@@ -1,0 +1,13 @@
+#pragma once
+#include "Primitives/TBox.hpp"
+#include "Primitives/TCone.hpp"
+#include "Primitives/TCylinder.hpp"
+#include "Primitives/TFrustum.hpp"
+#include "Primitives/TLine.hpp"
+#include "Primitives/TPlane.hpp"
+#include "Primitives/TPoint.hpp"
+#include "Primitives/TPolygon.hpp"
+#include "Primitives/TRay.hpp"
+#include "Primitives/TSphere.hpp"
+#include "Primitives/TTriangle.hpp"
+#include "Primitives/TTorus.hpp"
