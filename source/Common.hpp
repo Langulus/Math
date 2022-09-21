@@ -5,20 +5,12 @@
 /// Distributed under GNU General Public License v3+									
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
-#include "TestMain.hpp"
+#pragma once
+#include <LangulusSIMD.hpp>
 
-PC_MONOPOLIZE_MEMORY(0)
+namespace Langulus::Math
+{
 
-#define CATCH_CONFIG_RUNNER
-#include <catch2/catch.hpp>
+	using namespace ::Langulus::SIMD;
 
-
-int main(int argc, char* argv[]) {
-	Logger::pcInitLogger();
-	Memory::pcInitMemory();
-	Flow::pcInitGASM();
-	Math::pcInitPCMath();
-
-	Catch::Session session;
-	return session.run(argc, argv);
-}
+} // namespace Langulus::Math

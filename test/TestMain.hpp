@@ -1,9 +1,14 @@
+///																									
+/// Langulus::Math																				
+/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>							
+///																									
+/// Distributed under GNU General Public License v3+									
+/// See LICENSE file, or https://www.gnu.org/licenses									
+///																									
 #pragma once
-#include <PCFW.Math.hpp>
-using namespace PCFW;
-using namespace Memory;
-using namespace Math;
-using namespace Flow;
+#include <LangulusMath.hpp>
+
+using namespace ::Langulus::Math;
 
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 

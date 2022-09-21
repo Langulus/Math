@@ -1,28 +1,68 @@
-add_subdirectory(Test)
+cmake_minimum_required(VERSION 3.22)
+include(cmake/FetchLangulusModule.cmake)
+project(Langulus.Math)
 
-project(PCMath)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_definitions(-DPC_EXPORT_MATH)
+# Configure the features you require, all these are disabled by default
+option(LANGULUS_ENABLE_SAFE_MODE 
+    "Overrides additional error checking and sanity checks, \
+    incurs a serious runtime overhead")
 
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Colors SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Functions SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Matrices SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Primitives SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Quaternions SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Randomness SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Ranges SOURCE_FILES)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/Vectors SOURCE_FILES)
+option(LANGULUS_ENABLE_PARANOIA 
+    "Make sure that any unused memory is nullified, \
+    incurs a serious runtime overhead")
 
-add_library(PCMath SHARED ${SOURCE_FILES})
+option(LANGULUS_ENABLE_DEBUGGING 
+    "Explicitly define debug mode, in the case that default flags are \
+    not detected by some odd reason")
 
-target_include_directories(PCMath
-	PRIVATE		${CMAKE_CURRENT_SOURCE_DIR}
-	INTERFACE	${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+set(LANGULUS_ALIGNMENT 16 CACHE STRING "Overall langulus alignment")
+add_compile_definitions(LANGULUS_ALIGNMENT=${LANGULUS_ALIGNMENT})
 
-target_link_libraries(PCMath 
-	PUBLIC PCMemory Flow
-)
+if(LANGULUS_ENABLE_SAFE_MODE)
+    add_compile_definitions(LANGULUS_ENABLE_SAFE_MODE)
+endif()
+if(LANGULUS_ENABLE_PARANOIA)
+    add_compile_definitions(LANGULUS_ENABLE_PARANOIA)
+endif()
+if(LANGULUS_ENABLE_DEBUGGING)
+    add_compile_definitions(LANGULUS_ENABLE_DEBUGGING)
+endif()
 
-install(TARGETS PCMath DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	message(STATUS "Debug mode, all assertions are enabled")
+	add_compile_definitions(LANGULUS_ENABLE_ASSERTION_LEVEL=1000)
+    add_compile_definitions(LANGULUS_ENABLE_DEBUGGING)
+endif()
+
+# Check if this project is built as standalone, or a part of something else
+if(PROJECT_IS_TOP_LEVEL)
+    fetch_langulus_module(Core)
+    fetch_langulus_module(Logger)
+    fetch_langulus_module(SIMD)
+
+    add_compile_definitions(LANGULUS_ENABLE_TESTING)
+    enable_testing()
+	add_subdirectory(test)
+endif()
+
+# Build and install Math library
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Colors SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Functions SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Matrices SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Primitives SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Quaternions SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Randomness SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Ranges SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Vectors SOURCE_FILES)
+add_library(Langulus.Math ${SOURCE_FILES})
+
+if (MSVC)
+    target_compile_options(Langulus.Math PRIVATE /utf-8)
+endif()
+
+target_include_directories(Langulus.Math PUBLIC include)
+target_link_libraries(Langulus.Math PUBLIC Langulus.SIMD)
