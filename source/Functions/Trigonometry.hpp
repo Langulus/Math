@@ -8,127 +8,168 @@
 #pragma once
 #include "Arithmetics.hpp"
 
+namespace Langulus::CT
+{
+
+	///																								
+	/// All Langulus::Math arithmetic types have these properties					
+	///																								
+
+	/// Checks for a Cos() method																
+	template<class T>
+	concept HasCos = requires (const Decay<T> a) {
+		{a.Cos()} -> CT::Data;
+	};
+
+	/// Checks for a Sin() method																
+	template<class T>
+	concept HasSin = requires (const Decay<T> a) {
+		{a.Sin()} -> CT::Data;
+	};
+
+	/// Checks for a Atan() method															
+	template<class T>
+	concept HasAtan = requires (const Decay<T> a) {
+		{a.Atan()} -> CT::Data;
+	};
+
+	/// Checks for a Atan2() method															
+	template<class T1, class T2>
+	concept HasAtan2 = requires (const Decay<T1> a, const Decay<T2> b) {
+		{a.Atan2(b)} -> CT::Data;
+	};
+
+} // namespace Langulus::CT
+
+
 namespace Langulus::Math
 {
 
 	///																								
-	/// Constants																					
+	///	Constants																				
 	///																								
-	template<RealNumber T = real>
-	constexpr T PI = T(3.1415926535897932385L);
+	template<CT::Real T = Real>
+	constexpr T PI {3.1415926535897932385L};
 
-	template<RealNumber T = real>
-	constexpr T TAU = PI<T> * T(2);
+	template<CT::Real T = Real>
+	constexpr T TAU {PI<T> * T {2}};
 
-	template<RealNumber T = real>
-	constexpr T HALFPI = PI<T> * T(0.5);
+	template<CT::Real T = Real>
+	constexpr T HALFPI {PI<T> * T {0.5}};
 
-	template<RealNumber T = real>
-	constexpr T PIi = T(1) / PI<T>;
+	template<CT::Real T = Real>
+	constexpr T PIi {T {1} / PI<T>};
 
-	template<RealNumber T = real>
-	constexpr T TAUi = T(1) / TAU<T>;
+	template<CT::Real T = Real>
+	constexpr T TAUi {T {1} / TAU<T>};
 
-	template<RealNumber T = real>
-	constexpr T HALFPIi = T(1) / HALFPI<T>;
+	template<CT::Real T = Real>
+	constexpr T HALFPIi {T {1} / HALFPI<T>};
 
-	template<RealNumber T = real>
-	constexpr T LOGHALF = T(-0.30102999566L);
+	template<CT::Real T = Real>
+	constexpr T LOGHALF {-0.30102999566L};
 
-	template<RealNumber T = real>
-	constexpr T LOGHALFi = T(1) / LOGHALF<T>;
+	template<CT::Real T = Real>
+	constexpr T LOGHALFi {T {1} / LOGHALF<T>};
 
-	template<RealNumber T = real>
-	constexpr T I180 = T(1) / T(180);
+	template<CT::Real T = Real>
+	constexpr T I180 {T {1} / T {180}};
 
-	template<RealNumber T = real>
-	constexpr T PIxI180 = PI<T> * I180<T>;
+	template<CT::Real T = Real>
+	constexpr T PIxI180 {PI<T> * I180<T>};
 
-	template<RealNumber T = real>
-	constexpr T PIix180 = PIi<T> * T(180);
+	template<CT::Real T = Real>
+	constexpr T PIix180 {PIi<T> * T {180}};
 
-	template<RealNumber T = real>
-	constexpr T GOLDEN_ANGLE = (T(3) - pcSqrt<T>(5)) * PI<T>;
-
-
-	/// Calculate cosine																			
-	///	@param a - angle in radians														
-	template<class T>
-	inline auto pcCos(const T& a) noexcept {
-		if constexpr (requires(T a) { a.Cos(); })
-			return a.Cos();
-		else if constexpr (RealNumber<T>)
-			return std::cos(a);
-		else LANGULUS_ASSERT("T must either have Cos() method, or be a real number");
-	}
-
-	/// Calculate cosine in degrees															
-	///	@param a - angle in degrees														
-	template<class T>
-	inline auto pcCosDeg(const T& a) noexcept {
-		if constexpr (requires(T a) { a.Cos(); })
-			return (a * PIxI180<T>).Cos();
-		else if constexpr (RealNumber<T>)
-			return std::cos(a * PIxI180<T>);
-		else LANGULUS_ASSERT("T must either have Cos() method, or be a real number");
-	}
-
-	/// Calculate sine																			
-	///	@param a - angle in radians														
-	template<class T>
-	inline auto pcSin(const T& a) noexcept {
-		if constexpr (requires(T a) { a.Sin(); })
-			return a.Sin();
-		else if constexpr (RealNumber<T>)
-			return std::sin(a);
-		else LANGULUS_ASSERT("T must either have Sin() method, or be a real number");
-	}
-
-	/// Calculate sine in degrees																
-	///	@param a - angle in radians														
-	template<class T>
-	inline auto pcSinDeg(const T& a) noexcept {
-		if constexpr (requires(T a) { a.Sin(); })
-			return (a * PIxI180<T>).Sin();
-		else if constexpr (RealNumber<T>)
-			return std::sin(a * PIxI180<T>);
-		else LANGULUS_ASSERT("T must either have Sin() method, or be a real number");
-	}
-
-	/// Returns the arc tangent of x, expressed in radians							
-	///	@param a - angle in radians														
-	template<class T>
-	inline auto pcAtan(const T& a) noexcept {
-		if constexpr (requires(T a) { a.Atan(); })
-			return a.Atan();
-		else if constexpr (RealNumber<T>)
-			return std::atan(a);
-		else LANGULUS_ASSERT("T must either have Atan() method, or be a real number");
-	}
-
-	/// Returns the arc tangent of y/x, expressed in radians							
-	///	@param a - angle in radians														
-	template<class T>
-	inline auto pcAtan2(const T& a, const T& b) noexcept {
-		if constexpr (requires(T a, T b) { a.Atan2(b); })
-			return a.Atan2(b);
-		else if constexpr (RealNumber<T>)
-			return std::atan2(b, a);
-		else LANGULUS_ASSERT("T must either have Atan2() method, or be a real number");
-	}
+	template<CT::Real T = Real>
+	constexpr T GOLDEN_ANGLE {(T {3} - Sqrt(T {5})) * PI<T>};
 	
 	/// Degree to radian conversion															
 	///	@param degrees - degrees to convert to radians								
-	template<class T>
-	constexpr auto pcD2R(const T& degrees) noexcept {
+	template<CT::Dense T>
+	constexpr auto DegToRad(const T& degrees) noexcept {
 		return degrees * PIxI180<T>;
 	}
 
 	/// Radians to degrees conversion														
 	///	@param radians - radians to convert to degrees								
-	template<class T>
-	constexpr auto pcR2D(const T& radians) noexcept {
+	template<CT::Dense T>
+	constexpr auto RadToDeg(const T& radians) noexcept {
 		return radians * PIix180<T>;
+	}
+
+
+	///																								
+	///	Types																						
+	///																								
+	
+	/// Type used for representing angles in degrees									
+	template<CT::Dense T>
+	struct Degrees {
+		T mValue;
+	};
+
+	/// Type used for representing angles in radians									
+	template<CT::Dense T>
+	struct Radians {
+		T mValue;
+	};
+
+
+	///																								
+	///	Functions																				
+	///																								
+
+	/// Calculate cosine																			
+	///	@attention if angle is not Radians or Degrees, it is assumed radians	
+	///	@param a - the angle																	
+	template<CT::Dense T>
+	inline auto Cos(const T& a) noexcept {
+		if constexpr (CT::HasCos<T>)
+			return a.Cos();
+		else if constexpr (CT::Real<T>)
+			return ::std::cos(a);
+		else
+			return ::std::cos(static_cast<Real>(a));
+	}
+
+	/// Calculate sine																			
+	///	@attention if angle is not Radians or Degrees, it is assumed radians	
+	///	@param a - the angle																	
+	template<CT::Dense T>
+	inline auto Sin(const T& a) noexcept {
+		if constexpr (CT::HasSin<T>)
+			return a.Sin();
+		else if constexpr (CT::Real<T>)
+			return ::std::sin(a);
+		else
+			return ::std::sin(static_cast<Real>(a));
+	}
+
+	/// Returns the arc tangent of x															
+	///	@attention if angle is not Radians or Degrees, it is assumed radians	
+	///	@param a - the angle																	
+	template<CT::Dense T>
+	inline auto Atan(const T& a) noexcept {
+		if constexpr (CT::HasAtan<T>)
+			return a.Atan();
+		else if constexpr (CT::Real<T>)
+			return ::std::atan(a);
+		else
+			return ::std::atan(static_cast<Real>(a));
+	}
+
+	/// Returns the arc tangent of y/x														
+	///	@attention if angle is not Radians or Degrees, it is assumed radians	
+	///	@param a - the angle																	
+	template<CT::Dense T>
+	inline auto Atan2(const T& a, const T& b) noexcept {
+		if constexpr (CT::HasAtan2<T>)
+			return a.Atan2(b);
+		else if constexpr (CT::Real<T>)
+			return ::std::atan2(b, a);
+		else
+			return ::std::atan2(static_cast<Real>(b), static_cast<Real>(a));
 	}
 
 } // namespace Langulus::Math

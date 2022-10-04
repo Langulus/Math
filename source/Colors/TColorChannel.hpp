@@ -6,7 +6,6 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "../Functions.hpp"
 #include "../Vectors/TVector.hpp"
 
 /// Traits for accessing individual channels												
@@ -14,7 +13,7 @@ LANGULUS_DECLARE_TRAIT(R, "Red color channel");
 LANGULUS_DECLARE_TRAIT(G, "Green color channel");
 LANGULUS_DECLARE_TRAIT(B, "Blue color channel");
 LANGULUS_DECLARE_TRAIT(A, "Alpha color channel");
-LANGULUS_DECLARE_TRAIT(D, "Depth color channel");
+LANGULUS_DECLARE_TRAIT(D, "Depth channel");
 
 namespace Langulus::Math
 {

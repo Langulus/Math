@@ -9,18 +9,18 @@
 #include "TVectorComponent.hpp"
 #include "../TGradient.hpp"
 
-LANGULUS_DECLARE_TRAIT(Position, "Position trait");
+/*LANGULUS_DECLARE_TRAIT(Position, "Position trait");
 LANGULUS_DECLARE_TRAIT(Velocity, "Velocity trait");
-LANGULUS_DECLARE_TRAIT(Acceleration, "Acceleration trait");
+LANGULUS_DECLARE_TRAIT(Acceleration, "Acceleration trait");*/
 
 namespace Langulus::Math
 {
 
-	/// Types that use complex numbers as base											
-	template<ComplexNumber T> struct TForce;
-	template<ComplexNumber T> struct TNormal;
-	template<ComplexNumber T> struct TSampler;
-	template<ComplexNumber T> struct TSizer;
+	template<CT::Vector> class TForce;
+	template<CT::Vector> class TNormal;
+	template<CT::Vector> class TSampler;
+	template<CT::Vector> class TSizer;
+
 
 	/// An abstract vector of specific size												
 	/// Used as a common base for any type that can be interpretable as a		

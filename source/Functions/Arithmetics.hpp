@@ -47,6 +47,18 @@ namespace Langulus::CT
 		{c.Sign()} -> CT::Same<T>;
 	};
 
+	/// Checks for a Sqrt() method															
+	template<class T>
+	concept HasSqrt = requires (const Decay<T> c) {
+		{c.Sqrt()} -> CT::Same<T>;
+	};
+
+	/// Checks for a Frac() method															
+	template<class T>
+	concept HasFrac = requires (const Decay<T> c) {
+		{c.Frac()} -> CT::Same<T>;
+	};
+
 	/// Checks for a Pow(exponent) method													
 	template<class B, class E>
 	concept HasPow = requires (const Decay<B> b, const Decay<E> e) {
@@ -65,6 +77,66 @@ namespace Langulus::CT
 		{a.Max(b)} -> CT::Same<T1>;
 	};
 
+	/// Checks for a Mod(x) method															
+	template<class T1, class T2>
+	concept HasMod = requires (const Decay<T1> a, const Decay<T2> b) {
+		{a.Mod(b)} -> CT::Same<T1>;
+	};
+
+	/// Checks for a Dot(x) method															
+	template<class T1, class T2>
+	concept HasDot = requires (const Decay<T1> a, const Decay<T2> b) {
+		{a.Dot(b)} -> CT::Number;
+	};
+	
+	/// Checks for a Length() method															
+	template<class T>
+	concept HasLength = requires (const Decay<T> a) {
+		{a.Length()} -> CT::Number;
+	};
+	
+	/// Checks for a Sum() method																
+	template<class T>
+	concept HasSum = requires (const Decay<T> a) {
+		{a.Sum()} -> CT::Number;
+	};
+
+	/// Checks for a Cross(x) method															
+	template<class T1, class T2>
+	concept HasCross = requires (const Decay<T1> a, const Decay<T2> b) {
+		{a.Cross(b)} -> CT::Same<T1>;
+	};
+	
+	/// Checks for a Step(edge) method														
+	template<class T, class EDGE>
+	concept HasStep = requires (const Decay<T> a, const Decay<EDGE> b) {
+		{a.Step(b)} -> CT::Same<T>;
+	};
+	
+	/// Checks for a Normalize() method														
+	template<class T>
+	concept HasNormalize = requires (const Decay<T> a) {
+		{a.Normalize()} -> CT::Same<T>;
+	};
+	
+	/// Checks for an Exp() method															
+	template<class T>
+	concept HasExp = requires (const Decay<T> a) {
+		{a.Exp()} -> CT::Same<T>;
+	};
+
+	/// Checks for a Clamp(min,max) method													
+	template<class T, class MIN, class MAX>
+	concept HasClamp = requires (const Decay<T> v, const Decay<MIN> min, const Decay<MAX> max) {
+		{v.Clamp(min, max)} -> CT::Same<T>;
+	};
+
+	/// Checks for a ClampRev(min,max) method												
+	template<class T, class MIN, class MAX>
+	concept HasClampRev = requires (const Decay<T> v, const Decay<MIN> min, const Decay<MAX> max) {
+		{v.ClampRev(min, max)} -> CT::Same<T>;
+	};
+
 	/// Check if two types are multipliable												
 	template<class LHS, class RHS>
 	concept Multipliable = requires (const Decay<LHS> a, const Decay<RHS> b) {
@@ -77,17 +149,17 @@ namespace Langulus::CT
 namespace Langulus::Math
 {
 	
-	/// Absolute values of any signed number, or any with Abs() member			
+	/// Get absolute value																		
 	///	@param a - the number/class to absolute										
 	///	@return either T or whatever Abs() returns for class						
 	template<CT::Dense T>
 	NOD() constexpr auto Abs(const T& a) noexcept {
-		if constexpr (CT::Unsigned<T>)
+		if constexpr (CT::HasAbs<T>)
+			return a.Abs();
+		else if constexpr (CT::Unsigned<T>)
 			return a;
 		else if constexpr (CT::Signed<T>)
 			return a < T {0} ? -a : a;
-		else if constexpr (CT::HasAbs<T>)
-			return a.Abs();
 		else
 			LANGULUS_ERROR("T must either have Abs() method, or be a number");
 	}
@@ -97,14 +169,14 @@ namespace Langulus::Math
 	///	@return either T(-1) or T(1), or whatever Sign() returns for class	
 	template<CT::Dense T>
 	NOD() constexpr auto Sign(const T& a) noexcept {
-		if constexpr (CT::Unsigned<T>) {
+		if constexpr (CT::HasSign<T>)
+			return a.Sign();
+		else if constexpr (CT::Unsigned<T>) {
 			(a);
 			return T {1};
 		}
 		else if constexpr (CT::Signed<T>)
 			return a < T {0} ? T {-1} : T {1};
-		else if constexpr (CT::HasSign<T>)
-			return a.Sign();
 		else
 			LANGULUS_ERROR("T must either have Sign() method, or be a number");
 	}
@@ -115,7 +187,9 @@ namespace Langulus::Math
 	///	@return the exponentiated number, or whatever Pow() returns in class	
 	template<CT::Dense B, CT::Dense E>
 	NOD() constexpr auto Pow(B base, E exponent) noexcept {
-		if constexpr (CT::Integer<B, E>) {
+		if constexpr (CT::HasPow<B, E>)
+			return base.Pow(exponent);
+		else if constexpr (CT::Integer<B, E>) {
 			// Credit goes to: http://stackoverflow.com/questions/101439	
 			B result {1};
 			while (exponent) {
@@ -134,13 +208,11 @@ namespace Langulus::Math
 		}
 		else if constexpr (CT::Real<B>)
 			return ::std::pow(base, exponent);
-		else if constexpr (CT::HasPow<B, E>)
-			return base.Pow(exponent);
 		else
-			LANGULUS_ERROR("T must either have base.Pow(exponent) method, or be a number");
+			LANGULUS_ERROR("T must either have Pow(exponent) method, or be a number");
 	}
 
-	/// Get the smallest value of the provided											
+	/// Get the smallest of the provided													
 	template<CT::Dense T1, CT::Dense T2, CT::Dense... TAIL>
 	NOD() constexpr auto Min(T1&& t1, T2&& t2, TAIL&&... tail) {
 		if constexpr (sizeof...(TAIL) == 0) {
@@ -149,12 +221,12 @@ namespace Langulus::Math
 			else if constexpr (CT::Sortable<T1, T2>)
 				return t1 < t2 ? t1 : t2;
 			else
-				LANGULUS_ERROR("T must either have t1.Min(t2) method, or be sortable");
+				LANGULUS_ERROR("T must either have Min(t2) method, or be sortable");
 		}
 		else return Min(Min(t1, t2), tail...);
 	}
 
-	/// Get the biggest value of the provided												
+	/// Get the biggest of the provided														
 	template<CT::Dense T1, CT::Dense T2, CT::Dense... TAIL>
 	NOD() constexpr auto Max(T1&& t1, T2&& t2, TAIL&&... tail) {
 		if constexpr (sizeof...(TAIL) == 0) {
@@ -163,7 +235,7 @@ namespace Langulus::Math
 			else if constexpr (CT::Sortable<T1, T2>)
 				return t1 > t2 ? t1 : t2;
 			else
-				LANGULUS_ERROR("T must either have t1.Max(t2) method, or be sortable");
+				LANGULUS_ERROR("T must either have Max(t2) method, or be sortable");
 		}
 		else return Max(Max(t1, t2), tail...);
 	}
@@ -171,12 +243,12 @@ namespace Langulus::Math
 	/// Round 																						
 	template<CT::Dense T>
 	NOD() constexpr auto Round(const T& a) noexcept {
-		if constexpr (CT::Integer<T>)
+		if constexpr (CT::HasRound<T>)
+			return a.Round();
+		else if constexpr (CT::Integer<T>)
 			return a;
 		else if constexpr (CT::Real<T>)
 			return ::std::round(a);
-		else if constexpr (CT::HasRound<T>)
-			return a.Round();
 		else
 			LANGULUS_ERROR("T must either have Round() method, or be a number");
 	}
@@ -184,7 +256,9 @@ namespace Langulus::Math
 	/// Round and return an integer															
 	template<CT::Dense T>
 	NOD() constexpr auto Roundi(const T& a) noexcept {
-		if constexpr (CT::Integer<T>)
+		if constexpr (CT::HasRound<T>)
+			return static_cast<int>(a.Round());
+		else if constexpr (CT::Integer<T>)
 			return a;
 		else if constexpr (CT::RealDP<T>) {
 			const auto aa = a + T {6755399441055744.0};
@@ -194,8 +268,6 @@ namespace Langulus::Math
 			const auto aa = static_cast<double>(a) + double {6755399441055744.0};
 			return reinterpret_cast<const int&>(aa);
 		}
-		else if constexpr (CT::HasRound<T>)
-			return static_cast<int>(a.Round());
 		else
 			LANGULUS_ERROR("T must either have Round() method, or be a number");
 	}
@@ -203,19 +275,19 @@ namespace Langulus::Math
 	/// Floor																						
 	template<CT::Dense T>
 	NOD() constexpr auto Floor(const T& a) noexcept {
-		if constexpr (CT::Integer<T>)
+		if constexpr (CT::HasFloor<T>)
+			return a.Floor();
+		else if constexpr (CT::Integer<T>)
 			return a;
 		else if constexpr (CT::Real<T>) {
 			const auto round_a = Round<T>(a);
 			return round_a <= a ? round_a : round_a - T {1};
 		}
-		else if constexpr (CT::HasFloor<T>)
-			return a.Floor();
 		else
 			LANGULUS_ERROR("T must either have Floor() method, or be a number");
 	}
 
-	/// Floor and return integer																
+	/// Floor and return an integer															
 	template<CT::Dense T>
 	NOD() constexpr auto Floori(const T& a) noexcept {
 		return static_cast<int>(Floor<T>(a));
@@ -224,19 +296,19 @@ namespace Langulus::Math
 	/// Ceil																							
 	template<CT::Dense T>
 	NOD() constexpr auto Ceil(const T& a) noexcept {
-		if constexpr (CT::Integer<T>)
+		if constexpr (CT::HasCeil<T>)
+			return a.Ceil();
+		else if constexpr (CT::Integer<T>)
 			return a;
 		else if constexpr (CT::Real<T>) {
 			const auto round_a = Round<T>(a);
 			return round_a >= a ? round_a : round_a + T(1);
 		}
-		else if constexpr (CT::HasCeil<T>)
-			return a.Ceil();
 		else
 			LANGULUS_ERROR("T must either have Ceil() method, or be a number");
 	}
 
-	/// Ceil a real, return integer															
+	/// Ceil and return an integer															
 	template<CT::Dense T>
 	NOD() constexpr auto Ceili(const T& a) noexcept {
 		return static_cast<int>(Ceil<T>(a));
@@ -257,8 +329,7 @@ namespace Langulus::Math
 		/// Compile time square root using binary search								
 		template<CT::Unsigned T>
 		NOD() constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept requires CT::Dense<T> {
-			return
-				lo == hi
+			return lo == hi
 				? lo
 				: ((x / ((lo + hi + T {1}) / T {2}) < ((lo + hi + T {1}) / T {2}))
 					? SqrtHelper<T>(x, lo, ((lo + hi + T {1}) / T {2}) - T {1})
@@ -268,245 +339,202 @@ namespace Langulus::Math
 	} // namespace Detail
 
 	/// Square root																				
+	///	@attention assumes x is not a negative number								
 	template<CT::Dense T>
 	NOD() constexpr auto Sqrt(const T& x) {
-		if constexpr (UnsignedNumber<T>)
-			return DetailSqrt::SqrtHelper<T>(x, 0, x / 2 + 1);
-		else if constexpr (IntegerNumber<T>) {
-			SAFETY(if (x < 0)
-				throw Except::Arithmetic("Square root of negative signed integer"));
-			return T(pcSqrt(typename std::make_unsigned<T>::type(x)));
+		if constexpr (CT::HasSqrt<T>)
+			return x.Sqrt();
+		else if constexpr (CT::Unsigned<T>)
+			return Detail::SqrtHelper<T>(x, 0, x / 2 + 1);
+		else if constexpr (CT::Integer<T>) {
+			LANGULUS_ASSUME(UserAssumes, x >= 0,
+				"Square root of negative signed integer");
+			return T {Sqrt(::std::make_unsigned_t<T> {x})};
 		}
-		else if constexpr (RealNumber<T>) {
-			SAFETY(if (x < 0)
-				throw Except::Arithmetic("Square root of negative real"));
+		else if constexpr (CT::Real<T>) {
+			LANGULUS_ASSUME(UserAssumes, x >= 0,
+				"Square root of negative real");
 
-			T p = 1;
+			T p {1};
 			while (p <= x / p)
-				p = 2 * p;
+				p = T {2} *p;
 
-			T r = p;
+			T r {p};
 			do {
 				p = r;
-				r = (r + x / r) * 0.5f;
+				r = (r + x / r) * T {0.5f};
 			} while (r < p);
 			return p;
 		}
-		else if constexpr (requires (T a) { a.Sqrt(); })
-			return x.Sqrt();
-		else
-			LANGULUS_ERROR("T must either have Sqrt() method, or be a number");
+		else LANGULUS_ERROR("T must either have Sqrt() method, or be a number");
 	}
-
-
-	///																								
-	///	INTERPOLATION																			
-	///																								
-
-	/// 1D Linear interpolation																
-	///	@param n0 - first point																
-	///	@param n1 - second point															
-	///	@param a - rate																		
-	///	@return the linearly interpolated value										
-	template<class T1, class T2, class T3>
-	NOD() constexpr auto Lerp(const T1& n0, const T2& n1, const T3& a) noexcept {
-		return n0 + a * (n1 - n0);
-	}
-
-	/// 1D Cubic interpolation (Hermit interpolation, using tangents)				
-	///	@param n0 - first point																
-	///	@param m0 - tangent to first point												
-	///	@param n1 - second point															
-	///	@param m1 - tangent to second point												
-	///	@param a - rate																		
-	///	@return the cubically interpolated value										
-	template<class T1, class T2, class T3, class T4, class T5>
-	NOD() constexpr auto CerpTan(const T1& n0, const T2& m0, const T3& n1, const T4& m1, const T5& a) noexcept {
-		const auto t2 = a * a;
-		const auto t3 = t2 * a;
-		return (2 * t3 - 3 * t2 + 1) * n0 + (t3 - 2 * t2 + a) * m0 + ((-2) * t3 + 3 * t2) * n1 + (t3 - t2) * m1;
-	}
-
-	/// 1D Cubic interpolation																	
-	///	@param n0 - the point before the first point									
-	///	@param n1 - first point																
-	///	@param n2 - second point															
-	///	@param n3 - the point after the second point									
-	///	@param a - the rate																	
-	///	@return the cubically interpolated value										
-	template<class T1, class T2, class T3, class T4, class T5>
-	NOD() constexpr auto Cerp(const T1& n0, const T2& n1, const T3& n2, const T4& n3, const T5& a) noexcept {
-		const auto t2 = a * a;
-		const auto t3 = t2 * a;
-		const auto p = (n3 - n2) - (n0 - n1);
-		return p * t3 + ((n0 - n1) - p) * t2 + (n2 - n0) * a + n1;
-	}
-
-	/// Get fractional part of a real number												
-	template<class T>
+	
+	/// Get a fractional part																	
+	template<CT::Dense T>
 	NOD() constexpr auto Frac(const T& f) noexcept {
-		if constexpr (requires (T a) { a.Frac(); })
+		if constexpr (CT::HasFrac<T>)
 			return f.Frac();
-		else if constexpr (RealNumber<T>)
-			return f - pcFloor(f);
-		else if constexpr (IntegerNumber<T>)
-			return T(0);
+		else if constexpr (CT::Real<T>)
+			return f - Floor(f);
+		else if constexpr (CT::Integer<T>)
+			return T {0};
 		else
 			LANGULUS_ERROR("T must either have Frac() method, or be a number");
 	}
 
-	/// Modulation of real numbers															
-	template<class T1, class T2>
+	/// Modulate																					
+	template<CT::Dense T1, CT::Dense T2>
 	NOD() constexpr auto Mod(const T1& x, const T2& y) noexcept {
-		if constexpr (requires (T1 a, T2 b) { a.Mod(b); })
+		if constexpr (CT::HasMod<T1, T2>)
 			return x.Mod(y);
-		else if constexpr (IntegerNumber<T1>)
-			return x - y * T1(pcFloor(pcr64(x) / pcr64(y)));
-		else if constexpr (RealNumber<T1>)
-			return x - y * pcFloor(x / y);
+		else if constexpr (CT::Integer<T1>)
+			return x - y * T1 {Floor(RealDP{x} / RealDP{y})};
+		else if constexpr (CT::Real<T1>)
+			return x - y * Floor(x / y);
 		else
-			LANGULUS_ERROR("T must either have x.Mod(y) method, or be a number");
+			LANGULUS_ERROR("T must either have Mod(y) method, or be a number");
 	}
 
 	/// Remaps a [0; 1] range to a [-1; 1] range											
-	template<class T>
+	template<CT::Dense T>
 	NOD() constexpr auto Center(const T& a) noexcept {
-		return a * 2 - 1;
+		return a * T {2} - T {1};
 	}
 
-	/// Clamp a value in the interval [min;max]											
-	template<class T1, class T2, class T3>
-	NOD() constexpr auto Clamp(const T1& value, const T2& min, const T3& max) noexcept {
-		if constexpr (requires (T1 a, T1 b, T1 c) { a.Clamp(b, c); })
-			return value.Clamp(T1(min), T1(max));
-		else if constexpr (Number<T1> && Number<T2> && Number<T3>)
-			return value < min ? min : (value > max ? max : value);
+	/// Clamp a value inside the interval [min;max]										
+	template<CT::Dense T, CT::Dense MIN, CT::Dense MAX>
+	NOD() constexpr auto Clamp(const T& v, const MIN& min, const MAX& max) noexcept {
+		if constexpr (CT::HasClamp<T, MIN, MAX>)
+			return v.Clamp(min, max);
+		else if constexpr (CT::Number<T, MIN, MAX>)
+			return v < min ? min : (v > max ? max : v);
 		else
-			LANGULUS_ERROR("T must either have value.Clamp(min, max) method, or be a number");
+			LANGULUS_ERROR("T must either have Clamp(min, max) method, or be a number");
 	}
 
-	/// Clamp a value in the interval [0:1]												
-	template<class T>
-	NOD() constexpr auto Clamp01(const T& value) noexcept {
-		return pcClamp(value, T(0), T(1));
+	/// Clamp a value inside the interval [0:1]											
+	template<CT::Dense T>
+	NOD() constexpr auto Clamp01(const T& v) noexcept {
+		return Clamp(v, T {0}, T {1});
 	}
 
 	/// Clamp a value outside the interval (min:max)									
 	/// If the value is near min, min is returned, otherwise max is returned	
-	template<class T1, class T2, class T3>
-	NOD() constexpr auto ClampRev(const T1& value, const T2& min, const T3& max) noexcept {
-		if constexpr (requires (T1 a, T1 b, T1 c) { a.ClampRev(b, c); })
-			return value.ClampRev(T1(min), T1(max));
-		else if constexpr (Number<T1> && Number<T2> && Number<T3>) {
-			const auto halfd = (max - min) / 2;
-			if (value > min && value < max)
-				return value - min > halfd ? max : min;
-			return value;
+	template<CT::Dense T, CT::Dense MIN, CT::Dense MAX>
+	NOD() constexpr auto ClampRev(const T& v, const MIN& min, const MAX& max) noexcept {
+		if constexpr (CT::HasClampRev<T, MIN, MAX>)
+			return v.ClampRev(min, max);
+		else if constexpr (CT::Number<T, MIN, MAX>) {
+			const auto halfd = T {max - min} / T {2};
+			if (v > min && v < max)
+				return v - min > halfd ? max : min;
+			return v;
 		}
-		else LANGULUS_ERROR("T must either have value.ClampRev(min, max) method, or be a number");
+		else LANGULUS_ERROR("T must either have ClampRev(min, max) method, or be a number");
 	}
 
-	/// Dot two types that have a Dot method												
-	template<class T1, class T2>
-	NOD() constexpr auto Dot(const T1& v1, const T2& v2) noexcept {
-		if constexpr (requires (T1 a, T2 b) { a.Dot(b); })
-			return v1.Dot(v2);
-		else LANGULUS_ASSERT("T must have v1.Dot(v2) method");
+	/// Dot product																				
+	template<CT::Dense T1, CT::Dense T2>
+	NOD() constexpr auto Dot(const T1& a, const T2& b) noexcept {
+		if constexpr (CT::HasDot<T1, T2>)
+			return a.Dot(b);
+		else LANGULUS_ERROR("T must have Dot(b) method");
 	}
 
-	/// Self-dot product																			
-	template<class T>
-	NOD() constexpr auto Dot2(const T& v1) noexcept {
-		return pcDot(v1, v1);
+	/// Self dot product																			
+	template<CT::Dense T>
+	NOD() constexpr auto Dot2(const T& a) noexcept {
+		return Dot(a, a);
 	}
 
-	/// Cross two types that have a Cross method											
-	template<class T1, class T2>
-	NOD() constexpr auto Cross(const T1& v1, const T2& v2) noexcept {
-		if constexpr (requires (T1 a, T2 b) { a.Cross(b); })
-			return v1.Cross(v2);
-		else LANGULUS_ASSERT("T must have v1.Cross(v2) method");
+	/// Cross product																				
+	template<CT::Dense T1, CT::Dense T2>
+	NOD() constexpr auto Cross(const T1& a, const T2& b) noexcept {
+		if constexpr (CT::HasCross<T1, T2>)
+			return a.Cross(b);
+		else LANGULUS_ERROR("T must have Cross(b) method");
 	}
 
-	/// Get the length of numbers and complex numbers									
-	template<class T>
-	NOD() constexpr auto Length(const T& v1) noexcept {
-		if constexpr (requires (T a) { a.Length(); })
-			return v1.Length();
-		else if constexpr (Number<T>)
-			return pcAbs(v1);
+	/// Get length (as in magnitude)															
+	template<CT::Dense T>
+	NOD() constexpr auto Length(const T& v) noexcept {
+		if constexpr (CT::HasLength<T>)
+			return v.Length();
+		else if constexpr (CT::Number<T>)
+			return Abs(v);
 		else
-			LANGULUS_ERROR("T must either have v1.Length() method, or be a number");
+			LANGULUS_ERROR("T must either have Length() method, or be a number");
 	}
 
-	/// Get the distance between two values												
-	template<class T1, class T2>
+	/// Distance																					
+	template<CT::Dense T1, CT::Dense T2>
 	NOD() constexpr auto Distance(const T1& p0, const T2& p1) noexcept {
-		return pcLength(p0 - p1);
+		return Length(p0 - p1);
 	}
 
-	/// Normalize anything that has a Normalize method									
-	template<class T>
+	/// Normalize																					
+	template<CT::Dense T>
 	NOD() constexpr auto Normalize(const T& v) noexcept {
-		if constexpr (requires (T a) { a.Normalize(); })
+		if constexpr (CT::HasNormalize<T>)
 			return v.Normalize();
 		else
-			LANGULUS_ERROR("T must have v.Normalize() method");
+			LANGULUS_ERROR("T must have Normalize() method");
 	}
 
 	/// Step function																				
-	template<class T1, class T2>
-	NOD() constexpr auto Step(const T1& edge, const T2& x) noexcept {
-		if constexpr (requires (T1 a, T2 b) { b.Step(a); })
+	template<CT::Dense T, CT::Dense EDGE>
+	NOD() constexpr auto Step(const EDGE& edge, const T& x) noexcept {
+		if constexpr (CT::HasStep<T, EDGE>)
 			return x.Step(edge);
-		else if constexpr (Number<T1> && Number<T2>)
-			return x < edge ? T2(0) : T2(1);
+		else if constexpr (CT::Number<T, EDGE>)
+			return x < edge ? T {0} : T {1};
 		else
-			LANGULUS_ERROR("T must either have x.Step(edge) method, or be a number");
+			LANGULUS_ERROR("T must either have Step(edge) method, or be a number");
 	}
 
 	/// Smooth step (Hermite) interpolation, analogous to the GLSL function		
-	template<class T1, class T2, class T3>
-	NOD() constexpr auto SmoothStep(const T1& min, const T2& max, const T3& x) noexcept {
-		const auto t = pcClamp((x - min) / (max - min), 0, 1);
-		return t * t * (-t * 2 + 3);
+	template<CT::Dense T, CT::Dense MIN, CT::Dense MAX>
+	NOD() constexpr auto SmoothStep(const MIN& min, const MAX& max, const T& x) noexcept {
+		const T t = Clamp01((x - T {min}) / T {max - min});
+		return t * t * (-t * T {2} + T {3});
 	}
 
 	/// Returns the base-e exponential function of x, which is e raised to x	
 	///	@param exponent - the power to raise to										
 	///	@return e^x																				
-	template<class T>
+	template<CT::Dense T>
 	NOD() constexpr auto Exp(const T& x) noexcept {
-		if constexpr (requires (T a) { a.Exp(); })
+		if constexpr (CT::HasExp<T>)
 			return x.Exp();
-		else if constexpr (Number<T>)
-			return std::exp(x);
+		else if constexpr (CT::Number<T>)
+			return ::std::exp(x);
 		else
 			LANGULUS_ERROR("T must either have Exp() method, or be a number");
 	}
 
 	/// Solve 2^x																					
-	template<class T>
+	template<CT::Dense T>
 	NOD() constexpr auto Exp2(const T& x) noexcept {
-		return pcPow(T(2), x);
+		return Pow(T {2}, x);
 	}
 
-	/// Sum of positive integers [0;n]														
-	template<class T>
+	/// Sum of positive numbers [0;n], or elements of vector						
+	template<CT::Dense T>
 	NOD() constexpr T Sum(const T& n) noexcept {
-		if constexpr (requires (T a) { a.Sum(); })
+		if constexpr (CT::HasSum<T>)
 			return n.Sum();
-		else if constexpr (Number<T>)
-			return (n * (n + T(1))) / T(2);
-		else
-			LANGULUS_ERROR("T must either have Sum() method, or be a number");
+		else if constexpr (CT::Number<T>) {
+			LANGULUS_ASSUME(UserAssumes, n >= 0, "Can't get sum of non-positive integers");
+			return (n * (n + T {1})) / T {2};
+		}
+		else LANGULUS_ERROR("T must either have Sum() method, or be a number");
 	}
 
 	/// A Kahan summation used to minimize floating-point math error				
 	///	@param cookie - provide zero on first iteration								
 	///	@param input - the number to add, repeat for more numbers				
 	///	@param output - the sum, gets overwritten every time						
-	template<Number T>
+	template<CT::Dense T>
 	void KahanSum(T& cookie, const T& input, T& output) noexcept {
 		T y = input - cookie;
 		// So far, so good: cookie be zero on first iteration					
@@ -516,6 +544,49 @@ namespace Langulus::Math
 		// (t - sum) recovers high-order y											
 		output = t;
 		// Next time around, the lost low part will be fixed					
+	}
+
+	/// Linear interpolation																	
+	///	@param n0 - first point																
+	///	@param n1 - second point															
+	///	@param a - rate																		
+	///	@return the linearly interpolated value										
+	template<CT::Dense T1, CT::Dense T2, CT::Dense R>
+	NOD() constexpr auto Lerp(const T1& n0, const T2& n1, const R& a) noexcept {
+		return n0 + a * (n1 - n0);
+	}
+
+	/// Cubic interpolation (Hermit interpolation, using tangents)					
+	///	@param n0 - first point																
+	///	@param m0 - tangent to first point												
+	///	@param n1 - second point															
+	///	@param m1 - tangent to second point												
+	///	@param a - rate																		
+	///	@return the cubically interpolated value										
+	template<CT::Dense T1, CT::Dense T2, CT::Dense T3, CT::Dense T4, CT::Dense T5>
+	NOD() constexpr auto CerpTan(const T1& n0, const T2& m0, const T3& n1, const T4& m1, const T5& a) noexcept {
+		const auto t2 = a * a;
+		const auto t3 = t2 * a;
+		return
+			  T1 {T1 {2} * t3 - T1 {3} * t2 + T1 {1}} * n0
+			+ T1 {t3 - T1 {2} * t2 + T1 {a}} * T1 {m0}
+			+ T3 {T3 {-2} * t3 + T3 {3} * t2} * n1
+			+ T3 {t3 - t2} * T3 {m1};
+	}
+
+	/// Cubic interpolation																		
+	///	@param n0 - the point before the first point									
+	///	@param n1 - first point																
+	///	@param n2 - second point															
+	///	@param n3 - the point after the second point									
+	///	@param a - the rate																	
+	///	@return the cubically interpolated value										
+	template<CT::Dense T1, CT::Dense T2, CT::Dense T3, CT::Dense T4, CT::Dense T5>
+	NOD() constexpr auto Cerp(const T1& n0, const T2& n1, const T3& n2, const T4& n3, const T5& a) noexcept {
+		const auto t2 = a * a;
+		const auto t3 = t2 * a;
+		const auto p = (n3 - n2) - (n0 - n1);
+		return p * t3 + ((n0 - n1) - p) * t2 + (n2 - n0) * a + n1;
 	}
 
 } // namespace Langulus::Math

@@ -6,7 +6,6 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "../source/Functions.hpp"
 #include "../source/Colors.hpp"
 #include "../source/Randomness.hpp"
 #include "../source/Times.hpp"
