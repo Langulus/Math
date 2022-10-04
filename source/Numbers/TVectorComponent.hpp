@@ -7,6 +7,7 @@
 ///																									
 #pragma once
 #include "../Dimensions.hpp"
+#include "../Numbers/TNumber.hpp"
 
 namespace Langulus::Math
 {
@@ -77,61 +78,13 @@ namespace Langulus::Math
 	///																								
 	///	Vector component																		
 	///																								
-	template<CT::Dense T, class DIMENSION = void>
-	struct TVectorComponent : public TNumber<T, TVectorComponent<T, INDEX>> {
-	private:
-		using NUMBER_BASE = TNumber<T, TVectorComponent<T, INDEX>>;
-
+	template<class T, class DIMENSION = void>
+	class TVectorComponent : public TNumber<T, TVectorComponent<T, DIMENSION>> {
+		using Base = TNumber<T, TVectorComponent<T, DIMENSION>>;
 	public:
-		static_assert(Dense<T>, "Can't have sparse vector component");
-		static constexpr auto Index = INDEX;
-
-		REFLECT_MANUALLY(TVectorComponent) {
-			static_assert(pcIsPOD<ME>, "Must be POD");
-			static_assert(pcIsNullifiable<ME>, "Must be NULLIFIABLE");
-			static_assert(sizeof(T) == sizeof(ME), "Size mismatch");
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				if constexpr (Index == Dimension::X) {
-					name += "VecX";
-					info += "x";
-				}
-				else if constexpr (Index == Dimension::Y) {
-					name += "VecY";
-					info += "y";
-				}
-				else if constexpr (Index == Dimension::Z) {
-					name += "VecZ";
-					info += "z";
-				}
-				else if constexpr (Index == Dimension::W) {
-					name += "VecW";
-					info += "w";
-				}
-				else LANGULUS_ASSERT("Unsupported vector component index");
-				name.TypeSuffix<T>();
-				name = name.StandardToken();
-				info += " vector component of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(AVector),
-				REFLECT_BASE(T));
-			return reflection;
-		}
-
-	public:
-		using NUMBER_BASE::TNumber;
-
-		NOD() constexpr operator T& () noexcept {
-			return NUMBER_BASE::mValue;
-		}
-
-		NOD() constexpr operator const T& () const noexcept {
-			return NUMBER_BASE::mValue;
-		}
+		static_assert(CT::Dense<T>, "Can't have sparse vector component");
+		using Dimension = DIMENSION;
+		using Base::TNumber;
 	};
 
 } // namespace Langulus::Math
