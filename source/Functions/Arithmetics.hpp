@@ -8,8 +8,6 @@
 #pragma once
 #include "../Common.hpp"
 
-LANGULUS_EXCEPTION(Arithmetic);
-
 namespace Langulus::CT
 {
 

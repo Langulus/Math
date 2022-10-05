@@ -52,14 +52,20 @@ namespace Langulus::Math
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// vector of the same type															
 		///																							
-		template<class T>
+		template<CT::DenseNumber T>
 		struct VectorOfType : public Vector {
 			LANGULUS(CONCRETE) TVector<T, 4>;
 			LANGULUS_BASES(Vector);
-			using MemberType = Decay<T>;
+			using MemberType = T;
 		};
 
 	} // namespace Langulus::Math::A
+
+
+	/// See my thread here:																		
+	/// https://stackoverflow.com/questions/56585548/									
+	#define LANGULUS_CONDITIONAL_MEMBER(CONDITION, TYPE, NAME) \
+		[[no_unique_address]] Conditional<(CONDITION), TYPE, decltype([]{})> NAME;
 
 
 	///																								
@@ -72,93 +78,121 @@ namespace Langulus::Math
 	/// being a pointer (a so called proxy vector), in order to implement		
 	/// swizzling. Proxy vectors eventually decay into conventional vectors.	
 	///																								
-#pragma pack(push, 1)
-	template<class T, Count S>
+	#pragma pack(push, 1)
+	template<CT::DenseNumber T, Count S>
 	class TVector {
 	public:
 		LANGULUS(POD) true;
 		LANGULUS(NULLIFIABLE) true;
 		LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>);
 
-		using DenseT = Decay<T>;
-		using DenseME = TVector<DenseT, S>;
-		using MemberType = DenseT;
-
+		static_assert(S >= 1, "Can't have a vector of zero size");
+		using MemberType = T;
 		static constexpr Count MemberCount = S;
-		static constexpr bool SparseVector = CT::Sparse<T>;
-		static constexpr bool DenseVector = CT::Dense<T>;
+		template<CT::DenseNumber N>
+		static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
-		T mArray[MemberCount] = {};
+		union {
+			// Array representation														
+			T mArray[S] = {};
+
+			struct {
+				// xyzw-tail representation											
+				T x;
+				LANGULUS_CONDITIONAL_MEMBER(S > 1, T, y);
+				LANGULUS_CONDITIONAL_MEMBER(S > 2, T, z);
+				LANGULUS_CONDITIONAL_MEMBER(S > 3, T, w);
+			};
+
+			struct {
+				// uvst representation													
+				T u;
+				LANGULUS_CONDITIONAL_MEMBER(S > 1, T, v);
+				LANGULUS_CONDITIONAL_MEMBER(S > 2, T, s);
+				LANGULUS_CONDITIONAL_MEMBER(S > 3, T, t);
+			};
+
+			struct {
+				// rgba representation													
+				T r;
+				LANGULUS_CONDITIONAL_MEMBER(S > 1, T, g);
+				LANGULUS_CONDITIONAL_MEMBER(S > 2, T, b);
+				LANGULUS_CONDITIONAL_MEMBER(S > 3, T, a);
+			};
+		};
 
 	public:
 		constexpr TVector() noexcept = default;
 
-		template<class ALTT, Count ALTS>
+		template<CT::DenseNumber ALTT, Count ALTS>
 		constexpr TVector(const TVector<ALTT, ALTS>&) noexcept;
 
 		template<class HEAD, class... TAIL>
 		constexpr TVector(const HEAD&, const TAIL&...) noexcept requires (S > 1 && sizeof...(TAIL) > 0);
 
-		template<class N>
-		constexpr TVector(const N&) noexcept requires CT::Convertible<Decay<N>, Decay<T>>;
+		template<CT::DenseNumber N>
+		constexpr TVector(const N&) noexcept requires IsCompatible<N>;
 
-		template<class N, class DIMENSION>
-		constexpr TVector(const TVectorComponent<N, DIMENSION>&) noexcept;
+		template<CT::SparseNumber N>
+		constexpr TVector(Deref<N>) noexcept requires IsCompatible<Decay<N>>;
 
-		template<class ALTT, Count ALTS, ALTT DEFAULT>
+		template<CT::Array N>
+		constexpr TVector(const N&) noexcept requires IsCompatible<Decay<N>>;
+
+		template<CT::DenseNumber N, CT::Dimension D>
+		constexpr TVector(const TVectorComponent<N, D>&) noexcept;
+
+		template<CT::DenseNumber ALTT, Count ALTS, ALTT DEFAULT>
 		constexpr void Initialize(const TVector<ALTT, ALTS>&) noexcept;
 
 		void WriteBody(Flow::Code&) const;
 
 		NOD() explicit operator Flow::Code() const;
 
-		template<class N>
-		NOD() constexpr decltype(auto) Adapt(const N&) const noexcept requires CT::Convertible<Decay<N>, Decay<T>>;
+		template<CT::DenseNumber N>
+		NOD() constexpr decltype(auto) Adapt(const N&) const noexcept requires IsCompatible<N>;
 
 
 		///																							
 		///	Access																				
 		///																							
-		NOD() constexpr decltype(auto) Get(Offset) const noexcept;
+		NOD() constexpr const T& Get(Offset) const noexcept;
 
 		template<Offset I>
-		NOD() constexpr decltype(auto) GetIdx() const noexcept requires (I < S);
+		NOD() constexpr const T& GetIdx() const noexcept;
 
-		NOD() constexpr decltype(auto) operator [] (Offset) noexcept;
-		NOD() constexpr decltype(auto) operator [] (Offset) const noexcept;
+		NOD() constexpr T& operator [] (Offset) noexcept;
+		NOD() constexpr const T& operator [] (Offset) const noexcept;
 
-		NOD() constexpr auto GetRaw() const noexcept;
-		NOD() constexpr auto GetRaw() noexcept;
-		NOD() constexpr auto GetCount() const noexcept;
-		NOD() constexpr auto GetCount() noexcept;
-
-		NOD() constexpr auto operator () () noexcept requires DenseVector;
-		NOD() constexpr auto operator () () const noexcept requires DenseVector;
-
-		NOD() constexpr auto LengthSquared() const noexcept;
-		NOD() constexpr auto Length() const noexcept;
-
+		NOD() constexpr const T* GetRaw() const noexcept;
+		NOD() constexpr T* GetRaw() noexcept;
+		NOD() constexpr Count GetCount() const noexcept;
+		NOD() constexpr T LengthSquared() const noexcept;
+		NOD() constexpr T Length() const noexcept;
 		NOD() constexpr bool IsDegenerate() const noexcept;
 
 		template<Offset... I>
-		NOD() constexpr decltype(auto) Swz() noexcept;
-
+		NOD() auto Swz() noexcept;
 		template<Offset... I>
-		NOD() constexpr decltype(auto) Swz() const noexcept;
+		NOD() constexpr auto Swz() const noexcept;
 
 		template<Offset... I>
 		static constexpr bool SwzRequirements = S > Max(0U, I...);
 
 		/// Generate all combinations of all swizzle functions up to 4D			
 		#define PC_VSWIZZLE(name, ...) \
-			NOD() decltype(auto) name() noexcept requires (SwzRequirements<__VA_ARGS__>) { return Swz<__VA_ARGS__>(); }\
-			NOD() decltype(auto) name() const noexcept requires (SwzRequirements<__VA_ARGS__>) { return Swz<__VA_ARGS__>(); }
+			NOD() decltype(auto) name() noexcept requires (SwzRequirements<__VA_ARGS__>) { \
+				return Swz<__VA_ARGS__>(); \
+			} \
+			NOD() decltype(auto) name() const noexcept requires (SwzRequirements<__VA_ARGS__>) { \
+				return Swz<__VA_ARGS__>(); \
+			}
 
 		/// 1D Swizzlers																			
-		PC_VSWIZZLE(x, 0U)
+		/*PC_VSWIZZLE(x, 0U)
 		PC_VSWIZZLE(y, 1U)
 		PC_VSWIZZLE(z, 2U)
-		PC_VSWIZZLE(w, 3U)
+		PC_VSWIZZLE(w, 3U)*/
 
 		/// 2D Swizzlers																			
 		#define PC_VSWIZZLE2(name, ...) \
@@ -197,36 +231,35 @@ namespace Langulus::Math
 		PC_VSWIZZLE4(w, 3U)
 
 
-		NOD() constexpr decltype(auto) Real() const noexcept;
+		template<class AS, bool NORMALIZE = CT::Real<AS> && !CT::Real<T>>
+		NOD() constexpr TVector<AS, S> AsCast() const noexcept;
+		template<Count = Min(S, 3)>
 		NOD() constexpr auto Volume() const noexcept;
 
 
 		///																							
 		///	Compare																				
 		///																							
-		template<class N>
+		template<CT::DenseNumber N>
 		constexpr auto& operator = (const N&) noexcept;
 
-		template<class ALTT = T, Count ALTS = S>
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
 		constexpr auto& operator = (const TVector<ALTT, ALTS>&) noexcept;
 
-		template<class N, class DIMENSION>
-		constexpr auto& operator = (const TVectorComponent<N, DIMENSION>&) noexcept;
+		template<CT::DenseNumber N, CT::Dimension D>
+		constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-		template<class ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Dot(const TVector<ALTT, ALTS>&) const noexcept;
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
+		NOD() constexpr T Dot(const TVector<ALTT, ALTS>&) const noexcept;
 
-		template<class N>
-		NOD() constexpr auto Dot(const N&) const noexcept;
-
-		template<class ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Cross(const TVector<ALTT, ALTS>&) const noexcept requires (S > 2 && ALTS > 2);
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
+		NOD() constexpr TVector<T, 3> Cross(const TVector<ALTT, ALTS>&) const noexcept requires (S >= 3 && ALTS >= 3);
 
 		NOD() constexpr auto Normalize() const requires (S > 1);
 
-		template<class ALTT1 = T, Count ALTS1 = S, class ALTT2 = T, Count ALTS2 = S>
+		template<CT::DenseNumber ALTT1 = T, Count ALTS1 = S, CT::DenseNumber ALTT2 = T, Count ALTS2 = S>
 		NOD() constexpr auto Clamp(const TVector<ALTT1, ALTS1>&, const TVector<ALTT2, ALTS2>&) const noexcept;
-		template<class ALTT1 = T, Count ALTS1 = S, class ALTT2 = T, Count ALTS2 = S>
+		template<CT::DenseNumber ALTT1 = T, Count ALTS1 = S, CT::DenseNumber ALTT2 = T, Count ALTS2 = S>
 		NOD() constexpr auto ClampRev(const TVector<ALTT1, ALTS1>&, const TVector<ALTT2, ALTS2>&) const noexcept;
 
 		NOD() constexpr auto Round() const noexcept;
@@ -239,52 +272,93 @@ namespace Langulus::Math
 		NOD() constexpr auto Exp() const noexcept;
 		NOD() constexpr auto Sin() const noexcept;
 		NOD() constexpr auto Cos() const noexcept;
-		NOD() constexpr auto Warp(const DenseT&) const noexcept;
+		NOD() constexpr auto Warp(const T&) const noexcept;
 
 		NOD() static constexpr TVector Max() noexcept;
-		NOD() constexpr auto Max(const DenseT&) const noexcept;
-		template<class ALTT = T, Count ALTS = S>
+		NOD() constexpr auto Max(const T&) const noexcept;
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
 		NOD() constexpr auto Max(const TVector<ALTT, ALTS>&) const noexcept;
 		NOD() constexpr auto HMax() const noexcept;
 
 		NOD() static constexpr TVector Min() noexcept;
-		NOD() constexpr auto Min(const DenseT&) const noexcept;
-		template<class ALTT = T, Count ALTS = S>
+		NOD() constexpr auto Min(const T&) const noexcept;
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
 		NOD() constexpr auto Min(const TVector<ALTT, ALTS>&) const noexcept;
 		NOD() constexpr auto HMin() const noexcept;
 
 		NOD() constexpr auto HSum() const noexcept;
 		NOD() constexpr auto HMul() const noexcept;
 
-		NOD() constexpr auto Mod(const DenseT&) const noexcept;
-		template<class ALTT = T, Count ALTS = S>
+		NOD() constexpr auto Mod(const T&) const noexcept;
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
 		NOD() constexpr auto Mod(const TVector<ALTT, ALTS>&) const noexcept;
 
-		NOD() constexpr auto Step(const DenseT&) const noexcept;
-		template<class ALTT = T, Count ALTS = S>
+		NOD() constexpr auto Step(const T&) const noexcept;
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
 		NOD() constexpr auto Step(const TVector<ALTT, ALTS>&) const noexcept;
 
-		NOD() constexpr auto Pow(const DenseT&) const noexcept;
-		template<class ALTT = T, Count ALTS = S>
+		NOD() constexpr auto Pow(const T&) const noexcept;
+		template<CT::DenseNumber ALTT = T, Count ALTS = S>
 		NOD() constexpr auto Pow(const TVector<ALTT, ALTS>&) const noexcept;
 
 		auto& Sort() noexcept;
 
-		NOD() constexpr operator DenseME () const noexcept requires SparseVector;
-		NOD() constexpr operator const DenseT& () const noexcept requires (S == 1);
-		NOD() constexpr operator DenseT& () noexcept requires (S == 1);
-		template<class N>
-		NOD() explicit constexpr operator N () const noexcept requires (S == 1);
+		NOD() constexpr operator T& () noexcept requires (S == 1);
+		NOD() constexpr operator const T& () const noexcept requires (S == 1);
+
+		template<CT::DenseNumber N>
+		NOD() explicit constexpr operator N () const noexcept requires (S == 1 && IsCompatible<N>);
 	};
 	#pragma pack(pop)
+
+	namespace Inner
+	{
+
+		///																							
+		///	Swizzled vector, intermediate type											
+		///																							
+		/// Creates a shuffled representation of a source vector, and commits	
+		/// any changes to it upon destruction												
+		template<CT::DenseNumber T, Count S, Offset... I>
+		class TProxyVector : public TVector<T, sizeof...(I)> {
+		LANGULUS(UNINSERTABLE) true;
+		private:
+			using Base = TVector<T, sizeof...(I)>;
+			using Base::mArray;
+
+			TVector<T, S>& mSource;
+
+		private:
+			/// Commit the changes																
+			template<Offset FROM, Offset TO, Offset... TAIL>
+			void Commit() noexcept {
+				mSource.mArray[TO] = mArray[FROM];
+				if constexpr (sizeof...(TAIL))
+					Commit<FROM + 1, TAIL...>();
+			}
+
+		public:
+			TProxyVector() = delete;
+			TProxyVector(const TProxyVector&) = delete;
+			TProxyVector(TProxyVector&&) = delete;
+
+			TProxyVector(TVector<T,S>& source) noexcept
+				: mSource {source} {}
+
+			~TProxyVector() noexcept {
+				Commit<0, I...>();
+			}
+		};
+
+	} // namespace Inner
 
 
 	///																								
 	///	Operations																				
 	///																								
-	#define TARGS(a) class a##T, Count a##S
+	#define TARGS(a) CT::DenseNumber a##T, Count a##S
 	#define TVEC(a) TVector<a##T, a##S>
-	#define TEMPLATE() template<class T, Count S>
+	#define TEMPLATE() template<CT::DenseNumber T, Count S>
 	#define TME() TVector<T, S>
 
 	/// Returns an inverted vector															

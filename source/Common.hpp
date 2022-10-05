@@ -16,3 +16,5 @@ namespace Langulus::Math
 	using namespace ::Langulus::SIMD;
 
 } // namespace Langulus::Math
+
+LANGULUS_EXCEPTION(Arithmetic);

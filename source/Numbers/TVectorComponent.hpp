@@ -12,10 +12,10 @@
 namespace Langulus::Math
 {
 
-	template<class, Count>
+	template<CT::DenseNumber, Count>
 	class TVector;
 
-	template<class T, Count S>
+	template<CT::DenseNumber T, Count S>
 	using TVec = TVector<T, S>;
 
 	using vec1 = TVec<Real, 1>;
@@ -24,7 +24,7 @@ namespace Langulus::Math
 	using vec1i = TVec<signed, 1>;
 	using vec1u = TVec<unsigned, 1>;
 	using vec1i8 = TVec<::std::int8_t, 1>;
-	using vec1u8 = TVec<::std::uint8_t, 1>;
+	using vec1u8 = TVec<uint8, 1>;
 	using vec1i16 = TVec<::std::int16_t, 1>;
 	using vec1u16 = TVec<::std::uint16_t, 1>;
 	using vec1i32 = TVec<::std::int32_t, 1>;
@@ -38,7 +38,7 @@ namespace Langulus::Math
 	using vec2i = TVec<signed, 2>;
 	using vec2u = TVec<unsigned, 2>;
 	using vec2i8 = TVec<::std::int8_t, 2>;
-	using vec2u8 = TVec<::std::uint8_t, 2>;
+	using vec2u8 = TVec<uint8, 2>;
 	using vec2i16 = TVec<::std::int16_t, 2>;
 	using vec2u16 = TVec<::std::uint16_t, 2>;
 	using vec2i32 = TVec<::std::int32_t, 2>;
@@ -52,7 +52,7 @@ namespace Langulus::Math
 	using vec3i = TVec<signed, 3>;
 	using vec3u = TVec<unsigned, 3>;
 	using vec3i8 = TVec<::std::int8_t, 3>;
-	using vec3u8 = TVec<::std::uint8_t, 3>;
+	using vec3u8 = TVec<uint8, 3>;
 	using vec3i16 = TVec<::std::int16_t, 3>;
 	using vec3u16 = TVec<::std::uint16_t, 3>;
 	using vec3i32 = TVec<::std::int32_t, 3>;
@@ -66,7 +66,7 @@ namespace Langulus::Math
 	using vec4i = TVec<signed, 4>;
 	using vec4u = TVec<unsigned, 4>;
 	using vec4i8 = TVec<::std::int8_t, 4>;
-	using vec4u8 = TVec<::std::uint8_t, 4>;
+	using vec4u8 = TVec<uint8, 4>;
 	using vec4i16 = TVec<::std::int16_t, 4>;
 	using vec4u16 = TVec<::std::uint16_t, 4>;
 	using vec4i32 = TVec<::std::int32_t, 4>;
@@ -78,12 +78,12 @@ namespace Langulus::Math
 	///																								
 	///	Vector component																		
 	///																								
-	template<class T, class DIMENSION = void>
-	class TVectorComponent : public TNumber<T, TVectorComponent<T, DIMENSION>> {
-		using Base = TNumber<T, TVectorComponent<T, DIMENSION>>;
+	template<CT::DenseNumber T, CT::Dimension D>
+	class TVectorComponent : public TNumber<T, TVectorComponent<T, D>> {
+		using Base = TNumber<T, TVectorComponent<T, D>>;
 	public:
-		static_assert(CT::Dense<T>, "Can't have sparse vector component");
-		using Dimension = DIMENSION;
+		using Dimension = D;
+		using MemberType = T;
 		using Base::TNumber;
 	};
 

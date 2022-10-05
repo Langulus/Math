@@ -24,12 +24,14 @@ namespace Langulus::Math
 	///		conversion-to-text-hell															
 	///	4. Gives a layer for integration with langulus flows and verbs			
 	///																								
-	template<class T, class WRAPPER>
+	template<class T, class WRAPPER = T>
 	class TNumber {
 	public:
 		LANGULUS(NUMBER) T;
 
 		T mValue;
 	};
+
+	using uint8 = TNumber<::std::uint8_t>;
 
 } // namespace Langulus::Math

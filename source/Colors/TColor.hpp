@@ -6,52 +6,76 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "TColorChannel.hpp"
+#include "../Numbers/TColorChannel.hpp"
 
 namespace Langulus::Math
 {
+	namespace A
+	{
 
-	using ConsoleColor = Logger::ConsoleColor;
+		///																							
+		/// An abstract color																	
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// color																					
+		///																							
+		struct Color {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) rgba;
+		};
 
-	///																								
-	///	Abstract color of specific size													
-	///																								
-	template<pcptr SIZE>
-	struct EMPTY_BASE() TSizedColor : POD, NULLIFIABLE {
-		static_assert(SIZE > 0, "Color size must be greater than zero");
-		static constexpr pcptr MemberCount = SIZE;
-		REFLECT_MANUALLY(TSizedColor);
-	};
+		///																							
+		/// An abstract color of specific size												
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// color of the same size																
+		///																							
+		template<Count S>
+		struct ColorOfSize : public Color {
+			LANGULUS(CONCRETE) TColor<TVector<::std::uint8_t, S>>;
+			LANGULUS_BASES(Color);
+			static constexpr Count MemberCount {S};
+			static_assert(S > 0, "Color size must be greater than zero");
+		};
+
+		///																							
+		/// An abstract color of specific type												
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// color of the same type																
+		///																							
+		template<CT::DenseNumber T>
+		struct ColorOfType : public Color {
+			LANGULUS(CONCRETE) TColor<TVector<T, 4>>;
+			LANGULUS_BASES(Color);
+			using MemberType = T;
+		};
+
+	} // namespace Langulus::Math::A
+
 
 	///																								
 	///	Templated color																		
 	///																								
 	#pragma pack(push, 1)
-	template<ComplexNumber T>
-	struct EMPTY_BASE() TColor : public T {
-	public:
+	template<CT::Vector T>
+	struct TColor : public T {
 		using PointType = T;
 		using MemberType = typename T::MemberType;
-		static constexpr pcptr MemberCount = T::MemberCount;
-		REFLECT_MANUALLY(TColor);
+		static constexpr Count MemberCount = T::MemberCount;
+		LANGULUS_BASES(A::ColorOfSize<MemberCount>, A::ColorOfType<MemberType>);
 
 	public:
 		using T::T;
+		using T::mArray;
 
 		constexpr TColor(const T&);
+		constexpr TColor(Logger::Color);
 
-		template<pcptr SIZE = T::MemberCount>
-		TColor(ConsoleColor) requires (SIZE >= 3);
+		template<CT::DenseNumber ALTT, CT::Dimension D>
+		constexpr TColor<T>& operator = (const TColorChannel<ALTT, D>&) noexcept;
 
-		template<ColorChannel INDEX, class K = typename T::MemberType, pcptr SIZE = T::MemberCount>
-		constexpr TColor<T>& operator = (const TColorChannel<K, INDEX>&) noexcept requires (pcptr(INDEX) < SIZE);
-
-		NOD() explicit operator GASM() const;
-		NOD() explicit operator ConsoleColor() const;
+		NOD() explicit operator Flow::Code() const;
+		NOD() explicit operator Logger::Color() const;
 	};
 	#pragma pack(pop)
-
-	PC_DEFINE_ABSTRACT_DATA(Color, "An abstract color", rgba);
 
 } // namespace Langulus::Math
 

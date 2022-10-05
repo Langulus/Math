@@ -8,60 +8,69 @@
 #pragma once
 #include "TVector.hpp"
 
-LANGULUS_DECLARE_TRAIT(Aim, "Rotation trait; used for normals/tangents/bitangents");
-
 namespace Langulus::Math
 {
 
-	/// Commonly used 3D normal																
+	/// Commonly used normal																	
 	using Normal = TNormal<vec3>;
 
+	namespace A
+	{
 
-	///																								
-	///	Abstract normal																		
-	///																								
-	PC_DECLARE_ABSTRACT_DATA(Normal);
+		///																							
+		/// An abstract normal																	
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// normal																					
+		///																							
+		struct Normal {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) Normal;
+		};
+
+		///																							
+		/// An abstract normal of specific size											
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// normal of the same size															
+		///																							
+		template<Count S>
+		struct NormalOfSize : public Normal {
+			LANGULUS(CONCRETE) TNormal<TVector<Real, S>>;
+			LANGULUS_BASES(Normal);
+			static constexpr Count MemberCount {S};
+			static_assert(S > 1, "Normal size must be greater than one");
+		};
+
+		///																							
+		/// An abstract normal of specific type											
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// normal of the same type															
+		///																							
+		template<CT::DenseNumber T>
+		struct NormalOfType : public Normal {
+			LANGULUS(CONCRETE) TNormal<TVector<T, 4>>;
+			LANGULUS_BASES(Normal);
+			using MemberType = T;
+		};
+
+	} // namespace Langulus::Math::A
 
 
 	///																								
 	///	Templated normal																		
-	///	It is essentially a vector that gets normalized after any change		
 	///																								
-	template<ComplexNumber T>
-	struct TNormal : public T, NOT_NULLIFIABLE {
+	/// It is essentially a vector that gets normalized after any change			
+	///																								
+	template<CT::Vector T>
+	struct TNormal : public T {
 		using PointType = T;
 		using MemberType = typename T::MemberType;
-		static constexpr pcptr MemberCount = T::MemberCount;
-		static_assert(MemberCount > 1, "Can't have TNormal that is smaller than 2D");
-
-		REFLECT_MANUALLY(TNormal) {
-			// Zero normal is considered degenerate								
-			static_assert(!pcIsNullifiable<ME>, "Must NOT be NULLIFIABLE");
-			static_assert(pcIsPOD<ME>, "Must be POD");
-			static_assert(sizeof(T) == sizeof(ME), "Size mismatch");
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "Normal";
-				if constexpr (MemberCount != 3)
-					name += MemberCount;
-				if constexpr (!Same<MemberType, real>)
-					name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a normalized vector of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(ANormal),
-				REFLECT_BASE(T));
-			reflection.template SetAbilities<ME>(
-				REFLECT_CONVERSIONS(GASM));
-			return reflection;
-		}
+		static constexpr Count MemberCount = T::MemberCount;
+		static_assert(S > 1, "Normal size must be greater than one");
+		LANGULUS_BASES(A::NormalOfSize<MemberCount>, A::NormalOfType<MemberType>);
 
 	public:
 		using T::T;
+		using T::mArray;
 
 		/// Construct a normal from a vector												
 		///	@param other - the vector to normalize										
@@ -69,14 +78,12 @@ namespace Langulus::Math
 			: T {other.Normalize()} {}
 
 		/// Convert from any normal to text													
-		NOD() explicit operator GASM() const {
-			GASM result;
-			result += DataID::Of<ME>;
+		NOD() explicit operator Flow::Code() const {
+			Flow::Code result;
+			result += RTTI::MetaData::Of<TNormal>();
 			T::WriteBody(result);
 			return result;
 		}
 	};
-
-	PC_DEFINE_ABSTRACT_DATA(Normal, "An abstract normalized value", Normal);
 
 } // namespace Langulus::Math

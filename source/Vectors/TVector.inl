@@ -25,89 +25,75 @@ namespace Langulus::Math
 	TEMPLATE()
 	template<TARGS(ALT), ALTT DEFAULT>
 	constexpr void TME()::Initialize(const TVEC(ALT)& a) noexcept {
-		static_assert(DenseVector || ALTS >= S,
-			"Can't create sparse vector by the use of a smaller vector");
-
-		if constexpr (DenseVector) {
-			if constexpr (S == 1) {
-				// No loop, just use first element									
-				mArray[0] = Adapt(a[0]);
-			}
-			else if constexpr (ALTS == 1) {
-				// Prepare the scalar and set all elements to it				
-				const auto scalar = Adapt(a[0]);
-				for (Offset i = 0; i < S; ++i)
-					mArray[i] = scalar;
-			}
-			else {
-				// Convert element-by-element											
-				constexpr auto count = Min(S, ALTS);
-				for (Offset i = 0; i < count; ++i)
-					mArray[i] = Adapt(a[i]);
-
-				if constexpr (ALTS < S) {
-					for (Offset i = count; i < S; ++i)
-						mArray[i] = DEFAULT;
-				}
-			}
+		if constexpr (S == 1) {
+			// No loop, just use first element										
+			*mArray = Adapt(*a.mArray);
+		}
+		else if constexpr (ALTS == 1) {
+			// Prepare the scalar and set all elements to it					
+			const auto scalar = Adapt(a[0]);
+			for (auto& v : mArray)
+				v = scalar;
 		}
 		else {
-			auto& mutableA = const_cast<TVEC(ALT)&>(a);
-			if constexpr (S == 1) {
-				// No loop, just use first element									
-				mArray[0] = SparseCast(mutableA.mArray[0]);
-			}
-			else if constexpr (ALTS == 1) {
-				// Prepare the scalar and set all elements to it				
-				for (Offset i = 0; i < S; ++i)
-					mArray[i] = SparseCast(mutableA.mArray[0]);
-			}
-			else {
-				// Convert element-by-element											
-				constexpr auto count = pcMin(S, ALTS);
-				for (Offset i = 0; i < count; ++i)
-					mArray[i] = SparseCast(mutableA.mArray[i]);
+			// Convert element-by-element												
+			const ALTT* source = a.mArray;
+			T* start = mArray;
+			auto end = mArray + Min(S, ALTS);
+
+			// Copy the available components											
+			while (start != end)
+				*(start++) = Adapt(*(source++));
+
+			if constexpr (ALTS < S) {
+				// And fill the rest with the default value						
+				end = mArray + S;
+				while (start != end)
+					*(start++) = DEFAULT;
 			}
 		}
 	}
 
-	/// Construction from scalar/array														
-	///	@param a - scalar/array to copy 													
+	/// Construction from scalar																
+	///	@param a - scalar to copy 															
 	TEMPLATE()
-	template<class N>
-	constexpr TME()::TVector(const N& a) noexcept requires CT::Convertible<Decay<N>, Decay<T>> {
-		static_assert(!CT::Array<N> || (ExtentOf<N>) >= S,
+	template<CT::DenseNumber N>
+	constexpr TME()::TVector(const N& a) noexcept requires IsCompatible<N> {
+		if constexpr (S == 1)
+			*mArray = *a.mArray;
+		else {
+			const auto scalar = Adapt(a);
+			for (auto& v : mArray)
+				v = scalar;
+		}
+	}
+	
+	/// Construction from an unbounded array												
+	///	@attention very unsafe																
+	///	@param a - array to copy 															
+	TEMPLATE()
+	template<CT::SparseNumber N>
+	constexpr TME()::TVector(Deref<N> a) noexcept requires IsCompatible<Decay<N>> {
+		T* start = mArray;
+		const auto end = mArray + S;
+
+		while (start != end)
+			*(start++) = Adapt(*(a++));
+	}
+	
+	/// Construction from a bounded array													
+	///	@param a - array to copy 															
+	TEMPLATE()
+	template<CT::Array N>
+	constexpr TME()::TVector(const N& a) noexcept requires IsCompatible<Decay<N>> {
+		static_assert(ExtentOf<N> >= S,
 			"This vector is too powerful for your array");
 
-		if constexpr (DenseVector) {
-			// Setup a dense vector														
-			if constexpr (CT::Dense<N>) {
-				const auto scalar = Adapt(a);
-				for (Offset i = 0; i < S; ++i)
-					mArray[i] = scalar;
-			}
-			else if constexpr (CT::Array<N>) {
-				for (Offset i = 0; i < Min(S, ExtentOf<N>); ++i)
-					mArray[i] = Adapt(a[i]);
-			}
-			else for (Offset i = 0; i < S; ++i) {
-				mArray[i] = Adapt(a[i]);
-			}
-		}
-		else {
-			// Setup a sparse vector													
-			if constexpr (CT::Dense<N>) {
-				for (Offset i = 0; i < S; ++i)
-					mArray[i] = const_cast<T>(&a);
-			}
-			else if constexpr (CT::Array<N>) {
-				for (Offset i = 0; i < Min(S, ExtentOf<N>); ++i)
-					mArray[i] = const_cast<T>(a + i);
-			}
-			else for (Offset i = 0; i < S; ++i) {
-				mArray[i] = const_cast<T>(SparseCast(a[i]));
-			}
-		}
+		const Decay<N>* source = a;
+		T* start = mArray;
+		const auto end = mArray + Min(S, ExtentOf<N>);
+		while (start != end)
+			*(start++) = Adapt(*(source++));
 	}
 
 	/// Manual construction via a variadic head-tail									
@@ -116,62 +102,35 @@ namespace Langulus::Math
 	TEMPLATE()
 	template<class HEAD, class... TAIL>
 	constexpr TME()::TVector(const HEAD& head, const TAIL&... tail) noexcept requires (S > 1 && sizeof...(TAIL) > 0) {
-		if constexpr (DenseVector) {
-			// Setup a dense vector														
-			if constexpr (CT::Vector<HEAD>) {
-				if constexpr (HEAD::MemberCount < MemberCount) {
-					for (Offset i = 0; i < HEAD::MemberCount; ++i)
-						mArray[i] = Adapt(head[i]);
-					const TVector<T, MemberCount - HEAD::MemberCount> theRest {tail...};
-					for (Offset i = HEAD::MemberCount; i < MemberCount; ++i)
-						mArray[i] = theRest.mArray[i - HEAD::MemberCount];
-				}
-				else LANGULUS_ERROR("More elements provided than required");
+		if constexpr (CT::Vector<HEAD>) {
+			if constexpr (HEAD::MemberCount < MemberCount) {
+				for (Offset i = 0; i < HEAD::MemberCount; ++i)
+					mArray[i] = Adapt(head[i]);
+				const TVector<T, MemberCount - HEAD::MemberCount> theRest {tail...};
+				for (Offset i = HEAD::MemberCount; i < MemberCount; ++i)
+					mArray[i] = theRest.mArray[i - HEAD::MemberCount];
 			}
-			else if constexpr (CT::Convertible<HEAD, T>) {
-				mArray[0] = Adapt(head);
-				const TVector<T, MemberCount - 1> theRest {tail...};
-				for (Offset i = 1; i < MemberCount; ++i)
-					mArray[i] = theRest.mArray[i - 1];
-			}
-			else LANGULUS_ERROR(
-				"Bad element type in dense vector unfolding constructor"
-				" - must be CT::Vector or a number");
+			else LANGULUS_ERROR("More elements provided than required");
 		}
-		else {
-			// Setup a sparse vector													
-			if constexpr (CT::Vector<HEAD>) {
-				if constexpr (HEAD::MemberCount < MemberCount) {
-					for (Offset i = 0; i < HEAD::MemberCount; ++i)
-						mArray[i] = const_cast<T>(SparseCast(head[i]));
-					TVector<T, MemberCount - HEAD::MemberCount> theRest {tail...};
-					for (Offset i = HEAD::MemberCount; i < MemberCount; ++i)
-						mArray[i] = theRest.mArray[i - HEAD::MemberCount];
-				}
-				else LANGULUS_ERROR("More elements provided than required");
-			}
-			else if constexpr (CT::Convertible<HEAD, T>) {
-				mArray[0] = const_cast<T>(SparseCast(head));
-				TVector<T, MemberCount - 1> theRest {tail...};
-				for (Offset i = 1; i < MemberCount; ++i)
-					mArray[i] = theRest.mArray[i - 1];
-			}
-			else LANGULUS_ERROR(
-				"Bad element type in sparse vector unfolding constructor"
-				" - must be ComplexNumber or Number");
+		else if constexpr (CT::Convertible<HEAD, T>) {
+			mArray[0] = Adapt(head);
+			const TVector<T, MemberCount - 1> theRest {tail...};
+			for (Offset i = 1; i < MemberCount; ++i)
+				mArray[i] = theRest.mArray[i - 1];
 		}
+		else LANGULUS_ERROR(
+			"Bad element type in dense vector unfolding constructor"
+			" - must be CT::Vector or a number");
 	}
 
 	/// Construct from component, if its index is smaller than SIZE				
 	///	@param a - component to set														
 	TEMPLATE()
-	template<class N, class DIMENSION>
-	constexpr TME()::TVector(const TVectorComponent<N, DIMENSION>& a) noexcept
+	template<CT::DenseNumber N, CT::Dimension D>
+	constexpr TME()::TVector(const TVectorComponent<N, D>& a) noexcept
 		: TVector {} {
-		if constexpr (DenseVector)
-			mArray[I] = Adapt(a.mValue);
-		else
-			mArray[I] = const_cast<T*>(SparseCast(a.mValue));
+		static_assert(D::Index < S, "LHS doesn't have such dimension");
+		mArray[D::Index] = Adapt(a.mValue);
 	}
 
 	/// Write the body of the vector (reused in vector specializations)			
@@ -196,7 +155,7 @@ namespace Langulus::Math
 	TME()::operator Flow::Code() const {
 		Flow::Code result;
 		if constexpr (S > 1)
-			result += MetaData::Of<TVector>();
+			result += RTTI::MetaData::Of<TVector>();
 		WriteBody(result);
 		return result;
 	}
@@ -216,233 +175,253 @@ namespace Langulus::Math
 	///	Access																					
 	///																								
 	/// Get the value of a specific component index										
+	///	@attention assumes index is in vector's size limits						
+	///	@param i - index of the component (0, 1, 2 correspond to X, Y, Z)		
+	///	@return a reference to the component											
 	TEMPLATE()
-	constexpr decltype(auto) TME()::Get(const Offset i) const noexcept {
+	constexpr const T& TME()::Get(const Offset i) const noexcept {
+		LANGULUS_ASSUME(UserAssumes, i < S, "Index is out of limits");
 		return mArray[i];
 	}
 
 	/// Get the value of a specific component index (with static check)			
+	///	@return a reference to the component											
 	TEMPLATE()
 	template<Offset I>
-	constexpr decltype(auto) TME()::GetIdx() const noexcept requires (I < S) {
+	constexpr const T& TME()::GetIdx() const noexcept {
+		static_assert(I < S, "Index is out of limits");
 		return Get(I);
 	}
 
 	/// Get Nth vector element (mutable)													
-	/// Make sure the index is smaller than SIZE											
+	///	@attention assumes index is in vector's size limits						
 	///	@param a - index of the element (0, 1, 2 correspond to X, Y, Z)		
 	///	@returns a reference to the component											
 	TEMPLATE()
-	constexpr decltype(auto) TME()::operator [] (const Offset a) noexcept {
-		if constexpr (SparseVector)
-			return *mArray[a];
-		else
-			return mArray[a];
+	constexpr T& TME()::operator [] (const Offset a) noexcept {
+		return const_cast<T&>(Get(a));
 	}
 
 	/// Get Nth vector element																	
-	/// Make sure the index is smaller than SIZE											
+	///	@attention assumes index is in vector's size limits						
 	///	@param a - index of the element (0, 1, 2 correspond to X, Y, Z)		
 	///	@returns a reference to the component											
 	TEMPLATE()
-	constexpr decltype(auto) TME()::operator [] (const Offset a) const noexcept {
-		if constexpr (SparseVector)
-			return *mArray[a];
-		else
-			return mArray[a];
+	constexpr const T& TME()::operator [] (const Offset a) const noexcept {
+		return Get(a);
 	}
 
+	/// Get the raw array																		
+	///	@return a pointer to the first component inside this vector				
 	TEMPLATE()
-	constexpr auto TME()::GetRaw() const noexcept {
+	constexpr const T* TME()::GetRaw() const noexcept {
 		return mArray;
 	}
 
+	/// Get the raw array (mutable)															
+	///	@return a pointer to the first component inside this vector				
 	TEMPLATE()
-	constexpr auto TME()::GetRaw() noexcept {
+	constexpr T* TME()::GetRaw() noexcept {
 		return mArray;
 	}
 
+	/// Get the number of components															
+	///	@return the number of components													
 	TEMPLATE()
-	constexpr auto TME()::GetCount() const noexcept {
+	constexpr Count TME()::GetCount() const noexcept {
 		return MemberCount;
-	}
-
-	TEMPLATE()
-	constexpr auto TME()::GetCount() noexcept {
-		return MemberCount;
-	}
-
-	/// Get the raw dense data of the vector (mutable)									
-	/// This is disabled for proxy vectors													
-	TEMPLATE()
-	constexpr auto TME()::operator () () noexcept requires DenseVector {
-		return mArray;
-	}
-
-	/// Get the raw dense data of the vector												
-	/// This is disabled for proxy vectors													
-	TEMPLATE()
-	constexpr auto TME()::operator () () const noexcept requires DenseVector {
-		return mArray;
 	}
 
 	/// Get the squared magnitute of the vector											
+	///	@return the length of the vector, before the Sqrt operation				
 	TEMPLATE()
-	constexpr auto TME()::LengthSquared() const noexcept {
-		auto accum = (*this)[0] * (*this)[0];
-		for (Offset i = 1; i < S; ++i)
-			accum += (*this)[i] * (*this)[i];
+	constexpr T TME()::LengthSquared() const noexcept {
+		auto start = mArray;
+		const auto end = mArray + S;
+		T accum = Sq(*(start++));
+		while (start != end)
+			accum += Sq(*(start++));
 		return accum;
 	}
 
 	/// Get the magnitute of the vector														
+	///	@return the length of the vector													
 	TEMPLATE()
-	constexpr auto TME()::Length() const noexcept {
+	constexpr T TME()::Length() const noexcept {
 		return Sqrt(LengthSquared());
 	}
 
-	/// Check if vector is a degenerate, that is at least one element is	0		
-	///	@returns true if vector is degenerate											
+	/// Check if vector is a degenerate, that is at least one component is 0	
+	///	@return true if vector is degenerate											
 	TEMPLATE()
 	constexpr bool TME()::IsDegenerate() const noexcept {
-		for (Offset i = 0; i < S; ++i)
-			if ((*this)[i] == DenseT(0))
+		auto start = mArray;
+		const auto end = mArray + S;
+		while (start != end) {
+			if (*(start++) == T {})
 				return true;
+		}
+
 		return false;
 	}
 
 	/// Mutable swizzle																			
-	/// Make sure provided indices are inside the vector								
-	///	@returns the proxy vector with the selected components					
+	///	@returns a proxy vector with the selected components						
 	TEMPLATE()
 	template<Offset... I>
-	constexpr decltype(auto) TME()::Swz() noexcept {
-		return TVector<DenseT*, sizeof...(I)>(SparseCast(mArray[I])...);
+	auto TME()::Swz() noexcept {
+		return Inner::TProxyVector<T, S, I...> {*this};
 	}
 
-	/// Immutable swizzle																		
-	/// Make sure provided indices are inside the vector								
+	/// Immutable swizzle, just returns a shuffled vector								
 	///	@returns a simple vector with the selected copied components			
 	TEMPLATE()
-	template <Offset... I>
-	constexpr decltype(auto) TME()::Swz() const noexcept {
-		return TVector<DenseT, sizeof...(I)>(mArray[I]...);
+	template<Offset... I>
+	constexpr auto TME()::Swz() const noexcept {
+		return TVector<T, sizeof...(I)>(mArray[I]...);
 	}
 
-	/// Copy same vector as real																
-	/// If the vector is an integer vector, all elements will be normalized		
-	/// by the maximum integer and returned as real number.							
+	/// Cast the vector to another number type, with the ability to normalize	
+	///	@tparam AS - the type of number to cast to									
+	///	@tparam NORMALIZE - whether or not to normalize the result				
+	///	@return the converted vector														
 	TEMPLATE()
-	constexpr decltype(auto) TME()::Real() const noexcept {
-		if constexpr (CT::Real<T>) {
-			// The vector is already a floating point vector - just copy	
-			return *this;
+	template<class AS, bool NORMALIZE>
+	NOD() constexpr TVector<AS, S> TME()::AsCast() const noexcept {
+		auto converted = SIMD::Convert<0, Decay<AS>>(mArray);
+		if constexpr (NORMALIZE) {
+			// Normalize all elements by the old numeric limits				
+			constexpr AS factor = AS {1} / AS {::std::numeric_limits<T>::max()};
+			converted = SIMD::MultiplyInner(converted, SIMD::Set(factor));
 		}
-		else {
-			// Normalize all elements by the numeric limits of the type		
-			constexpr real factor = real(1) / real(std::numeric_limits<DenseT>::max());
-			real result[S];
-			for (int i = 0; i < S; ++i)
-				result[i] = static_cast<real>((*this)[i]) * factor;
-			return TVector<real, S>(result);
-		}
+
+		TVector<AS, S> result;
+		SIMD::Store(converted, result.mArray);
+		return result;
 	}
 
-	/// Multiply all members																	
+	/// Multiply all components together													
+	///	@tparam ALTS - number of dimensions to multiply together					
+	///	@return the product																	
 	TEMPLATE()
+	template<Count ALTS>
 	constexpr auto TME()::Volume() const noexcept {
-		DenseT product = 1;
-		for (Offset i = 0; i < S; ++i)
-			product *= (*this)[i];
+		static_assert(ALTS > 1, "Degenerated volume, use higher rank");
+		static_assert(ALTS <= S, "Rank out of limits");
+
+		T product {1};
+		auto start = mArray;
+		const auto end = mArray + ALTS;
+		while (start != end)
+			product *= *(start++);
 		return product;
 	}
 
-	/// Copy a scalar/array																		
+	/// Copy scalar																				
+	///	@param scalar - the scalar value													
+	///	@return a reference to this vector												
 	TEMPLATE()
-	template<Number N>
+	template<CT::DenseNumber N>
 	constexpr auto& TME()::operator = (const N& scalar) noexcept {
-		if constexpr (!CT::Same<N, T>) {
-			const auto convertedScalar = Adapt(scalar);
-			for (Offset i = 0; i < S; ++i)
-				(*this)[i] = convertedScalar;
-		}
-		else {
-			for (Offset i = 0; i < S; ++i)
-				(*this)[i] = scalar;
-		}
+		new (this) TVector {scalar};
 		return *this;
 	}
 
 	/// Copy vector																				
+	///	@param vec - the vector to copy													
+	///	@return a reference to this vector												
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr auto& TME()::operator = (const TVEC(ALT)& vec) noexcept {
-		for (Offset i = 0; i < Min(S, ALTS); ++i)
-			(*this)[i] = Adapt(vec[i]);
+		static_assert(S <= ALTS, "LHS must be of same or smaller size than RHS");
+		new (this) TVector {vec};
 		return *this;
 	}
 
-	/// Copy only component of same type													
+	/// Set only a specific component 														
+	///	@param com - the component to overwrite										
+	///	@return a reference to this vector												
 	TEMPLATE()
-	template<Number N, Dimension IDX>
-	constexpr auto& TME()::operator = (const TVectorComponent<N, IDX>& com) noexcept requires (pcptr(IDX) < S) {
-		(*this)[pcptr(IDX)] = Adapt(com.mValue);
+	template<CT::DenseNumber N, CT::Dimension D>
+	constexpr auto& TME()::operator = (const TVectorComponent<N, D>& com) noexcept {
+		static_assert(D::Index < S, "LHS doesn't have such dimension");
+		mArray[D::Index] = Adapt(com.mValue);
 		return *this;
 	}
 
 	/// Dot product																				
+	///	@param other - the vector to dot with											
+	///	@return the dot product of both vectors										
 	TEMPLATE()
 	template<TARGS(ALT)>
-	constexpr auto TME()::Dot(const TVEC(ALT)& other) const noexcept {
-		DenseT accum = (*this)[0] * Adapt(other[0]);
-		for (Offset i = 1; i < Min(S, ALTS); ++i)
-			accum += (*this)[i] * Adapt(other[i]);
+	constexpr T TME()::Dot(const TVEC(ALT)& other) const noexcept {
+		auto source = other.mArray;
+		auto start = mArray;
+		const auto end = mArray + Min(S, ALTS);
+		T accum = *(start++) * *(source++);
+		while (start != end)
+			accum += *(start++) * *(source++);
 		return accum;
 	}
 
-	TEMPLATE()
-	template<Number N>
-	constexpr auto TME()::Dot(const N& other) const noexcept {
-		return Dot(DenseME(other));
-	}
-
-	/// Cross																						
+	/// Cross product																				
+	///	@param rhs - the vector to cross with											
+	///	@return the cross product of both vectors										
 	TEMPLATE()
 	template<TARGS(ALT)>
-	constexpr auto TME()::Cross(const TVEC(ALT)& other) const noexcept requires (S > 2 && ALTS > 2) {
-		DenseME base;
-		base[0] = (*this)[1] * other[2] - (*this)[2] * other[1];
-		base[1] = (*this)[2] * other[0] - (*this)[0] * other[2];
-		base[2] = (*this)[0] * other[1] - (*this)[1] * other[0];
-		return base;
+	constexpr TVector<T, 3> TME()::Cross(const TVEC(ALT)& rhs) const noexcept requires (S >= 3 && ALTS >= 3) {
+		return {
+			mArray[1] * rhs[2] - mArray[2] * rhs[1],
+			mArray[2] * rhs[0] - mArray[0] * rhs[2],
+			mArray[0] * rhs[1] - mArray[1] * rhs[0]
+		};
 	}
 
 	/// Normalize																					
+	///	@return the normalized vector														
 	TEMPLATE()
 	constexpr auto TME()::Normalize() const requires (S > 1) {
 		const auto l = Length();
-		if (l == DenseT(0))
-			throw Except::Arithmetic("Degenerate vector");
-		return *this * (DenseT(1) / l);
+		if (l == T {}) UNLIKELY()
+			LANGULUS_THROW(Arithmetic, "Degenerate vector");
+		return *this * (T {1} / l);
 	}
 
 	/// Clamp between a minimum and maximum												
+	///	@param min - lower limit															
+	///	@param max - higher limit															
+	///	@return the clamped equivalent of this vector								
 	TEMPLATE()
-	template<TARGS(ALT1), TARGS(ALT2)>
-	constexpr auto TME()::Clamp(const TVEC(ALT1)& min, const TVEC(ALT2)& max) const noexcept {
-		DenseME result {*this};
-		for (Offset i = 0; i < Min(S, ALTS1, ALTS2); ++i)
-			result[i] = Clamp(result[i], min[i], max[i]);
+	template<TARGS(MIN), TARGS(MAX)>
+	constexpr auto TME()::Clamp(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
+		TVector result {*this};
+		auto minp = min.mArray;
+		auto maxp = max.mArray;
+		auto start = result.mArray;
+		const auto end = result.mArray + Min(S, MINS, MAXS);
+		while (start != end) {
+			*start = Clamp(*start, *(minp++), *(maxp++));
+			++start;
+		}
 		return result;
 	}
 
 	/// Clamp outide a minimum and maximum													
+	///	@param min - lower limit															
+	///	@param max - higher limit															
+	///	@return the clamped equivalent of this vector								
 	TEMPLATE()
-	template<TARGS(ALT1), TARGS(ALT2)>
-	constexpr auto TME()::ClampRev(const TVEC(ALT1)& min, const TVEC(ALT2)& max) const noexcept {
-		DenseME result {*this};
-		for (Offset i = 0; i < Min(S, ALTS1, ALTS2); ++i)
-			result[i] = ClampRev(result[i], min[i], max[i]);
+	template<TARGS(MIN), TARGS(MAX)>
+	constexpr auto TME()::ClampRev(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
+		TVector result {*this};
+		auto minp = min.mArray;
+		auto maxp = max.mArray;
+		auto start = result.mArray;
+		const auto end = result.mArray + Min(S, MINS, MAXS);
+		while (start != end) {
+			*start = ClampRev(*start, *(minp++), *(maxp++));
+			++start;
+		}
 		return result;
 	}
 
@@ -450,42 +429,42 @@ namespace Langulus::Math
 	TEMPLATE()
 	constexpr auto TME()::Round() const noexcept {
 		if constexpr (CT::Real<T>) {
-			DenseT result[S];
+			T result[S];
 			SIMD::Store(SIMD::Round(mArray), result);
-			return DenseME {result};
+			return result;
 		}
 		else return *this;
 	}
 
-	/// Floor each element of the vector													
+	/// Round down each vector component 													
 	TEMPLATE()
 	constexpr auto TME()::Floor() const noexcept {
 		if constexpr (CT::Real<T>) {
-			DenseT result[S];
+			T result[S];
 			SIMD::Store(SIMD::Floor(mArray), result);
-			return DenseME {result};
+			return result;
 		}
 		else return *this;
 	}
 
-	/// Ceil each element of the vector														
+	/// Round up each vector component 														
 	TEMPLATE()
 	constexpr auto TME()::Ceil() const noexcept {
 		if constexpr (CT::Real<T>) {
-			DenseT result[S];
+			T result[S];
 			SIMD::Store(SIMD::Ceil(mArray), result);
-			return DenseME {result};
+			return result;
 		}
 		else return *this;
 	}
 
-	/// Invert negative elements of vector													
+	/// Invert negative components of vector												
 	TEMPLATE()
 	constexpr auto TME()::Abs() const noexcept {
-		if constexpr (Signed<T>) {
-			DenseT result[S];
+		if constexpr (CT::Signed<T>) {
+			T result[S];
 			SIMD::Store(SIMD::Abs(mArray), result);
-			return DenseME {result};
+			return result;
 		}
 		else return *this;
 	}
@@ -493,132 +472,154 @@ namespace Langulus::Math
 	/// Get biggest possible vector of the type											
 	TEMPLATE()
 	constexpr TME() TME()::Max() noexcept {
-		return {::std::numeric_limits<DenseT>::max()};
+		return ::std::numeric_limits<T>::max();
 	}
 
 	/// Get scalar maximum of each element													
 	TEMPLATE()
-	constexpr auto TME()::Max(const DenseT& limit) const noexcept {
-		return SIMD::MaxWrap<DenseME>(mArray, limit);
+	constexpr auto TME()::Max(const T& limit) const noexcept {
+		T result[S];
+		SIMD::Store(SIMD::Max(mArray, limit), result);
+		return result;
 	}
 
 	/// Get maximum of each element															
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr auto TME()::Max(const TVEC(ALT)& limits) const noexcept {
-		return SIMD::MaxWrap<TVector<DenseT, Min(S, ALTS)>>(mArray, limits.mArray);
-	}
-
-	/// Horizontal max																			
-	TEMPLATE()
-	constexpr auto TME()::HMax() const noexcept {
-		DenseT biggest = (*this)[0];
-		for (Offset i = 1; i < S; ++i)
-			biggest = Max((*this)[i], biggest);
-		return biggest;
+		T result[Min(S, ALTS)];
+		SIMD::Store(SIMD::Max(mArray, limits.mArray), result);
+		return result;
 	}
 
 	/// Get smallest possible vector of the type											
 	TEMPLATE()
 	constexpr TME() TME()::Min() noexcept {
 		if constexpr (CT::Real<T>)
-			return {::std::numeric_limits<DenseT>::lowest()};
+			return {::std::numeric_limits<T>::lowest()};
 		else
-			return {::std::numeric_limits<DenseT>::min()};
+			return {::std::numeric_limits<T>::min()};
 	}
 
 	/// Get scalar minimum of each element													
 	TEMPLATE()
-	constexpr auto TME()::Min(const DenseT& limit) const noexcept {
-		return SIMD::MinWrap<DenseME>(mArray, limit);
+	constexpr auto TME()::Min(const T& limit) const noexcept {
+		T result[S];
+		SIMD::Store(SIMD::Min(mArray, limit), result);
+		return result;
 	}
 
 	/// Get minimum of each element															
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr auto TME()::Min(const TVEC(ALT)& limits) const noexcept {
-		return SIMD::MinWrap<TVector<DenseT, Min(S, ALTS)>>(mArray, limits.mArray);
+		T result[Min(S, ALTS)];
+		SIMD::Store(SIMD::Min(mArray, limits.mArray), result);
+		return result;
+	}
+	
+	/// Horizontal max																			
+	TEMPLATE()
+	constexpr auto TME()::HMax() const noexcept {
+		// Related: https://stackoverflow.com/questions/22256525/			
+		auto start = mArray;
+		const auto end = mArray + S;
+		T t = *(start++);
+		while (start != end)
+			t = Max(*(start++), t);
+		return t;
 	}
 
 	/// Horizontal min																			
 	TEMPLATE()
 	constexpr auto TME()::HMin() const noexcept {
-		DenseT smallest = (*this)[0];
-		for (Offset i = 1; i < S; ++i)
-			smallest = Min((*this)[i], smallest);
-		return smallest;
+		// Related: https://stackoverflow.com/questions/22256525/			
+		auto start = mArray;
+		const auto end = mArray + S;
+		T t = *(start++);
+		while (start != end)
+			t = Min(*(start++), t);
+		return t;
 	}
 
 	/// Horizontal sum																			
 	TEMPLATE()
 	constexpr auto TME()::HSum() const noexcept {
-		DenseT sum {};
-		for (Offset i = 0; i < S; ++i)
-			sum += (*this)[i];
-		return sum;
+		// Related: https://stackoverflow.com/questions/6996764/				
+		auto start = mArray;
+		const auto end = mArray + S;
+		T t = *(start++);
+		while (start != end)
+			t += *(start++);
+		return t;
 	}
 
-	/// Horizontal multiply																		
+	/// Horizontal multiply (similar to Volume)											
 	TEMPLATE()
 	constexpr auto TME()::HMul() const noexcept {
-		DenseT product {1};
-		for (Offset i = 0; i < S; ++i)
-			product *= (*this)[i];
+		T product {1};
+		for (auto& v : mArray)
+			product *= v;
 		return product;
 	}
 
 	/// Sign																							
 	TEMPLATE()
 	constexpr auto TME()::Sign() const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Sign((*this)[i]);
-		return DenseME {result};
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Sign(v);
+		return result;
 	}
 
 	/// Modulate via a scalar																	
 	TEMPLATE()
-	constexpr auto TME()::Mod(const DenseT& period) const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Mod((*this)[i], period);
-		return DenseME {result};
+	constexpr auto TME()::Mod(const T& period) const noexcept {
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Mod(v, period);
+		return result;
 	}
 
 	/// Modulate via a vector																	
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr auto TME()::Mod(const TVEC(ALT)& period) const noexcept {
-		constexpr Count commonS = Min(S, ALTS);
-		DenseT result[commonS];
-		for (Offset i = 0; i < commonS; ++i)
-			result[i] = Mod((*this)[i], period[i]);
-		return TVector<DenseT, commonS> {result};
+		T result[Min(S, ALTS)];
+		const T* lhs = mArray;
+		const T* rhs = period.mArray;
+		for (auto& v : result)
+			v = Mod(*(lhs++), *(rhs++));
+		return result;
 	}
 
 	/// Step via a scalar																		
 	TEMPLATE()
-	constexpr auto TME()::Step(const DenseT& edge) const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Step(edge, (*this)[i]);
-		return DenseME {result};
+	constexpr auto TME()::Step(const T& edge) const noexcept {
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Step(edge, v);
+		return result;
 	}
 
 	/// Step via a vector																		
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr auto TME()::Step(const TVEC(ALT)& edge) const noexcept {
-		constexpr Count commonS = Min(S, ALTS);
-		DenseT result[commonS];
-		for (Offset i = 0; i < commonS; ++i)
-			result[i] = Step(edge[i], (*this)[i]);
-		return TVector<DenseT, commonS> {result};
+		T result[Min(S, ALTS)];
+		const T* lhs = mArray;
+		const T* rhs = edge.mArray;
+		for (auto& v : result)
+			v = Step(*(rhs++), *(lhs++));
+		return result;
 	}
 
 	/// Power via a scalar																		
 	TEMPLATE()
-	constexpr auto TME()::Pow(const DenseT& exponent) const noexcept {
+	constexpr auto TME()::Pow(const T& exponent) const noexcept {
 		return SIMD::PowerWrap<DenseME>(mArray, exponent);
 	}
 
@@ -698,7 +699,7 @@ namespace Langulus::Math
 
 	/// Warp (used for periodic boundary conditions)									
 	TEMPLATE()
-	constexpr auto TME()::Warp(const DenseT& scalar) const noexcept {
+	constexpr auto TME()::Warp(const T& scalar) const noexcept {
 		if constexpr (CT::Signed<T>) {
 			const auto absScale = Abs(scalar);
 			const auto halfScale = absScale / DenseT(2);
@@ -726,27 +727,23 @@ namespace Langulus::Math
 		}
 	}
 
-	/// Implicitly convert from proxy to standard vector								
-	TEMPLATE()
-	constexpr TME()::operator DenseME () const noexcept requires SparseVector {
-		return {mArray};
-	}
-
 	/// Implicitly convert to a number if size is 1										
 	TEMPLATE()
-	constexpr TME()::operator const DenseT& () const noexcept requires (S == 1) {
+	constexpr TME()::operator const T& () const noexcept requires (S == 1) {
 		return (*this)[0];
 	}
 
+	/// Implicitly convert to a number if size is 1 (mutable)						
 	TEMPLATE()
-	constexpr TME()::operator DenseT& () noexcept requires (S == 1) {
+	constexpr TME()::operator T& () noexcept requires (S == 1) {
 		return (*this)[0];
 	}
 
+	/// Explicit cast to a compatible number of different type						
 	TEMPLATE()
-	template<Number N>
-	constexpr TME()::operator N () const noexcept requires (S == 1) {
-		return static_cast<N>((*this)[0]);
+	template<CT::DenseNumber N>
+	constexpr TME()::operator N () const noexcept requires (S == 1 && IsCompatible<N>) {
+		return static_cast<N>(*mArray);
 	}
 	
 
@@ -756,7 +753,7 @@ namespace Langulus::Math
 	/// Returns an inverted vector															
 	template<TARGS(RHS)>
 	auto operator - (const TVEC(RHS)& me) noexcept {
-		return me * pcDecay<RHST>(-1);
+		return me * Decay<RHST>(-1);
 	}
 
 	/// Returns the sum of any two vectors													
@@ -769,7 +766,7 @@ namespace Langulus::Math
 	}
 
 	/// Vector + Scalar																			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator + (const TVEC(LHS)& me, const N& other) noexcept {
 		if constexpr (LHSS == 1)
 			return me[0] + other;	// 1D vectors decay to a number			
@@ -780,7 +777,7 @@ namespace Langulus::Math
 	}
 
 	/// Scalar + Vector																			
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator + (const N& other, const TVEC(RHS)& me) noexcept {
 		if constexpr (RHSS == 1)
 			return other + me[0];	// 1D vectors decay to a number			
@@ -796,7 +793,7 @@ namespace Langulus::Math
 	}
 
 	/// Vector - Scalar																			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator - (const TVEC(LHS)& me, const N& other) noexcept {
 		if constexpr (LHSS == 1)
 			return me[0] - other;	// 1D vectors decay to a number			
@@ -807,7 +804,7 @@ namespace Langulus::Math
 	}
 
 	/// Scalar - Vector																			
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator - (const N& other, const TVEC(RHS)& me) noexcept {
 		if constexpr (RHSS == 1)
 			return other - me[0];	// 1D vectors decay to a number			
@@ -825,7 +822,7 @@ namespace Langulus::Math
 	}
 
 	/// Vector * Scalar																			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator * (const TVEC(LHS)& me, const N& other) noexcept {
 		if constexpr (LHSS == 1)
 			return me[0] * other;	// 1D vectors decay to a number			
@@ -836,7 +833,7 @@ namespace Langulus::Math
 	}
 
 	/// Scalar * Vector																			
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator * (const N& other, const TVEC(RHS)& me) noexcept {
 		if constexpr (RHSS == 1)
 			return other * me[0];	// 1D vectors decay to a number			
@@ -852,7 +849,7 @@ namespace Langulus::Math
 	}
 
 	/// Vector / Scalar																			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator / (const TVEC(LHS)& me, const N& other) {
 		if constexpr (LHSS == 1)
 			return me[0] / other;	// 1D vectors decay to a number			
@@ -863,7 +860,7 @@ namespace Langulus::Math
 	}
 
 	/// Scalar / Vector																			
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator / (const N& other, const TVEC(RHS)& me) {
 		if constexpr (RHSS == 1)
 			return other / me[0];	// 1D vectors decay to a number			
@@ -875,14 +872,14 @@ namespace Langulus::Math
 
 	/// Returns the left-shift of two integer vectors									
 	template<TARGS(LHS), TARGS(RHS)>
-	auto operator << (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires IntegerNumber<LHST, RHST> {
+	auto operator << (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
 		using TYPE = TLossless<LHST, RHST>;
 		return SIMD::ShiftLeftWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
 	/// Vector << Scalar																			
-	template<TARGS(LHS), IntegerNumber N>
-	auto operator << (const TVEC(LHS)& me, const N& other) noexcept requires IntegerNumber<LHST> {
+	template<TARGS(LHS), CT::Integer N>
+	auto operator << (const TVEC(LHS)& me, const N& other) noexcept requires CT::Integer<LHST> {
 		if constexpr (LHSS == 1)
 			return me[0] << other;	// 1D vectors decay to a number			
 		else {
@@ -892,8 +889,8 @@ namespace Langulus::Math
 	}
 
 	/// Scalar << Vector																			
-	template<TARGS(RHS), IntegerNumber N>
-	auto operator << (const N& other, const TVEC(RHS)& me) noexcept requires IntegerNumber<RHST> {
+	template<TARGS(RHS), CT::Integer N>
+	auto operator << (const N& other, const TVEC(RHS)& me) noexcept requires CT::Integer<RHST> {
 		if constexpr (RHSS == 1)
 			return other << me[0];	// 1D vectors decay to a number			
 		else {
@@ -904,14 +901,14 @@ namespace Langulus::Math
 
 	/// Returns the right-shift of two integer vectors									
 	template<TARGS(LHS), TARGS(RHS)>
-	auto operator >> (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires IntegerNumber<LHST, RHST> {
+	auto operator >> (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
 		using TYPE = TLossless<LHST, RHST>;
 		return SIMD::ShiftRightWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
 	/// Vector >> Scalar																			
-	template<TARGS(LHS), IntegerNumber N>
-	auto operator >> (const TVEC(LHS)& me, const N& other) noexcept requires IntegerNumber<LHST> {
+	template<TARGS(LHS), CT::Integer N>
+	auto operator >> (const TVEC(LHS)& me, const N& other) noexcept requires CT::Integer<LHST> {
 		if constexpr (LHSS == 1)
 			return me[0] >> other;	// 1D vectors decay to a number			
 		else {
@@ -921,8 +918,8 @@ namespace Langulus::Math
 	}
 
 	/// Scalar >> Vector																			
-	template<TARGS(RHS), IntegerNumber N>
-	auto operator >> (const N& other, const TVEC(RHS)& me) noexcept requires IntegerNumber<RHST> {
+	template<TARGS(RHS), CT::Integer N>
+	auto operator >> (const N& other, const TVEC(RHS)& me) noexcept requires CT::Integer<RHST> {
 		if constexpr (RHSS == 1)
 			return other >> me[0];	// 1D vectors decay to a number			
 		else {
@@ -933,14 +930,14 @@ namespace Langulus::Math
 
 	/// Returns the xor of two integer vectors											
 	template<TARGS(LHS), TARGS(RHS)>
-	auto operator ^ (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires IntegerNumber<LHST, RHST> {
+	auto operator ^ (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
 		using TYPE = TLossless<LHST, RHST>;
 		return SIMD::XOrWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
 	/// Vector ^ Scalar																			
-	template<TARGS(LHS), IntegerNumber N>
-	auto operator ^ (const TVEC(LHS)& me, const N& other) noexcept requires IntegerNumber<LHST> {
+	template<TARGS(LHS), CT::Integer N>
+	auto operator ^ (const TVEC(LHS)& me, const N& other) noexcept requires CT::Integer<LHST> {
 		if constexpr (LHSS == 1)
 			return me[0] ^ other;	// 1D vectors decay to a number			
 		else {
@@ -950,8 +947,8 @@ namespace Langulus::Math
 	}
 
 	/// Scalar ^ Vector																			
-	template<TARGS(RHS), IntegerNumber N>
-	auto operator ^ (const N& other, const TVEC(RHS)& me) noexcept requires IntegerNumber<RHST> {
+	template<TARGS(RHS), CT::Integer N>
+	auto operator ^ (const N& other, const TVEC(RHS)& me) noexcept requires CT::Integer<RHST> {
 		if constexpr (RHSS == 1)
 			return other ^ me[0];	// 1D vectors decay to a number			
 		else {
@@ -979,7 +976,7 @@ namespace Langulus::Math
 	}
 
 	/// Add vector and a scalar																
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator += (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Add(me.mArray, other, me.mArray);
 		return me;
@@ -987,7 +984,7 @@ namespace Langulus::Math
 
 	/// Add a proxy vector and a scalar														
 	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator += (const TVEC(LHS)& me, const N& other) noexcept requires Sparse<LHST> {
 		return operator += (const_cast<TVEC(LHS)&>(me), other);
 	}
@@ -1007,7 +1004,7 @@ namespace Langulus::Math
 	}
 
 	/// Subtract vector and a scalar															
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator -= (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Subtract(me.mArray, other, me.mArray);
 		return me;
@@ -1015,7 +1012,7 @@ namespace Langulus::Math
 
 	/// Subtract a scalar vector from a proxy vector									
 	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator -= (const TVEC(LHS)& me, const N& other) noexcept requires Sparse<LHST> {
 		return operator -= (const_cast<TVEC(LHS)&>(me), other);
 	}
@@ -1035,7 +1032,7 @@ namespace Langulus::Math
 	}
 
 	/// Multiply vector by a scalar															
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator *= (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Multiply(me.mArray, other, me.mArray);
 		return me;
@@ -1043,7 +1040,7 @@ namespace Langulus::Math
 
 	/// Multiply a proxy vector by a scalar												
 	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator *= (const TVEC(LHS)& me, const N& other) noexcept requires Sparse<LHST> {
 		return operator *= (const_cast<TVEC(LHS)&>(me), other);
 	}
@@ -1066,7 +1063,7 @@ namespace Langulus::Math
 
 	/// Divide dense vector and a scalar													
 	/// This function will throw on division by zero									
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator /= (TVEC(LHS)& me, const N& other) {
 		SIMD::Divide(me.mArray, other, me.mArray);
 		return me;
@@ -1075,7 +1072,7 @@ namespace Langulus::Math
 	/// Divide a proxy vector by a scalar													
 	/// Proxy vectors are often temporary, so a constant lhs is required			
 	/// This function will throw on division by zero									
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto& operator /= (const TVEC(LHS)& me, const N& other) requires Sparse<LHST> {
 		return operator /= (const_cast<TVEC(LHS)&>(me), other);
 	}
@@ -1089,12 +1086,12 @@ namespace Langulus::Math
 		return SIMD::Lesser(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto operator < (const TVEC(LHS)& me, const N& other) {
 		return SIMD::Lesser(me.mArray, other);
 	}
 
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::Integer N>
 	auto operator < (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Lesser(other, me.mArray);
 	}
@@ -1104,12 +1101,12 @@ namespace Langulus::Math
 		return SIMD::EqualsOrLesser(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto operator <= (const TVEC(LHS)& me, const N& other) {
 		return SIMD::EqualsOrLesser(me.mArray, other);
 	}
 
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::Integer N>
 	auto operator <= (const N& other, const TVEC(RHS)& me) {
 		return SIMD::EqualsOrLesser(other, me.mArray);
 	}
@@ -1119,12 +1116,12 @@ namespace Langulus::Math
 		return SIMD::Greater(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto operator > (const TVEC(LHS)& me, const N& other) {
 		return SIMD::Greater(me.mArray, other);
 	}
 
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::Integer N>
 	auto operator > (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Greater(other, me.mArray);
 	}
@@ -1134,12 +1131,12 @@ namespace Langulus::Math
 		return SIMD::EqualsOrGreater(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto operator >= (const TVEC(LHS)& me, const N& other) {
 		return SIMD::EqualsOrGreater(me.mArray, other);
 	}
 
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::Integer N>
 	auto operator >= (const N& other, const TVEC(RHS)& me) {
 		return SIMD::EqualsOrGreater(other, me.mArray);
 	}
@@ -1149,12 +1146,12 @@ namespace Langulus::Math
 		return SIMD::Equals(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto operator == (const TVEC(LHS)& me, const N& other) {
 		return SIMD::Equals(me.mArray, other);
 	}
 
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::Integer N>
 	auto operator == (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Equals(other, me.mArray);
 	}
@@ -1164,12 +1161,12 @@ namespace Langulus::Math
 		return !SIMD::Equals(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), Number N>
+	template<TARGS(LHS), CT::Integer N>
 	auto operator != (const TVEC(LHS)& me, const N& other) {
 		return !SIMD::Equals(me.mArray, other);
 	}
 
-	template<TARGS(RHS), Number N>
+	template<TARGS(RHS), CT::Integer N>
 	auto operator != (const N& other, const TVEC(RHS)& me) {
 		return !SIMD::Equals(other, me.mArray);
 	}
