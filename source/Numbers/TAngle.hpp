@@ -6,325 +6,211 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "Vectors.hpp"
-#include "Dimensions.hpp"
+#include "TNumber.hpp"
+#include "../Vectors.hpp"
+#include "../Dimensions.hpp"
+
+namespace Langulus::CT
+{
+
+	template<class T>
+	concept Angle = DenseNumber<T> && requires { {Decay<T>::Radians} -> Bool; };
+
+} // namespace Langulus::CT
+
 
 namespace Langulus::Math
 {
 
-	template<class T, Dimension AXIS, bool RAD>
+	/// Type used for representing angles in degrees									
+	template<CT::DenseNumber T>
+	struct TDegrees : public TNumber<T, TDegrees<T>> {
+		using Base = TNumber<T, TDegrees<T>>;
+		using Base::Base;
+		using Base::mValue;
+		static constexpr bool Radians = false;
+	};
+
+	/// Type used for representing angles in radians									
+	template<CT::DenseNumber T>
+	struct TRadians : public TNumber<T, TRadians<T>> {
+		using Base = TNumber<T, TRadians<T>>;
+		using Base::Base;
+		using Base::mValue;
+		static constexpr bool Radians = true;
+	};
+
+	using Degrees = TDegrees<Real>;
+	using Radians = TRadians<Real>;
+
+	template<CT::Angle T, CT::Dimension D>
 	struct TAngle;
 
-	template<class T, bool RAD> 
-	using TYaw = TAngle<T, Dimension::Y, RAD>;
-	template<class T>	
-	using DYaw = TYaw<T, false>;
-	template<class T> 
-	using RYaw = TYaw<T, true>;
+	template<CT::Angle T>
+	using TYaw = TAngle<T, Traits::Y>;
+	template<CT::Angle T>
+	using TPitch = TAngle<T, Traits::X>;
+	template<CT::Angle T>
+	using TRoll = TAngle<T, Traits::Z>;
 
-	template<class T, bool RAD> 
-	using TPitch = TAngle<T, Dimension::X, RAD>;
-	template<class T> 
-	using DPitch = TPitch<T, false>;
-	template<class T> 
-	using RPitch = TPitch<T, true>;
+	using Yawdf = TYaw<TDegrees<RealSP>>;
+	using Yawdd = TYaw<TDegrees<RealDP>>;
+	using Yawrf = TYaw<TRadians<RealSP>>;
+	using Yawrd = TYaw<TRadians<RealDP>>;
 
-	template<class T, bool RAD> 
-	using TRoll = TAngle<T, Dimension::Z, RAD>;
-	template<class T> 
-	using DRoll = TRoll<T, false>;
-	template<class T> 
-	using RRoll = TRoll<T, true>;
+	using Pitchdf = TPitch<TDegrees<RealSP>>;
+	using Pitchdd = TPitch<TDegrees<RealDP>>;
+	using Pitchrf = TPitch<TRadians<RealSP>>;
+	using Pitchrd = TPitch<TRadians<RealDP>>;
 
-	using dyawf = DYaw<pcr32>;
-	using dyawd = DYaw<pcr64>;
-	using ryawf = RYaw<pcr32>;
-	using ryawd = RYaw<pcr64>;
+	using Rolldf = TRoll<TDegrees<RealSP>>;
+	using Rolldd = TRoll<TDegrees<RealDP>>;
+	using Rollrf = TRoll<TRadians<RealSP>>;
+	using Rollrd = TRoll<TRadians<RealDP>>;
 
-	using dpitchf = DPitch<pcr32>;
-	using dpitchd = DPitch<pcr64>;
-	using rpitchf = RPitch<pcr32>;
-	using rpitchd = RPitch<pcr64>;
-
-	using drollf = DRoll<pcr32>;
-	using drolld = DRoll<pcr64>;
-	using rrollf = RRoll<pcr32>;
-	using rrolld = RRoll<pcr64>;
-
-	using dyaw = DYaw<real>;
-	using ryaw = RYaw<real>;
-	using dpitch = DPitch<real>;
-	using rpitch = RPitch<real>;
-	using droll = DRoll<real>;
-	using rroll = RRoll<real>;
+	using Yawd = TYaw<Degrees>;
+	using Yawr = TYaw<Radians>;
+	using Pitchd = TPitch<Degrees>;
+	using Pitchr = TPitch<Radians>;
+	using Rolld = TRoll<Degrees>;
+	using Rollr = TRoll<Radians>;
 
 
-	///																								
-	///	Abstract angle																			
-	///																								
-	PC_DECLARE_ABSTRACT_DATA(Angle);
+	namespace A
+	{
 
+		/// Used as an imposed base for any type that can be interpretable as	
+		/// an angle																				
+		struct Angle {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) Radians;
+		};
 
-	///																								
-	/// Angle oriented around a specific axis												
-	///																								
-	template<Dimension AXIS>
-	struct EMPTY_BASE() TAngleOriented {
-		using Concrete = TAngle<real, AXIS, false>;
+		/// Used as an imposed base for any type that can be interpretable as	
+		/// an angle of the same dimension													
+		template<CT::Dimension D>
+		struct AngleOfDimension : public Angle {
+			LANGULUS(CONCRETE) TAngle<Radians, D>;
+			LANGULUS_BASES(Angle);
+		};
 
-		REFLECT_MANUALLY(TAngleOriented) {
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				if constexpr (AXIS == Dimension::X) {
-					name += "Pitch";
-					info += "pitch";
-				}
-				else if constexpr (AXIS == Dimension::Y) {
-					name += "Yaw";
-					info += "yaw";
-				}
-				else if constexpr (AXIS == Dimension::Z) {
-					name += "Roll";
-					info += "roll";
-				}
-				else LANGULUS_ASSERT("Unsupported axis");
-				name = name.StandardToken();
-				info = " abstract " + info + " angle";
-			}
+		/// Used as an imposed base for any type that can be interpretable as	
+		/// an angle of the same type															
+		template<CT::Angle T>
+		struct AngleOfType : public Angle {
+			LANGULUS(CONCRETE) T;
+			LANGULUS_BASES(Angle);
+			using MemberType = T;
+		};
 
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.mConcrete = DataID::Of<Concrete>;
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(AAngle));
-			reflection.MakeAbstract();
-			return reflection;
-		}
-	};
-
-
-	///																								
-	/// Angle that is explicitly either in radians or degrees						
-	///																								
-	template<bool RAD>
-	struct EMPTY_BASE() TAngleTyped {
-		REFLECT_MANUALLY(TAngleTyped) {
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				if constexpr (RAD) {
-					name += "Radians";
-					info += "radians";
-				}
-				else {
-					name += "Degrees";
-					info += "degrees";
-				}
-				name = name.StandardToken();
-				info = "abstract angle in " + info;
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.mConcrete = DataID::Of<real>;
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(AAngle));
-			reflection.MakeAbstract();
-			return reflection;
-		}
-	};
+	} // namespace Langulus::Math::A
 
 
 	///																								
 	///	Templated angle																		
 	///																								
-	template<class T, Dimension AXIS, bool RAD>
-	struct EMPTY_BASE() TAngle 
-		: public TAngleOriented<AXIS>
-		, public TAngleTyped<RAD>
-		, public TNumber<T, TAngle<T, AXIS, RAD>> {
+	template<CT::Angle T, CT::Dimension D>
+	struct TAngle : public T {
+		using Dimension = D;
+		using T::T;
+		using T::mValue;
 
-		using NUMBER_BASE = TNumber<T, TAngle<T, AXIS, RAD>>;
-
-		REFLECT_MANUALLY(TAngle) {
-			static_assert(pcIsPOD<ME>, "Must be POD");
-			static_assert(pcIsNullifiable<ME>, "Must be NULLIFIABLE");
-			static_assert(sizeof(T) == sizeof(ME), "Size mismatch");
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += Text(DataID::Reflect<TAngleTyped<RAD>>()->GetToken(), 1);
-				name += DataID::Reflect<TAngleOriented<AXIS>>()->GetToken();
-				name.TypeSuffix<T>();
-				name = name.StandardToken();
-
-				if constexpr (AXIS == Dimension::X)
-					info += "pitch";
-				else if constexpr (AXIS == Dimension::Y)
-					info += "yaw";
-				else if constexpr (AXIS == Dimension::Z)
-					info += "roll";
-				else LANGULUS_ASSERT("Unsupported axis");
-
-				info += " angle in ";
-				if constexpr (RAD)
-					info += "radians";
-				else
-					info += "degrees";
-
-				info += " of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(TAngleOriented<AXIS>), 
-				REFLECT_BASE(TAngleTyped<RAD>));
-			reflection.template SetAbilities<ME>(
-				REFLECT_CONVERSIONS(GASM));
-			reflection.template SetMembers<ME>(
-				REFLECT_MEMBER(mValue));
-			return reflection;
-		}
-
-	public:
-		using NUMBER_BASE::TNumber;
-
-		template<bool ANYRAD>
-		using SIMILAR = TAngle<T, AXIS, ANYRAD>;
-
-		template<bool ANYRAD>
-		NOD() friend constexpr ME operator + (const ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			if constexpr (ANYRAD == RAD)
-				return lhs.mValue + rhs.mValue;
-			else if constexpr (ANYRAD)
-				return lhs.mValue + pcR2D(rhs.mValue);
-			else 
-				return lhs.mValue + pcD2R(rhs.mValue);
-		}
-
-		template<bool ANYRAD>
-		NOD() friend constexpr ME operator - (const ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			if constexpr (ANYRAD == RAD)
-				return lhs.mValue - rhs.mValue;
-			else if constexpr (ANYRAD)
-				return lhs.mValue - pcR2D(rhs.mValue);
+		NOD() constexpr decltype(auto) GetRadians() const noexcept {
+			if constexpr (T::Radians)
+				return mValue;
 			else
-				return lhs.mValue - pcD2R(rhs.mValue);
+				return DegToRad(mValue);
 		}
 
-		template<bool ANYRAD>
-		NOD() friend constexpr ME operator * (const ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			if constexpr (ANYRAD == RAD)
-				return lhs.mValue * rhs.mValue;
-			else if constexpr (ANYRAD)
-				return lhs.mValue * pcR2D(rhs.mValue);
+		NOD() constexpr decltype(auto) GetDegrees() const noexcept {
+			if constexpr (T::Radians)
+				return RadToDeg(mValue);
 			else
-				return lhs.mValue * pcD2R(rhs.mValue);
-		}
-
-		template<bool ANYRAD>
-		NOD() friend constexpr ME operator / (const ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			if constexpr (ANYRAD == RAD)
-				return lhs.mValue / rhs.mValue;
-			else if constexpr (ANYRAD)
-				return lhs.mValue / pcR2D(rhs.mValue);
-			else
-				return lhs.mValue / pcD2R(rhs.mValue);
-		}
-
-		template<bool ANYRAD>
-		friend constexpr ME& operator += (ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			lhs = lhs + rhs;
-			return lhs;
-		}
-
-		template<bool ANYRAD>
-		friend constexpr ME& operator -= (ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			lhs = lhs - rhs;
-			return lhs;
-		}
-
-		template<bool ANYRAD>
-		friend constexpr ME& operator *= (ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			lhs = lhs * rhs;
-			return lhs;
-		}
-
-		template<bool ANYRAD>
-		friend constexpr ME& operator /= (ME& lhs, const SIMILAR<ANYRAD>& rhs) noexcept {
-			lhs = lhs / rhs;
-			return lhs;
-		}
-
-		/// Implicitly convert among angles of same type								
-		template<class ANYT = T>
-		NOD() constexpr operator TAngle<ANYT, AXIS, !RAD>() const noexcept {
-			if constexpr(RAD)
-				return { ANYT(pcR2D(NUMBER_BASE::mValue)) };
-			else 
-				return { ANYT(pcD2R(NUMBER_BASE::mValue)) };
-		}
-
-		NOD() constexpr T GetRadians() const noexcept {
-			if constexpr (RAD)
-				return NUMBER_BASE::mValue;
-			else
-				return pcD2R(NUMBER_BASE::mValue);
-		}
-
-		NOD() constexpr T GetDegrees() const noexcept {
-			if constexpr (!RAD)
-				return NUMBER_BASE::mValue;
-			else
-				return pcR2D(NUMBER_BASE::mValue);
+				return mValue;
 		}
 
 		/// Convert from any angle to text													
-		NOD() explicit operator GASM() const {
-			GASM result;
-			result += DataID::Of<ME>;
-			result += GASM::OpenScope;
-				result += NUMBER_BASE::mValue;
-			result += GASM::CloseScope;
+		NOD() explicit operator Flow::Code() const {
+			Flow::Code result;
+			result += RTTI::MetaData::Of<TAngle>();
+			result += Flow::Code::OpenScope;
+			result += Text {mValue};
+			result += Flow::Code::CloseScope;
 			return result;
 		}
 	};
 
 
-	/// Calculate cosine																			
-	template<class T, Dimension AXIS, bool RAD>
-	T pcCos(const TAngle<T, AXIS, RAD>& a) noexcept {
-		if constexpr (RAD)
-			return pcCos(a);
-		else
-			return pcCosDeg(a);
+	/// Add two similar angles																	
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	NOD() constexpr TAngle<LHST, D> operator + (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+		if constexpr (CT::Same<LHST, RHST>)
+			return lhs.mValue + rhs.mValue;
+		else if constexpr (LHST::Radians)
+			return lhs.mValue + DegToRad(rhs.mValue);
+		else 
+			return lhs.mValue + RadToDeg(rhs.mValue);
 	}
 
-	/// Calculate sine																			
-	template<class T, Dimension AXIS, bool RAD>
-	T pcSin(const TAngle<T, AXIS, RAD>& a) noexcept {
-		if constexpr (RAD)
-			return pcSin(a);
+	/// Subtract two similar angles															
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	NOD() constexpr TAngle<LHST, D> operator - (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+		if constexpr (CT::Same<LHST, RHST>)
+			return lhs.mValue - rhs.mValue;
+		else if constexpr (LHST::Radians)
+			return lhs.mValue - DegToRad(rhs.mValue);
 		else
-			return pcSinDeg(a);
+			return lhs.mValue - RadToDeg(rhs.mValue);
 	}
 
-	/// Angle typelists																			
-	template<Dimension AXIS, bool RAD>
-	struct TAngleTypeGenerator {
-		template<class... T>
-		static constexpr auto ForEach(TTypeList<T...>)
-			-> TTypeList<TAngle<T, AXIS, RAD>...>;
-	};
+	/// Multiply two similar angles															
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	NOD() constexpr TAngle<LHST, D> operator * (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+		if constexpr (CT::Same<LHST, RHST>)
+			return lhs.mValue * rhs.mValue;
+		else if constexpr (LHST::Radians)
+			return lhs.mValue * DegToRad(rhs.mValue);
+		else
+			return lhs.mValue * RadToDeg(rhs.mValue);
+	}
+		
+	/// Divide two similar angles																
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	NOD() constexpr TAngle<LHST, D> operator / (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) {
+		if constexpr (CT::Same<LHST, RHST>)
+			return lhs.mValue / rhs.mValue;
+		else if constexpr (LHST::Radians)
+			return lhs.mValue / DegToRad(rhs.mValue);
+		else
+			return lhs.mValue / RadToDeg(rhs.mValue);
+	}
 
-	using TAnglePitchDegreeTypes = decltype(TAngleTypeGenerator<Dimension::X, false>::ForEach(std::declval<NumberTypes>()));
-	using TAngleYawDegreeTypes = decltype(TAngleTypeGenerator<Dimension::Y, false>::ForEach(std::declval<NumberTypes>()));
-	using TAngleRollDegreeTypes = decltype(TAngleTypeGenerator<Dimension::Z, false>::ForEach(std::declval<NumberTypes>()));
-	using TAnglePitchRadianTypes = decltype(TAngleTypeGenerator<Dimension::X, true>::ForEach(std::declval<NumberTypes>()));
-	using TAngleYawRadianTypes = decltype(TAngleTypeGenerator<Dimension::Y, true>::ForEach(std::declval<NumberTypes>()));
-	using TAngleRollRadianTypes = decltype(TAngleTypeGenerator<Dimension::Z, true>::ForEach(std::declval<NumberTypes>()));
+	/// Destructively add two similar angles												
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	constexpr TAngle<LHST, D>& operator += (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+		lhs = lhs + rhs;
+		return lhs;
+	}
+		
+	/// Destructively subtract two similar angles										
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	constexpr TAngle<LHST, D>& operator -= (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+		lhs = lhs - rhs;
+		return lhs;
+	}
+		
+	/// Destructively multiply two similar angles										
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	constexpr TAngle<LHST, D>& operator *= (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+		lhs = lhs * rhs;
+		return lhs;
+	}
 
-	using TAngleDegreeTypes = TTYPELIST_CAT3(TAnglePitchDegreeTypes, TAngleYawDegreeTypes, TAngleRollDegreeTypes);
-	using TAngleRadianTypes = TTYPELIST_CAT3(TAnglePitchRadianTypes, TAngleYawRadianTypes, TAngleRollRadianTypes);
-	using TAngleTypes = TTYPELIST_CAT2(TAngleDegreeTypes, TAngleRadianTypes);
-
-	PC_DEFINE_ABSTRACT_DATA(Angle, "An abstract angle", void, REFLECT_BASE(ANumber));
+	/// Destructively divide two similar angles											
+	template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
+	constexpr TAngle<LHST, D>& operator /= (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) {
+		lhs = lhs / rhs;
+		return lhs;
+	}
 
 } // namespace Langulus::Math

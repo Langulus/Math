@@ -315,7 +315,7 @@ namespace Langulus::Math
 	/// Get square of anything with multiplication operator							
 	template<CT::Dense T>
 	NOD() constexpr auto Sq(const T& n) noexcept {
-		if constexpr (CT::Multipliable<T>)
+		if constexpr (CT::Multipliable<T, T>)
 			return n * n;
 		else
 			LANGULUS_ERROR("T must be CT::Multipliable");

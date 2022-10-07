@@ -8,7 +8,6 @@
 #pragma once
 #include "../source/Colors.hpp"
 #include "../source/Randomness.hpp"
-#include "../source/Times.hpp"
 #include "../source/TInstance.hpp"
 #include "../source/TGradient.hpp"
 #include "../source/TFraction.hpp"

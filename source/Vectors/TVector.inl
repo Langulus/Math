@@ -60,7 +60,7 @@ namespace Langulus::Math
 	template<CT::DenseNumber N>
 	constexpr TME()::TVector(const N& a) noexcept requires IsCompatible<N> {
 		if constexpr (S == 1)
-			*mArray = *a.mArray;
+			*mArray = a;
 		else {
 			const auto scalar = Adapt(a);
 			for (auto& v : mArray)
@@ -112,7 +112,7 @@ namespace Langulus::Math
 			}
 			else LANGULUS_ERROR("More elements provided than required");
 		}
-		else if constexpr (CT::Convertible<HEAD, T>) {
+		else if constexpr (IsCompatible<HEAD>) {
 			mArray[0] = Adapt(head);
 			const TVector<T, MemberCount - 1> theRest {tail...};
 			for (Offset i = 1; i < MemberCount; ++i)
@@ -162,12 +162,12 @@ namespace Langulus::Math
 
 	/// Get the value of a specific component index										
 	TEMPLATE()
-	template<class N>
-	constexpr decltype(auto) TME()::Adapt(const N& item) const noexcept requires CT::Convertible<Decay<N>, Decay<T>> {
-		if constexpr (!Same<N, T>)
-			return static_cast<DenseT>(DenseCast(item));
+	template<CT::DenseNumber N>
+	constexpr decltype(auto) TME()::Adapt(const N& item) const noexcept requires IsCompatible<N> {
+		if constexpr (!CT::Same<N, T>)
+			return static_cast<T>(item);
 		else
-			return DenseCast(item);
+			return item;
 	}
 
 
@@ -620,59 +620,64 @@ namespace Langulus::Math
 	/// Power via a scalar																		
 	TEMPLATE()
 	constexpr auto TME()::Pow(const T& exponent) const noexcept {
-		return SIMD::PowerWrap<DenseME>(mArray, exponent);
+		return SIMD::PowerWrap<TVector>(mArray, exponent);
 	}
 
 	/// Power via a vector																		
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr auto TME()::Pow(const TVEC(ALT)& exponents) const noexcept {
-		return SIMD::PowerWrap<DenseME>(mArray, exponents.mArray);
+		return SIMD::PowerWrap<TVector>(mArray, exponents.mArray);
 	}
 
 	/// Fraction																					
 	TEMPLATE()
 	constexpr auto TME()::Frac() const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Frac((*this)[i]);
-		return DenseME {result};
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Frac(v);
+		return result;
 	}
 
 	/// Square root																				
 	TEMPLATE()
 	constexpr auto TME()::Sqrt() const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Sqrt((*this)[i]);
-		return DenseME {result};
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Sqrt(v);
+		return result;
 	}
 
 	/// Exponent																					
 	TEMPLATE()
 	constexpr auto TME()::Exp() const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Exp((*this)[i]);
-		return DenseME {result};
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Exp(v);
+		return result;
 	}
 
 	/// Sine																							
 	TEMPLATE()
 	constexpr auto TME()::Sin() const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Sin((*this)[i]);
-		return DenseME {result};
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Sin(v);
+		return result;
 	}
 
 	/// Cosine																						
 	TEMPLATE()
 	constexpr auto TME()::Cos() const noexcept {
-		DenseT result[S];
-		for (Offset i = 0; i < S; ++i)
-			result[i] = Cos((*this)[i]);
-		return DenseME {result};
+		T result[S];
+		T* it = result;
+		for (auto& v : mArray)
+			*(it++) = Cos(v);
+		return result;
 	}
 
 	/// Quicksort																					
@@ -702,28 +707,23 @@ namespace Langulus::Math
 	constexpr auto TME()::Warp(const T& scalar) const noexcept {
 		if constexpr (CT::Signed<T>) {
 			const auto absScale = Abs(scalar);
-			const auto halfScale = absScale / DenseT(2);
-			DenseT result[S];
-
-			for (Offset i = 0; i < S; ++i) {
-				result[i] = (*this)[i] > halfScale
-					? (*this)[i] - absScale
-					: (*this)[i] < -halfScale
-						? (*this)[i] + absScale
-						: (*this)[i];
+			const auto halfScale = absScale / T {2};
+			T result[S];
+			T* it = result;
+			for (auto& v : mArray) {
+				*(it++) = v > halfScale
+					? v - absScale : v < -halfScale
+						? v + absScale : v;
 			}
 
-			return DenseME {result};
+			return result;
 		}
 		else {
-			DenseT result[S];
-			for (Offset i = 0; i < S; ++i) {
-				result[i] = (*this)[i] > scalar
-					? (*this)[i] - scalar
-					: (*this)[i];
-			}
-
-			return DenseME {result};
+			T result[S];
+			T* it = result;
+			for (auto& v : mArray)
+				*(it++) = v > scalar ? v - scalar : v;
+			return result;
 		}
 	}
 
@@ -761,7 +761,7 @@ namespace Langulus::Math
 	///	v[4] + v[2] = v[2]																	
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator + (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::AddWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -771,7 +771,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] + other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::AddWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -788,7 +788,7 @@ namespace Langulus::Math
 	/// Returns the difference of two vectors												
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator - (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::SubtractWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -798,7 +798,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] - other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::SubtractWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -809,7 +809,7 @@ namespace Langulus::Math
 		if constexpr (RHSS == 1)
 			return other - me[0];	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<RHST, N>;
+			using TYPE = Lossless<RHST, N>;
 			return SIMD::SubtractWrap<TVector<TYPE, RHSS>>(other, me.mArray);
 		}
 	}
@@ -817,7 +817,7 @@ namespace Langulus::Math
 	/// Returns the product of two vectors													
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator * (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::MultiplyWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -827,7 +827,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] * other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::MultiplyWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -844,7 +844,7 @@ namespace Langulus::Math
 	/// Returns the division of two vectors												
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator / (const TVEC(LHS)& me, const TVEC(RHS)& other) {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::DivideWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -854,7 +854,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] / other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::DivideWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -865,7 +865,7 @@ namespace Langulus::Math
 		if constexpr (RHSS == 1)
 			return other / me[0];	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<RHST, N>;
+			using TYPE = Lossless<RHST, N>;
 			return SIMD::DivideWrap<TVector<TYPE, RHSS>>(other, me.mArray);
 		}
 	}
@@ -873,7 +873,7 @@ namespace Langulus::Math
 	/// Returns the left-shift of two integer vectors									
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator << (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::ShiftLeftWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -883,7 +883,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] << other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::ShiftLeftWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -894,7 +894,7 @@ namespace Langulus::Math
 		if constexpr (RHSS == 1)
 			return other << me[0];	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<RHST, N>;
+			using TYPE = Lossless<RHST, N>;
 			return SIMD::ShiftLeftWrap<TVector<TYPE, RHSS>>(other, me.mArray);
 		}
 	}
@@ -902,7 +902,7 @@ namespace Langulus::Math
 	/// Returns the right-shift of two integer vectors									
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator >> (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::ShiftRightWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -912,7 +912,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] >> other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::ShiftRightWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -923,7 +923,7 @@ namespace Langulus::Math
 		if constexpr (RHSS == 1)
 			return other >> me[0];	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<RHST, N>;
+			using TYPE = Lossless<RHST, N>;
 			return SIMD::ShiftRightWrap<TVector<TYPE, RHSS>>(other, me.mArray);
 		}
 	}
@@ -931,7 +931,7 @@ namespace Langulus::Math
 	/// Returns the xor of two integer vectors											
 	template<TARGS(LHS), TARGS(RHS)>
 	auto operator ^ (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
-		using TYPE = TLossless<LHST, RHST>;
+		using TYPE = Lossless<LHST, RHST>;
 		return SIMD::XOrWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
 	}
 
@@ -941,7 +941,7 @@ namespace Langulus::Math
 		if constexpr (LHSS == 1)
 			return me[0] ^ other;	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<LHST, N>;
+			using TYPE = Lossless<LHST, N>;
 			return SIMD::XOrWrap<TVector<TYPE, LHSS>>(me.mArray, other);
 		}
 	}
@@ -952,7 +952,7 @@ namespace Langulus::Math
 		if constexpr (RHSS == 1)
 			return other ^ me[0];	// 1D vectors decay to a number			
 		else {
-			using TYPE = TLossless<RHST, N>;
+			using TYPE = Lossless<RHST, N>;
 			return SIMD::XOrWrap<TVector<TYPE, RHSS>>(other, me.mArray);
 		}
 	}
@@ -968,25 +968,11 @@ namespace Langulus::Math
 		return me;
 	}
 
-	/// Add a dense vector to a proxy vector												
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator += (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires Sparse<LHST> {
-		return operator += (const_cast<TVEC(LHS)&>(me), other);
-	}
-
 	/// Add vector and a scalar																
 	template<TARGS(LHS), CT::Integer N>
 	auto& operator += (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Add(me.mArray, other, me.mArray);
 		return me;
-	}
-
-	/// Add a proxy vector and a scalar														
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), CT::Integer N>
-	auto& operator += (const TVEC(LHS)& me, const N& other) noexcept requires Sparse<LHST> {
-		return operator += (const_cast<TVEC(LHS)&>(me), other);
 	}
 
 	/// Subtract vectors																			
@@ -996,25 +982,11 @@ namespace Langulus::Math
 		return me;
 	}
 
-	/// Subtract a dense vector from a proxy vector										
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator -= (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires Sparse<LHST> {
-		return operator -= (const_cast<TVEC(LHS)&>(me), other);
-	}
-
 	/// Subtract vector and a scalar															
 	template<TARGS(LHS), CT::Integer N>
 	auto& operator -= (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Subtract(me.mArray, other, me.mArray);
 		return me;
-	}
-
-	/// Subtract a scalar vector from a proxy vector									
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), CT::Integer N>
-	auto& operator -= (const TVEC(LHS)& me, const N& other) noexcept requires Sparse<LHST> {
-		return operator -= (const_cast<TVEC(LHS)&>(me), other);
 	}
 
 	/// Multiply vectors																			
@@ -1024,25 +996,11 @@ namespace Langulus::Math
 		return me;
 	}
 
-	/// Multiply a dense vector to a proxy vector										
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator *= (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires Sparse<LHST> {
-		return operator *= (const_cast<TVEC(LHS)&>(me), other);
-	}
-
 	/// Multiply vector by a scalar															
 	template<TARGS(LHS), CT::Integer N>
 	auto& operator *= (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Multiply(me.mArray, other, me.mArray);
 		return me;
-	}
-
-	/// Multiply a proxy vector by a scalar												
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	template<TARGS(LHS), CT::Integer N>
-	auto& operator *= (const TVEC(LHS)& me, const N& other) noexcept requires Sparse<LHST> {
-		return operator *= (const_cast<TVEC(LHS)&>(me), other);
 	}
 
 	/// Divide dense vectors																	
@@ -1053,28 +1011,12 @@ namespace Langulus::Math
 		return me;
 	}
 
-	/// Divide a proxy vector to a dense vector											
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	/// This function will throw on division by zero									
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator /= (const TVEC(LHS)& me, const TVEC(RHS)& other) requires Sparse<LHST> {
-		return operator /= (const_cast<TVEC(LHS)&>(me), other);
-	}
-
 	/// Divide dense vector and a scalar													
 	/// This function will throw on division by zero									
 	template<TARGS(LHS), CT::Integer N>
 	auto& operator /= (TVEC(LHS)& me, const N& other) {
 		SIMD::Divide(me.mArray, other, me.mArray);
 		return me;
-	}
-
-	/// Divide a proxy vector by a scalar													
-	/// Proxy vectors are often temporary, so a constant lhs is required			
-	/// This function will throw on division by zero									
-	template<TARGS(LHS), CT::Integer N>
-	auto& operator /= (const TVEC(LHS)& me, const N& other) requires Sparse<LHST> {
-		return operator /= (const_cast<TVEC(LHS)&>(me), other);
 	}
 
 
@@ -1154,21 +1096,6 @@ namespace Langulus::Math
 	template<TARGS(RHS), CT::Integer N>
 	auto operator == (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Equals(other, me.mArray);
-	}
-
-	template<TARGS(LHS), TARGS(RHS)>
-	auto operator != (const TVEC(LHS)& me, const TVEC(RHS)& other) {
-		return !SIMD::Equals(me.mArray, other.mArray);
-	}
-
-	template<TARGS(LHS), CT::Integer N>
-	auto operator != (const TVEC(LHS)& me, const N& other) {
-		return !SIMD::Equals(me.mArray, other);
-	}
-
-	template<TARGS(RHS), CT::Integer N>
-	auto operator != (const N& other, const TVEC(RHS)& me) {
-		return !SIMD::Equals(other, me.mArray);
 	}
 
 } // namespace Langulus::Math

@@ -11,87 +11,104 @@
 namespace Langulus::Math
 {
 
-	template<Number T, pcptr S = 1>
+	template<CT::Vector>
 	class TRange;
 
+	using Range1f = TRange<vec1f>;
+	using Range1d = TRange<vec1d>;
 
-	///																								
-	///	Abstract range																			
-	///																								
-	PC_DECLARE_ABSTRACT_DATA(Range);
+	using Range2f = TRange<vec2f>;
+	using Range2d = TRange<vec2d>;
+	using Range3f = TRange<vec3f>;
+	using Range3d = TRange<vec3d>;
+	using Range4f = TRange<vec4f>;
+	using Range4d = TRange<vec4d>;
 
+	using Range1 = TRange<vec1>;
+	using Range2 = TRange<vec2>;
+	using Range3 = TRange<vec3>;
+	using Range4 = TRange<vec4>;
 
-	///																								
-	///	Abstract range of specific size													
-	///																								
-	template<pcptr S>
-	class EMPTY_BASE() TSizedRange {
-	public:
-		static constexpr pcptr MemberCount = S;
-		using Concrete = TRange<real, S>;
+	using Range1u8 = TRange<vec1u8>;
+	using Range1u16 = TRange<vec1u16>;
+	using Range1u32 = TRange<vec1u32>;
+	using Range1u64 = TRange<vec1u64>;
+	using Range1i8 = TRange<vec1i8>;
+	using Range1i16 = TRange<vec1i16>;
+	using Range1i32 = TRange<vec1i32>;
+	using Range1i64 = TRange<vec1i64>;
 
-		REFLECT_MANUALLY(TSizedRange) {
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "Range";
-				name += MemberCount;
-				name = name.StandardToken();
-				info += "an abstract range of a size ";
-				info += MemberCount;
-			}
+	using Range2u8 = TRange<vec2u8>;
+	using Range2u16 = TRange<vec2u16>;
+	using Range2u32 = TRange<vec2u32>;
+	using Range2u64 = TRange<vec2u64>;
+	using Range2i8 = TRange<vec2i8>;
+	using Range2i16 = TRange<vec2i16>;
+	using Range2i32 = TRange<vec2i32>;
+	using Range2i64 = TRange<vec2i64>;
 
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.mConcrete = DataID::Of<Concrete>;
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(ARange));
-			reflection.MakeAbstract();
-			return reflection;
-		}
-	};
+	using Range3u8 = TRange<vec3u8>;
+	using Range3u16 = TRange<vec3u16>;
+	using Range3u32 = TRange<vec3u32>;
+	using Range3u64 = TRange<vec3u64>;
+	using Range3i8 = TRange<vec3i8>;
+	using Range3i16 = TRange<vec3i16>;
+	using Range3i32 = TRange<vec3i32>;
+	using Range3i64 = TRange<vec3i64>;
+
+	using Range4u8 = TRange<vec4u8>;
+	using Range4u16 = TRange<vec4u16>;
+	using Range4u32 = TRange<vec4u32>;
+	using Range4u64 = TRange<vec4u64>;
+	using Range4i8 = TRange<vec4i8>;
+	using Range4i16 = TRange<vec4i16>;
+	using Range4i32 = TRange<vec4i32>;
+	using Range4i64 = TRange<vec4i64>;
+
+	namespace A
+	{
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// range																					
+		struct Range {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) TRange<vec4>;
+		};
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// range of the same size																
+		template<Count S>
+		struct RangeOfSize : public Range {
+			LANGULUS(CONCRETE) TRange<TVector<Real, S>>;
+			LANGULUS_BASES(Range);
+			static constexpr Count MemberCount {S};
+		};
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// range of the same type																
+		template<CT::DenseNumber T>
+		struct RangeOfType : public Range {
+			LANGULUS(CONCRETE) TRange<TVector<T, 4>>;
+			LANGULUS_BASES(Range);
+			using MemberType = T;
+		};
+
+	} // namespace Langulus::Math::A
 
 
 	///																								
 	///	Templated range																		
 	///																								
 	#pragma pack(push, 1)
-	template<Number T, pcptr S>
-	class TRange {
-	public:
-		static_assert(Dense<T>, "T must be dense");
-		using PointType = TVec<T, S>;
-		using MemberType = T;
-		static constexpr pcptr MemberCount = S;
+	template<CT::Vector T>
+	struct TRange {
+		using PointType = T;
+		using MemberType = typename T::MemberType;
+		static constexpr Count MemberCount = T::MemberCount;
+		LANGULUS_BASES(A::RangeOfSize<MemberCount>, A::RangeOfType<MemberType>);
 
-	public:
 		PointType mMin;
 		PointType mMax;
-
-		REFLECT_MANUALLY(TRange) {
-			static_assert(sizeof(T) * S * 2 == sizeof(ME), "Size mismatch");
-			auto subtype = DataID::Reflect<TSizedRange<MemberCount>>();
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += subtype->GetToken();
-				name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a range of a size ";
-				info += MemberCount;
-				info += " and type ";
-				info += DataID::Reflect<MemberType>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.mPOD = pcIsPOD<PointType>;
-			reflection.mNullifiable = pcIsNullifiable<PointType>;
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(TSizedRange<MemberCount>));
-			reflection.template SetMembers<ME>(
-				REFLECT_MEMBER_TRAIT(mMin, Min),
-				REFLECT_MEMBER_TRAIT(mMax, Max));
-			reflection.template SetAbilities<ME>(
-				REFLECT_CONVERSIONS(GASM));
-			return reflection;
-		}
 
 	public:
 		constexpr TRange() noexcept = default;
@@ -122,136 +139,96 @@ namespace Langulus::Math
 		~TRange() noexcept = default;
 
 		/// Copy operator																			
-		constexpr auto& operator = (const TRange& a) noexcept {
-			mMin = a.mMin;
-			mMax = a.mMax;
-			return *this;
-		}
+		constexpr auto& operator = (const TRange&) noexcept = default;
 
 		/// Convert any range to text															
-		NOD() explicit operator GASM() const {
-			GASM result;
-			result += DataID::Of<ME>;
-			result += GASM::OpenScope;
-				result += Flow::pcSerialize<GASM>(mMin);
-				result += GASM::AndSeparator;
-				result += Flow::pcSerialize<GASM>(mMax);
-			result += GASM::CloseScope;
+		NOD() explicit operator Flow::Code() const {
+			Flow::Code result;
+			result += RTTI::MetaData::Of<TRange>();
+			result += Flow::Code::OpenScope;
+				result += mMin.operator Flow::Code();
+				result += ", ";
+				result += mMax.operator Flow::Code();
+			result += Flow::Code::CloseScope;
 			return result;
 		}
 		
 		/// Arithmetics																			
-		NOD() friend constexpr ME operator - (const ME& me) noexcept {
+		NOD() friend constexpr TRange operator - (const TRange& me) noexcept {
 			return {-me.mMin, -me.mMax};
 		}
 
-		NOD() friend constexpr ME operator + (const ME& me, const ME& other) noexcept {
+		NOD() friend constexpr TRange operator + (const TRange& me, const TRange& other) noexcept {
 			return {me.mMin + other.mMin, me.mMax + other.mMax};
 		}
 
-		NOD() friend constexpr ME operator + (const ME& me, const T& other) noexcept {
-			return {me.mMin + other, me.mMax + other};
-		}
-
-		NOD() friend constexpr ME operator - (const ME& me, const ME& other) noexcept {
+		NOD() friend constexpr TRange operator - (const TRange& me, const TRange& other) noexcept {
 			return {me.mMin - other.mMin, me.mMax - other.mMax};
 		}
 
-		NOD() friend constexpr ME operator - (const ME& me, const T& other) noexcept {
-			return {me.mMin - other, me.mMax - other};
-		}
-
-		NOD() friend constexpr ME operator * (const ME& me, const ME& other) noexcept {
+		NOD() friend constexpr TRange operator * (const TRange& me, const TRange& other) noexcept {
 			return {me.mMin * other.mMin, me.mMax * other.mMax};
 		}
 
-		NOD() friend constexpr ME operator * (const ME& me, const T& other) noexcept {
-			return {me.mMin * other, me.mMax * other};
-		}
-
-		NOD() friend constexpr ME operator / (const ME& me, const ME& other) noexcept {
+		NOD() friend constexpr TRange operator / (const TRange& me, const TRange& other) noexcept {
 			return {me.mMin / other.mMin, me.mMax / other.mMax};
 		}
 
-		NOD() friend constexpr ME operator / (const ME& me, const T& other) noexcept {
-			return {me.mMin / other, me.mMax / other};
-		}
-
-		friend constexpr void operator += (ME& me, const ME& other) noexcept {
+		friend constexpr void operator += (TRange& me, const TRange& other) noexcept {
 			me.mMin += other.mMin;
 			me.mMax += other.mMax;
 		}
 
-		friend constexpr void operator += (ME& me, const T& other) noexcept {
-			me.mMin += other;
-			me.mMax += other;
-		}
-
-		friend constexpr void operator -= (ME& me, const ME& other) noexcept {
+		friend constexpr void operator -= (TRange& me, const TRange& other) noexcept {
 			me.mMin -= other.mMin;
 			me.mMax -= other.mMax;
 		}
 
-		friend constexpr void operator -= (ME& me, const T& other) noexcept {
-			me.mMin -= other;
-			me.mMax -= other;
-		}
-
-		friend constexpr void operator *= (ME& me, const ME& other) noexcept {
+		friend constexpr void operator *= (TRange& me, const TRange& other) noexcept {
 			me.mMin *= other.mMin;
 			me.mMax *= other.mMax;
 		}
 
-		friend constexpr void operator *= (ME& me, const T& other) noexcept {
-			me.mMin *= other;
-			me.mMax *= other;
-		}
-
-		friend constexpr void operator /= (ME& me, const ME& other) noexcept {
+		friend constexpr void operator /= (TRange& me, const TRange& other) noexcept {
 			me.mMin /= other.mMin;
 			me.mMax /= other.mMax;
 		}
 
-		friend constexpr void operator /= (ME& me, const T& other) noexcept {
-			me.mMin /= other;
-			me.mMax /= other;
-		}
-
 		template<class N>
 		constexpr TRange& Embrace(const N& other) noexcept {
-			mMin = pcMin(mMin, other);
-			mMax = pcMax(mMax, other);
+			mMin = Min(mMin, other);
+			mMax = Max(mMax, other);
 			return *this;
 		}
 
 		template<class N>
 		constexpr TRange& ConstrainBy(const N& limits) noexcept {
-			mMin = pcClamp(mMin, limits.mMin, limits.mMax);
-			mMax = pcClamp(mMax, limits.mMin, limits.mMax);
+			mMin = Clamp(mMin, limits.mMin, limits.mMax);
+			mMax = Clamp(mMax, limits.mMin, limits.mMax);
 			return *this;
 		}
 
-		NOD() constexpr bool operator == (const ME& a) const noexcept {
+		NOD() constexpr bool operator == (const TRange& a) const noexcept {
 			return mMin == a.mMin && mMax == a.mMax;
 		}
 
-		NOD() constexpr bool operator != (const ME& a) const noexcept {
+		NOD() constexpr bool operator != (const TRange& a) const noexcept {
 			return !(*this == a);
 		}
 
-		NOD() constexpr bool operator >= (const ME& a) const noexcept {
+		NOD() constexpr bool operator >= (const TRange& a) const noexcept {
 			return mMin >= a.mMin || mMax >= a.mMax;
 		}
 
-		NOD() constexpr bool operator <= (const ME& a) const noexcept {
+		NOD() constexpr bool operator <= (const TRange& a) const noexcept {
 			return mMin <= a.mMin || mMax <= a.mMax;
 		}
 
-		NOD() constexpr bool operator <  (const ME& a) const noexcept {
+		NOD() constexpr bool operator <  (const TRange& a) const noexcept {
 			return mMin < a.mMin || mMax < a.mMax;
 		}
 
-		NOD() constexpr bool operator >  (const ME& a) const noexcept {
+		NOD() constexpr bool operator >  (const TRange& a) const noexcept {
 			return mMin > a.mMin || mMax > a.mMax;
 		}
 
@@ -283,31 +260,17 @@ namespace Langulus::Math
 			return pos.Clamp(mMin, mMax);
 		}
 
-		NOD() constexpr ME operator | (const ME& a) const noexcept {
+		NOD() constexpr TRange operator | (const TRange& a) const noexcept {
 			return {
 				mMin.Clamp(a.mMin, a.mMax),
 				mMax.Clamp(a.mMin, a.mMax)
 			};
 		}
 
-		constexpr void operator |= (const ME& a) noexcept {
+		constexpr void operator |= (const TRange& a) noexcept {
 			*this = *this | a;
-		}
-
-		template<DenseNumber ALT_T = T, pcptr ALT_S = S>
-		NOD() explicit constexpr operator TRange<ALT_T, ALT_S>() const noexcept {
-			return {mMin, mMax};
-		}
-		template<pcptr ALT_S = S>
-		NOD() constexpr operator TRange<T, ALT_S>() const noexcept {
-			return {mMin, mMax};
 		}
 	};
 	#pragma pack(pop)
-
-	PC_DEFINE_ABSTRACT_DATA(Range, "An abstract range", void);
-
-	template<ComplexNumber T>
-	using TComplexRange = TRange<typename T::MemberType, T::MemberCount>;
 
 } // namespace Langulus::Math

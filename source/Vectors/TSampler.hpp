@@ -20,34 +20,25 @@ namespace Langulus::Math
 	namespace A
 	{
 
-		///																							
-		/// An abstract sampler																	
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// sampler																					
-		///																							
 		struct Sampler {
 			LANGULUS(ABSTRACT) true;
 			LANGULUS(CONCRETE) Sampler3;
 		};
 
-		///																							
-		/// An abstract sampler of specific size											
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// sampler of the same size															
-		///																							
 		template<Count S>
 		struct SamplerOfSize : public Sampler {
 			LANGULUS(CONCRETE) TSampler<TVector<Real, S>>;
 			LANGULUS_BASES(Sampler);
 			static constexpr Count MemberCount {S};
-			static_assert(S > 1, "Normal size must be greater than one");
+			static_assert(S > 0, "Normal size must be greater than zero");
 		};
 
-		///																							
-		/// An abstract sampler of specific type											
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// sampler of the same type															
-		///																							
 		template<CT::DenseNumber T>
 		struct SamplerOfType : public Sampler {
 			LANGULUS(CONCRETE) TSampler<TVector<T, 3>>;
@@ -60,7 +51,6 @@ namespace Langulus::Math
 
 	///																								
 	///	A templated sampler																	
-	///																								
 	/// It's just a vector, specialized for accessing textures/volumes			
 	///																								
 	template<CT::Vector T>
@@ -68,15 +58,12 @@ namespace Langulus::Math
 		using PointType = T;
 		using MemberType = typename T::MemberType;
 		static constexpr Count MemberCount = T::MemberCount;
-		static_assert(S > 0, "Sampler size must be greater than one");
+		static_assert(MemberCount > 0, "Sampler size must be greater than zero");
 		LANGULUS_BASES(A::SamplerOfSize<MemberCount>, A::SamplerOfType<MemberType>);
 
 	public:
 		using T::T;
 		using T::mArray;
-
-		constexpr TSampler(const T& other)
-			: T{ other } {}
 
 		/// Convert from any sampler to text												
 		NOD() explicit operator Flow::Code() const {

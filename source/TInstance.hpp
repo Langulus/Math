@@ -6,13 +6,12 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "Level.hpp"
-#include "Ranges.hpp"
+#include "Numbers/Level.hpp"
+#include "Numbers/TAngle.hpp"
+#include "Ranges/TRange.hpp"
 #include "Vectors.hpp"
 #include "Quaternions/TQuaternion.hpp"
 #include "Primitives.hpp"
-#include "TAngle.hpp"
-#include "Ranges.hpp"
 
 #define PC_TINSTANCE_VERBOSE(a) // pcLogSelfVerbose << a
 

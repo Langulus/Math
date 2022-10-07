@@ -8,95 +8,90 @@
 #pragma once
 #include "TVector.hpp"
 
-LANGULUS_DECLARE_TRAIT(Scale, "Scale/size trait");
-
 namespace Langulus::Math
 {
 
-	/// Commonly used sizers																	
-	using Sizer3 = TSizer<vec3>;
-	using Sizer2 = TSizer<vec2>;
-	using Sizer  = Sizer3;
+	using Size3 = TSize<vec3>;
+	using Size2 = TSize<vec2>;
+	using Size = Size3;
+
+
+	namespace A
+	{
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// size																						
+		struct Size {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) ::Langulus::Math::Size;
+		};
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// size of the same size																
+		template<Count S>
+		struct SizeOfSize : public Size {
+			LANGULUS(CONCRETE) TSize<TVector<Real, S>>;
+			LANGULUS_BASES(Size);
+			static constexpr Count MemberCount {S};
+			static_assert(S > 0, "Size size must be greater than zero");
+		};
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// size of the same type																
+		template<CT::DenseNumber T>
+		struct SizeOfType : public Size {
+			LANGULUS(CONCRETE) TSize<TVector<T, 3>>;
+			LANGULUS_BASES(Size);
+			using MemberType = T;
+		};
+
+	} // namespace Langulus::Math::A
 
 
 	///																								
-	///	Abstract sizer																			
+	///	Templated size																			
+	/// Vector specialization that defaults to 1 and is used for scaling			
 	///																								
-	PC_DECLARE_ABSTRACT_DATA(Sizer);
-
-
-	///																								
-	///	Templated sizer																		
-	///	Vector specialization that defaults to 1 and is used for scaling		
-	///																								
-	template<ComplexNumber T>
-	struct TSizer : public T, NOT_NULLIFIABLE {
+	template<CT::Vector T>
+	struct TSize : public T {
 		using PointType = T;
 		using MemberType = typename T::MemberType;
-		static constexpr pcptr MemberCount = T::MemberCount;
-
-		REFLECT_MANUALLY(TSizer) {
-			// Sizer defaults to 1, so not nullifiable!							
-			static_assert(!pcIsNullifiable<ME>, "Must NOT be NULLIFIABLE");
-			static_assert(pcIsPOD<ME>, "Must be POD");
-			static_assert(sizeof(T) == sizeof(ME), "Size mismatch");
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "Sizer";
-				if constexpr (MemberCount != 3)
-					name += MemberCount;
-				if constexpr (!Same<MemberType, real>)
-					name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a scale vector of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(ASizer),
-				REFLECT_BASE(T));
-			reflection.template SetAbilities<ME>(
-				REFLECT_CONVERSIONS(GASM));
-			return reflection;
-		}
+		static constexpr Count MemberCount = T::MemberCount;
+		static_assert(MemberCount > 0, "Force size must be greater than zero");
+		LANGULUS_BASES(A::SizeOfSize<MemberCount>, A::SizeOfType<MemberType>);
+		LANGULUS(NULLIFIABLE) false;
 
 	public:
-		using T::T;
+		using T::mArray;
 
-		/// Default sizer construction														
-		constexpr TSizer() noexcept
+		/// Default size construction															
+		constexpr TSize() noexcept
 			: T {1} {}
 			
 		/// Copy (and convert) from same/bigger vectors of same/different types	
 		/// Same as T constructor, but initializes to 1 by default					
 		///	@param a - vector to copy														
-		template<Number ALTT, pcptr ALTS>
-		constexpr TSizer(const TVector<ALTT, ALTS>& a) noexcept {
+		template<CT::DenseNumber ALTT, Count ALTS>
+		constexpr TSize(const TVector<ALTT, ALTS>& a) noexcept {
 			T::template Initialize<ALTT, ALTS, 1>(a);
 		}
 
 		/// Construct from component, if its index is smaller than SIZE			
 		/// Same as T constructor, but initializes to 1 by default					
 		///	@param a - component to set													
-		template<Number N, Dimension I>
-		constexpr TSizer(const TVectorComponent<N, I>& a) noexcept requires (pcptr(I) < MemberCount)
-			: TSizer {} {
-			if constexpr (T::DenseVector)
-				T::mArray[I] = T::Adapt(a.mValue);
-			else
-				T::mArray[I] = const_cast<T*>(pcPtr(a.mValue));
+		template<CT::DenseNumber N, CT::Dimension D>
+		constexpr TSize(const TVectorComponent<N, D>& a) noexcept
+			: TSize {} {
+			mArray[D::Index] = Adapt(a.mValue);
 		}
 
 		/// Convert from any sizer to text													
-		NOD() explicit operator GASM() const {
-			GASM result;
-			result += DataID::Of<ME>;
+		NOD() explicit operator Flow::Code() const {
+			Flow::Code result;
+			result += RTTI::MetaData::Of<TSize>();
 			T::WriteBody(result);
 			return result;
 		}
 	};
-
-	PC_DEFINE_ABSTRACT_DATA(Sizer, "An abstract sizer", Sizer);
 
 } // namespace Langulus::Math

@@ -7,59 +7,63 @@
 ///																									
 #pragma once
 #include "TVector.hpp"
-#include "../Level.hpp"
+#include "../Numbers/Level.hpp"
 
 namespace Langulus::Math
 {
 
-	/// Commonly used forces																	
 	using Force2 = TForce<vec2>;
 	using Force3 = TForce<vec3>;
 	using Force = Force3;
 
 
-	///																								
-	///	Abstract force																			
-	///																								
-	PC_DECLARE_ABSTRACT_DATA(Force);
+	namespace A
+	{
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// force																					
+		struct Force {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) ::Langulus::Math::Force;
+		};
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// force of the same size																
+		template<Count S>
+		struct ForceOfSize : public Force {
+			LANGULUS(CONCRETE) TForce<TVector<Real, S>>;
+			LANGULUS_BASES(Force);
+			static constexpr Count MemberCount {S};
+			static_assert(S > 0, "Force size must be greater than zero");
+		};
+
+		/// Used as an imposed base for any type that can be interpretable as a	
+		/// force of the same type																
+		template<CT::DenseNumber T>
+		struct ForceOfType : public Force {
+			LANGULUS(CONCRETE) TForce<TVector<T, 3>>;
+			LANGULUS_BASES(Force);
+			using MemberType = T;
+		};
+
+	} // namespace Langulus::Math::A
 
 
 	///																								
 	///	Templated force																		
 	///																								
-	template<ComplexNumber T>
-	struct TForce : public T, private AForce {
+	template<CT::Vector T>
+	struct TForce : public T {
 		using PointType = T;
-		using MemberType = typename PointType::MemberType;
-		static constexpr pcptr MemberCount = PointType::MemberCount;
-
-		REFLECT_MANUALLY(TForce) {
-			static_assert(pcIsPOD<ME>, "Must be POD");
-			static_assert(pcIsNullifiable<ME>, "Must be NULLIFIABLE");
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "Force";
-				if constexpr (MemberCount != 3)
-					name += MemberCount;
-				if constexpr(!Same<MemberType, real>)
-					name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a force of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(AForce),
-				REFLECT_BASE(T));
-			reflection.template SetMembers<ME>(
-				REFLECT_MEMBER_TRAIT(mLevel, Level));
-			reflection.template SetAbilities<ME>(
-				REFLECT_CONVERSIONS(GASM));
-			return reflection;
-		}
+		using MemberType = typename T::MemberType;
+		static constexpr Count MemberCount = T::MemberCount;
+		static_assert(MemberCount > 0, "Force size must be greater than zero");
+		LANGULUS_BASES(A::ForceOfSize<MemberCount>, A::ForceOfType<MemberType>);
 
 	public:
+		using T::T;
+		using T::mArray;
+
 		/// Construct force from vector and level											
 		///	@param force - the direction times magnitude of the force			
 		///	@param level - the level in which the force acts						
@@ -68,7 +72,7 @@ namespace Langulus::Math
 			, mLevel {level} {}
 
 		/// Convert from any force to text													
-		NOD() explicit operator GASM() const {
+		NOD() explicit operator Flow::Code() const {
 			GASM result;
 			result += DataID::Of<ME>;
 			result += GASM::OpenScope;
@@ -85,8 +89,5 @@ namespace Langulus::Math
 		// The level in which the force operates									
 		Level mLevel {};
 	};
-
-
-	PC_DEFINE_ABSTRACT_DATA(Force, "An abstract force", Force);
 
 } // namespace Langulus::Math

@@ -13,23 +13,24 @@ namespace Langulus::Math
 {
 
 	///																								
-	/// Hashes without Sine																		
+	///	Hashes without Sine																	
 	///																								
-	/// Credit to David Hoskins - https://www.shadertoy.com/view/4djSRW			
-	/// Trying to find a Hash function that is the same on all systems			
+	///	Credit to David Hoskins - https://www.shadertoy.com/view/4djSRW		
+	///	Trying to find a Hash function that is the same on all systems			
 	/// and doesn't rely on trigonometry functions that lose accuracy with		
 	/// high values.																				
-	template<RealNumber T>
+	///																								
+	template<CT::Real T>
 	struct THoskins {
 		/// Perform the specific hashing function											
-		template<pcptr DOUT, pcptr DIN, bool GET_GLSL = false>
-		NOD() static constexpr auto Hash(TVec<T, DIN> p = {}) noexcept {
+		template<Count DOUT, Count DIN, bool GET_GLSL = false>
+		NOD() static constexpr auto Hash(TVector<T, DIN> p = {}) noexcept {
 			static_assert(DIN >= 1 && DIN <= 4, 
 				"Hoskin's hashes work only for inputs of 1-4 components");
 			static_assert(DOUT >= 1 && DOUT <= 4, 
 				"Hoskin's hashes work only for outputs of 1-4 components");
 
-			constexpr TVec<T, 4> seed = { T(.1031), T(.1030), T(.0973), T(.1099) };
+			constexpr TVector<T, 4> seed = {.1031, .1030, .0973, .1099};
 
 			if constexpr (DIN == 1) {
 				if constexpr (DOUT == 1) {
@@ -98,7 +99,7 @@ namespace Langulus::Math
 						return pcFrac((p4.xxyz() + p4.yzzw()) * p4.zywx());
 					}
 				}
-				else LANGULUS_ASSERT("Hash function with this output doesn't exist, for input 1");
+				else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 1");
 			}
 			else if constexpr (DIN == 2) {
 				if constexpr (DOUT == 1) {
@@ -165,7 +166,7 @@ namespace Langulus::Math
 						return pcFrac((p4.xxyz() + p4.yzzw()) * p4.zywx());
 					}
 				}
-				else LANGULUS_ASSERT("Hash function with this output doesn't exist, for input 2");
+				else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 2");
 			}
 			else if constexpr (DIN == 3) {
 				if constexpr (DOUT == 1) {
@@ -232,7 +233,7 @@ namespace Langulus::Math
 						return pcFrac((p4.xxyz() + p4.yzzw()) * p4.zywx());
 					}
 				}
-				else LANGULUS_ASSERT("Hash function with this output doesn't exist, for input 3");
+				else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 3");
 			}
 			else if constexpr (DIN == 4) {
 				if constexpr (DOUT == 1) {
@@ -299,9 +300,9 @@ namespace Langulus::Math
 						return pcFrac((p.xxyz() + p.yzzw()) * p.zywx());
 					}
 				}
-				else LANGULUS_ASSERT("Hash function with this output doesn't exist, for input 4");
+				else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 4");
 			}
-			else LANGULUS_ASSERT("Hash function with this input doesn't exist");
+			else LANGULUS_ERROR("Hash function with this input doesn't exist");
 		}
 	};
 
@@ -313,14 +314,14 @@ namespace Langulus::Math
 	}
 
 	template<class T>
-	NOD() T pcMSinHash(const TVec<T, 2>& p) noexcept {
-		T h = pcDot(p, TVec<T, 2>(T(127.1), T(311.7)));
+	NOD() T pcMSinHash(const TVector<T, 2>& p) noexcept {
+		T h = pcDot(p, TVector<T, 2>(T(127.1), T(311.7)));
 		return pcFrac(pcSin(h) * T(43758.5453123));
 	}
 
 	template<class T>
-	NOD() T pcMSinHash(const TVec<T, 3>& p) noexcept {
-		T h = pcDot(p, TVec<T, 3>(T(127.1), T(311.7), T(758.5453123)));
+	NOD() T pcMSinHash(const TVector<T, 3>& p) noexcept {
+		T h = pcDot(p, TVector<T, 3>(T(127.1), T(311.7), T(758.5453123)));
 		return pcFrac(pcSin(h) * T(43758.5453123));
 	}
 

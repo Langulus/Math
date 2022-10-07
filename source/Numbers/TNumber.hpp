@@ -25,11 +25,17 @@ namespace Langulus::Math
 	///	4. Gives a layer for integration with langulus flows and verbs			
 	///																								
 	template<class T, class WRAPPER = T>
-	class TNumber {
-	public:
+	struct TNumber {
 		LANGULUS(NUMBER) T;
 
-		T mValue;
+		T mValue {};
+
+	public:
+		constexpr TNumber() noexcept = default;
+
+		template<class ALTT>
+		constexpr TNumber(const ALTT& a) noexcept
+			: mValue {static_cast<T>(a)} {}
 	};
 
 	using uint8 = TNumber<::std::uint8_t>;

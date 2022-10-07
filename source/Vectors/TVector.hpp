@@ -7,6 +7,7 @@
 ///																									
 #pragma once
 #include "../Numbers/TVectorComponent.hpp"
+#include "../Functions/Arithmetics.hpp"
 #include "../TGradient.hpp"
 
 /*LANGULUS_DECLARE_TRAIT(Position, "Position trait");
@@ -16,29 +17,23 @@ LANGULUS_DECLARE_TRAIT(Acceleration, "Acceleration trait");*/
 namespace Langulus::Math
 {
 
-	template<CT::Vector> class TForce;
-	template<CT::Vector> class TNormal;
-	template<CT::Vector> class TSampler;
-	template<CT::Vector> class TSizer;
+	template<CT::Vector> struct TForce;
+	template<CT::Vector> struct TNormal;
+	template<CT::Vector> struct TSampler;
+	template<CT::Vector> struct TSize;
 
 	namespace A
 	{
 
-		///																							
-		/// An abstract vector																	
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// vector																					
-		///																							
 		struct Vector {
 			LANGULUS(ABSTRACT) true;
 			LANGULUS(CONCRETE) vec4;
 		};
 
-		///																							
-		/// An abstract vector of specific size											
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// vector of the same size															
-		///																							
 		template<Count S>
 		struct VectorOfSize : public Vector {
 			LANGULUS(CONCRETE) TVector<Real, S>;
@@ -47,11 +42,8 @@ namespace Langulus::Math
 			static_assert(S > 0, "Vector size must be greater than zero");
 		};
 
-		///																							
-		/// An abstract vector of specific type											
 		/// Used as an imposed base for any type that can be interpretable as a	
 		/// vector of the same type															
-		///																							
 		template<CT::DenseNumber T>
 		struct VectorOfType : public Vector {
 			LANGULUS(CONCRETE) TVector<T, 4>;
@@ -60,12 +52,6 @@ namespace Langulus::Math
 		};
 
 	} // namespace Langulus::Math::A
-
-
-	/// See my thread here:																		
-	/// https://stackoverflow.com/questions/56585548/									
-	#define LANGULUS_CONDITIONAL_MEMBER(CONDITION, TYPE, NAME) \
-		[[no_unique_address]] Conditional<(CONDITION), TYPE, decltype([]{})> NAME;
 
 
 	///																								
@@ -92,34 +78,7 @@ namespace Langulus::Math
 		template<CT::DenseNumber N>
 		static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
-		union {
-			// Array representation														
-			T mArray[S] = {};
-
-			struct {
-				// xyzw-tail representation											
-				T x;
-				LANGULUS_CONDITIONAL_MEMBER(S > 1, T, y);
-				LANGULUS_CONDITIONAL_MEMBER(S > 2, T, z);
-				LANGULUS_CONDITIONAL_MEMBER(S > 3, T, w);
-			};
-
-			struct {
-				// uvst representation													
-				T u;
-				LANGULUS_CONDITIONAL_MEMBER(S > 1, T, v);
-				LANGULUS_CONDITIONAL_MEMBER(S > 2, T, s);
-				LANGULUS_CONDITIONAL_MEMBER(S > 3, T, t);
-			};
-
-			struct {
-				// rgba representation													
-				T r;
-				LANGULUS_CONDITIONAL_MEMBER(S > 1, T, g);
-				LANGULUS_CONDITIONAL_MEMBER(S > 2, T, b);
-				LANGULUS_CONDITIONAL_MEMBER(S > 3, T, a);
-			};
-		};
+		T mArray[S] = {};
 
 	public:
 		constexpr TVector() noexcept = default;
@@ -544,16 +503,6 @@ namespace Langulus::Math
 
 	template<TARGS(RHS), class N>
 	NOD() auto operator == (const N&, const TVEC(RHS)&);
-
-	/// Not equal																					
-	template<TARGS(LHS), TARGS(RHS)>
-	NOD() auto operator != (const TVEC(LHS)&, const TVEC(RHS)&);
-
-	template<TARGS(LHS), class N>
-	NOD() auto operator != (const TVEC(LHS)&, const N&);
-
-	template<TARGS(RHS), class N>
-	NOD() auto operator != (const N&, const TVEC(RHS)&);
 
 } // namespace Langulus::Math
 

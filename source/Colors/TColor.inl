@@ -12,12 +12,6 @@
 namespace Langulus::Math
 {
 
-	/// Construct color from vector															
-	///	@param other - the vector to copy												
-	TEMPLATE()
-	constexpr TColor<T>::TColor(const T& other)
-		: T {other} {}
-
 	/// Covert a console color to a 3-component color									
 	///	@param from - the console color to create from								
 	TEMPLATE()
@@ -32,24 +26,28 @@ namespace Langulus::Math
 
 		switch (from) {
 		case Logger::DarkBlue:
+		case Logger::DarkBlueBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[2] = 0.5;
 			else
 				mArray[2] = 128;
 			break;
 		case Logger::Blue:
+		case Logger::BlueBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[2] = 1.0;
 			else
 				mArray[2] = 255;
 			break;
 		case Logger::DarkGreen:
+		case Logger::DarkGreenBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[1] = 0.5;
 			else
 				mArray[1] = 128;
 			break;
 		case Logger::DarkCyan:
+		case Logger::DarkCyanBgr:
 			if constexpr (CT::Real<MemberType>) {
 				mArray[0] = mArray[1] = 0.33333;
 				mArray[2] = 0.5;
@@ -60,6 +58,7 @@ namespace Langulus::Math
 			}
 			break;
 		case Logger::Cyan:
+		case Logger::CyanBgr:
 			if constexpr (CT::Real<MemberType>) {
 				mArray[0] = mArray[1] = 0.5;
 				mArray[2] = 1.0;
@@ -70,30 +69,35 @@ namespace Langulus::Math
 			}
 			break;
 		case Logger::Green:
+		case Logger::GreenBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[1] = 1.0;
 			else
 				mArray[1] = 255;
 			break;
 		case Logger::DarkRed:
+		case Logger::DarkRedBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = 0.5;
 			else
 				mArray[0] = 128;
 			break;
 		case Logger::DarkPurple:
+		case Logger::DarkPurpleBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = mArray[2] = 0.5;
 			else
 				mArray[0] = mArray[2] = 128;
 			break;
 		case Logger::Purple:
+		case Logger::PurpleBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = mArray[2] = 1.0;
 			else
 				mArray[0] = mArray[2] = 255;
 			break;
 		case Logger::DarkYellow:
+		case Logger::DarkYellowBgr:
 			if constexpr (CT::Real<MemberType>) {
 				mArray[0] = 0.5;
 				mArray[1] = 0.333333;
@@ -103,13 +107,15 @@ namespace Langulus::Math
 				mArray[1] = 85;
 			}
 			break;
-		case Logger::Gray:
+		case Logger::DarkGray:
+		case Logger::DarkGrayBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = mArray[1] = mArray[2] = 0.33333;
 			else
 				mArray[0] = mArray[1] = mArray[2] = 85;
 			break;
 		case Logger::Yellow:
+		case Logger::YellowBgr:
 			if constexpr (CT::Real<MemberType>) {
 				mArray[0] = 1.0;
 				mArray[1] = 0.5;
@@ -120,22 +126,34 @@ namespace Langulus::Math
 			}
 			break;
 		case Logger::Red:
+		case Logger::RedBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = 1.0;
 			else
 				mArray[0] = 255;
 			break;
 		case Logger::White:
+		case Logger::WhiteBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = mArray[1] = mArray[2] = 1.0;
 			else
 				mArray[0] = mArray[1] = mArray[2] = 255;
 			break;
 		case Logger::Gray:
+		case Logger::GrayBgr:
 			if constexpr (CT::Real<MemberType>)
 				mArray[0] = mArray[1] = mArray[2] = 0.5;
 			else
 				mArray[0] = mArray[1] = mArray[2] = 128;
+			break;
+		case Logger::Black:
+		case Logger::BlackBgr:
+		case Logger::NoForeground:
+		case Logger::NoBackground:
+			if constexpr (CT::Real<MemberType>)
+				mArray[0] = mArray[1] = mArray[2] = 0.0;
+			else
+				mArray[0] = mArray[1] = mArray[2] = 0;
 			break;
 		}
 	}
@@ -143,7 +161,7 @@ namespace Langulus::Math
 	/// Copy a channel																			
 	TEMPLATE()
 	template<CT::DenseNumber ALTT, CT::Dimension D>
-	constexpr TColor<T>& TColor<T>::operator = (const TColorChannel<ALTT, D>& com) noexcept {
+	constexpr TColor<T>& TColor<T>::operator = (const TColorComponent<ALTT, D>& com) noexcept {
 		static_assert(D::Index < MemberCount, "Index out of bounds");
 		mArray[D::Index] = Adapt(com.mValue);
 		return *this;

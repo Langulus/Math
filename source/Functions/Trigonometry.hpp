@@ -100,23 +100,6 @@ namespace Langulus::Math
 
 
 	///																								
-	///	Types																						
-	///																								
-	
-	/// Type used for representing angles in degrees									
-	template<CT::Dense T>
-	struct Degrees {
-		T mValue;
-	};
-
-	/// Type used for representing angles in radians									
-	template<CT::Dense T>
-	struct Radians {
-		T mValue;
-	};
-
-
-	///																								
 	///	Functions																				
 	///																								
 
