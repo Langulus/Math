@@ -11,92 +11,77 @@
 namespace Langulus::Math
 {
 
-	template<class T> class TRay;
+	template<CT::Vector> struct TRay;
 
 	using Ray2 = TRay<Point2>;
 	using Ray3 = TRay<Point3>;
+	using Ray = Ray3;
+
+	namespace A
+	{
+
+		///																							
+		///	An abstract ray																	
+		///																							
+		struct Ray {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) ::Langulus::Math::Ray;
+			LANGULUS_BASES(Primitive);
+		};
+
+	} // namespace Langulus::Math::A
 
 
 	///																								
-	///	An abstract ray																		
+	///	A ray																						
+	/// A line segment with a discrete starting point, but no ending point		
 	///																								
-	PC_DECLARE_ABSTRACT_DATA(Ray);
-
-
-	///																								
-	///	A concrete ray																			
-	///																								
-	template<class T>
-	class TRay {
-	public:
-		static_assert(pcHasBase<T, AVector>, "TRay base must inherit a vector");
+	template<CT::Vector T>
+	struct TRay {
+		LANGULUS(POD) CT::POD<T>;
+		LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+		LANGULUS_BASES(A::Ray);
 
 		using PointType = T;
-		using MemberType = typename T::MemberType;
-		static constexpr pcptr MemberCount = T::MemberCount;
+		using typename T::MemberType;
+		using T::MemberCount;
+		static_assert(MemberCount > 1, "Rays don't exist below two dimensions");
 
-		REFLECT_MANUALLY(TRay) {
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "Ray";
-				if constexpr (MemberCount != 3)
-					name += MemberCount;
-				if constexpr (!Same<MemberType, real>)
-					name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a ray of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(ARay));
-			reflection.template SetMembers<ME>(
-				REFLECT_MEMBER_TRAIT(mOrigin, Position), 
-				REFLECT_MEMBER_TRAIT(mNormal, Aim));
-			return reflection;
-		}
+		T mOrigin {};
+		T mNormal {};
 
 	public:
-		/// Construction																			
 		constexpr TRay() = default;
+
 		constexpr TRay(const T& position, const T& normal) noexcept
-			: mOrigin(position)
-			, mNormal(normal.Normalize()) {}
+			: mOrigin {position}
+			, mNormal {normal.Normalize()} {}
 
 		/// Check if ray is degenerate														
-		constexpr bool IsDegenerate() const noexcept {
+		NOD() constexpr bool IsDegenerate() const noexcept {
 			return mNormal.Length() == 0;
 		}
 
 		/// Get a point along the ray															
-		constexpr T Point(const MemberType& distance) const noexcept {
-			const T offset = mNormal * distance;
-			return mOrigin + offset;
+		NOD() constexpr T Point(const MemberType& distance) const noexcept {
+			return mOrigin + mNormal * distance;
 		}
 
 		/// Move the ray origin 																
-		constexpr ME& Step(const MemberType& distance) noexcept {
+		NOD() constexpr TRay& Step(const MemberType& distance) noexcept {
 			mOrigin += mNormal * distance;
 			return *this;
 		}
 
-		constexpr ME Stepped(const MemberType& distance) const noexcept {
-			ME copy = *this;
+		NOD() constexpr TRay Stepped(const MemberType& distance) const noexcept {
+			TRay copy = *this;
 			return copy.Step(distance);
 		}
 
 		/// Self-dot the ray																		
-		constexpr float Dot() const noexcept {
-			return pcDot(mOrigin, mNormal);
+		NOD() constexpr MemberType Dot() const noexcept {
+			return Dot(mOrigin, mNormal);
 		}
-
-	public:
-		T mOrigin = {};
-		T mNormal = {};
 	};
-
-	PC_DEFINE_ABSTRACT_DATA(Ray, "An abstract ray primitive",
-		Ray3, REFLECT_BASE(APrimitive));
 
 } // namespace Langulus::Math

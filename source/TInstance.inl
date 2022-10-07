@@ -5,7 +5,10 @@
 /// Distributed under GNU General Public License v3+									
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
-#define TEMPLATE() template<ComplexNumber T>
+#pragma once 
+#include "TInstance.hpp"
+
+#define TEMPLATE() template<CT::Vector T>
 #define TME() TInstance<T>
 
 namespace Langulus::Math
@@ -18,7 +21,7 @@ namespace Langulus::Math
 	TEMPLATE()
 	typename TME()::RangeType TME()::GetRange(Level level) const {
 		const auto halfSize = GetScale() * MemberType(0.5);
-		const auto factor = pcPow(Level::Unit, real(mLevel - level));
+		const auto factor = Pow(Level::Unit, mLevel - level);
 		const auto position = GetPosition();
 		return RangeType {position - halfSize, position + halfSize} * factor;
 	}
@@ -57,8 +60,8 @@ namespace Langulus::Math
 
 		// Then recalculate min/max values of the new AABB						
 		return {
-			pcMin(points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7]),
-			pcMax(points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7])
+			Min(points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7]),
+			Max(points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7])
 		};
 	}
 
@@ -120,7 +123,7 @@ namespace Langulus::Math
 	///	@return the scale																		
 	TEMPLATE()
 	typename TME()::SizeType TME()::GetScale(Level level) const {
-		const auto factor = pcPow(Level::Unit, MemberType(mLevel - level));
+		const auto factor = pcPow(Level::Unit, mLevel - level);
 		return GetScale() * factor;
 	}
 
@@ -143,7 +146,7 @@ namespace Langulus::Math
 	///	@return the position																	
 	TEMPLATE()
 	typename TME()::PointType TME()::GetPosition(Level level) const {
-		const auto factor = pcPow(Level::Unit, MemberType(mLevel - level));
+		const auto factor = Pow(Level::Unit, mLevel - level);
 		return GetPosition() * factor;
 	}
 
@@ -166,7 +169,7 @@ namespace Langulus::Math
 	///	@return the model matrix															
 	TEMPLATE()
 	typename TME()::MatrixType TME()::GetModelTransform(Level level) const {
-		const auto factor = pcPow(Level::Unit, MemberType(mLevel - level));
+		const auto factor = Pow(Level::Unit, mLevel - level);
 		const auto translate = GetPosition() * factor;
 		auto scale = GetScale() * factor;
 		if (scale.IsDegenerate())
@@ -205,7 +208,7 @@ namespace Langulus::Math
 	TEMPLATE()
 	void TME()::ConstrainPosition(const TME()& limits, const RangeType& range) {
 		// Clamp inside object															
-		constexpr auto half = MemberType(0.5);
+		constexpr MemberType half {.5};
 		const auto thisscale = GetScale() * half;
 		const auto otherscale = limits.GetScale() * half;
 		const auto innerscale = (otherscale + thisscale) * range.mMin;
@@ -256,7 +259,7 @@ namespace Langulus::Math
 	///	@param range - the symbolic range for modifying the volume				
 	///	@return the generated position													
 	TEMPLATE()
-	typename TME()::PointType TME()::RandomPosition(PCMRNG& rng, const RangeType& range) const {
+	typename TME()::PointType TME()::RandomPosition(RNG& rng, const RangeType& range) const {
 		// Clamp inside object															
 		const auto thisscale = GetScale() * MemberType(0.5);
 		const auto innerscale = thisscale * range.mMin;
@@ -270,32 +273,33 @@ namespace Langulus::Math
 		) * MemberType(2) - MemberType(1);
 
 		auto newpos = rnewpos * (outerscale - innerscale);
-		newpos[0] += innerscale[0] * pcSign(newpos[0]);
-		newpos[1] += innerscale[1] * pcSign(newpos[1]);
-		newpos[2] += innerscale[2] * pcSign(newpos[2]);
+		newpos[0] += innerscale[0] * Sign(newpos[0]);
+		newpos[1] += innerscale[1] * Sign(newpos[1]);
+		newpos[2] += innerscale[2] * Sign(newpos[2]);
 		return newpos + GetPosition();
 	}
 
 	/// Rotate by euler angles																	
 	///	@param sign - the sign of the rotation											
-	///	@param angle - the oriented angle, in degrees or radians					
+	///	@param angle - the oriented angle												
 	///	@param relative - whether or not the angle is relative to current		
 	TEMPLATE()
-	template<Dimension AXIS, bool RAD>
-	void TME()::Rotate(MemberType sign, const TAngle<MemberType, AXIS, RAD>& angle, bool relative) {
+	template<CT::Angle A, CT::Dimension D>
+	void TME()::Rotate(MemberType sign, const TAngle<A, D>& angle, bool relative) {
 		if (relative) {
 			// The rotation axis is relative											
 			mAim *= QuatType::FromAngle(angle * sign);
 		}
 		else {
 			// The rotation axis is absolute											
-			if constexpr (AXIS == Dimension::X)
-				mAim *= QuatType::FromAxisAngle(GetRight(), angle.GetRadians() * sign);
-			else if constexpr (AXIS == Dimension::Y)
-				mAim *= QuatType::FromAxisAngle(GetUp(), angle.GetRadians() * sign);
-			else if constexpr (AXIS == Dimension::Z)
-				mAim *= QuatType::FromAxisAngle(GetForward(), angle.GetRadians() * sign);
-			else LANGULUS_ASSERT("Unsupported axis");
+			if constexpr (CT::Same<D, Traits::X>)
+				mAim *= QuatType::FromAxisAngle(GetRight(), angle * sign);
+			else if constexpr (CT::Same<D, Traits::Y>)
+				mAim *= QuatType::FromAxisAngle(GetUp(), angle * sign);
+			else if constexpr (CT::Same<D, Traits::Z>)
+				mAim *= QuatType::FromAxisAngle(GetForward(), angle * sign);
+			else
+				LANGULUS_ERROR("Unsupported dimension");
 		}
 	}
 
@@ -318,7 +322,7 @@ namespace Langulus::Math
 	///	@param relative - whether or not size is relative to current			
 	TEMPLATE()
 	template<class K>
-	void TME()::Move(MemberType sign, const TSizer<K>& sizer, bool relative) {
+	void TME()::Move(MemberType sign, const TSize<K>& sizer, bool relative) {
 		if (relative)
 			mScale += sizer * sign;
 		else
@@ -355,10 +359,10 @@ namespace Langulus::Math
 	///	@param verb - movement verb														
 	TEMPLATE()
 	void TME()::Move(Verb& verb) {
-		const auto& argument = verb.GetArgument();
-		const auto sign = pcSign(verb.GetMass());
+		const auto sign = Sign(verb.GetMass());
 		bool relative = false;
-		argument.ForEachDeep([&](const Block& part) {
+
+		verb.ForEachDeep([&](const Block& part) {
 			// Read relativity first													
 			part.ForEach([&relative](const Trait& trait) {
 				if (trait.TraitIs<Traits::Relative>())
@@ -546,11 +550,6 @@ namespace Langulus::Math
 			&& mSimLevelChange == other.mSimLevelChange
 			&& mUseLevelChange == other.mUseLevelChange
 			&& mLevel == other.mLevel;
-	}
-
-	TEMPLATE()
-	bool TME()::operator != (const TInstance& other) const noexcept {
-		return !(*this == other);
 	}
 
 } // namespace Langulus::Math

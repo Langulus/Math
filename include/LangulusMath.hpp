@@ -10,12 +10,4 @@
 #include "../source/Randomness.hpp"
 #include "../source/TInstance.hpp"
 #include "../source/TGradient.hpp"
-#include "../source/TFraction.hpp"
-
-
-namespace Langulus::Math
-{
-
-	bool RegisterTypes();
-
-} // namespace Langulus::Math
+#include "../source/Numbers/TAngle.hpp"

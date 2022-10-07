@@ -170,10 +170,7 @@ namespace Langulus::Math
 	/// Serialize the color to flow code													
 	TEMPLATE()
 	TColor<T>::operator Flow::Code() const {
-		Flow::Code result;
-		result += RTTI::MetaData::Of<TColor>();
-		T::WriteBody(result);
-		return result;
+		return Serialize<TColor>();
 	}
 
 	/// Covert to a console color																

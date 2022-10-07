@@ -48,48 +48,23 @@ namespace Langulus::Math
 	///	Templated quaternion																	
 	///																								
 	template<CT::DenseNumber T>
-	class TQuaternion {
-	public:
-		using MemberType = T;
-		static constexpr Count MemberCount = 4;
+	struct TQuaternion : public TVector<T, 4> {
+		using Base = TVector<T, 4>;
+		using Base::Base;
+		using Base::mArray;
 
-		T mArray[4] {0, 0, 0, 1};
-
-	public:
-		constexpr TQuaternion() noexcept = default;
-
-		/// Copy construction																	
-		///	@param a - the quaternion to copy											
-		constexpr TQuaternion(const TQuaternion& a) noexcept
-			: mArray {a.mArray[0], a.mArray[1], a.mArray[2], a.mArray[3]} { }
-
-		/// Manual construction																	
-		///	@param a - x component															
-		///	@param b - y component															
-		///	@param c - c component															
-		///	@param d - w component															
-		constexpr TQuaternion(const T& a, const T& b, const T& c, const T& d) noexcept
-			: mArray {a, b, c, d} { }
-
-		/// Creation from dense memory														
-		///	@param ar - beginning of array to copy										
-		constexpr TQuaternion(const T* ar) noexcept
-			: mArray {ar[0], ar[1], ar[2], ar[3]} { }
-
-		/// Creation from sparse memory														
-		///	@param ar - beginning of pointer array to copy							
-		constexpr TQuaternion(const T** ar) noexcept
-			: mArray {*ar[0], *ar[1], *ar[2], *ar[3]} { }
+		/// Default quaternion construction to identity									
+		constexpr TQuaternion() noexcept
+			: Base {0, 0, 0, 1} {}
 
 		/// Construct a roll (around Z) quaternion from 2x2 matrix					
 		///	@param matrix - 2x2 matrix to convert to a roll quaternion			
 		constexpr TQuaternion(const TMatrix<T, 2, 2>& matrix) noexcept {
-			const auto trace = T(1) + matrix[0] + matrix[3];
-			const auto S = pcSqrt(trace) * T(2);
-			mArray[0] = mArray[1] = T(0);
+			const auto trace = T {1} + matrix[0] + matrix[3];
+			const auto S = Sqrt(trace) * T {2};
+			mArray[0] = mArray[1] = T {0};
 			mArray[2] = (matrix[2] - matrix[1]) / S;
-			mArray[3] = T(0.25) * S;
-			return;
+			mArray[3] = T {.25} *S;
 		}
 
 		/// Constructor from 3x3 matrix														
@@ -99,34 +74,39 @@ namespace Langulus::Math
 			const auto m21 = mat.Get(1, 0), m22 = mat.Get(1, 1), m23 = mat.Get(1, 2);
 			const auto m31 = mat.Get(2, 0), m32 = mat.Get(2, 1), m33 = mat.Get(2, 2);
 			const auto trace = m11 + m22 + m33;
+			constexpr T one {1};
+			constexpr T quarter {.25};
+			constexpr T two {2};
+			constexpr T half {.5};
+
 			T s;
 			if (trace > 0) {
-				s = T(0.5) / pcSqrt(trace + T(1.0));
-				mArray[3] = T(0.25) / s;
+				s = half / Sqrt(trace + one);
+				mArray[3] = quarter / s;
 				mArray[0] = (m32 - m23) * s;
 				mArray[1] = (m13 - m31) * s;
 				mArray[2] = (m21 - m12) * s;
 			}
 			else if (m11 > m22 && m11 > m33) {
-				s = T(2.0) * pcSqrt(T(1.0) + m11 - m22 - m33);
+				s = two * Sqrt(one + m11 - m22 - m33);
 				mArray[3] = (m32 - m23) / s;
-				mArray[0] = T(0.25) * s;
+				mArray[0] = quarter * s;
 				mArray[1] = (m12 + m21) / s;
 				mArray[2] = (m13 + m31) / s;
 			}
 			else if (m22 > m33) {
-				s = T(2.0) * pcSqrt(T(1.0) + m22 - m11 - m33);
+				s = two * Sqrt(one + m22 - m11 - m33);
 				mArray[3] = (m13 - m31) / s;
 				mArray[0] = (m12 + m21) / s;
-				mArray[1] = T(0.25) * s;
+				mArray[1] = quarter * s;
 				mArray[2] = (m23 + m32) / s;
 			}
 			else {
-				s = T(2.0) * pcSqrt(T(1.0) + m33 - m11 - m22);
+				s = two * Sqrt(one + m33 - m11 - m22);
 				mArray[3] = (m21 - m12) / s;
 				mArray[0] = (m13 + m31) / s;
 				mArray[1] = (m23 + m32) / s;
-				mArray[2] = T(0.25) * s;
+				mArray[2] = quarter * s;
 			}
 		}
 
@@ -167,105 +147,17 @@ namespace Langulus::Math
 			return mArray;
 		}
 
-		/// Get the magnitude of the quaternion											
-		///	@return the scalar magnitude													
-		NOD() constexpr T Length() const noexcept {
-			T accum = mArray[0] * mArray[0];
-			for (int i = 1; i < MemberCount; ++i)
-				accum += mArray[i] * mArray[i];
-			return pcSqrt(accum);
-		}
-
 		/// Quaterion-quaternion product														
 		///	@param lhs - the left operand													
 		///	@param rhs - the right operand												
 		///	@return the product of the two provided quaternions					
-		NOD() friend ME operator * (const ME& lhs, const ME& rhs) noexcept {
+		NOD() friend TQuaternion operator * (const TQuaternion& lhs, const TQuaternion& rhs) noexcept {
 			return {
 				lhs.mArray[0] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[0] + lhs.mArray[1] * rhs.mArray[2] - lhs.mArray[2] * rhs.mArray[1],
 				lhs.mArray[1] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[1] + lhs.mArray[2] * rhs.mArray[0] - lhs.mArray[0] * rhs.mArray[2],
 				lhs.mArray[2] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[2] + lhs.mArray[0] * rhs.mArray[1] - lhs.mArray[1] * rhs.mArray[0],
 				lhs.mArray[3] * rhs.mArray[3] - lhs.mArray[0] * rhs.mArray[0] - lhs.mArray[1] * rhs.mArray[1] - lhs.mArray[2] * rhs.mArray[2]
 			};
-		}
-
-		/// Quaterion * Vector																	
-		template<class K, pcptr C>
-		NOD() friend TVector<K, C> operator * (const ME& me, const TVector<K, C>& point) noexcept requires(C >= 2) {
-			ME vecQuat;
-			if constexpr (C == 2)
-				vecQuat = {static_cast<T>(point[0]), static_cast<T>(point[1]), T(0), T(0)};
-			else
-				vecQuat = {static_cast<T>(point[0]), static_cast<T>(point[1]), static_cast<T>(point[2]), T(0)};
-
-			const ME resQuat = (me.Conjugate() * vecQuat) * me;
-			return {resQuat.mArray};
-		}
-
-		/// Vector * Quaterion																	
-		template<class K, pcptr C>
-		NOD() friend TVector<K, C> operator * (const TVector<K, C>& point, const ME& me) noexcept requires(C >= 2) {
-			ME vecQuat;
-			if constexpr (C == 2)
-				vecQuat = {static_cast<T>(point[0]), static_cast<T>(point[1]), T(0), T(0)};
-			else
-				vecQuat = {static_cast<T>(point[0]), static_cast<T>(point[1]), static_cast<T>(point[2]), T(0)};
-
-			const ME resQuat = (me * vecQuat) * me.Conjugate();
-			return {resQuat.mArray};
-		}
-
-		/// Quaterion *= Quaternion															
-		friend void operator *= (ME& me, const ME& other) noexcept {
-			me = me * other;
-		}
-
-		/// Quaternion + Scalar																	
-		template<Number K>
-		NOD() friend ME operator + (const ME& me, const K& other) noexcept {
-			return SIMD::AddWrap<ME>(me.mArray, other);
-		}
-
-		/// Scalar + Quaternion																	
-		template<Number K>
-		NOD() friend ME operator + (const K& other, const ME& me) noexcept {
-			return me * other;
-		}
-
-		/// Quaternion - Scalar																	
-		template<Number K>
-		NOD() friend ME operator - (const ME& me, const K& other) noexcept {
-			return SIMD::SubtractWrap<ME>(me.mArray, other);
-		}
-
-		/// Scalar - Quaternion 																
-		template<Number K>
-		NOD() friend ME operator - (const K& other, const ME& me) noexcept {
-			return SIMD::SubtractWrap<ME>(other, me.mArray);
-		}
-
-		/// Quaternion * Scalar																	
-		template<Number K>
-		NOD() friend ME operator * (const ME& me, const K& other) noexcept {
-			return SIMD::MultiplyWrap<ME>(me.mArray, other);
-		}
-
-		/// Scalar * Quaternion 																
-		template<Number K>
-		NOD() friend ME operator * (const K& other, const ME& me) noexcept {
-			return me * other;
-		}
-
-		/// Quaternion / Scalar																	
-		template<Number K>
-		NOD() friend ME operator / (const ME& me, const K& other) noexcept {
-			return SIMD::DivideWrap<ME>(me.mArray, other);
-		}
-
-		/// Scalar / Quaternion 																
-		template<Number K>
-		NOD() friend ME operator / (const K& other, const ME& me) noexcept {
-			return SIMD::DivideWrap<ME>(other, me.mArray);
 		}
 
 		/// Create a quaternion from euler angles	in radians							
@@ -277,23 +169,24 @@ namespace Langulus::Math
 			return (qx * qy) * qz;
 		}*/
 
-		/// Create a quaternion from axis and angle in radians						
-		NOD() static constexpr ME FromAxisAngle(const TVector<T, 3>& axis, const T angle) noexcept {
-			const auto hangle = angle * T(0.5);
-			const auto sin_a = pcSin(hangle);
-			return ME(sin_a * axis[0], sin_a * axis[1], sin_a * axis[2], pcCos(hangle));
+		/// Create a quaternion from axis and angle										
+		template<CT::Angle A>
+		NOD() static constexpr TQuaternion FromAxisAngle(const TVector<T, 3>& axis, const A& angle) noexcept {
+			const auto halfangle = angle * T {0.5};
+			return {axis * Sin(halfangle), Cos(halfangle)};
 		}
 
-		/// Create a quaternion from an angle												
-		template<Dimension AXIS, bool RAD>
-		NOD() static constexpr ME FromAngle(const TAngle<T, AXIS, RAD>& angle) noexcept {
-			if constexpr (AXIS == Dimension::X)
-				return FromAxisAngle(Vectors::Right<T>, angle.GetRadians());
-			else if constexpr (AXIS == Dimension::Y)
-				return FromAxisAngle(Vectors::Up<T>, angle.GetRadians());
-			else if constexpr (AXIS == Dimension::Z)
-				return FromAxisAngle(Vectors::Forward<T>, angle.GetRadians());
-			else LANGULUS_ASSERT("Unsupported axis");
+		/// Create a quaternion from an oriented angle									
+		template<CT::Angle A, CT::Dimension D>
+		NOD() static constexpr TQuaternion FromAngle(const TAngle<A, D>& angle) noexcept {
+			if constexpr (CT::Same<D, Traits::X>)
+				return FromAxisAngle(Vectors::Right<T>, angle);
+			else if constexpr (CT::Same<D, Traits::Y>)
+				return FromAxisAngle(Vectors::Up<T>, angle);
+			else if constexpr (CT::Same<D, Traits::Z>)
+				return FromAxisAngle(Vectors::Forward<T>, angle);
+			else
+				LANGULUS_ERROR("Unsupported dimension");
 		}
 
 		/// Constructor from axii and angles												
@@ -320,7 +213,7 @@ namespace Langulus::Math
 		}*/
 
 		/// Quaternion look at																	
-		constexpr ME& LookAt(const TVector<T, 3>& dir) noexcept {
+		constexpr TQuaternion& LookAt(const TVector<T, 3>& dir) noexcept {
 			auto look = (*this) * Vectors::Forward<T>;
 			auto axis = dir % look;
 			auto angle = T(1) / dir.Dot(look);
@@ -353,51 +246,124 @@ namespace Langulus::Math
 		}
 
 		/// Get conjugated quaternion															
-		NOD() constexpr ME Conjugate() const noexcept {
+		NOD() constexpr TQuaternion Conjugate() const noexcept {
 			auto result = *this * T(-1);
 			result[3] *= T(-1);
 			return result;
 		}
 
 		/// Get normalized quaternion															
-		NOD() constexpr ME Normalize() const {
-			const auto l = Length();
-			if (l == T(0))
-				throw Except::Arithmetic("Degenerate quaternion");
-
-			const auto t = T(1) / l;
-			return *this * t;
+		NOD() constexpr TQuaternion Normalize() const {
+			return Base::Normalize();
 		}
 
 		/// Conjugate operator																	
-		NOD() constexpr ME operator - () const noexcept {
+		NOD() constexpr TQuaternion operator - () const noexcept {
 			return Conjugate();
 		}
 
 		/// Convert to a 4x4 matrix															
-		template<RealNumber K = T>
-		NOD() explicit constexpr operator TMat<K, 4, 4>() const noexcept {
-			using VectorType = TVec<K, 3>;
-			return pcCompose<VectorType>(*this);
+		template<CT::DenseNumber K = T>
+		NOD() explicit constexpr operator TMatrix<K, 4, 4>() const noexcept {
+			return pcCompose<TVector<K, 3>>(*this);
 		}
 
 		/// Convert to a 3x3 matrix															
-		template<RealNumber K = T>
-		NOD() explicit constexpr operator TMat<K, 3, 3>() const noexcept {
-			using VectorType = TVec<K, 3>;
-			return pcCompose<VectorType>(*this);
+		template<CT::DenseNumber K = T>
+		NOD() explicit constexpr operator TMatrix<K, 3, 3>() const noexcept {
+			return pcCompose<TVector<K, 3>>(*this);
 		}
 
 		///																							
 		///	Compare																				
 		///																							
-		NOD() friend constexpr bool operator == (const ME& lhs, const ME& rhs) noexcept {
-			return pcNear(lhs[0], rhs[0])
-				&& pcNear(lhs[1], rhs[1])
-				&& pcNear(lhs[2], rhs[2])
-				&& pcNear(lhs[3], rhs[3]);
-		}
+		using Base::operator ==;
 	};
+
+
+	/// Quaterion * Vector																		
+	///	@param lhs - left hand side quaternion											
+	///	@param rhs - right hand side vector of at least 2 components			
+	///	@return a lossless product of the two											
+	template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
+	NOD() auto operator * (const TQuaternion<T1>& lhs, const TVector<T2, C>& rhs) noexcept requires(C >= 2) {
+		using LT = Lossless<T1, T2>;
+		const TQuaternion<LT> vecQuat {TVector<T2, 3>(rhs), 0};
+		return TVector<LT, C> {(lhs.Conjugate() * vecQuat) * lhs};
+	}
+
+	/// Vector * Quaterion																		
+	///	@param lhs - left hand side vector of at least 2 components				
+	///	@param rhs - right hand side quaternion										
+	///	@return a lossless product of the two											
+	template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
+	NOD() auto operator * (const TVector<T1, C>& lhs, const TQuaternion<T2>& rhs) noexcept requires(C >= 2) {
+		using LT = Lossless<T1, T2>;
+		const TQuaternion<LT> vecQuat {TVector<T2, 3>(lhs), 0};
+		return TVector<LT, C> {(lhs * vecQuat) * rhs.Conjugate()};
+	}
+
+	/// Quaterion *= Quaternion																
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	void operator *= (TQuaternion<T1>& lhs, const TQuaternion<T2>& rhs) noexcept {
+		lhs = lhs * rhs;
+	}
+
+	/// Quaternion + Scalar																		
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator + (const TQuaternion<T1>& lhs, const T2& rhs) noexcept {
+		using LT = Lossless<T1, T2>;
+		return SIMD::AddWrap<TQuaternion<LT>>(lhs.mArray, rhs);
+	}
+
+	/// Scalar + Quaternion																		
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator + (const T1& lhs, const TQuaternion<T2>& rhs) noexcept {
+		using LT = Lossless<T1, T2>;
+		return SIMD::AddWrap<TQuaternion<LT>>(lhs, rhs.mArray);
+	}
+
+	/// Quaternion - Scalar																		
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator - (const TQuaternion<T1>& lhs, const T2& rhs) noexcept {
+		using LT = Lossless<T1, T2>;
+		return SIMD::SubtractWrap<TQuaternion<LT>>(lhs.mArray, rhs);
+	}
+
+	/// Scalar - Quaternion 																	
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator - (const T1& lhs, const TQuaternion<T2>& rhs) noexcept {
+		using LT = Lossless<T1, T2>;
+		return SIMD::SubtractWrap<TQuaternion<LT>>(lhs, rhs.mArray);
+	}
+
+	/// Quaternion * Scalar																		
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator * (const TQuaternion<T1>& lhs, const T2& rhs) noexcept {
+		using LT = Lossless<T1, T2>;
+		return SIMD::MultiplyWrap<TQuaternion<LT>>(lhs.mArray, rhs);
+	}
+
+	/// Scalar * Quaternion 																	
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator * (const T1& lhs, const TQuaternion<T2>& rhs) noexcept {
+		using LT = Lossless<T1, T2>;
+		return SIMD::MultiplyWrap<TQuaternion<LT>>(lhs, rhs.mArray);
+	}
+
+	/// Quaternion / Scalar																		
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator / (const TQuaternion<T1>& lhs, const T2& rhs) {
+		using LT = Lossless<T1, T2>;
+		return SIMD::DivideWrap<TQuaternion<LT>>(lhs.mArray, rhs);
+	}
+
+	/// Scalar / Quaternion 																	
+	template<CT::DenseNumber T1, CT::DenseNumber T2>
+	NOD() auto operator / (const T1& lhs, const TQuaternion<T2>& rhs) {
+		using LT = Lossless<T1, T2>;
+		return SIMD::DivideWrap<TQuaternion<LT>>(lhs, rhs.mArray);
+	}
 
 
 	/// Compose a transformation matrix by combining position, orientation		
@@ -424,17 +390,18 @@ namespace Langulus::Math
 		auto& sy = s[1];
 		auto& sz = s[2];
 
-		result.Get(0, 0) = (K(1) - (yy + zz)) * sx;
+		constexpr K one {1};
+		result.Get(0, 0) = (one - (yy + zz)) * sx;
 		result.Get(1, 0) = (xy + wz) * sx;
 		result.Get(2, 0) = (xz - wy) * sx;
 
 		result.Get(0, 1) = (xy - wz) * sy;
-		result.Get(1, 1) = (K(1) - (xx + zz)) * sy;
+		result.Get(1, 1) = (one - (xx + zz)) * sy;
 		result.Get(2, 1) = (yz + wx) * sy;
 
 		result.Get(0, 2) = (xz + wy) * sz;
 		result.Get(1, 2) = (yz - wx) * sz;
-		result.Get(2, 2) = (K(1) - (xx + yy)) * sz;
+		result.Get(2, 2) = (one - (xx + yy)) * sz;
 
 		result.SetPosition(p);
 		return result;

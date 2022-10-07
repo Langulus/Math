@@ -54,8 +54,8 @@ namespace Langulus::Math
 	template<CT::Vector T>
 	struct TNormal : public T {
 		using PointType = T;
-		using MemberType = typename T::MemberType;
-		static constexpr Count MemberCount = T::MemberCount;
+		using typename T::MemberType;
+		using T::MemberCount;
 		static_assert(MemberCount > 1, "Normal size must be greater than one");
 		LANGULUS_BASES(A::NormalOfSize<MemberCount>, A::NormalOfType<MemberType>);
 
@@ -70,10 +70,7 @@ namespace Langulus::Math
 
 		/// Convert from any normal to text													
 		NOD() explicit operator Flow::Code() const {
-			Flow::Code result;
-			result += RTTI::MetaData::Of<TNormal>();
-			T::WriteBody(result);
-			return result;
+			return Serialize<TNormal>();
 		}
 	};
 

@@ -56,8 +56,8 @@ namespace Langulus::Math
 	template<CT::Vector T>
 	struct TSampler : public T {
 		using PointType = T;
-		using MemberType = typename T::MemberType;
-		static constexpr Count MemberCount = T::MemberCount;
+		using typename T::MemberType;
+		using T::MemberCount;
 		static_assert(MemberCount > 0, "Sampler size must be greater than zero");
 		LANGULUS_BASES(A::SamplerOfSize<MemberCount>, A::SamplerOfType<MemberType>);
 
@@ -67,10 +67,7 @@ namespace Langulus::Math
 
 		/// Convert from any sampler to text												
 		NOD() explicit operator Flow::Code() const {
-			Flow::Code result;
-			result += RTTI::MetaData::Of<TNormal>();
-			T::WriteBody(result);
-			return result;
+			return Serialize<TSampler>();
 		}
 	};
 

@@ -18,11 +18,11 @@
 ///																									
 SCENARIO("Parsing GASM", "[gasm]") {
 	GIVEN("1) The GASM script: - 4 ^ 2") {
-		const GASM gasm = "- 4 ^ 2";
+		const Flow::Code gasm = "- 4 ^ 2";
 
 		WHEN("Parsed without optimization") {
-			Any required = Verb::From<Verbs::Add>(
-				Verb::From<Verbs::Exponent>(real(4), real(2))
+			Any required = Verbs::Add(
+				Verbs::Exponent(Real(2)).SetSource(Real(4))
 			).SetMass(-1);
 
 			const auto parsed = gasm.Parse(false);
@@ -33,7 +33,7 @@ SCENARIO("Parsing GASM", "[gasm]") {
 		}
 
 		WHEN("Parsed with optimization") {
-			Any required = real(-16);
+			Any required = Real(-16);
 
 			const auto parsed = gasm.Parse();
 			DUMP_STUFF;

@@ -6,14 +6,20 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "../Vectors.hpp"
-#include "../Ranges.hpp"
 #include "../Matrices/TMatrix.hpp"
+#include "../Functions/Trigonometry.hpp"
 
-namespace Langulus::Math
+namespace Langulus::Math::A
 {
 
-	PC_DECLARE_AND_DEFINE_ABSTRACT_DATA(Primitive, "An abstract primitive", void);
-	PC_DECLARE_AND_DEFINE_ABSTRACT_DATA(Topology, "An abstract topology", void, REFLECT_BASE(APrimitive));
+	struct Primitive {
+		LANGULUS(INFO) "An abstract primitive";
+		LANGULUS(ABSTRACT) true;
+	};
 
-} // namespace Langulus::Math
+	struct Topology : public Primitive {
+		LANGULUS(INFO) "An abstract topology";
+		LANGULUS_BASES(Primitive);
+	};
+
+} // namespace Langulus::Math::A

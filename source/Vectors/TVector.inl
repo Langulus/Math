@@ -136,28 +136,30 @@ namespace Langulus::Math
 	/// Write the body of the vector (reused in vector specializations)			
 	///	@param result - [out] the resulting body										
 	TEMPLATE()
-	void TME()::WriteBody(Flow::Code& result) const {
-		if constexpr (S > 1)
+	template<class TOKEN>
+	Anyness::Text TME()::Serialize() {
+		Anyness::Text result;
+		if constexpr (S > 1 || !CT::Same<TME(), TOKEN>) {
+			result += RTTI::MetaData::Of<TOKEN>();
 			result += Flow::Code::OpenScope;
+		}
 
 		for (Offset i = 0; i < S; ++i) {
-			result += (*this)[i];
+			result += Text {mArray[i]};
 			if (i < S - 1)
 				result += ", ";
 		}
 
-		if constexpr (S > 1)
+		if constexpr (S > 1 || !CT::Same<TME(), TOKEN>)
 			result += Flow::Code::CloseScope;
+
+		return Abandon(result);
 	}
 
 	/// Convert from any vector to text														
 	TEMPLATE()
 	TME()::operator Flow::Code() const {
-		Flow::Code result;
-		if constexpr (S > 1)
-			result += RTTI::MetaData::Of<TVector>();
-		WriteBody(result);
-		return result;
+		return Serialize<TME()>();
 	}
 
 	/// Get the value of a specific component index										
@@ -269,16 +271,22 @@ namespace Langulus::Math
 	///	@returns a proxy vector with the selected components						
 	TEMPLATE()
 	template<Offset... I>
-	auto TME()::Swz() noexcept {
-		return Inner::TProxyVector<T, S, I...> {*this};
+	decltype(auto) TME()::Swz() noexcept {
+		if constexpr (sizeof...(I) == 1)
+			return mArray[I...];
+		else
+			return Inner::TProxyVector<T, S, I...> {*this};
 	}
 
 	/// Immutable swizzle, just returns a shuffled vector								
 	///	@returns a simple vector with the selected copied components			
 	TEMPLATE()
 	template<Offset... I>
-	constexpr auto TME()::Swz() const noexcept {
-		return TVector<T, sizeof...(I)>(mArray[I]...);
+	constexpr decltype(auto) TME()::Swz() const noexcept {
+		if constexpr (sizeof...(I) == 1)
+			return mArray[I...];
+		else
+			return TVector<T, sizeof...(I)>(mArray[I]...);
 	}
 
 	/// Cast the vector to another number type, with the ability to normalize	

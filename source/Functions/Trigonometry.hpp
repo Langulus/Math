@@ -145,11 +145,11 @@ namespace Langulus::Math
 	/// Returns the arc tangent of y/x														
 	///	@attention if angle is not Radians or Degrees, it is assumed radians	
 	///	@param a - the angle																	
-	template<CT::Dense T>
-	inline auto Atan2(const T& a, const T& b) noexcept {
-		if constexpr (CT::HasAtan2<T>)
+	template<CT::Dense T1, CT::Dense T2>
+	inline auto Atan2(const T1& a, const T2& b) noexcept {
+		if constexpr (CT::HasAtan2<T1, T2>)
 			return a.Atan2(b);
-		else if constexpr (CT::Real<T>)
+		else if constexpr (CT::Real<T1, T2>)
 			return ::std::atan2(b, a);
 		else
 			return ::std::atan2(static_cast<Real>(b), static_cast<Real>(a));

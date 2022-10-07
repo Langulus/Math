@@ -15,74 +15,66 @@
 
 #define PC_TINSTANCE_VERBOSE(a) // pcLogSelfVerbose << a
 
-LANGULUS_DECLARE_TRAIT(ModelTransform, "Model transformation matrix trait");
-LANGULUS_DECLARE_TRAIT(Solid, "Solidity state");
-LANGULUS_DECLARE_TRAIT(Pickable, "Pickability state (true to be able to select with mouse)");
-LANGULUS_DECLARE_TRAIT(Signed, "Signed state (inverts domains/geometry; flips faces; negates numbers)");
-LANGULUS_DECLARE_TRAIT(Bilateral, "Bilateral state (doublesidedness)");
-LANGULUS_DECLARE_TRAIT(Static, "Static state");
-LANGULUS_DECLARE_TRAIT(Boundness, "Boundness state (shifts control from simulation to user and vice-versa)");
-LANGULUS_DECLARE_TRAIT(Relative, "Relativity trait");
+LANGULUS_DEFINE_TRAIT(Transformation,
+	"Model transformation trait");
+LANGULUS_DEFINE_TRAIT(Solid,
+	"Solidity state");
+LANGULUS_DEFINE_TRAIT(Pickable,
+	"Pickability state (true to be able to select with mouse)");
+LANGULUS_DEFINE_TRAIT(Signed,
+	"Signed state (inverts domains/geometry; flips faces; negates numbers)");
+LANGULUS_DEFINE_TRAIT(Bilateral,
+	"Bilateral state (doublesidedness)");
+LANGULUS_DEFINE_TRAIT(Static,
+	"Static state");
+LANGULUS_DEFINE_TRAIT(Boundness,
+	"Boundness state (shifts control from simulation to user and vice-versa)");
+LANGULUS_DEFINE_TRAIT(Relative,
+	"Relativity trait");
 
-PC_DECLARE_VERB(Move, Move, "Move and rotate instances");
+namespace Langulus::Verbs
+{
+
+	/// Move verb																					
+	/// Performs spatial movement/rotation on a physical instance					
+	struct Move : public StaticVerb<Move> {
+		LANGULUS(VERB) "Move";
+		LANGULUS(INFO) "Performs spatial movement/rotation on physical instances";
+
+		template<CT::Data T, CT::Data... A>
+		static constexpr bool AvailableFor() noexcept;
+		template<CT::Data T, CT::Data... A>
+		static constexpr auto Of() noexcept;
+
+		template<CT::Data T>
+		static bool ExecuteIn(T&, Verb&);
+	};
+
+} // namespace Langulus::Verbs
+
 
 namespace Langulus::Math
 {
 
 	using LevelRange = TRange<Level>;
 
+
 	///																								
 	///	SPATIAL INSTANCE																		
 	///																								
 	/// Provides higher level functionality regarding rotation, translation,	
-	/// scaling, primitive collisions, etc.												
+	/// scaling, primitive collisions.														
 	///																								
-	template<ComplexNumber T>
+	template<CT::Vector T>
 	class TInstance {
 	public:
 		using PointType = T;
-		using MemberType = typename PointType::MemberType;
-		static_assert(RealNumber<MemberType>, "Instance must be made of real numbers");
-		static constexpr pcptr MemberCount = PointType::MemberCount;
-		using MatrixType = TMat<MemberType, MemberCount + 1, MemberCount + 1>;
-		using RangeType = TRange<MemberType, MemberCount>;
-		using QuatType = TQuat<MemberType>;
-		using SizeType = TSizer<PointType>;
-
-		REFLECT_MANUALLY(TInstance) {
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "TInstance";
-				name += MemberCount;
-				if (!Same<MemberType, real>)
-					name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a physical instance of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetMembers<ME>(
-				REFLECT_MEMBER_TRAIT(mPosition, Position),
-				REFLECT_MEMBER_TRAIT(mVelocity, Velocity),
-				REFLECT_MEMBER_TRAIT(mAcceleration, Acceleration),
-				REFLECT_MEMBER_TRAIT(mAim, Aim),
-				REFLECT_MEMBER_TRAIT(mScale, Scale),
-				REFLECT_MEMBER_TRAIT(mSimBoundness, Boundness),
-				REFLECT_MEMBER_TRAIT(mUseBoundness, Boundness),
-				REFLECT_MEMBER_TRAIT(mSolid, Solid),
-				REFLECT_MEMBER_TRAIT(mPickable, Pickable),
-				REFLECT_MEMBER_TRAIT(mSigned, Signed),
-				REFLECT_MEMBER_TRAIT(mBilateral, Bilateral),
-				REFLECT_MEMBER_TRAIT(mStatic, Static),
-				REFLECT_MEMBER_TRAIT(mLevel, Level)
-			);
-			reflection.template SetAbilities<ME>(
-				REFLECT_ABILITY(Move)
-			);
-
-			return reflection;
-		}
+		using typename T::MemberType;
+		using T::MemberCount;
+		using MatrixType = TMatrix<MemberType, MemberCount + 1, MemberCount + 1>;
+		using RangeType = TRange<T>;
+		using QuatType = TQuaternion<MemberType>;
+		using SizeType = TSize<T>;
 
 	public:
 		TInstance() noexcept = default;
@@ -118,16 +110,18 @@ namespace Langulus::Math
 		template<bool RELATIVE = false>
 		void SetPosition(const PointType&);
 
-		NOD() PointType RandomPosition(PCMRNG&, const RangeType&) const;
+		NOD() PointType RandomPosition(RNG&, const RangeType&) const;
 
-		template<Dimension AXIS, bool RAD>
-		void Rotate(MemberType, const TAngle<MemberType, AXIS, RAD>&, bool relative = false);
+		void Move(Verb&);
+
+		template<CT::Angle A, CT::Dimension D>
+		void Rotate(MemberType, const TAngle<A, D>&, bool relative = false);
 
 		template<class K>
 		void Move(MemberType, const TNormal<K>&, bool relative = false);
 
 		template<class K>
-		void Move(MemberType, const TSizer<K>&, bool relative = false);
+		void Move(MemberType, const TSize<K>&, bool relative = false);
 
 		template<class K>
 		void Move(MemberType, const TPoint<K>&, bool relative = false);
@@ -135,16 +129,13 @@ namespace Langulus::Math
 		template<class K>
 		void Move(MemberType, const TForce<K>&, bool relative = false);
 
-		PC_VERB(Move);
-
 		void ChangeLevel(MemberType, const Level&, bool relative = false);
 
 		bool operator == (const TInstance&) const noexcept;
-		bool operator != (const TInstance&) const noexcept;
 
 	public:
 		// Optional parent for inheriting transformations						
-		Ptr<TInstance<T>> mParent;
+		Anyness::Ptr<TInstance<T>> mParent;
 
 		// Position in space																
 		PointType mPosition;
@@ -186,7 +177,8 @@ namespace Langulus::Math
 
 		// Instance solidity. Solid instances are colliders.					
 		// Nonsolid instances are never tested for collision.					
-		// Volumes of water/air/etc. have partial solidity, causing drag	
+		// Volumes of water/air can have partial solidity, causing drag	
+		// 1 is perfect solidity, while 0 is perfect permittance				
 		MemberType mSolid = 0;
 
 		// Pickable instances are selectable by mouse ray						
@@ -197,10 +189,10 @@ namespace Langulus::Math
 		// It also changes the face winding if not doublesided				
 		bool mSigned = false;
 
-		// Doublesidedness																
+		// Doublesidedness for degenerative shapes								
 		bool mBilateral = false;
 
-		// Static instances are never updated. Used as optimization			
+		// Static instances are never updated (optimization only)			
 		bool mStatic = false;
 
 		// Octave change incurred by simulation									

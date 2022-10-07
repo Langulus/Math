@@ -66,8 +66,7 @@ namespace Langulus::Math
 	///																								
 	#pragma pack(push, 1)
 	template<CT::DenseNumber T, Count S>
-	class TVector {
-	public:
+	struct TVector {
 		LANGULUS(POD) true;
 		LANGULUS(NULLIFIABLE) true;
 		LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>);
@@ -104,7 +103,8 @@ namespace Langulus::Math
 		template<CT::DenseNumber ALTT, Count ALTS, ALTT DEFAULT>
 		constexpr void Initialize(const TVector<ALTT, ALTS>&) noexcept;
 
-		void WriteBody(Flow::Code&) const;
+		template<class TOKEN>
+		static Anyness::Text Serialize();
 
 		NOD() explicit operator Flow::Code() const;
 
@@ -131,9 +131,9 @@ namespace Langulus::Math
 		NOD() constexpr bool IsDegenerate() const noexcept;
 
 		template<Offset... I>
-		NOD() auto Swz() noexcept;
+		NOD() decltype(auto) Swz() noexcept;
 		template<Offset... I>
-		NOD() constexpr auto Swz() const noexcept;
+		NOD() constexpr decltype(auto) Swz() const noexcept;
 
 		template<Offset... I>
 		static constexpr bool SwzRequirements = S > Max(0U, I...);
@@ -148,10 +148,10 @@ namespace Langulus::Math
 			}
 
 		/// 1D Swizzlers																			
-		/*PC_VSWIZZLE(x, 0U)
+		PC_VSWIZZLE(x, 0U)
 		PC_VSWIZZLE(y, 1U)
 		PC_VSWIZZLE(z, 2U)
-		PC_VSWIZZLE(w, 3U)*/
+		PC_VSWIZZLE(w, 3U)
 
 		/// 2D Swizzlers																			
 		#define PC_VSWIZZLE2(name, ...) \
@@ -269,6 +269,7 @@ namespace Langulus::Math
 		NOD() explicit constexpr operator N () const noexcept requires (S == 1 && IsCompatible<N>);
 	};
 	#pragma pack(pop)
+
 
 	namespace Inner
 	{

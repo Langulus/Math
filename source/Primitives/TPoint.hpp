@@ -6,12 +6,12 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "APrimitive.hpp"
+#include "Primitive.hpp"
 
 namespace Langulus::Math
 {
 
-	template<class T> class TPoint;
+	template<CT::Vector> struct TPoint;
 
 	using Point1 = TPoint<vec1>;
 	using Point2 = TPoint<vec2>;
@@ -19,78 +19,46 @@ namespace Langulus::Math
 
 	using Point = Point3;
 
+	namespace A
+	{
 
-	///																								
-	///	An abstract point																		
-	///																								
-	PC_DECLARE_ABSTRACT_DATA(Point);
+		///																								
+		///	An abstract point, also used as a topology type								
+		///																								
+		struct Point {
+			LANGULUS(ABSTRACT) true;
+			LANGULUS(CONCRETE) ::Langulus::Math::Point;
+			LANGULUS_BASES(Topology);
+		};
+
+	} // namespace Langulus::Math::A
 
 
 	///																								
 	///	A concrete point																		
 	///																								
 	#pragma pack(push, 1)
-	template<class T>
-	class EMPTY_BASE() TPoint : public T {
-	public:
-		static_assert(pcHasBase<T, AVector>, "TPoint base must inherit a vector");
+	template<CT::Vector T>
+	struct TPoint : public T {
+		LANGULUS_BASES(A::Point, T);
 
 		using PointType = T;
-		using MemberType = typename T::MemberType;
-		static constexpr pcptr MemberCount = T::MemberCount;
-
-		REFLECT_MANUALLY(TPoint) {
-			static_assert(pcIsPOD<ME>, "Must be POD");
-			static_assert(pcIsNullifiable<ME>, "Must be NULLIFIABLE");
-			static_assert(pcIsPOD<T>, "Must be POD");
-			static_assert(pcIsNullifiable<T>, "Must be NULLIFIABLE");
-			static_assert(sizeof(ME) == sizeof(T), "Size mismatch");
-			static_assert(sizeof(MemberType) * MemberCount == sizeof(ME), "Size mismatch");
-			static GASM name, info;
-			if (name.IsEmpty()) {
-				name += "Point";
-				if constexpr (MemberCount != 3)
-					name += MemberCount;
-				if constexpr (!Same<MemberType, real>)
-					name.TypeSuffix<MemberType>();
-				name = name.StandardToken();
-				info += "a point of type ";
-				info += DataID::Reflect<T>()->GetToken();
-			}
-
-			auto reflection = RTTI::ReflectData::From<ME>(name, info);
-			reflection.template SetBases<ME>(
-				REFLECT_BASE(APoint),
-				REFLECT_BASE(T));
-			reflection.template SetAbilities<ME>(
-				REFLECT_CONVERSIONS(GASM));
-			return reflection;
-		}
-
-	public:
+		using typename T::MemberType;
+		using T::MemberCount;
 		using T::T;
 
-		constexpr TPoint(const T& other)
-			: T{ other } {}
-
-		/// Convert from any normal to text													
-		NOD() explicit operator GASM() const {
-			GASM result;
-			result += DataID::Of<ME>;
-			T::WriteBody(result);
-			return result;
+		/// Convert from any point to text													
+		NOD() explicit operator Flow::Code() const {
+			return Serialize<TPoint>();
 		}
 
 		/// Calculate signed distance															
 		///	@param point - point to check distance from								
 		///	@return the distance to the primitive										
-		NOD() MemberType SD(const T& point) const {
+		NOD() auto SignedDistance(const T& point) const {
 			return (point - *this).Length();
 		}
 	};
 	#pragma pack(pop)
-
-	PC_DEFINE_ABSTRACT_DATA(Point, "An abstract point primitive",
-		Point3, REFLECT_BASE(ATopology));
 
 } // namespace Langulus::Math

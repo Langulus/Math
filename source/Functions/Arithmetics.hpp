@@ -170,7 +170,7 @@ namespace Langulus::Math
 		if constexpr (CT::HasSign<T>)
 			return a.Sign();
 		else if constexpr (CT::Unsigned<T>) {
-			(a);
+			(void) a;
 			return T {1};
 		}
 		else if constexpr (CT::Signed<T>)

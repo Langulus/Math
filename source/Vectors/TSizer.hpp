@@ -55,8 +55,8 @@ namespace Langulus::Math
 	template<CT::Vector T>
 	struct TSize : public T {
 		using PointType = T;
-		using MemberType = typename T::MemberType;
-		static constexpr Count MemberCount = T::MemberCount;
+		using typename T::MemberType;
+		using T::MemberCount;
 		static_assert(MemberCount > 0, "Force size must be greater than zero");
 		LANGULUS_BASES(A::SizeOfSize<MemberCount>, A::SizeOfType<MemberType>);
 		LANGULUS(NULLIFIABLE) false;
@@ -85,12 +85,9 @@ namespace Langulus::Math
 			mArray[D::Index] = Adapt(a.mValue);
 		}
 
-		/// Convert from any sizer to text													
+		/// Convert from any size to text													
 		NOD() explicit operator Flow::Code() const {
-			Flow::Code result;
-			result += RTTI::MetaData::Of<TSize>();
-			T::WriteBody(result);
-			return result;
+			return Serialize<TSize>();
 		}
 	};
 

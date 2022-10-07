@@ -14,6 +14,7 @@ namespace Langulus::Math
 {
 
 	using namespace ::Langulus::SIMD;
+	using ::Langulus::Flow::Verb;
 
 } // namespace Langulus::Math
 
