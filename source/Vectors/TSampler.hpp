@@ -8,6 +8,8 @@
 #pragma once
 #include "TVector.hpp"
 
+LANGULUS_DEFINE_TRAIT(Sampler, "Texture coordinates");
+
 namespace Langulus::Math
 {
 
@@ -53,7 +55,7 @@ namespace Langulus::Math
 	///	A templated sampler																	
 	/// It's just a vector, specialized for accessing textures/volumes			
 	///																								
-	template<CT::Vector T>
+	template<CT::ScalarOrVector T>
 	struct TSampler : public T {
 		using PointType = T;
 		using typename T::MemberType;

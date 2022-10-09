@@ -15,11 +15,11 @@ TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]", vec2u8, vec2u16, vec2u
 
 		WHEN("Interpreted as number") {
 			THEN("Requirements should be met") {
-				REQUIRE(meta->template CastsTo<A::Number>());
-				REQUIRE(!meta->template CastsTo<A::Number>(1));
-				REQUIRE(meta->template CastsTo<A::Number>(2));
-				REQUIRE(!meta->template CastsTo<A::Number>(3));
-				REQUIRE(!meta->template CastsTo<A::Number>(4));
+				REQUIRE(meta->template CastsTo<Langulus::A::Number>());
+				REQUIRE(!meta->template CastsTo<Langulus::A::Number>(1));
+				REQUIRE(meta->template CastsTo<Langulus::A::Number>(2));
+				REQUIRE(!meta->template CastsTo<Langulus::A::Number>(3));
+				REQUIRE(!meta->template CastsTo<Langulus::A::Number>(4));
 			}
 		}
 	}

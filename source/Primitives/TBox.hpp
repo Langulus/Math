@@ -11,20 +11,20 @@
 namespace Langulus::Math
 {
 
-	///																								
-	/// 2D/3D box with varying dimensions, centered around origin					
-	///																								
-	/// An example unit 2D quad, centered at origin:									
-	///			  ^ +Y																			
-	///			  |																				
-	///	+---------------+	(.5, .5) mOffsets from origin								
-	///	|					 |																		
-	///	|					 |																		
-	///	|		  +		 |--> +X																
-	///	|	  origin		 |																		
-	///	|					 |																		
-	///	+---------------+																		
-	///																								
+	///																							|	
+	/// 2D/3D box with varying dimensions, centered around origin				|	
+	///																							|	
+	/// An example unit 2D quad, centered at origin:								|	
+	///			  ^ +Y																		|	
+	///			  |																			|	
+	///	+---------------+	(.5, .5) mOffsets from origin							|	
+	///	|					 |																	|	
+	///	|					 |																	|	
+	///	|		  +		 |--> +X															|	
+	///	|	  origin		 |																	|	
+	///	|					 |																	|	
+	///	+---------------+																	|	
+	///																							|	
 	template<CT::Vector T>
 	struct TBox {
 		LANGULUS(POD) true;
@@ -44,19 +44,19 @@ namespace Langulus::Math
 	};
 
 
-	///																								
-	/// 2D/3D rounded box with varying dimensions, centered around origin		
-	///																								
-	///			  ^ +Y																			
-	///			  |																				
-	///	 /-------------\+	(.5, .5) mOffsets from origin								
-	///	/					 \																		
-	///	|					 |																		
-	///	|		  +		 |--> +X																
-	///	|	  origin		 |																		
-	///	\					 /																		
-	///	 \-------------/	<- mRadius from origin of rounded parts				
-	///																								
+	///																							|	
+	/// 2D/3D rounded box with varying dimensions, centered around origin	|	
+	///																							|	
+	///			  ^ +Y																		|	
+	///			  |																			|	
+	///	 /-------------\+	(.5, .5) mOffsets from origin							|	
+	///	/					 \																	|	
+	///	|					 |																	|	
+	///	|		  +		 |--> +X															|	
+	///	|	  origin		 |																	|	
+	///	\					 /																	|	
+	///	 \-------------/	<- mRadius from origin of rounded parts			|	
+	///																							|	
 	template<CT::Vector T>
 	struct TBoxRounded : public TBox<T> {
 		using Base = TBox<T>;

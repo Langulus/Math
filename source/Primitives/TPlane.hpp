@@ -16,7 +16,8 @@ namespace Langulus::Math
 	///																								
 	template<CT::Vector T>
 	struct TPlane {
-		LANGULUS(POD) true;
+		LANGULUS(POD) CT::POD<T>;
+		LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
 		LANGULUS_BASES(A::Primitive);
 
 		using PointType = T;
@@ -24,7 +25,10 @@ namespace Langulus::Math
 		static constexpr Count MemberCount = T::MemberCount;
 		static_assert(MemberCount > 1, "Can't have one-dimensional plane");
 
-		T mNormal {Vectors::Backward<MemberType>};
+		// Default orientation is always towards user							
+		T mNormal {Cardinal::Backward<MemberType>};
+
+		// The offset of the plane, along the normal								
 		MemberType mOffset {0};
 
 	public:

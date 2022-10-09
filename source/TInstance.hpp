@@ -31,6 +31,13 @@ LANGULUS_DEFINE_TRAIT(Boundness,
 	"Boundness state (shifts control from simulation to user and vice-versa)");
 LANGULUS_DEFINE_TRAIT(Relative,
 	"Relativity trait");
+LANGULUS_DEFINE_TRAIT(Position,
+	"Position trait");
+LANGULUS_DEFINE_TRAIT(Velocity,
+	"Velocity trait");
+LANGULUS_DEFINE_TRAIT(Acceleration,
+	"Acceleration trait");
+
 
 namespace Langulus::Verbs
 {

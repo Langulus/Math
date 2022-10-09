@@ -60,6 +60,9 @@ namespace Langulus::Math
 		static_assert(MemberCount > 0, "Force size must be greater than zero");
 		LANGULUS_BASES(A::ForceOfSize<MemberCount>, A::ForceOfType<MemberType>);
 
+		// The level in which the force operates									
+		Level mLevel {};
+
 	public:
 		using T::T;
 		using T::mArray;
@@ -86,8 +89,6 @@ namespace Langulus::Math
 			return result;
 		}
 
-		// The level in which the force operates									
-		Level mLevel {};
 	};
 
 } // namespace Langulus::Math

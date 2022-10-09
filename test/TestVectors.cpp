@@ -16,39 +16,39 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 
 		WHEN("Creating a default vector") {
 			THEN("The vector must be initialized to zero") {
-				REQUIRE(Approx(x[0], T(0)));
-				REQUIRE(Approx(x[1], T(0)));
-				REQUIRE(Approx(x[2], T(0)));
-				REQUIRE(Approx(x[3], T(0)));
+				REQUIRE(x[0] == 0);
+				REQUIRE(x[1] == 0);
+				REQUIRE(x[2] == 0);
+				REQUIRE(x[3] == 0);
 			}
 		}
 
 		WHEN("Creating and asigning a vector manually") {
-			x = TVector<T, 4>(T(0), T(5), T(12), T(1));
+			x = TVector<T, 4>(0, 5, 12, 1);
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(x[0], T(0)));
-				REQUIRE(Approx(x[1], T(5)));
-				REQUIRE(Approx(x[2], T(12)));
-				REQUIRE(Approx(x[3], T(1)));
+				REQUIRE(x[0] == 0);
+				REQUIRE(x[1] == 5);
+				REQUIRE(x[2] == 12);
+				REQUIRE(x[3] == 1);
 			}
 		}
 	}
 
 	GIVEN("Two vectors and a resulting vector") {
 		using T = TestType;
-		TVector<T, 4> x(T(0), T(5), T(12), T(1));
-		TVector<T, 4> y(T(2), T(24), T(4), T(2));
+		TVector<T, 4> x(0, 5, 12, 1);
+		TVector<T, 4> y(2, 24, 4, 2);
 		TVector<T, 4> r;
 
 		WHEN("Adding the vectors") {
 			r = x + y;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(2)));
-				REQUIRE(Approx(r[1], T(29)));
-				REQUIRE(Approx(r[2], T(16)));
-				REQUIRE(Approx(r[3], T(3)));
+				REQUIRE(r[0] == 2);
+				REQUIRE(r[1] == 29);
+				REQUIRE(r[2] == 16);
+				REQUIRE(r[3] == 3);
 			}
 		}
 
@@ -56,10 +56,10 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 			r = y + x;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(2)));
-				REQUIRE(Approx(r[1], T(29)));
-				REQUIRE(Approx(r[2], T(16)));
-				REQUIRE(Approx(r[3], T(3)));
+				REQUIRE(r[0] == 2);
+				REQUIRE(r[1] == 29);
+				REQUIRE(r[2] == 16);
+				REQUIRE(r[3] == 3);
 			}
 		}
 
@@ -67,10 +67,10 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 			r = x - y;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(-2)));
-				REQUIRE(Approx(r[1], T(-19)));
-				REQUIRE(Approx(r[2], T(8)));
-				REQUIRE(Approx(r[3], T(-1)));
+				REQUIRE(r[0] == -2);
+				REQUIRE(r[1] == -19);
+				REQUIRE(r[2] == 8);
+				REQUIRE(r[3] == -1);
 			}
 		}
 
@@ -78,10 +78,10 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 			r = y - x;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(2)));
-				REQUIRE(Approx(r[1], T(19)));
-				REQUIRE(Approx(r[2], T(-8)));
-				REQUIRE(Approx(r[3], T(1)));
+				REQUIRE(r[0] == 2);
+				REQUIRE(r[1] == 19);
+				REQUIRE(r[2] == -8);
+				REQUIRE(r[3] == 1);
 			}
 		}
 
@@ -89,10 +89,10 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 			r = x * y;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(0)));
-				REQUIRE(Approx(r[1], T(120)));
-				REQUIRE(Approx(r[2], T(48)));
-				REQUIRE(Approx(r[3], T(2)));
+				REQUIRE(r[0] == 0);
+				REQUIRE(r[1] == 120);
+				REQUIRE(r[2] == 48);
+				REQUIRE(r[3] == 2);
 			}
 		}
 
@@ -100,10 +100,10 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 			r = y * x;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(0)));
-				REQUIRE(Approx(r[1], T(120)));
-				REQUIRE(Approx(r[2], T(48)));
-				REQUIRE(Approx(r[3], T(2)));
+				REQUIRE(r[0] == 0);
+				REQUIRE(r[1] == 120);
+				REQUIRE(r[2] == 48);
+				REQUIRE(r[3] == 2);
 			}
 		}
 
@@ -111,10 +111,10 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 			r = x / y;
 
 			THEN("The result should be correct") {
-				REQUIRE(Approx(r[0], T(0) / T(2)));
-				REQUIRE(Approx(r[1], T(5) / T(24)));
-				REQUIRE(Approx(r[2], T(12) / T(4)));
-				REQUIRE(Approx(r[3], T(1) / T(2)));
+				REQUIRE(r[0] == 0);
+				REQUIRE(r[1] == Approx(T(5) / T(24)));
+				REQUIRE(r[2] == Approx(T(12) / T(4)));
+				REQUIRE(r[3] == Approx(T(1) / T(2)));
 			}
 		}
 

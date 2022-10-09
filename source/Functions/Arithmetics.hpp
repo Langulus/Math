@@ -17,128 +17,128 @@ namespace Langulus::CT
 
 	/// Checks for an Abs() method															
 	template<class T>
-	concept HasAbs = requires (const Decay<T> c) {
-		{c.Abs()} -> CT::Same<T>;
+	concept HasAbs = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Abs();
 	};
 
 	/// Checks for a Round() method															
 	template<class T>
-	concept HasRound = requires (const Decay<T> c) {
-		{c.Round()} -> CT::Same<T>;
+	concept HasRound = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Round();
 	};
 
 	/// Checks for a Floor() method															
 	template<class T>
-	concept HasFloor = requires (const Decay<T> c) {
-		{c.Floor()} -> CT::Same<T>;
+	concept HasFloor = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Floor();
 	};
 
 	/// Checks for a Ceil() method															
 	template<class T>
-	concept HasCeil = requires (const Decay<T> c) {
-		{c.Ceil()} -> CT::Same<T>;
+	concept HasCeil = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Ceil();
 	};
 
 	/// Checks for a Sign() method															
 	template<class T>
-	concept HasSign = requires (const Decay<T> c) {
-		{c.Sign()} -> CT::Same<T>;
+	concept HasSign = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Sign();
 	};
 
 	/// Checks for a Sqrt() method															
 	template<class T>
-	concept HasSqrt = requires (const Decay<T> c) {
-		{c.Sqrt()} -> CT::Same<T>;
+	concept HasSqrt = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Sqrt();
 	};
 
 	/// Checks for a Frac() method															
 	template<class T>
-	concept HasFrac = requires (const Decay<T> c) {
-		{c.Frac()} -> CT::Same<T>;
+	concept HasFrac = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Frac();
 	};
 
 	/// Checks for a Pow(exponent) method													
 	template<class B, class E>
-	concept HasPow = requires (const Decay<B> b, const Decay<E> e) {
-		{b.Pow(e)} -> CT::Same<B>;
+	concept HasPow = requires (const Decay<B> a, const Decay<E> b, Decay<B> c) {
+		c = a.Pow(b);
 	};
 
 	/// Checks for a Min(x) method															
 	template<class T1, class T2>
-	concept HasMin = requires (const Decay<T1> a, const Decay<T2> b) {
-		{a.Min(b)} -> CT::Same<T1>;
+	concept HasMin = requires (const Decay<T1> a, const Decay<T2> b, Decay<T1> c) {
+		c = a.Min(b);
 	};
 
 	/// Checks for a Max(x) method															
 	template<class T1, class T2>
-	concept HasMax = requires (const Decay<T1> a, const Decay<T2> b) {
-		{a.Max(b)} -> CT::Same<T1>;
+	concept HasMax = requires (const Decay<T1> a, const Decay<T2> b, Decay<T1> c) {
+		c = a.Max(b);
 	};
 
 	/// Checks for a Mod(x) method															
 	template<class T1, class T2>
-	concept HasMod = requires (const Decay<T1> a, const Decay<T2> b) {
-		{a.Mod(b)} -> CT::Same<T1>;
+	concept HasMod = requires (const Decay<T1> a, const Decay<T2> b, Decay<T1> c) {
+		c = a.Mod(b);
 	};
 
 	/// Checks for a Dot(x) method															
 	template<class T1, class T2>
-	concept HasDot = requires (const Decay<T1> a, const Decay<T2> b) {
-		{a.Dot(b)} -> CT::Number;
+	concept HasDot = requires (const Decay<T1> a, const Decay<T2> b, Decay<T1> c) {
+		c = a.Dot(b);
 	};
 	
 	/// Checks for a Length() method															
 	template<class T>
 	concept HasLength = requires (const Decay<T> a) {
-		{a.Length()} -> CT::Number;
+		{a.Length()} -> CT::Scalar;
 	};
 	
 	/// Checks for a Sum() method																
 	template<class T>
 	concept HasSum = requires (const Decay<T> a) {
-		{a.Sum()} -> CT::Number;
+		{a.Sum()} -> CT::Scalar;
 	};
 
 	/// Checks for a Cross(x) method															
 	template<class T1, class T2>
-	concept HasCross = requires (const Decay<T1> a, const Decay<T2> b) {
-		{a.Cross(b)} -> CT::Same<T1>;
+	concept HasCross = requires (const Decay<T1> a, const Decay<T2> b, Decay<T1> c) {
+		c = a.Cross(b);
 	};
 	
 	/// Checks for a Step(edge) method														
 	template<class T, class EDGE>
-	concept HasStep = requires (const Decay<T> a, const Decay<EDGE> b) {
-		{a.Step(b)} -> CT::Same<T>;
+	concept HasStep = requires (const Decay<T> a, const Decay<EDGE> b, Decay<T> c) {
+		c = a.Step(b);
 	};
 	
 	/// Checks for a Normalize() method														
 	template<class T>
-	concept HasNormalize = requires (const Decay<T> a) {
-		{a.Normalize()} -> CT::Same<T>;
+	concept HasNormalize = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Normalize();
 	};
 	
 	/// Checks for an Exp() method															
 	template<class T>
-	concept HasExp = requires (const Decay<T> a) {
-		{a.Exp()} -> CT::Same<T>;
+	concept HasExp = requires (const Decay<T> a, Decay<T> b) {
+		b = a.Exp();
 	};
 
 	/// Checks for a Clamp(min,max) method													
 	template<class T, class MIN, class MAX>
-	concept HasClamp = requires (const Decay<T> v, const Decay<MIN> min, const Decay<MAX> max) {
-		{v.Clamp(min, max)} -> CT::Same<T>;
+	concept HasClamp = requires (const Decay<T> v, const Decay<MIN> min, const Decay<MAX> max, Decay<T> a) {
+		a = v.Clamp(min, max);
 	};
 
 	/// Checks for a ClampRev(min,max) method												
 	template<class T, class MIN, class MAX>
-	concept HasClampRev = requires (const Decay<T> v, const Decay<MIN> min, const Decay<MAX> max) {
-		{v.ClampRev(min, max)} -> CT::Same<T>;
+	concept HasClampRev = requires (const Decay<T> v, const Decay<MIN> min, const Decay<MAX> max, Decay<T> a) {
+		a = v.ClampRev(min, max);
 	};
 
 	/// Check if two types are multipliable												
 	template<class LHS, class RHS>
-	concept Multipliable = requires (const Decay<LHS> a, const Decay<RHS> b) {
-		{a * b} -> CT::Same<LHS>;
+	concept Multipliable = requires (const Decay<LHS> a, const Decay<RHS> b, Decay<LHS> c) {
+		c = a * b;
 	};
 
 } // namespace Langulus::CT
@@ -266,8 +266,7 @@ namespace Langulus::Math
 			const auto aa = static_cast<double>(a) + double {6755399441055744.0};
 			return reinterpret_cast<const int&>(aa);
 		}
-		else
-			LANGULUS_ERROR("T must either have Round() method, or be a number");
+		else LANGULUS_ERROR("T must either have Round() method, or be a number");
 	}
 
 	/// Floor																						
@@ -281,8 +280,7 @@ namespace Langulus::Math
 			const auto round_a = Round<T>(a);
 			return round_a <= a ? round_a : round_a - T {1};
 		}
-		else
-			LANGULUS_ERROR("T must either have Floor() method, or be a number");
+		else LANGULUS_ERROR("T must either have Floor() method, or be a number");
 	}
 
 	/// Floor and return an integer															
@@ -302,8 +300,7 @@ namespace Langulus::Math
 			const auto round_a = Round<T>(a);
 			return round_a >= a ? round_a : round_a + T(1);
 		}
-		else
-			LANGULUS_ERROR("T must either have Ceil() method, or be a number");
+		else LANGULUS_ERROR("T must either have Ceil() method, or be a number");
 	}
 
 	/// Ceil and return an integer															
@@ -327,11 +324,13 @@ namespace Langulus::Math
 		/// Compile time square root using binary search								
 		template<CT::Unsigned T>
 		NOD() constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept requires CT::Dense<T> {
-			return lo == hi
-				? lo
-				: ((x / ((lo + hi + T {1}) / T {2}) < ((lo + hi + T {1}) / T {2}))
-					? SqrtHelper<T>(x, lo, ((lo + hi + T {1}) / T {2}) - T {1})
-					: SqrtHelper<T>(x, ((lo + hi + T {1}) / T {2}), hi));
+			if (lo == hi)
+				return lo;
+
+			const auto lohionebytwo = (lo + hi + 1u) / 2u;
+			return (x / lohionebytwo < lohionebytwo)
+				? SqrtHelper<T>(x, lo, lohionebytwo - 1u)
+				: SqrtHelper<T>(x, lohionebytwo, hi);
 		}
 
 	} // namespace Detail
@@ -343,14 +342,15 @@ namespace Langulus::Math
 		if constexpr (CT::HasSqrt<T>)
 			return x.Sqrt();
 		else if constexpr (CT::Unsigned<T>)
-			return Detail::SqrtHelper<T>(x, 0, x / 2 + 1);
+			return Detail::SqrtHelper<T>(x, T {0}, x / T {2} + T {1});
 		else if constexpr (CT::Integer<T>) {
-			LANGULUS_ASSUME(UserAssumes, x >= 0,
+			LANGULUS_ASSUME(UserAssumes, x >= T {0},
 				"Square root of negative signed integer");
-			return T {Sqrt(::std::make_unsigned_t<T> {x})};
+			return static_cast<T>(
+				Sqrt(static_cast<::std::make_unsigned_t<T>>(x)));
 		}
 		else if constexpr (CT::Real<T>) {
-			LANGULUS_ASSUME(UserAssumes, x >= 0,
+			LANGULUS_ASSUME(UserAssumes, x >= T {0},
 				"Square root of negative real");
 
 			T p {1};
@@ -386,7 +386,7 @@ namespace Langulus::Math
 		if constexpr (CT::HasMod<T1, T2>)
 			return x.Mod(y);
 		else if constexpr (CT::Integer<T1>)
-			return x - y * T1 {Floor(RealDP{x} / RealDP{y})};
+			return x % y;
 		else if constexpr (CT::Real<T1>)
 			return x - y * Floor(x / y);
 		else
@@ -423,7 +423,7 @@ namespace Langulus::Math
 		if constexpr (CT::HasClampRev<T, MIN, MAX>)
 			return v.ClampRev(min, max);
 		else if constexpr (CT::Number<T, MIN, MAX>) {
-			const auto halfd = T {max - min} / T {2};
+			const auto halfd = (max - min) / T {2};
 			if (v > min && v < max)
 				return v - min > halfd ? max : min;
 			return v;
@@ -459,6 +459,8 @@ namespace Langulus::Math
 		if constexpr (CT::HasLength<T>)
 			return v.Length();
 		else if constexpr (CT::Number<T>)
+			return Abs(v);
+		else if constexpr (CT::Character<T>)
 			return Abs(v);
 		else
 			LANGULUS_ERROR("T must either have Length() method, or be a number");

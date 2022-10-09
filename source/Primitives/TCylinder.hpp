@@ -11,28 +11,28 @@
 namespace Langulus::Math
 {
 
-	///																								
-	/// Infinite 3D cylinder with varying radius, centered at origin				
-	/// D determines the direction of the cylinder's height							
-	///																								
-	///																								
-	///		^		^ +D	^		^																
-	///		|		|		|		|																
-	///		| _ _ | _ _	|		|																
-	///		|/		|	  \|		|																
-	///		|		+		|		|																
-	///		|\_________/|		| infinite height											
-	///		|				|		|																
-	///		|				|		v																
-	///		|		+		|	----																
-	///		|	origin	|																		
-	///		| _ _ _ _ _	|																		
-	///		|/			  \|																		
-	///		|		+		|																		
-	///		|\____|____/|																		
-	///		|		|		|																		
-	///		V		|<--->V mRadius															
-	///																								
+	///																							|	
+	/// Infinite 3D cylinder with varying radius, centered at origin			|	
+	/// D determines the direction of the cylinder's height						|	
+	///																							|	
+	///																							|	
+	///		^		^ +D	^		^															|	
+	///		|		|		|		|															|	
+	///		| _ _ | _ _	|		|															|	
+	///		|/		|	  \|		|															|	
+	///		|		+		|		|															|	
+	///		|\_________/|		| infinite height										|	
+	///		|				|		|															|	
+	///		|				|		v															|	
+	///		|		+		|	----															|	
+	///		|	origin	|																	|	
+	///		| _ _ _ _ _	|																	|	
+	///		|/			  \|																	|	
+	///		|		+		|																	|	
+	///		|\____|____/|																	|	
+	///		|		|		|																	|	
+	///		V		|<--->V mRadius														|	
+	///																							|	
 	template<CT::Vector T, CT::Dimension D = Traits::Y>
 	struct TCylinder {
 		LANGULUS(POD) true;
@@ -54,27 +54,27 @@ namespace Langulus::Math
 	};
 
 
-	///																								
-	/// Capped 3D cylinder with varying size, centered at origin					
-	/// D determines the direction of the cylinder's height							
-	///																								
-	///				^ +D																			
-	///				|																				
-	///		  ____|____																			
-	///		 /		|	  \																		
-	///		|		+		|	----																
-	///		|\_________/|		^ 																
-	///		|				|		|	mHeight													
-	///		|				|		v																
-	///		|		+		|	----																
-	///		|	origin	|																		
-	///		| _ _ _ _ _	|																		
-	///		|/			  \|																		
-	///		|		+		|																		
-	///		 \____|____/																		
-	///				|		|																		
-	///				|<--->| mRadius															
-	///																								
+	///																							|	
+	/// Capped 3D cylinder with varying size, centered at origin				|	
+	/// D determines the direction of the cylinder's height						|	
+	///																							|	
+	///				^ +D																		|	
+	///				|																			|	
+	///		  ____|____																		|	
+	///		 /		|	  \																	|	
+	///		|		+		|	----															|	
+	///		|\_________/|		^ 															|	
+	///		|				|		|	mHeight												|	
+	///		|				|		v															|	
+	///		|		+		|	----															|	
+	///		|	origin	|																	|	
+	///		| _ _ _ _ _	|																	|	
+	///		|/			  \|																	|	
+	///		|		+		|																	|	
+	///		 \____|____/																	|	
+	///				|		|																	|	
+	///				|<--->| mRadius														|	
+	///																							|	
 	template<CT::Vector T, CT::Dimension D = Traits::Y>
 	struct TCylinderCapped : public TCylinder<T, D> {
 		using Base = TCylinder<T>;

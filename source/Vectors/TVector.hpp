@@ -6,21 +6,87 @@
 /// See LICENSE file, or https://www.gnu.org/licenses									
 ///																									
 #pragma once
-#include "../Numbers/TVectorComponent.hpp"
 #include "../Functions/Arithmetics.hpp"
-#include "../TGradient.hpp"
+#include "../Functions/Trigonometry.hpp"
+#include "../Numbers/TNumber.hpp"
+#include "../Dimensions.hpp"
 
-/*LANGULUS_DECLARE_TRAIT(Position, "Position trait");
-LANGULUS_DECLARE_TRAIT(Velocity, "Velocity trait");
-LANGULUS_DECLARE_TRAIT(Acceleration, "Acceleration trait");*/
+#define TARGS(a) CT::DenseNumber a##T, Count a##S, int a##D
+#define TVEC(a) TVector<a##T, a##S, a##D>
+#define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
+#define TME() TVector<T, S, DEFAULT>
+
 
 namespace Langulus::Math
 {
 
+	template<CT::DenseNumber T, CT::Dimension D>
+	struct TVectorComponent;
+
+	template<CT::DenseNumber T, Count C, int DEFAULT = 0>
+	struct TVector;
+
 	template<CT::Vector> struct TForce;
 	template<CT::Vector> struct TNormal;
-	template<CT::Vector> struct TSampler;
-	template<CT::Vector> struct TSize;
+	template<CT::ScalarOrVector> struct TSampler;
+	template<CT::ScalarOrVector> struct TSize;
+
+	using vec1 = TVector<Real, 1>;
+	using vec1f = TVector<RealSP, 1>;
+	using vec1d = TVector<RealDP, 1>;
+	using vec1i = TVector<signed, 1>;
+	using vec1u = TVector<unsigned, 1>;
+	using vec1i8 = TVector<::std::int8_t, 1>;
+	using vec1u8 = TVector<uint8, 1>;
+	using vec1i16 = TVector<::std::int16_t, 1>;
+	using vec1u16 = TVector<::std::uint16_t, 1>;
+	using vec1i32 = TVector<::std::int32_t, 1>;
+	using vec1u32 = TVector<::std::uint32_t, 1>;
+	using vec1i64 = TVector<::std::int64_t, 1>;
+	using vec1u64 = TVector<::std::uint64_t, 1>;
+
+	using vec2 = TVector<Real, 2>;
+	using vec2f = TVector<RealSP, 2>;
+	using vec2d = TVector<RealDP, 2>;
+	using vec2i = TVector<signed, 2>;
+	using vec2u = TVector<unsigned, 2>;
+	using vec2i8 = TVector<::std::int8_t, 2>;
+	using vec2u8 = TVector<uint8, 2>;
+	using vec2i16 = TVector<::std::int16_t, 2>;
+	using vec2u16 = TVector<::std::uint16_t, 2>;
+	using vec2i32 = TVector<::std::int32_t, 2>;
+	using vec2u32 = TVector<::std::uint32_t, 2>;
+	using vec2i64 = TVector<::std::int64_t, 2>;
+	using vec2u64 = TVector<::std::uint64_t, 2>;
+
+	using vec3 = TVector<Real, 3>;
+	using vec3f = TVector<RealSP, 3>;
+	using vec3d = TVector<RealDP, 3>;
+	using vec3i = TVector<signed, 3>;
+	using vec3u = TVector<unsigned, 3>;
+	using vec3i8 = TVector<::std::int8_t, 3>;
+	using vec3u8 = TVector<uint8, 3>;
+	using vec3i16 = TVector<::std::int16_t, 3>;
+	using vec3u16 = TVector<::std::uint16_t, 3>;
+	using vec3i32 = TVector<::std::int32_t, 3>;
+	using vec3u32 = TVector<::std::uint32_t, 3>;
+	using vec3i64 = TVector<::std::int64_t, 3>;
+	using vec3u64 = TVector<::std::uint64_t, 3>;
+
+	using vec4 = TVector<Real, 4>;
+	using vec4f = TVector<RealSP, 4>;
+	using vec4d = TVector<RealDP, 4>;
+	using vec4i = TVector<signed, 4>;
+	using vec4u = TVector<unsigned, 4>;
+	using vec4i8 = TVector<::std::int8_t, 4>;
+	using vec4u8 = TVector<uint8, 4>;
+	using vec4i16 = TVector<::std::int16_t, 4>;
+	using vec4u16 = TVector<::std::uint16_t, 4>;
+	using vec4i32 = TVector<::std::int32_t, 4>;
+	using vec4u32 = TVector<::std::uint32_t, 4>;
+	using vec4i64 = TVector<::std::int64_t, 4>;
+	using vec4u64 = TVector<::std::uint64_t, 4>;
+
 
 	namespace A
 	{
@@ -65,25 +131,26 @@ namespace Langulus::Math
 	/// swizzling. Proxy vectors eventually decay into conventional vectors.	
 	///																								
 	#pragma pack(push, 1)
-	template<CT::DenseNumber T, Count S>
+	TEMPLATE()
 	struct TVector {
-		LANGULUS(POD) true;
-		LANGULUS(NULLIFIABLE) true;
-		LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>);
-
 		static_assert(S >= 1, "Can't have a vector of zero size");
 		using MemberType = T;
 		static constexpr Count MemberCount = S;
+		static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
 		template<CT::DenseNumber N>
 		static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
-		T mArray[S] = {};
+		T mArray[S];
+
+		LANGULUS(POD) CT::POD<T>;
+		LANGULUS(NULLIFIABLE) DEFAULT == 0;
+		LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>);
 
 	public:
-		constexpr TVector() noexcept = default;
+		constexpr TVector() noexcept;
 
-		template<CT::DenseNumber ALTT, Count ALTS>
-		constexpr TVector(const TVector<ALTT, ALTS>&) noexcept;
+		template<TARGS(ALT)>
+		constexpr TVector(const TVEC(ALT)&) noexcept;
 
 		template<class HEAD, class... TAIL>
 		constexpr TVector(const HEAD&, const TAIL&...) noexcept requires (S > 1 && sizeof...(TAIL) > 0);
@@ -91,17 +158,14 @@ namespace Langulus::Math
 		template<CT::DenseNumber N>
 		constexpr TVector(const N&) noexcept requires IsCompatible<N>;
 
-		template<CT::SparseNumber N>
-		constexpr TVector(Deref<N>) noexcept requires IsCompatible<Decay<N>>;
+		template<CT::DenseNumber N>
+		constexpr TVector(const N*) noexcept requires IsCompatible<N>;
 
 		template<CT::Array N>
 		constexpr TVector(const N&) noexcept requires IsCompatible<Decay<N>>;
 
 		template<CT::DenseNumber N, CT::Dimension D>
 		constexpr TVector(const TVectorComponent<N, D>&) noexcept;
-
-		template<CT::DenseNumber ALTT, Count ALTS, ALTT DEFAULT>
-		constexpr void Initialize(const TVector<ALTT, ALTS>&) noexcept;
 
 		template<class TOKEN>
 		static Anyness::Text Serialize();
@@ -130,9 +194,9 @@ namespace Langulus::Math
 		NOD() constexpr T Length() const noexcept;
 		NOD() constexpr bool IsDegenerate() const noexcept;
 
-		template<Offset... I>
+		template<Offset HEAD, Offset... TAIL>
 		NOD() decltype(auto) Swz() noexcept;
-		template<Offset... I>
+		template<Offset HEAD, Offset... TAIL>
 		NOD() constexpr decltype(auto) Swz() const noexcept;
 
 		template<Offset... I>
@@ -192,7 +256,7 @@ namespace Langulus::Math
 
 		template<class AS, bool NORMALIZE = CT::Real<AS> && !CT::Real<T>>
 		NOD() constexpr TVector<AS, S> AsCast() const noexcept;
-		template<Count = Min(S, 3)>
+		template<Count = Math::Min(S, 3)>
 		NOD() constexpr auto Volume() const noexcept;
 
 
@@ -202,24 +266,24 @@ namespace Langulus::Math
 		template<CT::DenseNumber N>
 		constexpr auto& operator = (const N&) noexcept;
 
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		constexpr auto& operator = (const TVector<ALTT, ALTS>&) noexcept;
+		template<TARGS(ALT)>
+		constexpr auto& operator = (const TVEC(ALT)&) noexcept;
 
 		template<CT::DenseNumber N, CT::Dimension D>
 		constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr T Dot(const TVector<ALTT, ALTS>&) const noexcept;
+		template<TARGS(ALT)>
+		NOD() constexpr T Dot(const TVEC(ALT)&) const noexcept;
 
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr TVector<T, 3> Cross(const TVector<ALTT, ALTS>&) const noexcept requires (S >= 3 && ALTS >= 3);
+		template<TARGS(ALT)>
+		NOD() constexpr TVector<T, 3> Cross(const TVEC(ALT)&) const noexcept requires (S >= 3 && ALTS >= 3);
 
 		NOD() constexpr auto Normalize() const requires (S > 1);
 
-		template<CT::DenseNumber ALTT1 = T, Count ALTS1 = S, CT::DenseNumber ALTT2 = T, Count ALTS2 = S>
-		NOD() constexpr auto Clamp(const TVector<ALTT1, ALTS1>&, const TVector<ALTT2, ALTS2>&) const noexcept;
-		template<CT::DenseNumber ALTT1 = T, Count ALTS1 = S, CT::DenseNumber ALTT2 = T, Count ALTS2 = S>
-		NOD() constexpr auto ClampRev(const TVector<ALTT1, ALTS1>&, const TVector<ALTT2, ALTS2>&) const noexcept;
+		template<TARGS(MIN), TARGS(MAX)>
+		NOD() constexpr auto Clamp(const TVEC(MIN)&, const TVEC(MAX)&) const noexcept;
+		template<TARGS(MIN), TARGS(MAX)>
+		NOD() constexpr auto ClampRev(const TVEC(MIN)&, const TVEC(MAX)&) const noexcept;
 
 		NOD() constexpr auto Round() const noexcept;
 		NOD() constexpr auto Floor() const noexcept;
@@ -235,30 +299,30 @@ namespace Langulus::Math
 
 		NOD() static constexpr TVector Max() noexcept;
 		NOD() constexpr auto Max(const T&) const noexcept;
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Max(const TVector<ALTT, ALTS>&) const noexcept;
+		template<TARGS(ALT)>
+		NOD() constexpr auto Max(const TVEC(ALT)&) const noexcept;
 		NOD() constexpr auto HMax() const noexcept;
 
 		NOD() static constexpr TVector Min() noexcept;
 		NOD() constexpr auto Min(const T&) const noexcept;
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Min(const TVector<ALTT, ALTS>&) const noexcept;
+		template<TARGS(ALT)>
+		NOD() constexpr auto Min(const TVEC(ALT)&) const noexcept;
 		NOD() constexpr auto HMin() const noexcept;
 
 		NOD() constexpr auto HSum() const noexcept;
 		NOD() constexpr auto HMul() const noexcept;
 
 		NOD() constexpr auto Mod(const T&) const noexcept;
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Mod(const TVector<ALTT, ALTS>&) const noexcept;
+		template<TARGS(ALT)>
+		NOD() constexpr auto Mod(const TVEC(ALT)&) const noexcept;
 
 		NOD() constexpr auto Step(const T&) const noexcept;
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Step(const TVector<ALTT, ALTS>&) const noexcept;
+		template<TARGS(ALT)>
+		NOD() constexpr auto Step(const TVEC(ALT)&) const noexcept;
 
 		NOD() constexpr auto Pow(const T&) const noexcept;
-		template<CT::DenseNumber ALTT = T, Count ALTS = S>
-		NOD() constexpr auto Pow(const TVector<ALTT, ALTS>&) const noexcept;
+		template<TARGS(ALT)>
+		NOD() constexpr auto Pow(const TVEC(ALT)&) const noexcept;
 
 		auto& Sort() noexcept;
 
@@ -279,14 +343,14 @@ namespace Langulus::Math
 		///																							
 		/// Creates a shuffled representation of a source vector, and commits	
 		/// any changes to it upon destruction												
-		template<CT::DenseNumber T, Count S, Offset... I>
-		class TProxyVector : public TVector<T, sizeof...(I)> {
+		template<TARGS(V), Offset... I>
+		class TProxyVector : public TVector<VT, sizeof...(I), VD> {
 		LANGULUS(UNINSERTABLE) true;
 		private:
-			using Base = TVector<T, sizeof...(I)>;
+			using Base = TVector<VT, sizeof...(I), VD>;
 			using Base::mArray;
 
-			TVector<T, S>& mSource;
+			TVEC(V)& mSource;
 
 		private:
 			/// Commit the changes																
@@ -302,7 +366,7 @@ namespace Langulus::Math
 			TProxyVector(const TProxyVector&) = delete;
 			TProxyVector(TProxyVector&&) = delete;
 
-			TProxyVector(TVector<T,S>& source) noexcept
+			TProxyVector(TVEC(V)& source) noexcept
 				: mSource {source} {}
 
 			~TProxyVector() noexcept {
@@ -316,10 +380,6 @@ namespace Langulus::Math
 	///																								
 	///	Operations																				
 	///																								
-	#define TARGS(a) CT::DenseNumber a##T, Count a##S
-	#define TVEC(a) TVector<a##T, a##S>
-	#define TEMPLATE() template<CT::DenseNumber T, Count S>
-	#define TME() TVector<T, S>
 
 	/// Returns an inverted vector															
 	template<TARGS(RHS)>
@@ -329,40 +389,40 @@ namespace Langulus::Math
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator + (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator + (const TVEC(LHS)&, const N&) noexcept;
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator + (const N&, const TVEC(RHS)&) noexcept;
 
 	/// Returns the difference of two vectors												
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator - (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator - (const TVEC(LHS)&, const N&) noexcept;
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator - (const N&, const TVEC(RHS)&) noexcept;
 
 	/// Returns the product of two vectors													
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator * (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator * (const TVEC(LHS)&, const N&) noexcept;
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator * (const N&, const TVEC(RHS)&) noexcept;
 
 	/// Returns the division of two vectors												
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator / (const TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator / (const TVEC(LHS)&, const N&);
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator / (const N&, const TVEC(RHS)&);
 
 	/// Returns the left-shift of two integer vectors									
@@ -403,53 +463,29 @@ namespace Langulus::Math
 	template<TARGS(LHS), TARGS(RHS)>
 	auto& operator += (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator += (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Sparse<LHST>;
-
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator += (TVEC(LHS)&, const N&) noexcept;
-
-	template<TARGS(LHS), class N>
-	auto& operator += (const TVEC(LHS)&, const N&) noexcept requires CT::Sparse<LHST>;
 
 	/// Subtract																					
 	template<TARGS(LHS), TARGS(RHS)>
 	auto& operator -= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator -= (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Sparse<LHST>;
-
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator -= (TVEC(LHS)&, const N&) noexcept;
-
-	template<TARGS(LHS), class N>
-	auto& operator -= (const TVEC(LHS)&, const N&) noexcept requires CT::Sparse<LHST>;
 
 	/// Multiply																					
 	template<TARGS(LHS), TARGS(RHS)>
 	auto& operator *= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator *= (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Sparse<LHST>;
-
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator *= (TVEC(LHS)&, const N&) noexcept;
-
-	template<TARGS(LHS), class N>
-	auto& operator *= (const TVEC(LHS)&, const N&) noexcept requires CT::Sparse<LHST>;
 
 	/// Divide																						
 	template<TARGS(LHS), TARGS(RHS)>
 	auto& operator /= (TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), TARGS(RHS)>
-	auto& operator /= (const TVEC(LHS)&, const TVEC(RHS)&) requires CT::Sparse<LHST>;
-
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator /= (TVEC(LHS)&, const N&);
-
-	template<TARGS(LHS), class N>
-	auto& operator /= (const TVEC(LHS)&, const N&) requires CT::Sparse<LHST>;
 
 
 	///																								
@@ -459,51 +495,88 @@ namespace Langulus::Math
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator < (const TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator < (const TVEC(LHS)&, const N&);
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator < (const N&, const TVEC(RHS)&);
 
 	/// Bigger																						
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator > (const TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator > (const TVEC(LHS)&, const N&);
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator > (const N&, const TVEC(RHS)&);
 
 	/// Bigger or equal																			
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator >= (const TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator >= (const TVEC(LHS)&, const N&);
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator >= (const N&, const TVEC(RHS)&);
 
 	/// Smaller or equal																			
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() auto operator <= (const TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), class N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	NOD() auto operator <= (const TVEC(LHS)&, const N&);
 
-	template<TARGS(RHS), class N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	NOD() auto operator <= (const N&, const TVEC(RHS)&);
 
 	/// Equal																						
 	template<TARGS(LHS), TARGS(RHS)>
-	NOD() auto operator == (const TVEC(LHS)&, const TVEC(RHS)&);
+	NOD() bool operator == (const TVEC(LHS)&, const TVEC(RHS)&);
 
-	template<TARGS(LHS), class N>
-	NOD() auto operator == (const TVEC(LHS)&, const N&);
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() bool operator == (const TVEC(LHS)&, const N&);
 
-	template<TARGS(RHS), class N>
-	NOD() auto operator == (const N&, const TVEC(RHS)&);
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() bool operator == (const N&, const TVEC(RHS)&);
+
+
+	///																								
+	/// Cardinal vectors																			
+	///																								
+	namespace Cardinal
+	{
+
+		/// Canonical world origin																
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Origin {0, 0, 0, 0};
+
+		/// Canonical forward vector, pointing towards the screen, positive Z	
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Forward {0, 0, 1, 0};
+
+		/// Canonical backward vector, pointing towards user, in negative Z		
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Backward {0, 0, -1, 0};
+
+		/// Canonical up vector, pointing from the ground up, in positive Y		
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Up {0, 1, 0, 0};
+
+		/// Canonical down vector, pointing in gravity's direction, negative Y	
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Down {0, -1, 0, 0};
+
+		/// Canonical right vector, pointing to right hand, positive X				
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Right {1, 0, 0, 0};
+
+		/// Canonical left vector, pointing to left hand, negative X			
+		template<CT::DenseNumber T>
+		constexpr TVector<T, 4> Left {-1, 0, 0, 0};
+
+	} // Langulus::Math::Cardinal
 
 } // namespace Langulus::Math
 

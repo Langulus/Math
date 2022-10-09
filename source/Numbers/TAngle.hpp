@@ -132,7 +132,7 @@ namespace Langulus::Math
 		/// Convert from any angle to text													
 		NOD() explicit operator Flow::Code() const {
 			Flow::Code result;
-			result += RTTI::MetaData::Of<TAngle>();
+			result += MetaOf<TAngle>();
 			result += Flow::Code::OpenScope;
 			result += Text {mValue};
 			result += Flow::Code::CloseScope;

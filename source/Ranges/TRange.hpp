@@ -11,7 +11,7 @@
 namespace Langulus::Math
 {
 
-	template<CT::Vector>
+	template<CT::ScalarOrVector>
 	class TRange;
 
 	using Range1f = TRange<vec1f>;
@@ -100,7 +100,7 @@ namespace Langulus::Math
 	///	Templated range																		
 	///																								
 	#pragma pack(push, 1)
-	template<CT::Vector T>
+	template<CT::ScalarOrVector T>
 	struct TRange {
 		using PointType = T;
 		using MemberType = typename T::MemberType;
@@ -144,7 +144,7 @@ namespace Langulus::Math
 		/// Convert any range to text															
 		NOD() explicit operator Flow::Code() const {
 			Flow::Code result;
-			result += RTTI::MetaData::Of<TRange>();
+			result += MetaOf<TRange>();
 			result += Flow::Code::OpenScope;
 				result += mMin.operator Flow::Code();
 				result += ", ";

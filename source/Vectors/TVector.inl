@@ -7,24 +7,24 @@
 ///																									
 #pragma once
 #include "TVector.hpp"
+#include "../Numbers/TVectorComponent.hpp"
 
 namespace Langulus::Math
 {
 	
+	/// Default vector constructor initialized all components to DefaultMember	
+	TEMPLATE()
+	constexpr TME()::TVector() noexcept {
+		for (auto& v : mArray)
+			v = DefaultMember;
+	}
+
 	/// Copy (and convert) from same/bigger vectors of same/different types		
 	/// Also acts as a copy-constructor														
 	///	@param a - vector to copy															
 	TEMPLATE()
 	template<TARGS(ALT)>
 	constexpr TME()::TVector(const TVEC(ALT)& a) noexcept {
-		Initialize<ALTT, ALTS, ALTT {0}> (a);
-	}
-
-	/// Initialize vector from another, setting unavailable values to DEFAULT	
-	///	@param a - the vector to copy														
-	TEMPLATE()
-	template<TARGS(ALT), ALTT DEFAULT>
-	constexpr void TME()::Initialize(const TVEC(ALT)& a) noexcept {
 		if constexpr (S == 1) {
 			// No loop, just use first element										
 			*mArray = Adapt(*a.mArray);
@@ -39,7 +39,7 @@ namespace Langulus::Math
 			// Convert element-by-element												
 			const ALTT* source = a.mArray;
 			T* start = mArray;
-			auto end = mArray + Min(S, ALTS);
+			auto end = mArray + Math::Min(S, ALTS);
 
 			// Copy the available components											
 			while (start != end)
@@ -49,7 +49,7 @@ namespace Langulus::Math
 				// And fill the rest with the default value						
 				end = mArray + S;
 				while (start != end)
-					*(start++) = DEFAULT;
+					*(start++) = DefaultMember;
 			}
 		}
 	}
@@ -60,7 +60,7 @@ namespace Langulus::Math
 	template<CT::DenseNumber N>
 	constexpr TME()::TVector(const N& a) noexcept requires IsCompatible<N> {
 		if constexpr (S == 1)
-			*mArray = a;
+			*mArray = Adapt(a);
 		else {
 			const auto scalar = Adapt(a);
 			for (auto& v : mArray)
@@ -72,13 +72,10 @@ namespace Langulus::Math
 	///	@attention very unsafe																
 	///	@param a - array to copy 															
 	TEMPLATE()
-	template<CT::SparseNumber N>
-	constexpr TME()::TVector(Deref<N> a) noexcept requires IsCompatible<Decay<N>> {
-		T* start = mArray;
-		const auto end = mArray + S;
-
-		while (start != end)
-			*(start++) = Adapt(*(a++));
+	template<CT::DenseNumber N>
+	constexpr TME()::TVector(const N* a) noexcept requires IsCompatible<N> {
+		for (auto& v : mArray)
+			v = Adapt(*(a++));
 	}
 	
 	/// Construction from a bounded array													
@@ -90,10 +87,8 @@ namespace Langulus::Math
 			"This vector is too powerful for your array");
 
 		const Decay<N>* source = a;
-		T* start = mArray;
-		const auto end = mArray + Min(S, ExtentOf<N>);
-		while (start != end)
-			*(start++) = Adapt(*(source++));
+		for (auto& v : mArray)
+			v = Adapt(*(source++));
 	}
 
 	/// Manual construction via a variadic head-tail									
@@ -140,7 +135,7 @@ namespace Langulus::Math
 	Anyness::Text TME()::Serialize() {
 		Anyness::Text result;
 		if constexpr (S > 1 || !CT::Same<TME(), TOKEN>) {
-			result += RTTI::MetaData::Of<TOKEN>();
+			result += MetaOf<TOKEN>();
 			result += Flow::Code::OpenScope;
 		}
 
@@ -250,7 +245,7 @@ namespace Langulus::Math
 	///	@return the length of the vector													
 	TEMPLATE()
 	constexpr T TME()::Length() const noexcept {
-		return Sqrt(LengthSquared());
+		return Math::Sqrt(LengthSquared());
 	}
 
 	/// Check if vector is a degenerate, that is at least one component is 0	
@@ -270,23 +265,23 @@ namespace Langulus::Math
 	/// Mutable swizzle																			
 	///	@returns a proxy vector with the selected components						
 	TEMPLATE()
-	template<Offset... I>
+	template<Offset HEAD, Offset... TAIL>
 	decltype(auto) TME()::Swz() noexcept {
-		if constexpr (sizeof...(I) == 1)
-			return mArray[I...];
+		if constexpr (sizeof...(TAIL) == 0)
+			return mArray[HEAD];
 		else
-			return Inner::TProxyVector<T, S, I...> {*this};
+			return Inner::TProxyVector<T, S, HEAD, TAIL...> {*this};
 	}
 
 	/// Immutable swizzle, just returns a shuffled vector								
 	///	@returns a simple vector with the selected copied components			
 	TEMPLATE()
-	template<Offset... I>
+	template<Offset HEAD, Offset... TAIL>
 	constexpr decltype(auto) TME()::Swz() const noexcept {
-		if constexpr (sizeof...(I) == 1)
-			return mArray[I...];
+		if constexpr (sizeof...(TAIL) == 0)
+			return mArray[HEAD];
 		else
-			return TVector<T, sizeof...(I)>(mArray[I]...);
+			return TVector<T, sizeof...(TAIL) + 1> {mArray[HEAD], mArray[TAIL]...};
 	}
 
 	/// Cast the vector to another number type, with the ability to normalize	
@@ -977,7 +972,7 @@ namespace Langulus::Math
 	}
 
 	/// Add vector and a scalar																
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator += (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Add(me.mArray, other, me.mArray);
 		return me;
@@ -991,7 +986,7 @@ namespace Langulus::Math
 	}
 
 	/// Subtract vector and a scalar															
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator -= (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Subtract(me.mArray, other, me.mArray);
 		return me;
@@ -1005,7 +1000,7 @@ namespace Langulus::Math
 	}
 
 	/// Multiply vector by a scalar															
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator *= (TVEC(LHS)& me, const N& other) noexcept {
 		SIMD::Multiply(me.mArray, other, me.mArray);
 		return me;
@@ -1021,7 +1016,7 @@ namespace Langulus::Math
 
 	/// Divide dense vector and a scalar													
 	/// This function will throw on division by zero									
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto& operator /= (TVEC(LHS)& me, const N& other) {
 		SIMD::Divide(me.mArray, other, me.mArray);
 		return me;
@@ -1036,12 +1031,12 @@ namespace Langulus::Math
 		return SIMD::Lesser(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator < (const TVEC(LHS)& me, const N& other) {
 		return SIMD::Lesser(me.mArray, other);
 	}
 
-	template<TARGS(RHS), CT::Integer N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator < (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Lesser(other, me.mArray);
 	}
@@ -1051,12 +1046,12 @@ namespace Langulus::Math
 		return SIMD::EqualsOrLesser(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator <= (const TVEC(LHS)& me, const N& other) {
 		return SIMD::EqualsOrLesser(me.mArray, other);
 	}
 
-	template<TARGS(RHS), CT::Integer N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator <= (const N& other, const TVEC(RHS)& me) {
 		return SIMD::EqualsOrLesser(other, me.mArray);
 	}
@@ -1066,12 +1061,12 @@ namespace Langulus::Math
 		return SIMD::Greater(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator > (const TVEC(LHS)& me, const N& other) {
 		return SIMD::Greater(me.mArray, other);
 	}
 
-	template<TARGS(RHS), CT::Integer N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator > (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Greater(other, me.mArray);
 	}
@@ -1081,28 +1076,28 @@ namespace Langulus::Math
 		return SIMD::EqualsOrGreater(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), CT::Integer N>
+	template<TARGS(LHS), CT::DenseNumber N>
 	auto operator >= (const TVEC(LHS)& me, const N& other) {
 		return SIMD::EqualsOrGreater(me.mArray, other);
 	}
 
-	template<TARGS(RHS), CT::Integer N>
+	template<TARGS(RHS), CT::DenseNumber N>
 	auto operator >= (const N& other, const TVEC(RHS)& me) {
 		return SIMD::EqualsOrGreater(other, me.mArray);
 	}
 
 	template<TARGS(LHS), TARGS(RHS)>
-	auto operator == (const TVEC(LHS)& me, const TVEC(RHS)& other) {
+	bool operator == (const TVEC(LHS)& me, const TVEC(RHS)& other) {
 		return SIMD::Equals(me.mArray, other.mArray);
 	}
 
-	template<TARGS(LHS), CT::Integer N>
-	auto operator == (const TVEC(LHS)& me, const N& other) {
+	template<TARGS(LHS), CT::DenseNumber N>
+	bool operator == (const TVEC(LHS)& me, const N& other) {
 		return SIMD::Equals(me.mArray, other);
 	}
 
-	template<TARGS(RHS), CT::Integer N>
-	auto operator == (const N& other, const TVEC(RHS)& me) {
+	template<TARGS(RHS), CT::DenseNumber N>
+	bool operator == (const N& other, const TVEC(RHS)& me) {
 		return SIMD::Equals(other, me.mArray);
 	}
 

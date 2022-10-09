@@ -11,3 +11,5 @@
 #include "../source/TInstance.hpp"
 #include "../source/TGradient.hpp"
 #include "../source/Numbers/TAngle.hpp"
+
+#define LANGULUS_MODULE_MATH()

@@ -52,7 +52,7 @@ namespace Langulus::Math
 	public:
 		using Dimension = D;
 		using MemberType = T;
-		using Base::TNumber;
+		using Base::Base;
 	};
 
 } // namespace Langulus::Math

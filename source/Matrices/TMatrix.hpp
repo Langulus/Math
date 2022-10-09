@@ -8,6 +8,11 @@
 #pragma once
 #include "../Vectors.hpp"
 
+#define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
+#define TMAT(a) TMatrix<a##T, a##C, a##R>
+#define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+#define TME() TMatrix<T, COLUMNS, ROWS>
+
 namespace Langulus::Math
 {
 
@@ -38,6 +43,7 @@ namespace Langulus::Math
 	using Matrix4u = TMatrix<unsigned, 4>;
 
 	using Matrix = Matrix4;
+
 
 	namespace A
 	{
@@ -96,7 +102,7 @@ namespace Langulus::Math
 	///																								
 	///	A templated matrix (column-major)												
 	///																								
-	template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+	TEMPLATE()
 	struct TMatrix {
 		using MemberType = T;
 		using ColumnType = TVector<T, ROWS>;
@@ -106,20 +112,31 @@ namespace Langulus::Math
 		static constexpr Count Rows = ROWS;
 		static constexpr Count MemberCount = Columns * Rows;
 		static constexpr bool IsSquare = Columns == Rows;
+		template<CT::DenseNumber N>
+		static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
-		T mArray[MemberCount] = {};
+		T mArray[MemberCount];
 
 	public:
 		constexpr TMatrix() noexcept;
 
-		template<CT::DenseNumber ALTT = T, Count ALTC = COLUMNS, Count ALTR = ROWS>
-		constexpr TMatrix(const TMatrix<ALTT, ALTC, ALTR>&) noexcept;
-
-		template<CT::DenseNumber K>
-		constexpr TMatrix(K) noexcept;
+		template<TARGS(ALT)>
+		constexpr TMatrix(const TMAT(ALT)&) noexcept;
 
 		template<class HEAD, class... TAIL>
 		constexpr TMatrix(const HEAD&, const TAIL&...) noexcept requires (sizeof...(TAIL) > 0);
+
+		template<CT::DenseNumber N>
+		constexpr TMatrix(const N&) noexcept requires IsCompatible<N>;
+
+		template<CT::DenseNumber N>
+		constexpr TMatrix(const N*) noexcept requires IsCompatible<N>;
+
+		template<CT::Array N>
+		constexpr TMatrix(const N&) noexcept requires IsCompatible<Decay<N>>;
+
+		template<CT::DenseNumber N>
+		NOD() constexpr decltype(auto) Adapt(const N&) const noexcept requires IsCompatible<N>;
 
 		NOD() static constexpr TMatrix PerspectiveFOV(const T&, const T&, const T&, const T&);
 		NOD() static constexpr TMatrix PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&);
@@ -182,9 +199,6 @@ namespace Langulus::Math
 	///																								
 	///	Arithmetic																				
 	///																								
-	#define TEMPLATE() template<CT::DenseNumber T, Count COLS, Count ROWS>
-	#define TME() TMatrix<T, COLS, ROWS>
-
 	TEMPLATE()
 	NOD() constexpr TME() operator * (const TME()&, const TME()&) noexcept;
 
@@ -221,30 +235,29 @@ namespace Langulus::Math
 	TEMPLATE()
 	constexpr void operator /= (TME()&, const T&) noexcept;
 
-	template<CT::DenseNumber T, Count COLS, Count ROWS, CT::DenseNumber K, Count C>
-	NOD() constexpr auto operator * (const TME()&, const TVector<K, C>&) noexcept requires (C <= ROWS);
+	template<TARGS(LHS), CT::DenseNumber K, Count C>
+	NOD() constexpr auto operator * (const TMAT(LHS)&, const TVector<K, C>&) noexcept requires (C <= LHSR && C > 1);
 
-	template<CT::DenseNumber T, Count COLS, Count ROWS, CT::DenseNumber K, Count C>
-	NOD() constexpr auto operator * (const TVector<K, C>&, const TME()&) noexcept requires (C <= COLS);
+	template<TARGS(RHS), CT::DenseNumber K, Count C>
+	NOD() constexpr auto operator * (const TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
 
-	template<CT::DenseNumber T, Count COLS, Count ROWS, CT::DenseNumber K, Count C>
-	constexpr void operator *= (TVector<K, C>&, const TME()&) noexcept requires (C <= COLS);
-
-	template<CT::DenseNumber T, Count COLS, Count ROWS, CT::DenseNumber K, Count C>
-	constexpr void operator *= (const TVector<K, C>&, const TME()&) noexcept requires (C <= COLS);
+	template<TARGS(RHS), CT::DenseNumber K, Count C>
+	constexpr void operator *= (TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
 
 
 	///																								
 	///	Comparison																				
 	///																								
-	TEMPLATE() NOD() constexpr bool operator == (const TME()&, const TME()&) noexcept;
-	TEMPLATE() NOD() constexpr bool operator == (const TME()&, const T&) noexcept;
-	TEMPLATE() NOD() constexpr bool operator != (const TME()&, const TME()&) noexcept;
-	TEMPLATE() NOD() constexpr bool operator != (const TME()&, const T&) noexcept;
+	TEMPLATE()
+	NOD() constexpr bool operator == (const TME()&, const TME()&) noexcept;
+	TEMPLATE()
+	NOD() constexpr bool operator == (const TME()&, const T&) noexcept;
 
 } // namespace Langulus::Math
 
 #include "TMatrix.inl"
 
+#undef TARGS
+#undef TMAT
 #undef TEMPLATE
 #undef TME

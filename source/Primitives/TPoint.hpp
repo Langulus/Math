@@ -11,7 +11,7 @@
 namespace Langulus::Math
 {
 
-	template<CT::Vector> struct TPoint;
+	template<CT::ScalarOrVector> struct TPoint;
 
 	using Point1 = TPoint<vec1>;
 	using Point2 = TPoint<vec2>;
@@ -22,9 +22,9 @@ namespace Langulus::Math
 	namespace A
 	{
 
-		///																								
-		///	An abstract point, also used as a topology type								
-		///																								
+		///																							
+		///	An abstract point, also used as a topology type							
+		///																							
 		struct Point {
 			LANGULUS(ABSTRACT) true;
 			LANGULUS(CONCRETE) ::Langulus::Math::Point;
@@ -38,7 +38,7 @@ namespace Langulus::Math
 	///	A concrete point																		
 	///																								
 	#pragma pack(push, 1)
-	template<CT::Vector T>
+	template<CT::ScalarOrVector T>
 	struct TPoint : public T {
 		LANGULUS_BASES(A::Point, T);
 
