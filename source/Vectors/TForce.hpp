@@ -76,16 +76,16 @@ namespace Langulus::Math
 
 		/// Convert from any force to text													
 		NOD() explicit operator Flow::Code() const {
-			GASM result;
-			result += DataID::Of<ME>;
-			result += GASM::OpenScope;
+			Flow::Code result;
+			result += MetaOf<TForce>();
+			result += Flow::Code::OpenScope;
 			auto& asVector = static_cast<const T&>(*this);
 			for (auto& x : asVector) {
 				result += x;
-				result += GASM::AndSeparator;
+				result += ", ";
 			}
 			result += mLevel;
-			result += GASM::CloseScope;
+			result += Flow::Code::CloseScope;
 			return result;
 		}
 

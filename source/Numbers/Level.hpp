@@ -136,7 +136,7 @@ namespace Langulus::Math
 		///	@param level - the level to factor against								
 		///	@param return the invlog scale that maps this to other				
 		inline Real GetFactor(const Level& level) const noexcept {
-			return Pow(Unit, level.mValue - mValue);
+			return Math::Pow(Unit, level.mValue - mValue);
 		}
 
 		/// Get a reference point between two levels										

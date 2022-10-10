@@ -139,7 +139,7 @@ namespace Langulus::Math
 		~TRange() noexcept = default;
 
 		/// Copy operator																			
-		constexpr auto& operator = (const TRange&) noexcept = default;
+		constexpr TRange& operator = (const TRange&) noexcept = default;
 
 		/// Convert any range to text															
 		NOD() explicit operator Flow::Code() const {

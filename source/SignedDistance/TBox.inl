@@ -23,7 +23,7 @@ namespace Langulus::Math
 		else if constexpr (C == 2)
 			return Length(Max(d, T {0})) + Min(Max(d.x(), d.y()), T {0});
 		else
-			LANGULUS_ERROR("Unsupported box dimensions")
+			LANGULUS_ERROR("Unsupported box dimensions");
 	};
 
 } // namespace Langulus::Math

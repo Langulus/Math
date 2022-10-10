@@ -14,7 +14,9 @@ namespace Langulus::CT
 {
 
 	template<class T>
-	concept Angle = DenseNumber<T> && requires { {Decay<T>::Radians} -> Bool; };
+	concept Angle = DenseNumber<T> && requires {
+		{Decay<T>::Radians} -> Bool;
+	};
 
 } // namespace Langulus::CT
 
@@ -111,6 +113,7 @@ namespace Langulus::Math
 	///																								
 	template<CT::Angle T, CT::Dimension D>
 	struct TAngle : public T {
+		LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
 		using Dimension = D;
 		using T::T;
 		using T::mValue;

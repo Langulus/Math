@@ -168,7 +168,7 @@ namespace Langulus::Math
 		constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
 		template<class TOKEN>
-		static Anyness::Text Serialize();
+		Flow::Code Serialize() const;
 
 		NOD() explicit operator Flow::Code() const;
 

@@ -38,11 +38,11 @@ namespace Langulus::Math
 	/// A list of coplanar points that form a surface with a complex edge		
 	///																								
 	template<CT::Vector T>
-	struct TPolygon : public Anyness::TAny<T> {
+	struct TPolygon : public TAny<T> {
 		LANGULUS(DEEP) false;
 		LANGULUS_BASES(A::Polygon);
 
-		using Base = Anyness::TAny<T>;
+		using Base = TAny<T>;
 		using PointType = T;
 		using typename T::MemberType;
 		using T::MemberCount;

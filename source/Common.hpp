@@ -8,11 +8,13 @@
 #pragma once
 #include <LangulusRTTI.hpp>
 #include <LangulusSIMD.hpp>
+#include <LangulusAnyness.hpp>
 #include <LangulusFlow.hpp>
 
 namespace Langulus::Math
 {
 
+	using namespace ::Langulus::Anyness;
 	using ::Langulus::Flow::Verb;
 
 } // namespace Langulus::Math

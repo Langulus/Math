@@ -19,10 +19,12 @@ namespace Langulus::Math
 	T SignedDistance(const TVector<T, 3>& point, const TCylinder<TVector<T, 3>, D>& cylinder) {
 		if constexpr (CT::Same<D, Traits::X>)
 			return Length(point.yz()) - cylinder.mRadius;
-		else if constexpr (Space == Dimension::Y)
+		else if constexpr (CT::Same<D, Traits::Y>)
 			return Length(point.xz()) - cylinder.mRadius;
-		else
+		else if constexpr (CT::Same<D, Traits::Z>)
 			return Length(point.xy()) - cylinder.mRadius;
+		else
+			LANGULUS_ERROR("Unsupported dimension");
 	};
 
 } // namespace Langulus::Math

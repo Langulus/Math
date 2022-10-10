@@ -132,8 +132,8 @@ namespace Langulus::Math
 	///	@param result - [out] the resulting body										
 	TEMPLATE()
 	template<class TOKEN>
-	Anyness::Text TME()::Serialize() {
-		Anyness::Text result;
+	Flow::Code TME()::Serialize() const {
+		Flow::Code result;
 		if constexpr (S > 1 || !CT::Same<TME(), TOKEN>) {
 			result += MetaOf<TOKEN>();
 			result += Flow::Code::OpenScope;

@@ -101,21 +101,21 @@ namespace Langulus::Math
 	///	@return the oriented right vector												
 	TEMPLATE()
 	typename TME()::PointType TME()::GetRight() const noexcept {
-		return GetAim() * Vectors::Right<MemberType>;
+		return GetAim() * Cardinal::Right<MemberType>;
 	}
 
 	/// Get the up normal of the instance													
 	///	@return the oriented up vector													
 	TEMPLATE()
 	typename TME()::PointType TME()::GetUp() const noexcept {
-		return GetAim() * Vectors::Up<MemberType>;
+		return GetAim() * Cardinal::Up<MemberType>;
 	}
 
 	/// Get the forward normal of the instance											
 	///	@return the oriented forward vector												
 	TEMPLATE()
 	typename TME()::PointType TME()::GetForward() const noexcept {
-		return GetAim() * Vectors::Forward<MemberType>;
+		return GetAim() * Cardinal::Forward<MemberType>;
 	}
 
 	/// Get scale, relative to a given octave												
@@ -123,7 +123,7 @@ namespace Langulus::Math
 	///	@return the scale																		
 	TEMPLATE()
 	typename TME()::SizeType TME()::GetScale(Level level) const {
-		const auto factor = pcPow(Level::Unit, mLevel - level);
+		const auto factor = Math::Pow(Level::Unit, mLevel - level);
 		return GetScale() * factor;
 	}
 
@@ -146,7 +146,7 @@ namespace Langulus::Math
 	///	@return the position																	
 	TEMPLATE()
 	typename TME()::PointType TME()::GetPosition(Level level) const {
-		const auto factor = Pow(Level::Unit, mLevel - level);
+		const auto factor = Math::Pow(Level::Unit, mLevel - level);
 		return GetPosition() * factor;
 	}
 
@@ -169,7 +169,7 @@ namespace Langulus::Math
 	///	@return the model matrix															
 	TEMPLATE()
 	typename TME()::MatrixType TME()::GetModelTransform(Level level) const {
-		const auto factor = Pow(Level::Unit, mLevel - level);
+		const auto factor = Math::Pow(Level::Unit, mLevel - level);
 		const auto translate = GetPosition() * factor;
 		auto scale = GetScale() * factor;
 		if (scale.IsDegenerate())
@@ -261,21 +261,21 @@ namespace Langulus::Math
 	TEMPLATE()
 	typename TME()::PointType TME()::RandomPosition(RNG& rng, const RangeType& range) const {
 		// Clamp inside object															
-		const auto thisscale = GetScale() * MemberType(0.5);
+		const auto thisscale = GetScale() * MemberType {.5};
 		const auto innerscale = thisscale * range.mMin;
 		const auto outerscale = thisscale * range.mMax;
 
 		// Get a random vector															
-		const auto rnewpos = PointType(
-			rng.GenerateRealClosed<MemberType>(),
-			rng.GenerateRealClosed<MemberType>(),
-			rng.GenerateRealClosed<MemberType>()
-		) * MemberType(2) - MemberType(1);
+		const auto rnewpos = PointType {
+			rng.Get<MemberType>(),
+			rng.Get<MemberType>(),
+			rng.Get<MemberType>()
+		} * MemberType {2} - MemberType {1};
 
 		auto newpos = rnewpos * (outerscale - innerscale);
-		newpos[0] += innerscale[0] * Sign(newpos[0]);
-		newpos[1] += innerscale[1] * Sign(newpos[1]);
-		newpos[2] += innerscale[2] * Sign(newpos[2]);
+		newpos[0] += innerscale[0] * Math::Sign(newpos[0]);
+		newpos[1] += innerscale[1] * Math::Sign(newpos[1]);
+		newpos[2] += innerscale[2] * Math::Sign(newpos[2]);
 		return newpos + GetPosition();
 	}
 
@@ -337,7 +337,7 @@ namespace Langulus::Math
 	template<class K>
 	void TME()::Move(MemberType sign, const TPoint<K>& position, bool relative) {
 		if (relative)
-			mPosition = -mAim * (sign * PointType(position));
+			mPosition = -mAim * (sign * PointType {position});
 		else
 			mPosition = position;
 	}
@@ -369,150 +369,127 @@ namespace Langulus::Math
 					relative = trait.AsCast<bool>();
 			});
 
-			pcptr done = 0;
-			done = part.ForEach([&](const Normal& normal) {
-				// Move towards normalized direction								
-				// All points move in the same direction							
-				PC_TINSTANCE_VERBOSE("Moving towards a normal: " << normal 
-					<< (relative ? " (relatively)" : ""));
-				Move(sign, normal, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
+			Count done = part.ForEach(
+				[&](const Normal& normal) {
+					// Move towards normalized direction							
+					// All points move in the same direction						
+					VERBOSE_TINSTANCE("Moving along normal: " << normal 
+						<< (relative ? " (relatively)" : ""));
+					Move(sign, normal, relative);
+					verb.Done();
+				},
+				[&](const Point2& point) {
+					// Move towards a point in space									
+					// All points move in the same direction						
+					VERBOSE_TINSTANCE("Moving to a point2: " << point
+						<< (relative ? " (relatively)" : ""));
+					Move(sign, point, relative);
+					verb.Done();
+				},
+				[&](const Point3& point) {
+					// Move towards a point in space									
+					// All points move in the same direction						
+					VERBOSE_TINSTANCE("Moving to a point3: " << point
+						<< (relative ? " (relatively)" : ""));
+					Move(sign, point, relative);
+					verb.Done();
+				},
+				[&](const Force2& force) {
+					// Apply a force														
+					// All points move in the same direction						
+					VERBOSE_TINSTANCE("Applying a force2: " << force
+						<< (relative ? " (relatively)" : ""));
+					Move(sign, force, relative);
+					verb.Done();
+				},
+				[&](const Force3& force) {
+					// Apply a force														
+					// All points move in the same direction						
+					VERBOSE_TINSTANCE("Applying a force3: " << force
+						<< (relative ? " (relatively)" : ""));
+					Move(sign, force, relative);
+					verb.Done();
+				},
+				[&](const Level& octave) {
+					// Apply a change in octave										
+					// All points of a physical object move to/from center	
+					VERBOSE_TINSTANCE("Applying an octave: " << octave
+						<< (relative ? " (relatively)" : ""));
+					ChangeLevel(sign, octave, relative);
+					verb.Done();
+				},
+				[&](const Size& size) {
+					// Apply a change in size											
+					// All points of a physical object move to/from center	
+					VERBOSE_TINSTANCE("Applying a size: " << size
+						<< (relative ? " (relatively)" : ""));
+					Move(sign, size, relative);
+					verb.Done();
+				}
+			);
 
-			done = part.ForEach([&](const Point2& point) {
-				// Move towards a point in space										
-				// All points move in the same direction							
-				PC_TINSTANCE_VERBOSE("Moving to a point2: " << point 
-					<< (relative ? " (relatively)" : ""));
-				Move(sign, point, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
-
-			done = part.ForEach([&](const Point3& point) {
-				// Move towards a point in space										
-				// All points move in the same direction							
-				PC_TINSTANCE_VERBOSE("Moving to a point3: " << point 
-					<< (relative ? " (relatively)" : ""));
-				Move(sign, point, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
-
-			done = part.ForEach([&](const Force2& force) {
-				// Apply a force															
-				// All points move in the same direction							
-				PC_TINSTANCE_VERBOSE("Applying a force2: " << force 
-					<< (relative ? " (relatively)" : ""));
-				Move(sign, force, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
-
-			done = part.ForEach([&](const Force3& force) {
-				// Apply a force															
-				// All points move in the same direction							
-				PC_TINSTANCE_VERBOSE("Applying a force3: " << force 
-					<< (relative ? " (relatively)" : ""));
-				Move(sign, force, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
-
-			done = part.ForEach([&](const Level& octave) {
-				// Apply a change in octave											
-				// All points of a physical object move to/from center		
-				PC_TINSTANCE_VERBOSE("Applying an octave: " << octave 
-					<< (relative ? " (relatively)" : ""));
-				ChangeLevel(sign, octave, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
-
-			done = part.ForEach([&](const Sizer& sizer) {
-				// Apply a change in size												
-				// All points of a physical object move to/from center		
-				PC_TINSTANCE_VERBOSE("Applying a sizer: " << sizer 
-					<< (relative ? " (relatively)" : ""));
-				Move(sign, sizer, relative);
-				verb.Done();
-			});
 			if (done > 0)
 				return;
 
 			if constexpr (MemberCount > 2) {
 				// Yaw and pitch are allowed only above 2D						
-				done = part.ForEach([&](const dyaw& angle) {
-					// Rotate via a yaw angle (turning around Y)					
-					// All points move around the center							
-					PC_TINSTANCE_VERBOSE("Yaw (degrees): " << angle 
-						<< (relative ? " (relatively)" : ""));
-					Rotate(sign, angle, relative);
-					verb.Done();
-				});
-				if (done > 0)
-					return;
+				done = part.ForEach(
+					[&](const Yawd& angle) {
+						// Rotate via a yaw angle (turning around Y)				
+						// All points move around the center						
+						VERBOSE_TINSTANCE("Yaw (degrees): " << angle 
+							<< (relative ? " (relatively)" : ""));
+						Rotate(sign, angle, relative);
+						verb.Done();
+					},
+					[&](const Yawr& angle) {
+						// Rotate via a yaw angle (turning around Y)				
+						// All points move around the center						
+						VERBOSE_TINSTANCE("Yaw (radians): " << angle
+							<< (relative ? " (relatively)" : ""));
+						Rotate(sign, angle, relative);
+						verb.Done();
+					},
+					[&](const Pitchd& angle) {
+						// Rotate via a pitch angle (turning around X)			
+						// All points move around the center						
+						VERBOSE_TINSTANCE("Pitch (degrees): " << angle 
+							<< (relative ? " (relatively)" : ""));
+						Rotate(sign, angle, relative);
+						verb.Done();
+					},
+					[&](const Pitchr& angle) {
+						// Rotate via a pitch angle (turning around X)			
+						// All points move around the center						
+						VERBOSE_TINSTANCE("Pitch (radians): " << angle
+							<< (relative ? " (relatively)" : ""));
+						Rotate(sign, angle, relative);
+						verb.Done();
+					}
+				);
 
-				done = part.ForEach([&](const ryaw& angle) {
-					// Rotate via a yaw angle (turning around Y)					
-					// All points move around the center							
-					PC_TINSTANCE_VERBOSE("Yaw (radians): " << angle 
-						<< (relative ? " (relatively)" : ""));
-					Rotate(sign, angle, relative);
-					verb.Done();
-				});
-				if (done > 0)
-					return;
-
-				done = part.ForEach([&](const dpitch& angle) {
-					// Rotate via a pitch angle (turning around X)				
-					// All points move around the center							
-					PC_TINSTANCE_VERBOSE("Pitch (degrees): " << angle 
-						<< (relative ? " (relatively)" : ""));
-					Rotate(sign, angle, relative);
-					verb.Done();
-				});
-				if (done > 0)
-					return;
-
-				done = part.ForEach([&](const rpitch& angle) {
-					// Rotate via a pitch angle (turning around X)				
-					// All points move around the center							
-					PC_TINSTANCE_VERBOSE("Pitch (radians): " << angle 
-						<< (relative ? " (relatively)" : ""));
-					Rotate(sign, angle, relative);
-					verb.Done();
-				});
 				if (done > 0)
 					return;
 			}
 
-			done = part.ForEach([&](const droll& angle) {
-				// Rotate via a roll angle (turning around Z)					
-				// All points of a physical object move around the center	
-				PC_TINSTANCE_VERBOSE("Roll (degrees): " << angle 
-					<< (relative ? " (relatively)" : ""));
-				Rotate(sign, angle, relative);
-				verb.Done();
-			});
-			if (done > 0)
-				return;
-
-			done = part.ForEach([&](const rroll& angle) {
-				// Rotate via a roll angle (turning around Z)					
-				// All points of a physical object move around the center	
-				PC_TINSTANCE_VERBOSE("Roll (radians): " << angle 
-					<< (relative ? " (relatively)" : ""));
-				Rotate(sign, angle, relative);
-				verb.Done();
-			});
+			done = part.ForEach(
+				[&](const Rolld& angle) {
+					// Rotate via a roll angle (turning around Z)				
+					// All points of a physical object move around the center
+					VERBOSE_TINSTANCE("Roll (degrees): " << angle 
+						<< (relative ? " (relatively)" : ""));
+					Rotate(sign, angle, relative);
+					verb.Done();
+				},
+				[&](const Rollr& angle) {
+					// Rotate via a roll angle (turning around Z)				
+					// All points of a physical object move around the center
+					VERBOSE_TINSTANCE("Roll (radians): " << angle
+						<< (relative ? " (relatively)" : ""));
+					Rotate(sign, angle, relative);
+					verb.Done();
+				}
+			);
 		});
 	}
 
@@ -522,9 +499,9 @@ namespace Langulus::Math
 	TEMPLATE()
 	void TME()::ChangeLevel(MemberType sign, const Level& octave, bool relative) {
 		if (relative)
-			mUseLevelChange += octave * Level(sign);
+			mUseLevelChange += octave * Level {sign};
 		else
-			mUseLevelChange = octave * Level(sign);
+			mUseLevelChange = octave * Level {sign};
 	}
 
 	/// Compare two instances																	

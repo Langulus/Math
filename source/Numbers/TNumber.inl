@@ -13,7 +13,7 @@ namespace Langulus::Math
 
 	/// Returns an inverted number															
 	template<TARGS(RHS)>
-	constexpr RHSW operator - (const TNUM(RHS)& a) noexcept {
+	constexpr RHSW operator - (const TNUM(RHS)& a) noexcept requires CT::Signed<RHST> {
 		return -a.mValue;
 	}
 

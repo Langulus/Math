@@ -13,7 +13,7 @@
 #include "Quaternions/TQuaternion.hpp"
 #include "Primitives.hpp"
 
-#define PC_TINSTANCE_VERBOSE(a) // pcLogSelfVerbose << a
+#define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
 LANGULUS_DEFINE_TRAIT(Transformation,
 	"Model transformation trait");
@@ -142,7 +142,7 @@ namespace Langulus::Math
 
 	public:
 		// Optional parent for inheriting transformations						
-		Anyness::Ptr<TInstance<T>> mParent;
+		Ptr<TInstance<T>> mParent;
 
 		// Position in space																
 		PointType mPosition;

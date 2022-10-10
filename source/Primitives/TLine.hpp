@@ -149,11 +149,11 @@ namespace Langulus::Math
 	/// the previous, and the last point forms a line with the first one			
 	///																								
 	template<CT::Vector T>
-	struct TLineLoop : public Anyness::TAny<T> {
+	struct TLineLoop : public TAny<T> {
 		LANGULUS(DEEP) false;
 		LANGULUS_BASES(A::LineLoop);
 
-		using Base = Anyness::TAny<T>;
+		using Base = TAny<T>;
 		using PointType = T;
 		using typename T::MemberType;
 		using T::MemberCount;
@@ -173,11 +173,11 @@ namespace Langulus::Math
 	/// the previous																				
 	///																								
 	template<CT::Vector T>
-	struct TLineStrip : public Anyness::TAny<T> {
+	struct TLineStrip : public TAny<T> {
 		LANGULUS(DEEP) false;
 		LANGULUS_BASES(A::LineStrip);
 
-		using Base = Anyness::TAny<T>;
+		using Base = TAny<T>;
 		using PointType = T;
 		using typename T::MemberType;
 		using T::MemberCount;

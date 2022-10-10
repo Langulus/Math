@@ -206,7 +206,7 @@ namespace Langulus::Math
 			result += MetaOf<TGradient>();
 			result += Flow::Code::OpenScope;
 			for (Offset i = 0; i < S; ++i) {
-				result += Anyness::Text {(*this)[i]};
+				result += Text {(*this)[i]};
 				if (i < S - 1)
 					result += ", ";
 			}

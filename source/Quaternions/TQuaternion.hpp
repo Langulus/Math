@@ -50,6 +50,7 @@ namespace Langulus::Math
 	template<CT::DenseNumber T>
 	struct TQuaternion : public TVector<T, 4> {
 		using Base = TVector<T, 4>;
+		LANGULUS_BASES(Base, A::QuaternionOfType<T>);
 		using Base::Base;
 		using Base::mArray;
 
@@ -58,14 +59,14 @@ namespace Langulus::Math
 			: Base {0, 0, 0, 1} {}
 
 		/// Quaternion construction from 4-component vector							
-		constexpr TQuaternion(const TVector<T, 4>& v) noexcept
+		constexpr TQuaternion(const Base& v) noexcept
 			: Base {v} {}
 
 		/// Construct a roll (around Z) quaternion from 2x2 matrix					
 		///	@param matrix - 2x2 matrix to convert to a roll quaternion			
 		constexpr TQuaternion(const TMatrix<T, 2, 2>& matrix) noexcept {
 			const auto trace = T {1} + matrix[0] + matrix[3];
-			const auto S = Sqrt(trace) * T {2};
+			const auto S = Math::Sqrt(trace) * T {2};
 			mArray[0] = mArray[1] = T {0};
 			mArray[2] = (matrix[2] - matrix[1]) / S;
 			mArray[3] = T {.25} *S;
@@ -85,28 +86,28 @@ namespace Langulus::Math
 
 			T s;
 			if (trace > 0) {
-				s = half / Sqrt(trace + one);
+				s = half / Math::Sqrt(trace + one);
 				mArray[3] = quarter / s;
 				mArray[0] = (m32 - m23) * s;
 				mArray[1] = (m13 - m31) * s;
 				mArray[2] = (m21 - m12) * s;
 			}
 			else if (m11 > m22 && m11 > m33) {
-				s = two * Sqrt(one + m11 - m22 - m33);
+				s = two * Math::Sqrt(one + m11 - m22 - m33);
 				mArray[3] = (m32 - m23) / s;
 				mArray[0] = quarter * s;
 				mArray[1] = (m12 + m21) / s;
 				mArray[2] = (m13 + m31) / s;
 			}
 			else if (m22 > m33) {
-				s = two * Sqrt(one + m22 - m11 - m33);
+				s = two * Math::Sqrt(one + m22 - m11 - m33);
 				mArray[3] = (m13 - m31) / s;
 				mArray[0] = (m12 + m21) / s;
 				mArray[1] = quarter * s;
 				mArray[2] = (m23 + m32) / s;
 			}
 			else {
-				s = two * Sqrt(one + m33 - m11 - m22);
+				s = two * Math::Sqrt(one + m33 - m11 - m22);
 				mArray[3] = (m21 - m12) / s;
 				mArray[0] = (m13 + m31) / s;
 				mArray[1] = (m23 + m32) / s;
@@ -121,7 +122,7 @@ namespace Langulus::Math
 
 		/// Serialize quaternion to code														
 		NOD() explicit operator Flow::Code() const {
-			return Base::Serialize<TQuaternion>();
+			return Base::template Serialize<TQuaternion>();
 		}
 
 		/// Create a quaternion from euler angles	in radians							
@@ -136,8 +137,11 @@ namespace Langulus::Math
 		/// Create a quaternion from axis and angle										
 		template<CT::Angle A>
 		NOD() static constexpr TQuaternion FromAxisAngle(const TVector<T, 3>& axis, const A& angle) noexcept {
-			const auto halfangle = angle * A {0.5};
-			return {axis * Sin(halfangle), Cos(halfangle)};
+			const auto halfangle = angle * A {.5};
+			return {
+				axis * Math::Sin(halfangle), 
+				Math::Cos(halfangle)
+			};
 		}
 
 		/// Create a quaternion from an oriented angle									
@@ -180,7 +184,7 @@ namespace Langulus::Math
 		constexpr TQuaternion& LookAt(const TVector<T, 3>& dir) noexcept {
 			auto look = (*this) * Cardinal::Forward<T>;
 			auto axis = dir % look;
-			auto angle = T(1) / dir.Dot(look);
+			auto angle = T {1} / dir.Dot(look);
 			return FromAxisAngle(axis, angle);
 		}
 
@@ -211,8 +215,8 @@ namespace Langulus::Math
 
 		/// Get conjugated quaternion															
 		NOD() constexpr TQuaternion Conjugate() const noexcept {
-			auto result = *this * T(-1);
-			result[3] *= T(-1);
+			auto result = *this * T {-1};
+			result[3] *= T {-1};
 			return result;
 		}
 

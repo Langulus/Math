@@ -28,7 +28,6 @@ namespace Langulus::Math
 	///																								
 	template<CT::Dense T, CT::Dense WRAPPER = T>
 	struct TNumber {
-		LANGULUS(NUMBER) T;
 		LANGULUS(POD) CT::POD<T>;
 		LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
 		using MemberType = T;
@@ -64,9 +63,12 @@ namespace Langulus::Math
 		}
 
 		//WRAPPER Length() const;
-		WRAPPER Sqrt() const;
+		/*WRAPPER Sqrt() const;
 		WRAPPER Frac() const;
 		WRAPPER Mod(const TNumber<T>&) const;
+
+		template<CT::Dense E>
+		NOD() constexpr WRAPPER Pow(E) noexcept;*/
 	};
 
 	using uint8 = TNumber<::std::uint8_t>;
@@ -82,7 +84,7 @@ namespace Langulus::Math
 
 	/// Returns an inverted number															
 	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator - (const TNUM(RHS)&) noexcept;
+	NOD() constexpr RHSW operator - (const TNUM(RHS)&) noexcept requires CT::Signed<RHST>;
 
 	/// Returns the sum of two numbers														
 	template<TARGS(LHS), TARGS(RHS)>

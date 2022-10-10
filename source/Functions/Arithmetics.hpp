@@ -154,9 +154,9 @@ namespace Langulus::Math
 	NOD() constexpr auto Abs(const T& a) noexcept {
 		if constexpr (CT::HasAbs<T>)
 			return a.Abs();
-		else if constexpr (CT::Unsigned<T>)
+		else if constexpr (CT::Unsigned<T> || CT::Unsigned<CT::UnderlyingTypeOf<T>>)
 			return a;
-		else if constexpr (CT::Signed<T>)
+		else if constexpr (CT::Signed<T> || CT::Signed<CT::UnderlyingTypeOf<T>>)
 			return a < T {0} ? -a : a;
 		else
 			LANGULUS_ERROR("T must either have Abs() method, or be a number");
@@ -169,11 +169,11 @@ namespace Langulus::Math
 	NOD() constexpr auto Sign(const T& a) noexcept {
 		if constexpr (CT::HasSign<T>)
 			return a.Sign();
-		else if constexpr (CT::Unsigned<T>) {
+		else if constexpr (CT::Unsigned<T> || CT::Unsigned<CT::UnderlyingTypeOf<T>>) {
 			(void) a;
 			return T {1};
 		}
-		else if constexpr (CT::Signed<T>)
+		else if constexpr (CT::Signed<T> || CT::Signed<CT::UnderlyingTypeOf<T>>)
 			return a < T {0} ? T {-1} : T {1};
 		else
 			LANGULUS_ERROR("T must either have Sign() method, or be a number");
@@ -187,7 +187,9 @@ namespace Langulus::Math
 	NOD() constexpr auto Pow(B base, E exponent) noexcept {
 		if constexpr (CT::HasPow<B, E>)
 			return base.Pow(exponent);
-		else if constexpr (CT::Integer<B, E>) {
+		else if constexpr (CT::Integer<B, E>
+			|| (::std::integral<CT::UnderlyingTypeOf<B>> && ::std::integral<CT::UnderlyingTypeOf<E>>)
+		) {
 			// Credit goes to: http://stackoverflow.com/questions/101439	
 			B result {1};
 			while (exponent) {
@@ -204,7 +206,8 @@ namespace Langulus::Math
 			}
 			return result;
 		}
-		else if constexpr (CT::Real<B>)
+		else if constexpr (CT::Real<B, E>
+			|| CT::Real<CT::UnderlyingTypeOf<B>, CT::UnderlyingTypeOf<E>>)
 			return ::std::pow(base, exponent);
 		else
 			LANGULUS_ERROR("T must either have Pow(exponent) method, or be a number");
