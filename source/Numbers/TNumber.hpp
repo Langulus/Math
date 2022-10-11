@@ -61,14 +61,6 @@ namespace Langulus::Math
 		constexpr explicit operator T& () noexcept {
 			return mValue;
 		}
-
-		//WRAPPER Length() const;
-		/*WRAPPER Sqrt() const;
-		WRAPPER Frac() const;
-		WRAPPER Mod(const TNumber<T>&) const;
-
-		template<CT::Dense E>
-		NOD() constexpr WRAPPER Pow(E) noexcept;*/
 	};
 
 	using uint8 = TNumber<::std::uint8_t>;
@@ -90,71 +82,82 @@ namespace Langulus::Math
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator + (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator + (const TNUM(LHS)&, const LHST&) noexcept;
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator + (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator + (const RHST&, const TNUM(RHS)&) noexcept;
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator + (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Returns the difference of two numbers												
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator - (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 	 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator - (const TNUM(LHS)&, const LHST&) noexcept;
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator - (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator - (const RHST&, const TNUM(RHS)&) noexcept;
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator - (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Returns the product of two numbers													
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator * (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator * (const TNUM(LHS)&, const LHST&) noexcept;
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator * (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator * (const RHST&, const TNUM(RHS)&) noexcept;
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator * (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Returns the division of two numbers												
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator / (const TNUM(LHS)&, const TNUM(RHS)&) requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator / (const TNUM(LHS)&, const LHST&);
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator / (const TNUM(LHS)&, const N&) requires (!CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator / (const RHST&, const TNUM(RHS)&);
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator / (const N&, const TNUM(RHS)&) requires (!CT::Same<RHSW, N>);
+	
+	/// Returns the remainder (a.k.a. modulation) of a division						
+	/// We augment c++ builtin types, by providing % operators for Real, too	
+	template<TARGS(LHS), TARGS(RHS)>
+	NOD() constexpr LHSW operator % (const TNUM(LHS)&, const TNUM(RHS)&) requires CT::Same<LHSW, RHSW>;
+
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator % (const TNUM(LHS)&, const N&) requires (!CT::Same<LHSW, N>);
+
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator % (const N&, const TNUM(RHS)&) requires (!CT::Same<RHSW, N>);
 
 	/// Returns the left-shift of two integer vectors									
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator << (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires (CT::Integer<LHST, RHST> && CT::Same<LHSW, RHSW>);
 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator << (const TNUM(LHS)&, const LHST&) noexcept requires (CT::Integer<LHST>);
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator << (const TNUM(LHS)&, const N&) noexcept requires (CT::Integer<N> && !CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator << (const RHST&, const TNUM(RHS)&) noexcept requires (CT::Integer<RHST>);
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator << (const N&, const TNUM(RHS)&) noexcept requires (CT::Integer<N> && !CT::Same<RHSW, N>);
 
 	/// Returns the right-shift of two integer vectors									
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator >> (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires (CT::Integer<LHST, RHST>&& CT::Same<LHSW, RHSW>);
 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator >> (const TNUM(LHS)&, const LHST&) noexcept requires (CT::Integer<LHST>);
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator >> (const TNUM(LHS)&, const N&) noexcept requires (CT::Integer<N> && !CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator >> (const RHST&, const TNUM(RHS)&) noexcept requires (CT::Integer<RHST>);
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator >> (const N&, const TNUM(RHS)&) noexcept requires (CT::Integer<N> && !CT::Same<RHSW, N>);
 
 	/// Returns the xor of two integer vectors											
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr LHSW operator ^ (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires (CT::Integer<LHST, RHST>&& CT::Same<LHSW, RHSW>);
 
-	template<TARGS(LHS)>
-	NOD() constexpr LHSW operator ^ (const TNUM(LHS)&, const LHST&) noexcept requires (CT::Integer<LHST>);
+	template<TARGS(LHS), CT::DenseNumber N>
+	NOD() constexpr LHSW operator ^ (const TNUM(LHS)&, const N&) noexcept requires (CT::Integer<N> && !CT::Same<LHSW, N>);
 
-	template<TARGS(RHS)>
-	NOD() constexpr RHSW operator ^ (const RHST&, const TNUM(RHS)&) noexcept requires (CT::Integer<RHST>);
+	template<TARGS(RHS), CT::DenseNumber N>
+	NOD() constexpr RHSW operator ^ (const N&, const TNUM(RHS)&) noexcept requires (CT::Integer<N> && !CT::Same<RHSW, N>);
 
 
 	///																								
@@ -164,29 +167,29 @@ namespace Langulus::Math
 	template<TARGS(LHS), TARGS(RHS)>
 	constexpr LHSW& operator += (TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	constexpr LHSW& operator += (TNUM(LHS)&, const LHST&) noexcept;
+	template<TARGS(LHS), CT::DenseNumber N>
+	constexpr LHSW& operator += (TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	/// Subtract																					
 	template<TARGS(LHS), TARGS(RHS)>
 	constexpr LHSW& operator -= (TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	constexpr LHSW& operator -= (TNUM(LHS)&, const LHST&) noexcept;
+	template<TARGS(LHS), CT::DenseNumber N>
+	constexpr LHSW& operator -= (TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	/// Multiply																					
 	template<TARGS(LHS), TARGS(RHS)>
 	constexpr LHSW& operator *= (TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	constexpr LHSW& operator *= (TNUM(LHS)&, const LHST&) noexcept;
+	template<TARGS(LHS), CT::DenseNumber N>
+	constexpr LHSW& operator *= (TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	/// Divide																						
 	template<TARGS(LHS), TARGS(RHS)>
 	constexpr LHSW& operator /= (TNUM(LHS)&, const TNUM(RHS)&) requires CT::Same<LHSW, RHSW>;
 
-	template<TARGS(LHS)>
-	constexpr LHSW& operator /= (TNUM(LHS)&, const LHST&);
+	template<TARGS(LHS), CT::DenseNumber N>
+	constexpr LHSW& operator /= (TNUM(LHS)&, const N&) requires (!CT::Same<LHSW, N>);
 
 
 	///																								
@@ -197,70 +200,70 @@ namespace Langulus::Math
 	NOD() constexpr bool operator < (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
 	template<TARGS(LHS), CT::DenseNumber N>
-	NOD() constexpr bool operator < (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator < (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 	template<TARGS(LHS), CT::Character N>
-	NOD() constexpr bool operator < (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator < (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	template<TARGS(RHS), CT::DenseNumber N>
-	NOD() constexpr bool operator < (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator < (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 	template<TARGS(RHS), CT::Character N>
-	NOD() constexpr bool operator < (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator < (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Bigger																						
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr bool operator > (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
 	template<TARGS(LHS), CT::DenseNumber N>
-	NOD() constexpr bool operator > (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator > (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 	template<TARGS(LHS), CT::Character N>
-	NOD() constexpr bool operator > (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator > (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	template<TARGS(RHS), CT::DenseNumber N>
-	NOD() constexpr bool operator > (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator > (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 	template<TARGS(RHS), CT::Character N>
-	NOD() constexpr bool operator > (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator > (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Bigger or equal																			
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr bool operator >= (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
 	template<TARGS(LHS), CT::DenseNumber N>
-	NOD() constexpr bool operator >= (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator >= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 	template<TARGS(LHS), CT::Character N>
-	NOD() constexpr bool operator >= (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator >= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	template<TARGS(RHS), CT::DenseNumber N>
-	NOD() constexpr bool operator >= (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator >= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 	template<TARGS(RHS), CT::Character N>
-	NOD() constexpr bool operator >= (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator >= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Smaller or equal																			
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr bool operator <= (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
 	template<TARGS(LHS), CT::DenseNumber N>
-	NOD() constexpr bool operator <= (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator <= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 	template<TARGS(LHS), CT::Character N>
-	NOD() constexpr bool operator <= (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator <= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	template<TARGS(RHS), CT::DenseNumber N>
-	NOD() constexpr bool operator <= (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator <= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 	template<TARGS(RHS), CT::Character N>
-	NOD() constexpr bool operator <= (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator <= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 	/// Equal																						
 	template<TARGS(LHS), TARGS(RHS)>
 	NOD() constexpr bool operator == (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
 
 	template<TARGS(LHS), CT::DenseNumber N>
-	NOD() constexpr bool operator == (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator == (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 	template<TARGS(LHS), CT::Character N>
-	NOD() constexpr bool operator == (const TNUM(LHS)&, const N&) noexcept;
+	NOD() constexpr bool operator == (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
 
 	template<TARGS(RHS), CT::DenseNumber N>
-	NOD() constexpr bool operator == (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator == (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 	template<TARGS(RHS), CT::Character N>
-	NOD() constexpr bool operator == (const N&, const TNUM(RHS)&) noexcept;
+	NOD() constexpr bool operator == (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
 
 } // namespace Langulus::Math
 

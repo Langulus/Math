@@ -154,9 +154,9 @@ namespace Langulus::Math
 	NOD() constexpr auto Abs(const T& a) noexcept {
 		if constexpr (CT::HasAbs<T>)
 			return a.Abs();
-		else if constexpr (CT::Unsigned<T> || CT::Unsigned<CT::UnderlyingTypeOf<T>>)
+		else if constexpr (CT::Unsigned<T>)
 			return a;
-		else if constexpr (CT::Signed<T> || CT::Signed<CT::UnderlyingTypeOf<T>>)
+		else if constexpr (CT::Signed<T>)
 			return a < T {0} ? -a : a;
 		else
 			LANGULUS_ERROR("T must either have Abs() method, or be a number");
@@ -169,11 +169,11 @@ namespace Langulus::Math
 	NOD() constexpr auto Sign(const T& a) noexcept {
 		if constexpr (CT::HasSign<T>)
 			return a.Sign();
-		else if constexpr (CT::Unsigned<T> || CT::Unsigned<CT::UnderlyingTypeOf<T>>) {
+		else if constexpr (CT::Unsigned<T>) {
 			(void) a;
 			return T {1};
 		}
-		else if constexpr (CT::Signed<T> || CT::Signed<CT::UnderlyingTypeOf<T>>)
+		else if constexpr (CT::Signed<T>)
 			return a < T {0} ? T {-1} : T {1};
 		else
 			LANGULUS_ERROR("T must either have Sign() method, or be a number");
@@ -187,9 +187,7 @@ namespace Langulus::Math
 	NOD() constexpr auto Pow(B base, E exponent) noexcept {
 		if constexpr (CT::HasPow<B, E>)
 			return base.Pow(exponent);
-		else if constexpr (CT::Integer<B, E>
-			|| (::std::integral<CT::UnderlyingTypeOf<B>> && ::std::integral<CT::UnderlyingTypeOf<E>>)
-		) {
+		else if constexpr (CT::Integer<B, E> || CT::CustomInteger<B, E>) {
 			// Credit goes to: http://stackoverflow.com/questions/101439	
 			B result {1};
 			while (exponent) {
@@ -206,8 +204,7 @@ namespace Langulus::Math
 			}
 			return result;
 		}
-		else if constexpr (CT::Real<B, E>
-			|| CT::Real<CT::UnderlyingTypeOf<B>, CT::UnderlyingTypeOf<E>>)
+		else if constexpr (CT::Real<B, E> || CT::CustomReal<B, E>)
 			return ::std::pow(base, exponent);
 		else
 			LANGULUS_ERROR("T must either have Pow(exponent) method, or be a number");
@@ -259,14 +256,14 @@ namespace Langulus::Math
 	NOD() constexpr auto Roundi(const T& a) noexcept {
 		if constexpr (CT::HasRound<T>)
 			return static_cast<int>(a.Round());
-		else if constexpr (CT::Integer<T>)
+		else if constexpr (CT::Integer<T> || CT::CustomInteger<T>)
 			return a;
-		else if constexpr (CT::RealDP<T>) {
+		else if constexpr ((CT::RealDP<T> || CT::RealDP<TypeOf<T>>) && sizeof(T) == 8) {
 			const auto aa = a + T {6755399441055744.0};
 			return reinterpret_cast<const int&>(aa);
 		}
-		else if constexpr (CT::RealSP<T>) {
-			const auto aa = static_cast<double>(a) + double {6755399441055744.0};
+		else if constexpr ((CT::RealSP<T> || CT::RealSP<TypeOf<T>>) && sizeof(T) == 4 && sizeof(RealDP) == 8) {
+			const auto aa = static_cast<RealDP>(a) + RealDP {6755399441055744.0};
 			return reinterpret_cast<const int&>(aa);
 		}
 		else LANGULUS_ERROR("T must either have Round() method, or be a number");
@@ -277,9 +274,9 @@ namespace Langulus::Math
 	NOD() constexpr auto Floor(const T& a) noexcept {
 		if constexpr (CT::HasFloor<T>)
 			return a.Floor();
-		else if constexpr (CT::Integer<T>)
+		else if constexpr (CT::Integer<T> || CT::CustomInteger<T>)
 			return a;
-		else if constexpr (CT::Real<T>) {
+		else if constexpr (CT::Real<T> || CT::CustomReal<T>) {
 			const auto round_a = Round<T>(a);
 			return round_a <= a ? round_a : round_a - T {1};
 		}
@@ -324,15 +321,16 @@ namespace Langulus::Math
 	namespace Detail
 	{
 
-		/// Compile time square root using binary search								
+		/// Compile-time square root using binary search								
+		/// Applicable only to unsigned integers											
 		template<CT::Unsigned T>
-		NOD() constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept requires CT::Dense<T> {
+		NOD() constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept {
 			if (lo == hi)
 				return lo;
 
-			const auto lohionebytwo = (lo + hi + 1u) / 2u;
+			const T lohionebytwo = (lo + hi + 1u) / 2u;
 			return (x / lohionebytwo < lohionebytwo)
-				? SqrtHelper<T>(x, lo, lohionebytwo - 1u)
+				? SqrtHelper<T>(x, lo, static_cast<T>(lohionebytwo - 1u))
 				: SqrtHelper<T>(x, lohionebytwo, hi);
 		}
 
@@ -345,20 +343,20 @@ namespace Langulus::Math
 		if constexpr (CT::HasSqrt<T>)
 			return x.Sqrt();
 		else if constexpr (CT::Unsigned<T>)
-			return Detail::SqrtHelper<T>(x, T {0}, x / T {2} + T {1});
-		else if constexpr (CT::Integer<T>) {
-			LANGULUS_ASSUME(UserAssumes, x >= T {0},
+			return Detail::SqrtHelper<T>(x, 0, x / 2u + 1u);
+		else if constexpr (CT::Integer<T> || CT::CustomInteger<T>) {
+			LANGULUS_ASSUME(UserAssumes, x >= 0,
 				"Square root of negative signed integer");
 			return static_cast<T>(
 				Sqrt(static_cast<::std::make_unsigned_t<T>>(x)));
 		}
-		else if constexpr (CT::Real<T>) {
-			LANGULUS_ASSUME(UserAssumes, x >= T {0},
+		else if constexpr (CT::Real<T> || CT::CustomReal<T>) {
+			LANGULUS_ASSUME(UserAssumes, x >= 0,
 				"Square root of negative real");
 
 			T p {1};
 			while (p <= x / p)
-				p = T {2} *p;
+				p *= T {2};
 
 			T r {p};
 			do {
@@ -375,9 +373,9 @@ namespace Langulus::Math
 	NOD() constexpr auto Frac(const T& f) noexcept {
 		if constexpr (CT::HasFrac<T>)
 			return f.Frac();
-		else if constexpr (CT::Real<T>)
+		else if constexpr (CT::Real<T> || CT::CustomReal<T>)
 			return f - Floor(f);
-		else if constexpr (CT::Integer<T>)
+		else if constexpr (CT::Integer<T> || CT::CustomInteger<T>)
 			return T {0};
 		else
 			LANGULUS_ERROR("T must either have Frac() method, or be a number");
@@ -388,9 +386,9 @@ namespace Langulus::Math
 	NOD() constexpr auto Mod(const T1& x, const T2& y) noexcept {
 		if constexpr (CT::HasMod<T1, T2>)
 			return x.Mod(y);
-		else if constexpr (CT::Integer<T1>)
+		else if constexpr (CT::Integer<T1, T2> || CT::CustomInteger<T1, T2>)
 			return x % y;
-		else if constexpr (CT::Real<T1>)
+		else if constexpr (CT::Real<T1, T2> || CT::CustomReal<T1, T2>)
 			return x - y * Floor(x / y);
 		else
 			LANGULUS_ERROR("T must either have Mod(y) method, or be a number");

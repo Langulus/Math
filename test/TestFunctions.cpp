@@ -286,6 +286,7 @@ TEMPLATE_TEST_CASE("ClampRev 1D - Unsigned", "[arithmetics]", UNSIGNED_TYPES) {
 	REQUIRE(ClampRev(T(100), T(0), T(1)) == 100);
 	REQUIRE(ClampRev(T(0), T(0), T(0)) == 0);
 	REQUIRE(ClampRev(T(12), T(10), T(15)) == 10);
+	REQUIRE(ClampRev(T(13), T(10), T(15)) == 15);
 }
 
 /*
