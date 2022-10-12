@@ -16,7 +16,7 @@ using namespace ::Langulus::Math;
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 
 #define UNSIGNED_TYPES        uint8, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t
-#define REAL_TYPES            RealSP, RealDP
+#define REAL_TYPES            Float, Double
 #define SIGNED_INTEGER_TYPES  ::std::int8_t, ::std::int16_t, ::std::int32_t, ::std::int64_t
 #define INTEGER_TYPES         UNSIGNED_TYPES, SIGNED_INTEGER_TYPES
 #define SIGNED_TYPES          SIGNED_INTEGER_TYPES, REAL_TYPES

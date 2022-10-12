@@ -1,19 +1,13 @@
-///																									
-/// Langulus::Math																				
-/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>							
-///																									
-/// Distributed under GNU General Public License v3+									
-/// See LICENSE file, or https://www.gnu.org/licenses									
-///																									
+///                                                                           
+/// Langulus::Math                                                            
+/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>                    
+///                                                                           
+/// Distributed under GNU General Public License v3+                          
+/// See LICENSE file, or https://www.gnu.org/licenses                         
+///                                                                           
 #pragma once
 #include "Vectors/TVector.hpp"
 #include "Vectors/TNormal.hpp"
 #include "Vectors/TSampler.hpp"
 #include "Vectors/TForce.hpp"
 #include "Vectors/TSizer.hpp"
-
-namespace Langulus::Math
-{
-
-
-} // namespace Langulus::Math

@@ -1,10 +1,10 @@
-///																									
-/// Langulus::Math																				
-/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>							
-///																									
-/// Distributed under GNU General Public License v3+									
-/// See LICENSE file, or https://www.gnu.org/licenses									
-///																									
+///                                                                           
+/// Langulus::Math                                                            
+/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>                    
+///                                                                           
+/// Distributed under GNU General Public License v3+                          
+/// See LICENSE file, or https://www.gnu.org/licenses                         
+///                                                                           
 #pragma once
 #include "Numbers/Level.hpp"
 #include "Numbers/TAngle.hpp"
@@ -16,46 +16,46 @@
 #define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
 LANGULUS_DEFINE_TRAIT(Transformation,
-	"Model transformation trait");
+   "Model transformation trait");
 LANGULUS_DEFINE_TRAIT(Solid,
-	"Solidity state");
+   "Solidity state");
 LANGULUS_DEFINE_TRAIT(Pickable,
-	"Pickability state (true to be able to select with mouse)");
+   "Pickability state (true to be able to select with mouse)");
 LANGULUS_DEFINE_TRAIT(Signed,
-	"Signed state (inverts domains/geometry; flips faces; negates numbers)");
+   "Signed state (inverts domains/geometry; flips faces; negates numbers)");
 LANGULUS_DEFINE_TRAIT(Bilateral,
-	"Bilateral state (doublesidedness)");
+   "Bilateral state (doublesidedness)");
 LANGULUS_DEFINE_TRAIT(Static,
-	"Static state");
+   "Static state");
 LANGULUS_DEFINE_TRAIT(Boundness,
-	"Boundness state (shifts control from simulation to user and vice-versa)");
+   "Boundness state (shifts control from simulation to user and vice-versa)");
 LANGULUS_DEFINE_TRAIT(Relative,
-	"Relativity trait");
+   "Relativity trait");
 LANGULUS_DEFINE_TRAIT(Position,
-	"Position trait");
+   "Position trait");
 LANGULUS_DEFINE_TRAIT(Velocity,
-	"Velocity trait");
+   "Velocity trait");
 LANGULUS_DEFINE_TRAIT(Acceleration,
-	"Acceleration trait");
+   "Acceleration trait");
 
 
 namespace Langulus::Verbs
 {
 
-	/// Move verb																					
-	/// Performs spatial movement/rotation on a physical instance					
-	struct Move : public StaticVerb<Move> {
-		LANGULUS(VERB) "Move";
-		LANGULUS(INFO) "Performs spatial movement/rotation on physical instances";
+   /// Move verb                                                              
+   /// Performs spatial movement/rotation on a physical instance              
+   struct Move : public StaticVerb<Move> {
+      LANGULUS(VERB) "Move";
+      LANGULUS(INFO) "Performs spatial movement/rotation on physical instances";
 
-		template<CT::Data T, CT::Data... A>
-		static constexpr bool AvailableFor() noexcept;
-		template<CT::Data T, CT::Data... A>
-		static constexpr auto Of() noexcept;
+      template<CT::Data T, CT::Data... A>
+      static constexpr bool AvailableFor() noexcept;
+      template<CT::Data T, CT::Data... A>
+      static constexpr auto Of() noexcept;
 
-		template<CT::Data T>
-		static bool ExecuteIn(T&, Verb&);
-	};
+      template<CT::Data T>
+      static bool ExecuteIn(T&, Verb&);
+   };
 
 } // namespace Langulus::Verbs
 
@@ -63,152 +63,152 @@ namespace Langulus::Verbs
 namespace Langulus::Math
 {
 
-	using LevelRange = TRange<Level>;
+   using LevelRange = TRange<Level>;
 
 
-	///																								
-	///	SPATIAL INSTANCE																		
-	///																								
-	/// Provides higher level functionality regarding rotation, translation,	
-	/// scaling, primitive collisions.														
-	///																								
-	template<CT::Vector T>
-	class TInstance {
-	public:
-		using PointType = T;
-		using typename T::MemberType;
-		using T::MemberCount;
-		using MatrixType = TMatrix<MemberType, MemberCount + 1, MemberCount + 1>;
-		using RangeType = TRange<T>;
-		using QuatType = TQuaternion<MemberType>;
-		using SizeType = TSize<T>;
+   ///                                                                        
+   ///   SPATIAL INSTANCE                                                     
+   ///                                                                        
+   /// Provides higher level functionality regarding rotation, translation,   
+   /// scaling, primitive collisions.                                         
+   ///                                                                        
+   template<CT::Vector T>
+   class TInstance {
+   public:
+      using PointType = T;
+      using typename T::MemberType;
+      using T::MemberCount;
+      using MatrixType = TMatrix<MemberType, MemberCount + 1, MemberCount + 1>;
+      using RangeType = TRange<T>;
+      using QuatType = TQuaternion<MemberType>;
+      using SizeType = TSize<T>;
 
-	public:
-		TInstance() noexcept = default;
+   public:
+      TInstance() noexcept = default;
 
-		NOD() RangeType GetRange(Level) const;
-		NOD() RangeType GetRangeRotated(Level) const;
+      NOD() RangeType GetRange(Level) const;
+      NOD() RangeType GetRangeRotated(Level) const;
 
-		NOD() PointType GetPositionNext(const MemberType&) const noexcept;
-		NOD() PointType GetPositionPrev(const MemberType&) const noexcept;
-		NOD() PointType GetVelocityNext(const MemberType&) const noexcept;
-		NOD() PointType GetVelocityPrev(const MemberType&) const noexcept;
+      NOD() PointType GetPositionNext(const MemberType&) const noexcept;
+      NOD() PointType GetPositionPrev(const MemberType&) const noexcept;
+      NOD() PointType GetVelocityNext(const MemberType&) const noexcept;
+      NOD() PointType GetVelocityPrev(const MemberType&) const noexcept;
 
-		NOD() PointType GetRight() const noexcept;
-		NOD() PointType GetUp() const noexcept;
-		NOD() PointType GetForward() const noexcept;
-		NOD() SizeType GetScale(Level) const;
-		NOD() SizeType GetScale() const noexcept;
-		NOD() QuatType GetAim() const noexcept;
-		NOD() PointType GetPosition(Level) const;
-		NOD() PointType GetPosition() const noexcept;
-		NOD() Level GetLevel() const noexcept;
+      NOD() PointType GetRight() const noexcept;
+      NOD() PointType GetUp() const noexcept;
+      NOD() PointType GetForward() const noexcept;
+      NOD() SizeType GetScale(Level) const;
+      NOD() SizeType GetScale() const noexcept;
+      NOD() QuatType GetAim() const noexcept;
+      NOD() PointType GetPosition(Level) const;
+      NOD() PointType GetPosition() const noexcept;
+      NOD() Level GetLevel() const noexcept;
 
-		NOD() MatrixType GetModelTransform(Level) const;
-		NOD() MatrixType GetModelTransform() const;
+      NOD() MatrixType GetModelTransform(Level) const;
+      NOD() MatrixType GetModelTransform() const;
 
-		NOD() MatrixType GetViewTransform(Level) const;
-		NOD() MatrixType GetViewTransform() const;
+      NOD() MatrixType GetViewTransform(Level) const;
+      NOD() MatrixType GetViewTransform() const;
 
-		void ConstrainPosition(const TInstance<T>&, const RangeType&);
+      void ConstrainPosition(const TInstance<T>&, const RangeType&);
 
-		template<bool RELATIVE = false>
-		void SetScale(const SizeType&);
-		template<bool RELATIVE = false>
-		void SetPosition(const PointType&);
+      template<bool RELATIVE = false>
+      void SetScale(const SizeType&);
+      template<bool RELATIVE = false>
+      void SetPosition(const PointType&);
 
-		NOD() PointType RandomPosition(RNG&, const RangeType&) const;
+      NOD() PointType RandomPosition(RNG&, const RangeType&) const;
 
-		void Move(Verb&);
+      void Move(Verb&);
 
-		template<CT::Angle A, CT::Dimension D>
-		void Rotate(MemberType, const TAngle<A, D>&, bool relative = false);
+      template<CT::Angle A, CT::Dimension D>
+      void Rotate(MemberType, const TAngle<A, D>&, bool relative = false);
 
-		template<class K>
-		void Move(MemberType, const TNormal<K>&, bool relative = false);
+      template<class K>
+      void Move(MemberType, const TNormal<K>&, bool relative = false);
 
-		template<class K>
-		void Move(MemberType, const TSize<K>&, bool relative = false);
+      template<class K>
+      void Move(MemberType, const TSize<K>&, bool relative = false);
 
-		template<class K>
-		void Move(MemberType, const TPoint<K>&, bool relative = false);
+      template<class K>
+      void Move(MemberType, const TPoint<K>&, bool relative = false);
 
-		template<class K>
-		void Move(MemberType, const TForce<K>&, bool relative = false);
+      template<class K>
+      void Move(MemberType, const TForce<K>&, bool relative = false);
 
-		void ChangeLevel(MemberType, const Level&, bool relative = false);
+      void ChangeLevel(MemberType, const Level&, bool relative = false);
 
-		bool operator == (const TInstance&) const noexcept;
+      bool operator == (const TInstance&) const noexcept;
 
-	public:
-		// Optional parent for inheriting transformations						
-		Ptr<TInstance<T>> mParent;
+   public:
+      // Optional parent for inheriting transformations                 
+      Ptr<TInstance<T>> mParent;
 
-		// Position in space																
-		PointType mPosition;
+      // Position in space                                              
+      PointType mPosition;
 
-		// Velocity incurred by simulation											
-		PointType mSimVelocity;
-		// Velocity incurred by user interaction									
-		PointType mUseVelocity;
-		// Total velocity 																
-		PointType mVelocity;
+      // Velocity incurred by simulation                                
+      PointType mSimVelocity;
+      // Velocity incurred by user interaction                          
+      PointType mUseVelocity;
+      // Total velocity                                                 
+      PointType mVelocity;
 
-		// Acceleration																	
-		PointType mAcceleration;
-		// The current orientation														
-		QuatType mAim;
-		// The current scale																
-		SizeType mScale;
+      // Acceleration                                                   
+      PointType mAcceleration;
+      // The current orientation                                        
+      QuatType mAim;
+      // The current scale                                              
+      SizeType mScale;
 
-		// User-boundness of the instance											
-		// Instances with zero sim-boundness, but high use-boundness are	
-		// only explicitly moved and manipulated.									
-		// They are not slaves of the simulation and 							
-		// will not move without user input - useful for explicit control 
-		// on characters and so on. This might cause really unexpected		
-		// results in worlds that are the size of an universe.				
-		// Instances with sim-boundness of one are dependent on				
-		// the simulation. You can use any ratio in order to blend			
-		// between user and sim input, but only simulation-boundness is	
-		// capped. Use-boundness might exceed 1, and even be reversed.		
-		// Excessive use-boundness essentially directs energy to the 		
-		// physical system, so care must be taken to balance it out			
-		// against the rest of energy applied from simulation. It's best	
-		// to design a controller that relies on 1 SB, and 0 UB, so that	
-		// physical movement is completely dependent on the simulation		
-		// energy transfer. However, sometimes that is not an option, and 
-		// involves quite elaborate tweeking and testing to behave well.	
-		MemberType mSimBoundness = 1;
-		MemberType mUseBoundness = 1;
+      // User-boundness of the instance                                 
+      // Instances with zero sim-boundness, but high use-boundness are  
+      // only explicitly moved and manipulated.                         
+      // They are not slaves of the simulation and                      
+      // will not move without user input - useful for explicit control 
+      // on characters and so on. This might cause really unexpected    
+      // results in worlds that are the size of an universe.            
+      // Instances with sim-boundness of one are dependent on           
+      // the simulation. You can use any ratio in order to blend        
+      // between user and sim input, but only simulation-boundness is   
+      // capped. Use-boundness might exceed 1, and even be reversed.    
+      // Excessive use-boundness essentially directs energy to the      
+      // physical system, so care must be taken to balance it out       
+      // against the rest of energy applied from simulation. It's best  
+      // to design a controller that relies on 1 SB, and 0 UB, so that  
+      // physical movement is completely dependent on the simulation    
+      // energy transfer. However, sometimes that is not an option, and 
+      // involves quite elaborate tweeking and testing to behave well.  
+      MemberType mSimBoundness = 1;
+      MemberType mUseBoundness = 1;
 
-		// Instance solidity. Solid instances are colliders.					
-		// Nonsolid instances are never tested for collision.					
-		// Volumes of water/air can have partial solidity, causing drag	
-		// 1 is perfect solidity, while 0 is perfect permittance				
-		MemberType mSolid = 0;
+      // Instance solidity. Solid instances are colliders.              
+      // Nonsolid instances are never tested for collision.             
+      // Volumes of water/air can have partial solidity, causing drag   
+      // 1 is perfect solidity, while 0 is perfect permittance          
+      MemberType mSolid = 0;
 
-		// Pickable instances are selectable by mouse ray						
-		bool mPickable = true;
+      // Pickable instances are selectable by mouse ray                 
+      bool mPickable = true;
 
-		// Instance hollowness. Hollow instances are inverted. (ie rooms)	
-		// This way we can reuse geometry like cube, to make an empty box	
-		// It also changes the face winding if not doublesided				
-		bool mSigned = false;
+      // Instance hollowness. Hollow instances are inverted. (ie rooms) 
+      // This way we can reuse geometry like cube, to make an empty box 
+      // It also changes the face winding if not doublesided            
+      bool mSigned = false;
 
-		// Doublesidedness for degenerative shapes								
-		bool mBilateral = false;
+      // Doublesidedness for degenerative shapes                        
+      bool mBilateral = false;
 
-		// Static instances are never updated (optimization only)			
-		bool mStatic = false;
+      // Static instances are never updated (optimization only)         
+      bool mStatic = false;
 
-		// Octave change incurred by simulation									
-		Level mSimLevelChange = 0;
-		// Octave change incurred by user interaction							
-		Level mUseLevelChange = 0;
-		// Octave for scaling, position, acceleration and velocity			
-		Level mLevel = 0;
-	};
+      // Octave change incurred by simulation                           
+      Level mSimLevelChange = 0;
+      // Octave change incurred by user interaction                     
+      Level mUseLevelChange = 0;
+      // Octave for scaling, position, acceleration and velocity        
+      Level mLevel = 0;
+   };
 
 } // namespace Langulus::Math
 

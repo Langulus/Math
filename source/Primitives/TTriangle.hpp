@@ -1,10 +1,10 @@
-///																									
-/// Langulus::Math																				
-/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>							
-///																									
-/// Distributed under GNU General Public License v3+									
-/// See LICENSE file, or https://www.gnu.org/licenses									
-///																									
+///                                                                           
+/// Langulus::Math                                                            
+/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>                    
+///                                                                           
+/// Distributed under GNU General Public License v3+                          
+/// See LICENSE file, or https://www.gnu.org/licenses                         
+///                                                                           
 #pragma once
 #include "TPoint.hpp"
 
@@ -30,27 +30,27 @@ namespace Langulus::Math
    namespace A
    {
 
-      ///																							
-      ///	An abstract triangle, also used as a topology type						
-      ///																							
+      ///                                                                     
+      ///   An abstract triangle, also used as a topology type                
+      ///                                                                     
       struct Triangle {
          LANGULUS(ABSTRACT) true;
          LANGULUS(CONCRETE) ::Langulus::Math::Triangle;
          LANGULUS_BASES(Topology);
       };
 
-      ///																							
-      ///	An abstract triangle strip, also used as a topology type				
-      ///																							
+      ///                                                                     
+      ///   An abstract triangle strip, also used as a topology type          
+      ///                                                                     
       struct TriangleStrip {
          LANGULUS(ABSTRACT) true;
          LANGULUS(CONCRETE) ::Langulus::Math::TriangleStrip;
          LANGULUS_BASES(Topology);
       };
 
-      ///																							
-      ///	An abstract triangle fan, also used as a topology type				
-      ///																							
+      ///                                                                     
+      ///   An abstract triangle fan, also used as a topology type            
+      ///                                                                     
       struct TriangleFan {
          LANGULUS(ABSTRACT) true;
          LANGULUS(CONCRETE) ::Langulus::Math::TriangleFan;
@@ -60,9 +60,9 @@ namespace Langulus::Math
    } // namespace Langulus::Math::A
 
 
-   ///																								
-   ///	A templated triangle																	
-   ///																								
+   ///                                                                        
+   ///   A templated triangle                                                 
+   ///                                                                        
    #pragma pack(push, 1)
    template<CT::Vector T>
    struct TTriangle {
@@ -80,37 +80,37 @@ namespace Langulus::Math
    public:
       constexpr TTriangle() = default;
 
-      /// Manual construction																	
-      ///	@param p1 - first point															
-      ///	@param p2 - second point														
-      ///	@param p3 - third point															
+      /// Manual construction                                                 
+      ///   @param p1 - first point                                           
+      ///   @param p2 - second point                                          
+      ///   @param p3 - third point                                           
       template<CT::Vector ALT_T = T>
       constexpr TTriangle(const ALT_T& p1, const ALT_T& p2, const ALT_T& p3) noexcept
          : mABC {p1, p2, p3} {}
 
-      /// Manual construction from three points of any type							
-      ///	@param points - pointer to the three points								
+      /// Manual construction from three points of any type                   
+      ///   @param points - pointer to the three points                       
       template<CT::Vector ALT_T = T>
       constexpr TTriangle(const ALT_T* points) noexcept
          : mABC {points[0], points[1], points[2]} {}
 
-      /// Manual construction from dense memory of any type, indexed				
-      ///	@param points - pointer to the point array								
-      ///	@param indices - three indices for the points array					
+      /// Manual construction from dense memory of any type, indexed          
+      ///   @param points - pointer to the point array                        
+      ///   @param indices - three indices for the points array               
       template<CT::Vector ALT_T = T, CT::Integer IDX>
       constexpr TTriangle(const ALT_T* points, const IDX(&indices)[3]) noexcept
          : mABC {points[indices[0]], points[indices[1]], points[indices[2]]} {}
 
-      /// Check if triangle is degenerate													
-      ///	@return true if any of the points overlap									
+      /// Check if triangle is degenerate                                     
+      ///   @return true if any of the points overlap                         
       NOD() constexpr bool IsDegenerate() const noexcept {
          return mABC[0] == mABC[1]
              || mABC[0] == mABC[2]
              || mABC[1] == mABC[2];
       }
 
-      /// Subdivide triangle																	
-      ///	@return the four new triangles												
+      /// Subdivide triangle                                                  
+      ///   @return the four new triangles                                    
       NOD() ::std::array<TTriangle, 4> Subdivide() const noexcept {
          constexpr MemberType two {2};
          const T m01 = mABC[0] + (mABC[1] - mABC[0]) / two;
@@ -124,9 +124,9 @@ namespace Langulus::Math
          };
       }
 
-      /// Calculate signed distance															
-      ///	@param point - the point from which distance is calculated			
-      ///	@return the distance																
+      /// Calculate signed distance                                           
+      ///   @param point - the point from which distance is calculated        
+      ///   @return the distance                                              
       NOD() auto SignedDistance(const T& point) const {
          const auto e0 = mABC[1] - mABC[0];
          const auto e1 = mABC[2] - mABC[1];
@@ -136,7 +136,7 @@ namespace Langulus::Math
          const auto v2 = point - mABC[2];
 
          if constexpr (MemberCount < 3) {
-            // 2D signed distance field											
+            // 2D signed distance field                                 
             const auto pq0 = v0 - e0 * Clamp01(v0.Dot(e0) / Dot2(e0));
             const auto pq1 = v1 - e1 * Clamp01(v1.Dot(e1) / Dot2(e1));
             const auto pq2 = v2 - e2 * Clamp01(v2.Dot(e2) / Dot2(e2));
@@ -151,7 +151,7 @@ namespace Langulus::Math
             return -Sqrt(d[0]) * Sign(d[1]);
          }
          else {
-            // 3D signed distance field											
+            // 3D signed distance field                                 
             const auto nor = e0.Cross(e2);
             return Sqrt((
                   Sign(e0.Cross(nor).Dot(v0)) +
