@@ -69,7 +69,7 @@ namespace Langulus::Math
 
       /// Convert from any sampler to text                                    
       NOD() explicit operator Flow::Code() const {
-         return Serialize<TSampler>();
+         return T::template Serialize<TSampler>();
       }
    };
 

@@ -70,7 +70,7 @@ namespace Langulus::Math
 
       /// Convert from any normal to text                                     
       NOD() explicit operator Flow::Code() const {
-         return Serialize<TNormal>();
+         return T::template Serialize<TNormal>();
       }
    };
 

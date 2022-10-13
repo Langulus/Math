@@ -84,7 +84,7 @@ namespace Langulus::Math
             result += x;
             result += ", ";
          }
-         result += mLevel;
+         result += Text {mLevel};
          result += Flow::Code::CloseScope;
          return result;
       }
