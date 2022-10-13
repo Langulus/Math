@@ -80,7 +80,7 @@ jobs:
       - name: Dispatch Trigger
         if: github.event.action == 'Dependency changed'
         run: >
-          echo "Triggered by dependency"
+          echo "Triggered by dependency: ${{github.event.client_payload.cause}}"
       - name: Clone
         uses: actions/checkout@v2
       - if: matrix.os == 'ubuntu-22.04'
