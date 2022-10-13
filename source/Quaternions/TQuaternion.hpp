@@ -275,9 +275,7 @@ namespace Langulus::Math
    ///   @return a lossless product of the two                                
    template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
    NOD() TVector<Lossless<T1, T2>, C> operator * (const TVector<T1, C>& lhs, const TQuaternion<T2>& rhs) noexcept requires(C >= 2) {
-      using LT = Lossless<T1, T2>;
-      const TQuaternion<LT> vecQuat {TVector<T1, 3>(lhs), 0};
-      return (lhs * vecQuat) * rhs.Conjugate();
+      return rhs.Conjugate() * lhs;
    }
 
    /// Quaterion *= Quaternion                                                

@@ -7,9 +7,26 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
-      "ctestCommandArgs": ""
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "MSVC-x64-Release-AVX2",
@@ -17,10 +34,27 @@
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ]
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "MSVC-x86-Debug-AVX2",
@@ -28,10 +62,27 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "MSVC-x86-Release-AVX2",
@@ -39,10 +90,27 @@
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "MSVC-x86-Debug-SSE2",
@@ -50,10 +118,27 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=16 -DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:SSE2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:SSE2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "16",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "MSVC-x86-Release-SSE2",
@@ -61,10 +146,27 @@
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=16 -DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:SSE2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"/DWIN32 /D_WINDOWS /arch:SSE2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x86" ]
+      "inheritEnvironments": [ "msvc_x86" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "16",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "WSL-GCC-Debug-AVX2",
@@ -73,11 +175,28 @@
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeExecutable": "cmake",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"-mavx2\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"-mavx2\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "linux_x64" ],
-      "wslPath": "${defaultWSLPath}"
+      "wslPath": "${defaultWSLPath}",
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "WSL-GCC-Release-AVX2",
@@ -86,11 +205,28 @@
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeExecutable": "cmake",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"-mavx2\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"-mavx2\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "linux_x64" ],
-      "wslPath": "${defaultWSLPath}"
+      "wslPath": "${defaultWSLPath}",
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "Clang-CL-x86-Debug-AVX2",
@@ -98,10 +234,27 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"-m32 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"-m32 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x86" ]
+      "inheritEnvironments": [ "clang_cl_x86" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "Clang-CL-x86-Release-AVX2",
@@ -109,10 +262,27 @@
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"-m32 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"-m32 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x86" ]
+      "inheritEnvironments": [ "clang_cl_x86" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "Clang-CL-x64-Debug-AVX2",
@@ -120,10 +290,27 @@
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"-m64 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"-m64 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x64_x64" ]
+      "inheritEnvironments": [ "clang_cl_x64_x64" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "Clang-CL-x64-Release-AVX2",
@@ -131,10 +318,27 @@
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "-DLANGULUS_ALIGNMENT=32 -DCMAKE_CXX_FLAGS:STRING=\"-m64 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
+      "cmakeCommandArgs": "-DCMAKE_CXX_FLAGS:STRING=\"-m64 /DWIN32 /D_WINDOWS /arch:AVX2 /EHsc\"",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "clang_cl_x64_x64" ]
+      "inheritEnvironments": [ "clang_cl_x64_x64" ],
+      "variables": [
+        {
+          "name": "LANGULUS_ALIGNMENT",
+          "value": "32",
+          "type": "STRING"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_MEMORY",
+          "value": "ON",
+          "type": "BOOL"
+        },
+        {
+          "name": "LANGULUS_FEATURE_MANAGED_REFLECTION",
+          "value": "ON",
+          "type": "BOOL"
+        }
+      ]
     }
   ]
 }
