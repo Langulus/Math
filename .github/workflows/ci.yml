@@ -78,7 +78,7 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - name: Dispatch Trigger
-        if: github.event.action == "Dependency changed"
+        if: github.event.action == 'Dependency changed'
         run: >
           echo "Triggered by dependency"
       - name: Clone
