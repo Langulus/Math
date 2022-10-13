@@ -49,7 +49,7 @@ namespace Langulus::Math
 
       /// Convert from any point to text                                      
       NOD() explicit operator Flow::Code() const {
-         return Serialize<TPoint>();
+         return T::template Serialize<TPoint>();
       }
 
       /// Calculate signed distance                                           

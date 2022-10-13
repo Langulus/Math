@@ -67,7 +67,7 @@ namespace Langulus::Math
 
       /// Convert from any size to text                                       
       NOD() explicit operator Flow::Code() const {
-         return Serialize<TSize>();
+         return T::template Serialize<TSize>();
       }
    };
 
