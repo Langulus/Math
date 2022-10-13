@@ -149,7 +149,7 @@ namespace Langulus::Math
 
    /// Casts a number to its underlying type                                  
    template<CT::DenseNumber T>
-   LANGULUS(ALWAYSINLINE) NOD() constexpr decltype(auto) BuiltinCast(const T& a) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) constexpr decltype(auto) BuiltinCast(const T& a) noexcept {
       if constexpr (CT::BuiltinNumber<T>) {
          // Already built-in, just forward it                           
          return a;
