@@ -380,7 +380,6 @@ namespace Langulus::Math
    ///                                                                        
    ///   Operations                                                           
    ///                                                                        
-
    /// Returns an inverted vector                                             
    template<TARGS(RHS)>
    NOD() auto operator - (const TVEC(RHS)&) noexcept;

@@ -94,6 +94,8 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{matrix.build}}
           -DCMAKE_CXX_FLAGS="${{matrix.feature[2]}}"
           -DLANGULUS_ALIGNMENT=${{matrix.feature[1]}}
+          -DLANGULUS_FEATURE_MANAGED_MEMORY=ON
+          -DLANGULUS_FEATURE_MANAGED_REFLECTION=ON
       - if: matrix.os == 'windows-latest'
         name: Configure Windows
         run: >
@@ -105,6 +107,8 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{matrix.build}}
           -DCMAKE_CXX_FLAGS="/DWIN32 /D_WINDOWS /EHsc ${{matrix.feature[3]}}"
           -DLANGULUS_ALIGNMENT=${{matrix.feature[1]}}
+          -DLANGULUS_FEATURE_MANAGED_MEMORY=ON
+          -DLANGULUS_FEATURE_MANAGED_REFLECTION=ON
       - name: Build
         run: cmake --build out/${{matrix.name}} --config ${{matrix.build}}
       - name: Test

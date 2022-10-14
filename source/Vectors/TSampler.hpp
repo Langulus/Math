@@ -8,8 +8,6 @@
 #pragma once
 #include "TVector.hpp"
 
-LANGULUS_DEFINE_TRAIT(Sampler, "Texture coordinates");
-
 namespace Langulus::Math
 {
 

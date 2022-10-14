@@ -196,74 +196,73 @@ namespace Langulus::Math
 
    /// Destructive multiplication of two matrices (not commutative)           
    TEMPLATE()
-   constexpr void operator *= (TME()& me, const TME()& other) noexcept {
-      me = me * other;
+   constexpr TME()& operator *= (TME()& me, const TME()& other) noexcept {
+      return me = me * other;
    }
 
    /// Destructive addition of two matrices. Not commutative                  
    TEMPLATE()
-   constexpr void operator += (TME()& me, const TME()& other) noexcept {
+   constexpr TME()& operator += (TME()& me, const TME()& other) noexcept {
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
          me.mArray[idx] += other.mArray[idx];
+      return me;
    }
 
    /// Destructive subtraction of two matrices. Not commutative               
    TEMPLATE()
-      constexpr void operator -= (TME()& me, const TME()& other) noexcept {
+   constexpr TME()& operator -= (TME()& me, const TME()& other) noexcept {
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
          me.mArray[idx] -= other.mArray[idx];
+      return me;
    }
 
    /// Destructive multiplication by a scalar. Not commutative                
    TEMPLATE()
-      constexpr void operator *= (TME()& me, const T& s) noexcept {
+   constexpr TME()& operator *= (TME()& me, const T& s) noexcept {
       for (auto& it : me.mArray)
          it *= s;
+      return me;
    }
 
    /// Destructive division by a scalar. Not commutative                      
    TEMPLATE()
-      constexpr void operator /= (TME()& me, const T& s) noexcept {
+   constexpr TME()& operator /= (TME()& me, const T& s) noexcept {
       const auto inv_s = T(1) / s;
       for (auto& it : me.mArray)
          it *= inv_s;
+      return me;
    }
 
    /// Multiply by a column vector                                            
    ///   @returns a row vector result                                         
    template<TARGS(LHS), CT::DenseNumber T, Count C>
-   constexpr auto operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSR && C > 1) {
+   constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSR && C > 1) {
       using LT = Lossless<T, LHST>;
       LT r[C] = {};
       for (Offset vr = 0; vr < C; ++vr) {
          for (Offset mc = 0; mc < Math::Min(C, LHSC); ++mc)
             r[vr] += me.Get(vr, mc) * vec[mc];
       }
-      return TVector<LT, C> {r};
+      return r;
    }
 
    /// Multiply by a row vector                                               
    ///   @returns a column vector result                                      
    template<TARGS(RHS), CT::DenseNumber T, Count C>
-   constexpr auto operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
+   constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
       using LT = Lossless<T, RHST>;
       LT r[C] = {};
       for (Offset vr = 0; vr < C; ++vr) {
          for (Offset mc = 0; mc < Math::Min(C, RHSR); ++mc)
             r[vr] += me.Get(mc, vr) * vec[mc];
       }
-      return TVector<LT, C> {r};
+      return r;
    }
 
    /// Destructive multiplication of a row vector                             
    template<TARGS(RHS), CT::DenseNumber T, Count C>
-   constexpr void operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
-      T r[C] = {};
-      for (Offset vr = 0; vr < C; ++vr) {
-         for (Offset mc = 0; mc < Math::Min(C, RHSR); ++mc)
-            r[vr] += me.Get(mc, vr) * vec[mc];
-      }
-      return TVector<T, C> {r};
+   constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
+      return vec = vec * me;
    }
 
 

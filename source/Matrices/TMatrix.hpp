@@ -221,28 +221,28 @@ namespace Langulus::Math
    NOD() constexpr TME() operator / (const T&, const TME()&) noexcept;
 
    TEMPLATE()
-   constexpr void operator *= (TME()&, const TME()&) noexcept;
+   constexpr TME()& operator *= (TME()&, const TME()&) noexcept;
 
    TEMPLATE()
-   constexpr void operator += (TME()&, const TME()&) noexcept;
+   constexpr TME()& operator += (TME()&, const TME()&) noexcept;
 
    TEMPLATE()
-   constexpr void operator -= (TME()&, const TME()&) noexcept;
+   constexpr TME()& operator -= (TME()&, const TME()&) noexcept;
 
    TEMPLATE()
-   constexpr void operator *= (TME()&, const T&) noexcept;
+   constexpr TME()& operator *= (TME()&, const T&) noexcept;
 
    TEMPLATE()
-   constexpr void operator /= (TME()&, const T&) noexcept;
+   constexpr TME()& operator /= (TME()&, const T&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber K, Count C>
-   NOD() constexpr auto operator * (const TMAT(LHS)&, const TVector<K, C>&) noexcept requires (C <= LHSR && C > 1);
+   NOD() constexpr TVector<K, C> operator * (const TMAT(LHS)&, const TVector<K, C>&) noexcept requires (C <= LHSR && C > 1);
 
    template<TARGS(RHS), CT::DenseNumber K, Count C>
-   NOD() constexpr auto operator * (const TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
+   NOD() constexpr TVector<K, C> operator * (const TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
 
    template<TARGS(RHS), CT::DenseNumber K, Count C>
-   constexpr void operator *= (TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
+   constexpr TVector<K, C>& operator *= (TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
 
 
    ///                                                                        

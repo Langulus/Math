@@ -52,17 +52,16 @@ SCENARIO("Parsing scripts", "[code]") {
 		}
 	}
 
-	GIVEN("The script: - .utSampler.y ^ 2") {
-		const auto code = "- .utSampler.y ^ 2"_code;
+	GIVEN("The script: - .Sampler.y ^ 2") {
+		const auto code = "- .Sampler.y ^ 2"_code;
 
 		WHEN("Parsed without optimization") {
-			Any required = Verbs::Add {}
-				.SetSource(Verbs::Exponent {Real(2)}
+			Any required = Verbs::Add {
+				Verbs::Exponent {Real(2)}
 					.SetSource(Verbs::Select {MetaOf<Traits::Y>()}
 						.SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
 					)
-				)
-				.SetMass(-1);
+			}.SetMass(-1);
 
 			const auto parsed = code.Parse();
 			DumpResults(code, parsed, required);
