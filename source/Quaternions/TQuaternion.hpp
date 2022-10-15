@@ -22,27 +22,31 @@ namespace Langulus::Math
    template<CT::Vector T>
    NOD() TMatrix<typename T::MemberType, T::MemberCount + 1> pcCompose(const TQuaternion<typename T::MemberType>&, const T & = 0, const T & = 1) noexcept;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// quaternion                                                          
-      struct Quaternion {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Quaternion;
-      };
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// quaternion of the same type                                         
-      template<CT::DenseNumber T>
-      struct QuaternionOfType : public Quaternion {
-         LANGULUS(CONCRETE) TQuaternion<T>;
-         LANGULUS_BASES(Quaternion);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// quaternion                                                             
+   struct Quaternion {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Quaternion;
+   };
 
-   } // namespace Langulus::Math::A
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// quaternion of the same type                                            
+   template<CT::DenseNumber T>
+   struct QuaternionOfType : public Quaternion {
+      LANGULUS(CONCRETE) Math::TQuaternion<T>;
+      LANGULUS_BASES(Quaternion);
+      using MemberType = T;
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated quaternion                                                 

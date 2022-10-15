@@ -16,7 +16,6 @@
 #define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
 #define TME() TVector<T, S, DEFAULT>
 
-
 namespace Langulus::Math
 {
 
@@ -87,38 +86,41 @@ namespace Langulus::Math
    using vec4i64 = TVector<::std::int64_t, 4>;
    using vec4u64 = TVector<::std::uint64_t, 4>;
 
+} // namespace Langulus::Math
 
-   namespace A
-   {
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// vector                                                              
-      struct Vector {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) vec4;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// vector                                                                 
+   struct Vector {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::vec4;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// vector of the same size                                             
-      template<Count S>
-      struct VectorOfSize : public Vector {
-         LANGULUS(CONCRETE) TVector<Real, S>;
-         LANGULUS_BASES(Vector);
-         static constexpr Count MemberCount {S};
-         static_assert(S > 0, "Vector size must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// vector of the same size                                                
+   template<Count S>
+   struct VectorOfSize : public Vector {
+      LANGULUS(CONCRETE) Math::TVector<Langulus::Real, S>;
+      LANGULUS_BASES(Vector);
+      static constexpr Count MemberCount {S};
+      static_assert(S > 0, "Vector size must be greater than zero");
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// vector of the same type                                             
-      template<CT::DenseNumber T>
-      struct VectorOfType : public Vector {
-         LANGULUS(CONCRETE) TVector<T, 4>;
-         LANGULUS_BASES(Vector);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// vector of the same type                                                
+   template<CT::DenseNumber T>
+   struct VectorOfType : public Vector {
+      LANGULUS(CONCRETE) Math::TVector<T, 4>;
+      LANGULUS_BASES(Vector);
+      using MemberType = T;
+   };
 
-   } // namespace Langulus::Math::A
+} // namespace Langulus::A
 
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated vector                                                     
@@ -142,9 +144,11 @@ namespace Langulus::Math
 
       T mArray[S];
 
+      static constexpr Token GenerateClassName() noexcept;
+      LANGULUS(NAME) GenerateClassName();
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
-      LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>);
+      LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>, T);
 
    public:
       constexpr TVector() noexcept;

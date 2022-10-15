@@ -9,7 +9,7 @@
 #include "../Matrices/TMatrix.hpp"
 #include "../Functions/Trigonometry.hpp"
 
-namespace Langulus::Math::A
+namespace Langulus::A
 {
 
    struct Primitive {
@@ -22,4 +22,4 @@ namespace Langulus::Math::A
       LANGULUS_BASES(Primitive);
    };
 
-} // namespace Langulus::Math::A
+} // namespace Langulus::A

@@ -17,37 +17,41 @@ namespace Langulus::Math
    using Sampler3 = TSampler<vec3>;
    using Sampler4 = TSampler<vec4>;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// sampler                                                             
-      struct Sampler {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Sampler3;
-      };
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// sampler of the same size                                            
-      template<Count S>
-      struct SamplerOfSize : public Sampler {
-         LANGULUS(CONCRETE) TSampler<TVector<Real, S>>;
-         LANGULUS_BASES(Sampler);
-         static constexpr Count MemberCount {S};
-         static_assert(S > 0, "Normal size must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// sampler                                                                
+   struct Sampler {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Sampler3;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// sampler of the same type                                            
-      template<CT::DenseNumber T>
-      struct SamplerOfType : public Sampler {
-         LANGULUS(CONCRETE) TSampler<TVector<T, 3>>;
-         LANGULUS_BASES(Sampler);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// sampler of the same size                                               
+   template<Count S>
+   struct SamplerOfSize : public Sampler {
+      LANGULUS(CONCRETE) Math::TSampler<Math::TVector<Real, S>>;
+      LANGULUS_BASES(Sampler);
+      static constexpr Count MemberCount {S};
+      static_assert(S > 0, "Normal size must be greater than zero");
+   };
 
-   } // namespace Langulus::Math::A
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// sampler of the same type                                               
+   template<CT::DenseNumber T>
+   struct SamplerOfType : public Sampler {
+      LANGULUS(CONCRETE) Math::TSampler<Math::TVector<T, 3>>;
+      LANGULUS_BASES(Sampler);
+      using MemberType = T;
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   A templated sampler                                                  

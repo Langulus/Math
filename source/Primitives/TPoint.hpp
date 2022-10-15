@@ -19,20 +19,22 @@ namespace Langulus::Math
 
    using Point = Point3;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      ///                                                                     
-      ///   An abstract point, also used as a topology type                   
-      ///                                                                     
-      struct Point {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Point;
-         LANGULUS_BASES(Topology);
-      };
+namespace Langulus::A
+{
 
-   } // namespace Langulus::Math::A
+   ///   An abstract point, also used as a topology type                      
+   struct Point {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Point;
+      LANGULUS_BASES(Topology);
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   A concrete point                                                     

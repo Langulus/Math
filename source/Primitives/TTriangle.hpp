@@ -26,39 +26,36 @@ namespace Langulus::Math
    using TriangleStrip = TriangleStrip3;
    using TriangleFan = TriangleFan3;
 
+} // namespace Langulus::Math
 
-   namespace A
-   {
+namespace Langulus::A
+{
 
-      ///                                                                     
-      ///   An abstract triangle, also used as a topology type                
-      ///                                                                     
-      struct Triangle {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Triangle;
-         LANGULUS_BASES(Topology);
-      };
+   ///   An abstract triangle, also used as a topology type                   
+   struct Triangle {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Triangle;
+      LANGULUS_BASES(Topology);
+   };
 
-      ///                                                                     
-      ///   An abstract triangle strip, also used as a topology type          
-      ///                                                                     
-      struct TriangleStrip {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::TriangleStrip;
-         LANGULUS_BASES(Topology);
-      };
+   ///   An abstract triangle strip, also used as a topology type             
+   struct TriangleStrip {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::TriangleStrip;
+      LANGULUS_BASES(Topology);
+   };
 
-      ///                                                                     
-      ///   An abstract triangle fan, also used as a topology type            
-      ///                                                                     
-      struct TriangleFan {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::TriangleFan;
-         LANGULUS_BASES(Topology);
-      };
+   ///   An abstract triangle fan, also used as a topology type               
+   struct TriangleFan {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::TriangleFan;
+      LANGULUS_BASES(Topology);
+   };
 
-   } // namespace Langulus::Math::A
+} // namespace Langulus::A
 
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   A templated triangle                                                 

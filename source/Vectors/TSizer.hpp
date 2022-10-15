@@ -15,38 +15,41 @@ namespace Langulus::Math
    using Size2 = TSize<TVector<Real, 2, 1>>;
    using Size = Size3;
 
+} // namespace Langulus::Math
 
-   namespace A
-   {
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// size                                                                
-      struct Size {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Size;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// size                                                                   
+   struct Size {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Size;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// size of the same size                                               
-      template<Count S>
-      struct SizeOfSize : public Size {
-         LANGULUS(CONCRETE) TSize<TVector<Real, S, 1>>;
-         LANGULUS_BASES(Size);
-         static constexpr Count MemberCount {S};
-         static_assert(S > 0, "Size size must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// size of the same size                                                  
+   template<Count S>
+   struct SizeOfSize : public Size {
+      LANGULUS(CONCRETE) Math::TSize<Math::TVector<Real, S, 1>>;
+      LANGULUS_BASES(Size);
+      static constexpr Count MemberCount {S};
+      static_assert(S > 0, "Size size must be greater than zero");
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// size of the same type                                               
-      template<CT::DenseNumber T>
-      struct SizeOfType : public Size {
-         LANGULUS(CONCRETE) TSize<TVector<T, 3, 1>>;
-         LANGULUS_BASES(Size);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// size of the same type                                                  
+   template<CT::DenseNumber T>
+   struct SizeOfType : public Size {
+      LANGULUS(CONCRETE) Math::TSize<Math::TVector<T, 3, 1>>;
+      LANGULUS_BASES(Size);
+      using MemberType = T;
+   };
 
-   } // namespace Langulus::Math::A
+} // namespace Langulus::A
 
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated size                                                       

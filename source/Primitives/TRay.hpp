@@ -17,20 +17,22 @@ namespace Langulus::Math
    using Ray3 = TRay<Point3>;
    using Ray = Ray3;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      ///                                                                     
-      ///   An abstract ray                                                   
-      ///                                                                     
-      struct Ray {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Ray;
-         LANGULUS_BASES(Primitive);
-      };
+namespace Langulus::A
+{
 
-   } // namespace Langulus::Math::A
+   ///   An abstract ray                                                      
+   struct Ray {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Ray;
+      LANGULUS_BASES(Primitive);
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   A ray                                                                

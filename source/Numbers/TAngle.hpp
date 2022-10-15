@@ -20,7 +20,6 @@ namespace Langulus::CT
 
 } // namespace Langulus::CT
 
-
 namespace Langulus::Math
 {
 
@@ -77,36 +76,40 @@ namespace Langulus::Math
    using Rolld = TRoll<Degrees>;
    using Rollr = TRoll<Radians>;
 
+} // namespace Langulus::Math
 
-   namespace A
-   {
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as   
-      /// an angle                                                            
-      struct Angle {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Radians;
-      };
+   /// Used as an imposed base for any type that can be interpretable as      
+   /// an angle                                                               
+   struct Angle {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Radians;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as   
-      /// an angle of the same dimension                                      
-      template<CT::Dimension D>
-      struct AngleOfDimension : public Angle {
-         LANGULUS(CONCRETE) TAngle<Radians, D>;
-         LANGULUS_BASES(Angle);
-      };
+   /// Used as an imposed base for any type that can be interpretable as      
+   /// an angle of the same dimension                                         
+   template<CT::Dimension D>
+   struct AngleOfDimension : public Angle {
+      LANGULUS(CONCRETE) Math::TAngle<Math::Radians, D>;
+      LANGULUS_BASES(Angle);
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as   
-      /// an angle of the same type                                           
-      template<CT::Angle T>
-      struct AngleOfType : public Angle {
-         LANGULUS(CONCRETE) T;
-         LANGULUS_BASES(Angle);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as      
+   /// an angle of the same type                                              
+   template<CT::Angle T>
+   struct AngleOfType : public Angle {
+      LANGULUS(CONCRETE) T;
+      LANGULUS_BASES(Angle);
+      using MemberType = T;
+   };
 
-   } // namespace Langulus::Math::A
+} // namespace Langulus::A
 
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated angle                                                      

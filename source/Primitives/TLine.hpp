@@ -26,38 +26,36 @@ namespace Langulus::Math
    using LineLoop = LineLoop3;
    using LineStrip = LineStrip3;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      ///                                                                     
-      ///   An abstract line, also used as a topology type                    
-      ///                                                                     
-      struct Line {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Line;
-         LANGULUS_BASES(Topology);
-      };
+namespace Langulus::A
+{
 
-      ///                                                                     
-      ///   An abstract line loop, also used as a topology type               
-      ///                                                                     
-      struct LineLoop {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::LineLoop;
-         LANGULUS_BASES(Topology);
-      };
+   ///   An abstract line, also used as a topology type                       
+   struct Line {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Line;
+      LANGULUS_BASES(Topology);
+   };
 
-      ///                                                                     
-      ///   An abstract line strip, also used as a topology type              
-      ///                                                                     
-      struct LineStrip {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::LineStrip;
-         LANGULUS_BASES(Topology);
-      };
+   ///   An abstract line loop, also used as a topology type                  
+   struct LineLoop {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::LineLoop;
+      LANGULUS_BASES(Topology);
+   };
 
-   } // namespace Langulus::Math::A
+   ///   An abstract line strip, also used as a topology type                 
+   struct LineStrip {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::LineStrip;
+      LANGULUS_BASES(Topology);
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated line segment                                               

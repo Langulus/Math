@@ -16,38 +16,41 @@ namespace Langulus::Math
    using Force3 = TForce<vec3>;
    using Force = Force3;
 
+} // namespace Langulus::Math
 
-   namespace A
-   {
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// force                                                               
-      struct Force {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Force;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// force                                                                  
+   struct Force {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Force;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// force of the same size                                              
-      template<Count S>
-      struct ForceOfSize : public Force {
-         LANGULUS(CONCRETE) TForce<TVector<Real, S>>;
-         LANGULUS_BASES(Force);
-         static constexpr Count MemberCount {S};
-         static_assert(S > 0, "Force size must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// force of the same size                                                 
+   template<Count S>
+   struct ForceOfSize : public Force {
+      LANGULUS(CONCRETE) Math::TForce<Math::TVector<Real, S>>;
+      LANGULUS_BASES(Force);
+      static constexpr Count MemberCount {S};
+      static_assert(S > 0, "Force size must be greater than zero");
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// force of the same type                                              
-      template<CT::DenseNumber T>
-      struct ForceOfType : public Force {
-         LANGULUS(CONCRETE) TForce<TVector<T, 3>>;
-         LANGULUS_BASES(Force);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// force of the same type                                                 
+   template<CT::DenseNumber T>
+   struct ForceOfType : public Force {
+      LANGULUS(CONCRETE) Math::TForce<Math::TVector<T, 3>>;
+      LANGULUS_BASES(Force);
+      using MemberType = T;
+   };
 
-   } // namespace Langulus::Math::A
+} // namespace Langulus::A
 
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated force                                                      

@@ -65,36 +65,40 @@ namespace Langulus::Math
    using Range4i32 = TRange<vec4i32>;
    using Range4i64 = TRange<vec4i64>;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// range                                                               
-      struct Range {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) TRange<vec4>;
-      };
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// range of the same size                                              
-      template<Count S>
-      struct RangeOfSize : public Range {
-         LANGULUS(CONCRETE) TRange<TVector<Real, S>>;
-         LANGULUS_BASES(Range);
-         static constexpr Count MemberCount {S};
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// range                                                                  
+   struct Range {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::TRange<Math::vec4>;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// range of the same type                                              
-      template<CT::DenseNumber T>
-      struct RangeOfType : public Range {
-         LANGULUS(CONCRETE) TRange<TVector<T, 4>>;
-         LANGULUS_BASES(Range);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// range of the same size                                                 
+   template<Count S>
+   struct RangeOfSize : public Range {
+      LANGULUS(CONCRETE) Math::TRange<Math::TVector<Real, S>>;
+      LANGULUS_BASES(Range);
+      static constexpr Count MemberCount {S};
+   };
 
-   } // namespace Langulus::Math::A
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// range of the same type                                                 
+   template<CT::DenseNumber T>
+   struct RangeOfType : public Range {
+      LANGULUS(CONCRETE) Math::TRange<Math::TVector<T, 4>>;
+      LANGULUS_BASES(Range);
+      using MemberType = T;
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated range                                                      

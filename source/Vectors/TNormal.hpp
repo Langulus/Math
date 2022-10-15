@@ -14,37 +14,41 @@ namespace Langulus::Math
    /// Commonly used 3D normal                                                
    using Normal = TNormal<vec3>;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// normal                                                              
-      struct Normal {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Normal;
-      };
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// normal of the same size                                             
-      template<Count S>
-      struct NormalOfSize : public Normal {
-         LANGULUS(CONCRETE) TNormal<TVector<Real, S>>;
-         LANGULUS_BASES(Normal);
-         static constexpr Count MemberCount {S};
-         static_assert(S > 1, "Normal size must be greater than one");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// normal                                                                 
+   struct Normal {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Normal;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// normal of the same type                                             
-      template<CT::DenseNumber T>
-      struct NormalOfType : public Normal {
-         LANGULUS(CONCRETE) TNormal<TVector<T, 4>>;
-         LANGULUS_BASES(Normal);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// normal of the same size                                                
+   template<Count S>
+   struct NormalOfSize : public Normal {
+      LANGULUS(CONCRETE) Math::TNormal<Math::TVector<Real, S>>;
+      LANGULUS_BASES(Normal);
+      static constexpr Count MemberCount {S};
+      static_assert(S > 1, "Normal size must be greater than one");
+   };
 
-   } // namespace Langulus::Math::A
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// normal of the same type                                                
+   template<CT::DenseNumber T>
+   struct NormalOfType : public Normal {
+      LANGULUS(CONCRETE) Math::TNormal<Math::TVector<T, 4>>;
+      LANGULUS_BASES(Normal);
+      using MemberType = T;
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated normal                                                     

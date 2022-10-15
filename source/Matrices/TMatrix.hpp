@@ -44,60 +44,63 @@ namespace Langulus::Math
 
    using Matrix = Matrix4;
 
+} // namespace Langulus::Math
 
-   namespace A
-   {
+namespace Langulus::A
+{
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix                                                              
-      struct Matrix {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Matrix;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// matrix                                                                 
+   struct Matrix {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) ::Langulus::Math::Matrix;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same column count                                     
-      template<Count COLUMNS>
-      struct MatrixOfColumns : public Matrix {
-         LANGULUS(CONCRETE) TMatrix<Real, COLUMNS, COLUMNS>;
-         LANGULUS_BASES(Matrix);
-         static constexpr Count Columns {COLUMNS};
-         static_assert(COLUMNS > 0, "Column count must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// matrix of the same column count                                        
+   template<Count COLUMNS>
+   struct MatrixOfColumns : public Matrix {
+      LANGULUS(CONCRETE) Math::TMatrix<Real, COLUMNS, COLUMNS>;
+      LANGULUS_BASES(Matrix);
+      static constexpr Count Columns {COLUMNS};
+      static_assert(COLUMNS > 0, "Column count must be greater than zero");
+   };
       
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same rows count                                       
-      template<Count ROWS>
-      struct MatrixOfRows : public Matrix {
-         LANGULUS(CONCRETE) TMatrix<Real, ROWS, ROWS>;
-         LANGULUS_BASES(Matrix);
-         static constexpr Count Rows {ROWS};
-         static_assert(ROWS > 0, "Row count must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// matrix of the same rows count                                          
+   template<Count ROWS>
+   struct MatrixOfRows : public Matrix {
+      LANGULUS(CONCRETE) Math::TMatrix<Real, ROWS, ROWS>;
+      LANGULUS_BASES(Matrix);
+      static constexpr Count Rows {ROWS};
+      static_assert(ROWS > 0, "Row count must be greater than zero");
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same column and row count                             
-      template<Count COLUMNS, Count ROWS>
-      struct MatrixOfSize : public Matrix {
-         LANGULUS(CONCRETE) TMatrix<Real, COLUMNS, ROWS>;
-         LANGULUS_BASES(Matrix);
-         static constexpr Count Columns {COLUMNS};
-         static constexpr Count Rows {ROWS};
-         static_assert(COLUMNS > 0, "Column count must be greater than zero");
-         static_assert(ROWS > 0, "Row count must be greater than zero");
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// matrix of the same column and row count                                
+   template<Count COLUMNS, Count ROWS>
+   struct MatrixOfSize : public Matrix {
+      LANGULUS(CONCRETE) Math::TMatrix<Real, COLUMNS, ROWS>;
+      LANGULUS_BASES(Matrix);
+      static constexpr Count Columns {COLUMNS};
+      static constexpr Count Rows {ROWS};
+      static_assert(COLUMNS > 0, "Column count must be greater than zero");
+      static_assert(ROWS > 0, "Row count must be greater than zero");
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same type                                             
-      template<CT::DenseNumber T>
-      struct MatrixOfType : public Matrix {
-         LANGULUS(CONCRETE) TMatrix<T, 4, 4>;
-         LANGULUS_BASES(Matrix);
-         using MemberType = T;
-      };
+   /// Used as an imposed base for any type that can be interpretable as a    
+   /// matrix of the same type                                                
+   template<CT::DenseNumber T>
+   struct MatrixOfType : public Matrix {
+      LANGULUS(CONCRETE) Math::TMatrix<T, 4, 4>;
+      LANGULUS_BASES(Matrix);
+      using MemberType = T;
+   };
 
-   } // namespace Langulus::Math::A
+} // namespace Langulus::A
 
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   A templated matrix (column-major)                                    

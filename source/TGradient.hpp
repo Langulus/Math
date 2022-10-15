@@ -44,17 +44,21 @@ namespace Langulus::Math
    using Grad2v4i = TGrad2<vec4i>;
    using Grad2v4u = TGrad2<vec4u>;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      /// Used as an imposed base for any type that can be interpretable as   
-      /// a gradient                                                          
-      struct Gradient {
-         LANGULUS(ABSTRACT) true;
-      };
+namespace Langulus::A
+{
 
-   } // namespace Langulus::Math::A
+   /// Used as an imposed base for any type that can be interpretable as      
+   /// a gradient                                                             
+   struct Gradient {
+      LANGULUS(ABSTRACT) true;
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   Templated gradient                                                   

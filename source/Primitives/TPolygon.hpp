@@ -18,20 +18,22 @@ namespace Langulus::Math
 
    using Polygon = Polygon3;
 
-   namespace A
-   {
+} // namespace Langulus::Math
 
-      ///                                                                     
-      ///   An abstract polygon, also used as a topology type                 
-      ///                                                                     
-      struct Polygon {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Polygon;
-         LANGULUS_BASES(Topology);
-      };
+namespace Langulus::A
+{
 
-   } // namespace Langulus::Math::A
+   ///   An abstract polygon, also used as a topology type                    
+   struct Polygon {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Polygon;
+      LANGULUS_BASES(Topology);
+   };
 
+} // namespace Langulus::A
+
+namespace Langulus::Math
+{
 
    ///                                                                        
    ///   A templated polygon                                                  

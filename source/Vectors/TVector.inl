@@ -12,6 +12,144 @@
 namespace Langulus::Math
 {
    
+   /// Pick a shorter token, based on member count and type                   
+   /// This should be made more elegant when true constexpr string literals   
+   /// become available in the standard                                       
+   TEMPLATE()
+   constexpr Token TME()::GenerateClassName() noexcept {
+      if constexpr (DEFAULT != 0)
+         return RTTI::LastNameOf<TME()>();
+
+      switch (MemberCount) {
+      case 1:
+         /*if constexpr (CT::Same<TypeOf<T>, Real>)
+            return "Vec1";
+         else if constexpr (CT::Same<TypeOf<T>, signed int>)
+            return "Vec1i";
+         else if constexpr (CT::Same<TypeOf<T>, unsigned int>)
+            return "Vec1u";
+         else*/ if constexpr (CT::Same<TypeOf<T>, bool>)
+            return "Vec1b";
+         else if constexpr (CT::Same<TypeOf<T>, Float>)
+            return "Vec1f";
+         else if constexpr (CT::Same<TypeOf<T>, Double>)
+            return "Vec1d";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint8_t>)
+            return "Vec1u8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint16_t>)
+            return "Vec1u16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint32_t>)
+            return "Vec1u32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint64_t>)
+            return "Vec1u64";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int8_t>)
+            return "Vec1i8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int16_t>)
+            return "Vec1i16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int32_t>)
+            return "Vec1i32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int64_t>)
+            return "Vec1i64";
+         else
+            return RTTI::LastNameOf<TME()>();
+      case 2:
+         /*if constexpr (CT::Same<TypeOf<T>, Real>)
+            return "Vec2";
+         else if constexpr (CT::Same<TypeOf<T>, signed int>)
+            return "Vec2i";
+         else if constexpr (CT::Same<TypeOf<T>, unsigned int>)
+            return "Vec2u";
+         else*/ if constexpr (CT::Same<TypeOf<T>, bool>)
+            return "Vec2b";
+         else if constexpr (CT::Same<TypeOf<T>, Float>)
+            return "Vec2f";
+         else if constexpr (CT::Same<TypeOf<T>, Double>)
+            return "Vec2d";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint8_t>)
+            return "Vec2u8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint16_t>)
+            return "Vec2u16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint32_t>)
+            return "Vec2u32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint64_t>)
+            return "Vec2u64";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int8_t>)
+            return "Vec2i8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int16_t>)
+            return "Vec2i16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int32_t>)
+            return "Vec2i32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int64_t>)
+            return "Vec2i64";
+         else
+            return RTTI::LastNameOf<TME()>();
+      case 3:
+         /*if constexpr (CT::Same<TypeOf<T>, Real>)
+            return "Vec3";
+         else if constexpr (CT::Same<TypeOf<T>, signed int>)
+            return "Vec3i";
+         else if constexpr (CT::Same<TypeOf<T>, unsigned int>)
+            return "Vec3u";
+         else*/ if constexpr (CT::Same<TypeOf<T>, bool>)
+            return "Vec3b";
+         else if constexpr (CT::Same<TypeOf<T>, Float>)
+            return "Vec3f";
+         else if constexpr (CT::Same<TypeOf<T>, Double>)
+            return "Vec3d";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint8_t>)
+            return "Vec3u8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint16_t>)
+            return "Vec3u16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint32_t>)
+            return "Vec3u32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint64_t>)
+            return "Vec3u64";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int8_t>)
+            return "Vec3i8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int16_t>)
+            return "Vec3i16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int32_t>)
+            return "Vec3i32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int64_t>)
+            return "Vec3i64";
+         else
+            return RTTI::LastNameOf<TME()>();
+      case 4:
+         /*if constexpr (CT::Same<TypeOf<T>, Real>)
+            return "Vec4";
+         else if constexpr (CT::Same<TypeOf<T>, signed int>)
+            return "Vec4i";
+         else if constexpr (CT::Same<TypeOf<T>, unsigned int>)
+            return "Vec4u";
+         else if constexpr (CT::Same<TypeOf<T>, bool>)
+            return "Vec4b";
+         else*/ if constexpr (CT::Same<TypeOf<T>, Float>)
+            return "Vec4f";
+         else if constexpr (CT::Same<TypeOf<T>, Double>)
+            return "Vec4d";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint8_t>)
+            return "Vec4u8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint16_t>)
+            return "Vec4u16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint32_t>)
+            return "Vec4u32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::uint64_t>)
+            return "Vec4u64";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int8_t>)
+            return "Vec4i8";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int16_t>)
+            return "Vec4i16";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int32_t>)
+            return "Vec4i32";
+         else if constexpr (CT::Same<TypeOf<T>, ::std::int64_t>)
+            return "Vec4i64";
+         else
+            return RTTI::LastNameOf<TME()>();
+      default:
+         return RTTI::LastNameOf<TME()>();
+      }
+   }
+
    /// Default vector constructor initialized all components to DefaultMember 
    TEMPLATE()
    constexpr TME()::TVector() noexcept {
