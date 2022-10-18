@@ -357,13 +357,13 @@ namespace Langulus::Math
          return x.Sqrt();
       else if constexpr (CT::Unsigned<T>)
          return Detail::SqrtHelper<T>(x, 0, x / 2u + 1u);
-      else if constexpr (CT::Integer<T> || CT::CustomInteger<T>) {
+      else if constexpr (CT::Integer<T>) {
          LANGULUS_ASSUME(UserAssumes, x >= 0,
             "Square root of negative signed integer");
          return static_cast<T>(
             Sqrt(static_cast<::std::make_unsigned_t<T>>(x)));
       }
-      else if constexpr (CT::Real<T> || CT::CustomReal<T>) {
+      else if constexpr (CT::Real<T>) {
          LANGULUS_ASSUME(UserAssumes, x >= 0,
             "Square root of negative real");
 
@@ -386,9 +386,9 @@ namespace Langulus::Math
    NOD() constexpr auto Frac(const T& f) noexcept {
       if constexpr (CT::HasFrac<T>)
          return f.Frac();
-      else if constexpr (CT::Real<T> || CT::CustomReal<T>)
+      else if constexpr (CT::Real<T>)
          return f - Floor(f);
-      else if constexpr (CT::Integer<T> || CT::CustomInteger<T>)
+      else if constexpr (CT::Integer<T>)
          return T {0};
       else
          LANGULUS_ERROR("T must either have Frac() method, or be a number");
@@ -399,9 +399,7 @@ namespace Langulus::Math
    NOD() constexpr auto Mod(const T1& x, const T2& y) noexcept {
       if constexpr (CT::HasMod<T1, T2>)
          return x.Mod(y);
-      else if constexpr (CT::Integer<T1, T2> || CT::CustomInteger<T1, T2>)
-         return x % y;
-      else if constexpr (CT::Real<T1, T2> || CT::CustomReal<T1, T2>)
+      else if constexpr (CT::Number<T1, T2>)
          return x - y * Floor(x / y);
       else
          LANGULUS_ERROR("T must either have Mod(y) method, or be a number");

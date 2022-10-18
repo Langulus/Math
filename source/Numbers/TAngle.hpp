@@ -30,6 +30,13 @@ namespace Langulus::Math
       using Base::Base;
       using Base::mValue;
       static constexpr bool Radians = false;
+
+      NOD() Lossless<Real, T> Cos() const noexcept {
+         return Math::Cos(DegToRad(mValue));
+      }
+      NOD() Lossless<Real, T> Sin() const noexcept {
+         return Math::Sin(DegToRad(mValue));
+      }
    };
 
    /// Type used for representing angles in radians                           
@@ -39,6 +46,13 @@ namespace Langulus::Math
       using Base::Base;
       using Base::mValue;
       static constexpr bool Radians = true;
+
+      NOD() Lossless<Real, T> Cos() const noexcept {
+         return Math::Cos(mValue);
+      }
+      NOD() Lossless<Real, T> Sin() const noexcept {
+         return Math::Sin(mValue);
+      }
    };
 
    using Degrees = TDegrees<Real>;

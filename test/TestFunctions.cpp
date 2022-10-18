@@ -197,8 +197,8 @@ TEMPLATE_TEST_CASE("Mod 1D - Signed Integers", "[arithmetics]", SIGNED_INTEGER_T
 	REQUIRE(Mod<T>(T(2), T(1)) == 0);
 	REQUIRE(Mod<T>(T(4), T(16)) == 4);
 	REQUIRE(Mod<T>(T(0), T(-1)) == 0);
-	REQUIRE(Mod<T>(T(5), T(-2)) == -1);
-	REQUIRE(Mod<T>(T(-5), T(2)) == 1);
+	REQUIRE(Mod<T>(T(5), T(-2)) == 1);
+	REQUIRE(Mod<T>(T(-5), T(2)) == -1);
 	REQUIRE(Mod<T>(T(-50), T(-23)) == -4);
 }
 

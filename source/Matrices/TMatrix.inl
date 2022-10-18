@@ -130,16 +130,15 @@ namespace Langulus::Math
    ///                                                                        
    /// Multiply two matrices - not commutative                                
    TEMPLATE()
-   constexpr TME() operator * (const TME()& me, const TME()& other) noexcept {
-      auto result = TME()::Null();
-      for (Offset i = 0; i < me.Columns; ++i) {
-         for (Offset j = 0; j < me.Rows; ++j) {
-            auto& rij = result.Get(i, j);
-            for (Offset f = 0; f < me.Columns; ++f)
-               rij += me.Get(f, j) * other.Get(i, f);
-         }
+   constexpr TME() operator * (const TME()& lhs, const TME()& rhs) noexcept {
+      TME() r = TME()::Null();
+      for (Offset col = 0; col < COLUMNS; ++col) {
+         auto& rc = r[col];
+         auto& rhsc = rhs[col];
+         for (Offset row = 0; row < ROWS; ++row)
+            rc += lhs[row] * rhsc[row];
       }
-      return result;
+      return r;
    }
 
    /// Add two matrices                                                       
@@ -233,30 +232,96 @@ namespace Langulus::Math
       return me;
    }
 
-   /// Multiply by a column vector                                            
-   ///   @returns a row vector result                                         
+   /// Multiply by a row vector                                               
+   ///   @return a column vector result                                       
    template<TARGS(LHS), CT::DenseNumber T, Count C>
-   constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSR && C > 1) {
+   constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSC && C > 1) {
       using LT = Lossless<T, LHST>;
-      LT r[C] = {};
-      for (Offset vr = 0; vr < C; ++vr) {
-         for (Offset mc = 0; mc < Math::Min(C, LHSC); ++mc)
-            r[vr] += me.Get(vr, mc) * vec[mc];
+      if constexpr (LHSC == LHSR && LHSC == 2) {
+         // 2x2 matrix * row optimization                               
+         return {
+            me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1],
+            me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1]
+         };
       }
-      return r;
+      else if constexpr (LHSC == LHSR && LHSC == 3) {
+         // 3x3 matrix * row optimization                               
+         return {
+            me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2],
+            me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2],
+            me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2]
+         };
+      }
+      else if constexpr (LHSC == LHSR && LHSC == 4) {
+         /* __m128 v0 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(0, 0, 0, 0));
+      __m128 v1 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(1, 1, 1, 1));
+      __m128 v2 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(2, 2, 2, 2));
+      __m128 v3 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(3, 3, 3, 3));
+      __m128 m0 = _mm_mul_ps(m[0].data, v0);
+      __m128 m1 = _mm_mul_ps(m[1].data, v1);
+      __m128 a0 = _mm_add_ps(m0, m1);
+      __m128 m2 = _mm_mul_ps(m[2].data, v2);
+      __m128 m3 = _mm_mul_ps(m[3].data, v3);
+      __m128 a1 = _mm_add_ps(m2, m3);
+      __m128 a2 = _mm_add_ps(a0, a1);
+      return typename mat<4, 4, T, Q>::col_type(a2);*/
+         // 4x4 matrix * row optimization                               
+         return {
+            me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2] + me.mColumns[3][0] * vec[3],
+            me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2] + me.mColumns[3][1] * vec[3],
+            me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[3][2] * vec[3],
+            me.mColumns[0][3] * vec[0] + me.mColumns[1][3] * vec[1] + me.mColumns[2][3] * vec[2] + me.mColumns[3][3] * vec[3]
+         };
+      }
+      else {
+         // Generic matrix * row                                        
+         LT r[C] = {};
+         for (Offset vr = 0; vr < C; ++vr) {
+            for (Offset mc = 0; mc < Math::Min(C, LHSC); ++mc)
+               r[vr] += me.Get(mc, vr) * vec[mc];
+         }
+         return r;
+      }
    }
 
-   /// Multiply by a row vector                                               
-   ///   @returns a column vector result                                      
+   /// Multiply by a column vector                                            
+   ///   @return a row vector result                                          
    template<TARGS(RHS), CT::DenseNumber T, Count C>
-   constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
+   constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSR && C > 1) {
       using LT = Lossless<T, RHST>;
-      LT r[C] = {};
-      for (Offset vr = 0; vr < C; ++vr) {
-         for (Offset mc = 0; mc < Math::Min(C, RHSR); ++mc)
-            r[vr] += me.Get(mc, vr) * vec[mc];
+      if constexpr (RHSC == RHSR && RHSC == 2) {
+         // 2x2 column * matrix optimization                            
+         return {
+            me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1],
+            me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1]
+         };
       }
-      return r;
+      else if constexpr (RHSC == RHSR && RHSC == 3) {
+         // 3x3 column * matrix optimization                            
+         return {
+            me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2],
+            me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2],
+            me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2]
+         };
+      }
+      else if constexpr (RHSC == RHSR && RHSC == 4) {
+         // 4x4 column * matrix optimization                            
+         return {
+            me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3] * vec[3],
+            me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2] + me.mColumns[1][3] * vec[3],
+            me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[2][3] * vec[3],
+            me.mColumns[3][0] * vec[0] + me.mColumns[3][1] * vec[1] + me.mColumns[3][2] * vec[2] + me.mColumns[3][3] * vec[3]
+         };
+      }
+      else {
+         // Generic column * matrix                                     
+         LT r[C] = {};
+         for (Offset vr = 0; vr < C; ++vr) {
+            for (Offset mc = 0; mc < Math::Min(C, RHSR); ++mc)
+               r[vr] += me.Get(vr, mc) * vec[mc];
+         }
+         return r;
+      }
    }
 
    /// Destructive multiplication of a row vector                             
@@ -271,18 +336,15 @@ namespace Langulus::Math
    ///                                                                        
    /// Compare with another matrix                                            
    TEMPLATE()
-   constexpr bool operator == (const TME()& me, const TME()& other) noexcept {
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         if (me[idx] != other[idx])
-            return false;
-      return true;
+   constexpr bool operator == (const TME()& lhs, const TME()& rhs) noexcept {
+      return 0 == memcmp(lhs.mArray, rhs.mArray, sizeof(lhs.mArray));
    }
 
    /// Compare with scalar                                                    
    TEMPLATE()
-   constexpr bool operator == (const TME()& me, const T& a) noexcept {
-      for (auto& it : me.mArray)
-         if (!it != a)
+   constexpr bool operator == (const TME()& lhs, const T& rhs) noexcept {
+      for (auto& it : lhs.mArray)
+         if (!it != rhs)
             return false;
       return true;
    }
@@ -295,16 +357,16 @@ namespace Langulus::Math
    ///   @param i - index [0; MemberCount)                                    
    ///   @return a reference to the element                                   
    TEMPLATE()
-   constexpr T& TME()::operator [] (const Offset i) noexcept {
-      return mArray[i];
+   constexpr typename TME()::ColumnType& TME()::operator [] (const Offset i) noexcept {
+      return mColumns[i];
    }
 
    /// Access 1D index (const)                                                
    ///   @param i - index [0; COLS*ROWS)                                      
    ///   @return a reference to the element                                   
    TEMPLATE()
-   constexpr const T& TME()::operator [] (const Offset i) const noexcept {
-      return mArray[i];
+   constexpr const typename TME()::ColumnType& TME()::operator [] (const Offset i) const noexcept {
+      return mColumns[i];
    }
 
    /// Access raw data                                                        
@@ -327,7 +389,7 @@ namespace Langulus::Math
    ///   @return a reference to the element                                   
    TEMPLATE()
    constexpr T& TME()::Get(const Offset col, const Offset row) noexcept {
-      return mArray[col + row * Columns];
+      return mColumns[col][row];
    }
 
    /// Get a 2D cell from the matrix (const)                                  
@@ -336,7 +398,7 @@ namespace Langulus::Math
    ///   @return a constant reference to the element                          
    TEMPLATE()
    constexpr const T& TME()::Get(const Offset col, const Offset row) const noexcept {
-      return mArray[col + row * Columns];
+      return mColumns[col][row];
    }
 
    /// Get right axis                                                         
@@ -373,21 +435,14 @@ namespace Langulus::Math
 
    /// Get translation                                                        
    TEMPLATE()
-   constexpr TVector<T, 3> TME()::GetPosition() const noexcept {
-      if constexpr (IsSquare && Rows > 3)
-         return {Get(0, 3), Get(1, 3), Get(2, 3)};
-      else LANGULUS_ERROR("Can't get translation of this matrix");
+   constexpr const TVector<T, ROWS - 1>& TME()::GetPosition() const noexcept requires (ROWS > 2 && COLUMNS > 2) {
+      return mColumns[COLUMNS - 1];
    }
 
    /// Set translation                                                        
    TEMPLATE()
-   constexpr TME()& TME()::SetPosition(const TVector<T, 3>& position) noexcept {
-      if constexpr (IsSquare && Rows > 3) {
-         Get(0, 3) = position[0];
-         Get(1, 3) = position[1];
-         Get(2, 3) = position[2];
-      }
-      else LANGULUS_ERROR("Can't set translation to this matrix");
+   constexpr TME()& TME()::SetPosition(const TVector<T, ROWS - 1>& position) noexcept requires (ROWS > 2 && COLUMNS > 2) {
+      static_cast<TVector<T, ROWS - 1>&>(mColumns[COLUMNS - 1]) = position;
       return *this;
    }
 
@@ -395,19 +450,19 @@ namespace Langulus::Math
    ///   @param idx - row index                                               
    ///   @return a row                                                        
    TEMPLATE()
-   TVector<T, COLUMNS> TME()::Row(Offset idx) const noexcept {
-      return mArray + idx * Columns;
+   typename TME()::RowType TME()::GetRow(Offset idx) const noexcept {
+      T r[COLUMNS];
+      for (int i = 0; i < COLUMNS; ++i)
+         r[i] = mColumns[i][idx];
+      return r;
    }
 
    /// Get a whole column                                                     
    ///   @param idx - column index                                            
    ///   @return a column                                                     
    TEMPLATE()
-   TVector<T, ROWS> TME()::Column(Offset idx) const noexcept {
-      T ar[Rows];
-      for (Offset i = 0; i < Rows; ++i)
-         ar[i] = mArray[idx + i * Columns];
-      return ar;
+   const typename TME()::ColumnType& TME()::GetColumn(Offset idx) const noexcept {
+      return mColumns[idx];
    }
 
    /// Convert to text                                                        
@@ -519,64 +574,73 @@ namespace Langulus::Math
 
    /// Create a rotational matrix (for 2x2 matrix, only around z)             
    TEMPLATE()
-   constexpr TME() TME()::Rotation(const T& roll) noexcept {
-      static_assert(IsSquare && Rows == 2,
-         "Can't make a rotation matrix from this one");
-
+   template<CT::Angle A>
+   constexpr TME() TME()::Rotation(const A& roll) noexcept requires (ROWS >= 2 && COLUMNS >= 2) {
       auto cosR = Math::Cos(roll);
       auto sinR = Math::Sin(roll);
 
-      TME() result;
-      result.Get(0, 0) = cosR;
-      result.Get(1, 0) = -sinR;
-      result.Get(0, 1) = sinR;
-      result.Get(1, 1) = cosR;
-      return result;
+      TME() r;
+      r.mColumns[0][0] = cosR;
+      r.mColumns[0][1] = sinR;
+      r.mColumns[1][0] =-sinR;
+      r.mColumns[1][1] = cosR;
+      return r;
    }
 
    /// Create a rotational matrix based on axis and angle                     
+   /// Builds a 3D rotation matrix created from normalized axis and an angle  
    TEMPLATE()
-   constexpr TME() TME()::RotationAxis(const TVector<T, 3>& axis, const T& angle) noexcept {
-      static_assert(IsSquare && Rows > 2,
-         "Can't make a rotation matrix from this one");
+   template<CT::Angle A>
+   constexpr TME() TME()::RotationAxis(const TVector<T, 3>& axis, const A& a) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
+      const T c = Math::Cos(a);
+      const T s = Math::Sin(a);
 
-      return static_cast<TME()>(TQuaternion<T>::FromAxisAngle(axis, angle));
+      const auto temp = (T {1} - c) * axis;
+
+      TME() r;
+      r[0][0] = c + temp[0] * axis[0];
+      r[0][1] = 0 + temp[0] * axis[1] + s * axis[2];
+      r[0][2] = 0 + temp[0] * axis[2] - s * axis[1];
+
+      r[1][0] = 0 + temp[1] * axis[0] - s * axis[2];
+      r[1][1] = c + temp[1] * axis[1];
+      r[1][2] = 0 + temp[1] * axis[2] + s * axis[0];
+
+      r[2][0] = 0 + temp[2] * axis[0] + s * axis[1];
+      r[2][1] = 0 + temp[2] * axis[1] - s * axis[0];
+      r[2][2] = c + temp[2] * axis[2];
+      return r;
    }
 
-   /// Rotational constructor in euler radians (for 3x3 matrix)               
+   /// Rotational constructor in euler angles (for 3x3 matrix or above)       
+   /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
-   constexpr TME() TME()::Rotation(const T& pitch, const T& yaw, const T& roll) noexcept {
-      static_assert(IsSquare && Rows > 2,
-         "Can't make a rotation matrix from this one");
+   template<CT::Angle PITCH, CT::Angle YAW, CT::Angle ROLL>
+   constexpr TME() TME()::Rotation(const PITCH& pitch, const YAW& yaw, const ROLL& roll) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
+      const T tmp_ch = Math::Cos(yaw);
+      const T tmp_sh = Math::Sin(yaw);
+      const T tmp_cp = Math::Cos(pitch);
+      const T tmp_sp = Math::Sin(pitch);
+      const T tmp_cb = Math::Cos(roll);
+      const T tmp_sb = Math::Sin(roll);
 
-      const auto a = Math::Cos(pitch);
-      const auto b = Math::Sin(pitch);
-      const auto c = Math::Cos(yaw);
-      const auto d = Math::Sin(yaw);
-      const auto e = Math::Cos(roll);
-      const auto f = Math::Sin(roll);
-      const auto ae = a * e;
-      const auto af = a * f;
-      const auto be = b * e;
-      const auto bf = b * f;
-
-      TME() result;
-      result.Get(0, 0) = c * e;
-      result.Get(1, 0) = -c * f;
-      result.Get(2, 0) = d;
-      result.Get(0, 1) = af + be * d;
-      result.Get(1, 1) = ae - bf * d;
-      result.Get(2, 1) = -b * c;
-      result.Get(0, 2) = bf - ae * d;
-      result.Get(1, 2) = be + af * d;
-      result.Get(2, 2) = a * c;
-      return result;
+      TME() r;
+      r[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+      r[0][1] = tmp_sb * tmp_cp;
+      r[0][2] = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+      r[1][0] = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+      r[1][1] = tmp_cb * tmp_cp;
+      r[1][2] = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+      r[2][0] = tmp_sh * tmp_cp;
+      r[2][1] = -tmp_sp;
+      r[2][2] = tmp_ch * tmp_cp;
+      return r;
    }
 
    /// Translational constructor                                              
    TEMPLATE()
    constexpr TME() TME()::Translation(const TVector<T, 4>& position) noexcept {
-      TME() temp = Identity();
+      TME() temp;
       return temp.SetPosition(position);
    }
 

@@ -335,6 +335,11 @@ namespace Langulus::Math
 
       template<CT::DenseNumber N>
       NOD() explicit constexpr operator N () const noexcept requires (S == 1 && IsCompatible<N>);
+
+      template<Count ALTS>
+      NOD() operator TVector<T, ALTS>& () noexcept requires (ALTS < S);
+      template<Count ALTS>
+      NOD() operator const TVector<T, ALTS>& () const noexcept requires (ALTS < S);
    };
    #pragma pack(pop)
 

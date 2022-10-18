@@ -63,17 +63,34 @@ namespace Langulus::Math
    /// Returns the product of two numbers                                     
    template<TARGS(LHS), TARGS(RHS)>
    constexpr auto operator * (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue * rhs.mValue;
+      if constexpr (CT::Same<Lossless<LHST, RHST>, LHST>) {
+         if constexpr (CT::Same<LHST, LHSW>)
+            return TNUM(LHS) { static_cast<LHST>(lhs.mValue * rhs.mValue) };
+         else
+            return LHSW {static_cast<LHST>(lhs.mValue * rhs.mValue)};
+      }
+      else {
+         if constexpr (CT::Same<RHST, RHSW>)
+            return TNUM(RHS) { static_cast<RHST>(lhs.mValue * rhs.mValue) };
+         else
+            return RHSW {static_cast<RHST>(lhs.mValue * rhs.mValue)};
+      }
    }
 
    template<TARGS(LHS), CT::DenseNumber N>
    constexpr auto operator * (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue * rhs;
+      if constexpr (CT::Same<LHST, LHSW>)
+         return TNUM(LHS) { static_cast<LHST>(lhs.mValue * rhs) };
+      else
+         return LHSW {static_cast<LHST>(lhs.mValue * rhs)};
    }
 
    template<TARGS(RHS), CT::DenseNumber N>
    constexpr auto operator * (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs * rhs.mValue;
+      if constexpr (CT::Same<RHST, RHSW>)
+         return TNUM(RHS) { static_cast<RHST>(lhs * rhs.mValue) };
+      else
+         return RHSW {static_cast<RHST>(lhs * rhs.mValue)};
    }
 
    /// Returns the division of two numbers                                    

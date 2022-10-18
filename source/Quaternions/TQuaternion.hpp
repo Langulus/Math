@@ -78,51 +78,58 @@ namespace Langulus::Math
 
       /// Constructor from 3x3 matrix                                         
       ///   @param matrix - 3x3 matrix to convert to a quaternion             
-      constexpr TQuaternion(const TMatrix<T, 3, 3>& mat) noexcept {
-         const auto m11 = mat.Get(0, 0), m12 = mat.Get(0, 1), m13 = mat.Get(0, 2);
-         const auto m21 = mat.Get(1, 0), m22 = mat.Get(1, 1), m23 = mat.Get(1, 2);
-         const auto m31 = mat.Get(2, 0), m32 = mat.Get(2, 1), m33 = mat.Get(2, 2);
-         const auto trace = m11 + m22 + m33;
-         constexpr T one {1};
-         constexpr T quarter {.25};
-         constexpr T two {2};
-         constexpr T half {.5};
+      template<Count COLUMNS, Count ROWS>
+      constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>& m) noexcept requires (COLUMNS >= 3 && ROWS >= 3) {
+         const T fourXSquaredMinus1 = m[0][0] - m[1][1] - m[2][2];
+         const T fourYSquaredMinus1 = m[1][1] - m[0][0] - m[2][2];
+         const T fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
+         const T fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
 
-         T s;
-         if (trace > 0) {
-            s = half / Math::Sqrt(trace + one);
-            mArray[3] = quarter / s;
-            mArray[0] = (m32 - m23) * s;
-            mArray[1] = (m13 - m31) * s;
-            mArray[2] = (m21 - m12) * s;
+         Offset biggestIndex = 0;
+         T fourBiggestSquaredMinus1 = fourWSquaredMinus1;
+         if (fourXSquaredMinus1 > fourBiggestSquaredMinus1) {
+            fourBiggestSquaredMinus1 = fourXSquaredMinus1;
+            biggestIndex = 1;
          }
-         else if (m11 > m22 && m11 > m33) {
-            s = two * Math::Sqrt(one + m11 - m22 - m33);
-            mArray[3] = (m32 - m23) / s;
-            mArray[0] = quarter * s;
-            mArray[1] = (m12 + m21) / s;
-            mArray[2] = (m13 + m31) / s;
+         if (fourYSquaredMinus1 > fourBiggestSquaredMinus1) {
+            fourBiggestSquaredMinus1 = fourYSquaredMinus1;
+            biggestIndex = 2;
          }
-         else if (m22 > m33) {
-            s = two * Math::Sqrt(one + m22 - m11 - m33);
-            mArray[3] = (m13 - m31) / s;
-            mArray[0] = (m12 + m21) / s;
-            mArray[1] = quarter * s;
-            mArray[2] = (m23 + m32) / s;
+         if (fourZSquaredMinus1 > fourBiggestSquaredMinus1) {
+            fourBiggestSquaredMinus1 = fourZSquaredMinus1;
+            biggestIndex = 3;
          }
-         else {
-            s = two * Math::Sqrt(one + m33 - m11 - m22);
-            mArray[3] = (m21 - m12) / s;
-            mArray[0] = (m13 + m31) / s;
-            mArray[1] = (m23 + m32) / s;
-            mArray[2] = quarter * s;
+
+         const T biggestVal = Math::Sqrt(fourBiggestSquaredMinus1 + T{1}) * T{0.5};
+         mArray[biggestIndex] = biggestVal;
+
+         const T mult = T {0.25} / biggestVal;
+         switch (biggestIndex) {
+         case 0:
+            mArray[1] = (m[1][2] - m[2][1]) * mult;
+            mArray[2] = (m[2][0] - m[0][2]) * mult;
+            mArray[3] = (m[0][1] - m[1][0]) * mult;
+            break;
+         case 1:
+            mArray[0] = (m[1][2] - m[2][1]) * mult;
+            mArray[2] = (m[0][1] + m[1][0]) * mult;
+            mArray[3] = (m[2][0] + m[0][2]) * mult;
+            break;
+         case 2:
+            mArray[0] = (m[2][0] - m[0][2]) * mult;
+            mArray[1] = (m[0][1] + m[1][0]) * mult;
+            mArray[3] = (m[1][2] + m[2][1]) * mult;
+            break;
+         case 3:
+            mArray[0] = (m[0][1] - m[1][0]) * mult;
+            mArray[1] = (m[2][0] + m[0][2]) * mult;
+            mArray[2] = (m[1][2] + m[2][1]) * mult;
+            break;
+         default:
+            // Never really happens, just silence warnings              
+            break;
          }
       }
-
-      /// Constructor from 4x4 matrix (only the 3x3 part is relevant)         
-      ///   @param matrix - 4x4 matrix to convert to a quaternion             
-      constexpr TQuaternion(const TMatrix<T, 4, 4>& matrix) noexcept
-         : TQuaternion(static_cast<TMatrix<T, 3, 3>>(matrix)) {}
 
       /// Serialize quaternion to code                                        
       NOD() explicit operator Flow::Code() const {
@@ -234,16 +241,34 @@ namespace Langulus::Math
          return Conjugate();
       }
 
-      /// Convert to a 4x4 matrix                                             
-      template<CT::DenseNumber K = T>
-      NOD() explicit constexpr operator TMatrix<K, 4, 4>() const noexcept {
-         return pcCompose<TVector<K, 3>>(*this);
-      }
+      /// Convert to a matrix                                                 
+      template<CT::DenseNumber K = T, Count COLUMNS, Count ROWS>
+      NOD() explicit constexpr operator TMatrix<K, COLUMNS, ROWS>() const noexcept requires (COLUMNS >= 3 && ROWS >= 3) {
+         const K qxx = mArray[0] * mArray[0];
+         const K qyy = mArray[1] * mArray[1];
+         const K qzz = mArray[2] * mArray[2];
+         const K qxz = mArray[0] * mArray[2];
+         const K qxy = mArray[0] * mArray[1];
+         const K qyz = mArray[1] * mArray[2];
+         const K qwx = mArray[3] * mArray[0];
+         const K qwy = mArray[3] * mArray[1];
+         const K qwz = mArray[3] * mArray[2];
 
-      /// Convert to a 3x3 matrix                                             
-      template<CT::DenseNumber K = T>
-      NOD() explicit constexpr operator TMatrix<K, 3, 3>() const noexcept {
-         return pcCompose<TVector<K, 3>>(*this);
+         constexpr K one {1};
+         constexpr K two {2};
+         TMatrix<K, COLUMNS, ROWS> r;
+         r[0][0] = one - two * (qyy + qzz);
+         r[0][1] =       two * (qxy + qwz);
+         r[0][2] =       two * (qxz - qwy);
+
+         r[1][0] =       two * (qxy - qwz);
+         r[1][1] = one - two * (qxx + qzz);
+         r[1][2] =       two * (qyz + qwx);
+
+         r[2][0] =       two * (qxz + qwy);
+         r[2][1] =       two * (qyz - qwx);
+         r[2][2] = one - two * (qxx + qyy);
+         return r;
       }
    };
 

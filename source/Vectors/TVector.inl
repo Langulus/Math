@@ -887,6 +887,18 @@ namespace Langulus::Math
       return static_cast<N>(*mArray);
    }
    
+   TEMPLATE()
+   template<Count ALTS>
+   TME()::operator TVector<T, ALTS>& () noexcept requires (ALTS < S) {
+      return reinterpret_cast<TVector<T, ALTS>&>(*this);
+   }
+
+   TEMPLATE()
+   template<Count ALTS>
+   TME()::operator const TVector<T, ALTS>& () const noexcept requires (ALTS < S) {
+      return reinterpret_cast<const TVector<T, ALTS>&>(*this);
+   }
+
 
    ///                                                                        
    ///   Operations                                                           

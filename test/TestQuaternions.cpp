@@ -16,7 +16,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		}
 
 		WHEN("Creating a quaternion from an axis and angle") {
-			x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(T(45)));
+			x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(45));
 
 			THEN("The result should be correct") {
 				REQUIRE(x[0] == 0);
@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		}
 
 		WHEN("Creating a quaternion from an axis and angle, and then normalizing it") {
-			x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(T(45)));
+			x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(45));
 			x = x.Normalize();
 
 			THEN("The result should be correct") {
@@ -39,17 +39,17 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		}
 
 		WHEN("Creating a quaternion from an axis and angle, and then converting it to a 3x3 rotation matrix") {
-			x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(T(45)));
+			x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(45));
 			auto as_mat = static_cast<TMatrix<T, 3, 3>>(x);
 
 			THEN("The result should be correct") {
 				REQUIRE(as_mat.Get(0, 0) == Approx(0.70710678118654746));
 				REQUIRE(as_mat.Get(1, 0) == 0);
-				REQUIRE(as_mat.Get(2, 0) == Approx(-0.70710678118654757));
+				REQUIRE(as_mat.Get(2, 0) == Approx(0.70710678118654757));
 				REQUIRE(as_mat.Get(0, 1) == 0);
 				REQUIRE(as_mat.Get(1, 1) == 1);
 				REQUIRE(as_mat.Get(2, 1) == 0);
-				REQUIRE(as_mat.Get(0, 2) == Approx(0.70710678118654746));
+				REQUIRE(as_mat.Get(0, 2) == Approx(-0.70710678118654746));
 				REQUIRE(as_mat.Get(1, 2) == 0);
 				REQUIRE(as_mat.Get(2, 2) == Approx(0.70710678118654757));
 			}
@@ -59,8 +59,8 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 	GIVEN("Two quaternions and a resulting quaternion") {
 		using T = TestType;
 		TQuaternion<T> x, y, r;
-		x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(T(45)));
-		y = TQuaternion<T>::FromAxisAngle(Cardinal::Right<T>, Degrees(T(45)));
+		x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(45));
+		y = TQuaternion<T>::FromAxisAngle(Cardinal::Right<T>, Degrees(45));
 
 		REQUIRE(y[0] == Approx(0.38268343236508978));
 		REQUIRE(y[1] == 0);
@@ -95,7 +95,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		TQuaternion<T> orientation;
 		TVector<T, 3> point;
 
-		orientation = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(T(45)));
+		orientation = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(45));
 		point = {0, 0, 50};
 
 		WHEN("Doing a quaternion * point multiplication") {
@@ -105,12 +105,12 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 			THEN("The point should be correctly transformed") {
 				REQUIRE(r1 != r2);
 
-				REQUIRE(r1.Length() == 50);
+				REQUIRE(r1.Length() == Approx(50));
 				REQUIRE(r1[0] == Approx(-35.355339059327378));
 				REQUIRE(r1[1] == 0);
 				REQUIRE(r1[2] == Approx(35.355339059327378));
 
-				REQUIRE(r2.Length() == 50);
+				REQUIRE(r2.Length() == Approx(50));
 				REQUIRE(r2[0] == Approx(35.355339059327378));
 				REQUIRE(r2[1] == 0);
 				REQUIRE(r2[2] == Approx(35.355339059327378));
@@ -124,12 +124,12 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 			THEN("The point should be correctly transformed, and same as the previous test") {
 				REQUIRE(r1 != r2);
 
-				REQUIRE(r1.Length() == 50);
+				REQUIRE(r1.Length() == Approx(50));
 				REQUIRE(r1[0] == Approx(35.355339059327378));
 				REQUIRE(r1[1] == 0);
 				REQUIRE(r1[2] == Approx(35.355339059327378));
 
-				REQUIRE(r2.Length() == 50);
+				REQUIRE(r2.Length() == Approx(50));
 				REQUIRE(r2[0] == Approx(-35.355339059327378));
 				REQUIRE(r2[1] == 0);
 				REQUIRE(r2[2] == Approx(35.355339059327378));
