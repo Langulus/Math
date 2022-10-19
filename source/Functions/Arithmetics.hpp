@@ -147,19 +147,6 @@ namespace Langulus::CT
 namespace Langulus::Math
 {
 
-   /// Casts a number to its underlying type                                  
-   template<CT::DenseNumber T>
-   NOD() LANGULUS(ALWAYSINLINE) constexpr decltype(auto) BuiltinCast(const T& a) noexcept {
-      if constexpr (CT::BuiltinNumber<T>) {
-         // Already built-in, just forward it                           
-         return a;
-      }
-      else {
-         // Explicitly cast to a reference of the contained type        
-         return static_cast<const TypeOf<T>&>(a);
-      }
-   }
-
    /// Get absolute value                                                     
    ///   @param a - the number/class to absolute                              
    ///   @return either T or whatever Abs() returns for class                 

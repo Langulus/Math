@@ -14,17 +14,22 @@ namespace Langulus::Math
    ///                                                                        
    ///   Templated number                                                     
    ///                                                                        
-   /// Serves various kinds of purposes:                                      
+   /// Might seem pointless, but serves various kinds of purposes:            
    ///   1. Provides a safety layer, that asserts underflows/overflows        
    ///      when building in safe-mode                                        
    ///   2. Provides consistent handling of infinities across all arithmetic  
    ///      types                                                             
-   ///   3. Allows for types, such as std::int8_t and std::uint8_t to be      
-   ///      considered CT::Number, without suffering the usual implicit       
-   ///      conversion-to-text-hell                                           
+   ///   3. Allows for character types to be considered CT::Number, without   
+   ///      suffering the usual implicit conversion-to-text-hell              
    ///   4. Gives a layer for integration with langulus flows and verbs       
    ///   5. Makes all numbers equivalent to 1D vectors, and thus compatible   
    ///      with the CT::Vector concept                                       
+   ///   6. Never allows for integer promotions, unless types differ, in      
+   ///      which case type promotion goes to no futher than the bigger type. 
+   ///   -  Whenever you do int8 * int8, you get the truncated int8 as result,
+   ///      instead of an int - whatever comes in will come out!              
+   ///   -  Whenever you do int8 * int16, you get the truncated int16 as      
+   ///      result, instead of an int - the better of the two is chosen!      
    ///                                                                        
    template<CT::Dense T, CT::Dense WRAPPER = T>
    struct TNumber {
