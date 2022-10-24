@@ -1238,17 +1238,23 @@ namespace Langulus::Math
 
    template<TARGS(LHS), TARGS(RHS)>
    bool operator == (const TVEC(LHS)& me, const TVEC(RHS)& other) {
-      return SIMD::Equals(me.mArray, other.mArray);
+      bool result = false;
+      SIMD::Equals(me.mArray, other.mArray, result);
+      return result;
    }
 
    template<TARGS(LHS), CT::DenseNumber N>
    bool operator == (const TVEC(LHS)& me, const N& other) {
-      return SIMD::Equals(me.mArray, other);
+      bool result = false;
+      SIMD::Equals(me.mArray, other, result);
+      return result;
    }
 
    template<TARGS(RHS), CT::DenseNumber N>
    bool operator == (const N& other, const TVEC(RHS)& me) {
-      return SIMD::Equals(other, me.mArray);
+      bool result = false;
+      SIMD::Equals(other, me.mArray, result);
+      return result;
    }
 
 } // namespace Langulus::Math
