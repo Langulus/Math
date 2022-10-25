@@ -85,45 +85,48 @@ namespace Langulus::Math
          const T fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
          const T fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
 
-         Offset biggestIndex = 0;
+         Offset biggestIndex = 3;
          T fourBiggestSquaredMinus1 = fourWSquaredMinus1;
+
          if (fourXSquaredMinus1 > fourBiggestSquaredMinus1) {
             fourBiggestSquaredMinus1 = fourXSquaredMinus1;
-            biggestIndex = 1;
-         }
-         if (fourYSquaredMinus1 > fourBiggestSquaredMinus1) {
-            fourBiggestSquaredMinus1 = fourYSquaredMinus1;
-            biggestIndex = 2;
-         }
-         if (fourZSquaredMinus1 > fourBiggestSquaredMinus1) {
-            fourBiggestSquaredMinus1 = fourZSquaredMinus1;
-            biggestIndex = 3;
+            biggestIndex = 0;
          }
 
-         const T biggestVal = Math::Sqrt(fourBiggestSquaredMinus1 + T{1}) * T{0.5};
+         if (fourYSquaredMinus1 > fourBiggestSquaredMinus1) {
+            fourBiggestSquaredMinus1 = fourYSquaredMinus1;
+            biggestIndex = 1;
+         }
+
+         if (fourZSquaredMinus1 > fourBiggestSquaredMinus1) {
+            fourBiggestSquaredMinus1 = fourZSquaredMinus1;
+            biggestIndex = 2;
+         }
+
+         const T biggestVal = Math::Sqrt(fourBiggestSquaredMinus1 + T {1}) * T {0.5};
          mArray[biggestIndex] = biggestVal;
 
          const T mult = T {0.25} / biggestVal;
          switch (biggestIndex) {
          case 0:
-            mArray[1] = (m[1][2] - m[2][1]) * mult;
-            mArray[2] = (m[2][0] - m[0][2]) * mult;
-            mArray[3] = (m[0][1] - m[1][0]) * mult;
+            mArray[3] = (m[1][2] - m[2][1]) * mult;
+            mArray[1] = (m[0][1] + m[1][0]) * mult;
+            mArray[2] = (m[2][0] + m[0][2]) * mult;
             break;
          case 1:
-            mArray[0] = (m[1][2] - m[2][1]) * mult;
-            mArray[2] = (m[0][1] + m[1][0]) * mult;
-            mArray[3] = (m[2][0] + m[0][2]) * mult;
+            mArray[3] = (m[2][0] - m[0][2]) * mult;
+            mArray[0] = (m[0][1] + m[1][0]) * mult;
+            mArray[2] = (m[1][2] + m[2][1]) * mult;
             break;
          case 2:
-            mArray[0] = (m[2][0] - m[0][2]) * mult;
-            mArray[1] = (m[0][1] + m[1][0]) * mult;
-            mArray[3] = (m[1][2] + m[2][1]) * mult;
+            mArray[3] = (m[0][1] - m[1][0]) * mult;
+            mArray[0] = (m[2][0] + m[0][2]) * mult;
+            mArray[1] = (m[1][2] + m[2][1]) * mult;
             break;
          case 3:
+            mArray[2] = (m[1][2] - m[2][1]) * mult;
+            mArray[1] = (m[2][0] - m[0][2]) * mult;
             mArray[0] = (m[0][1] - m[1][0]) * mult;
-            mArray[1] = (m[2][0] + m[0][2]) * mult;
-            mArray[2] = (m[1][2] + m[2][1]) * mult;
             break;
          default:
             // Never really happens, just silence warnings              

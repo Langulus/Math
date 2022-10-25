@@ -57,6 +57,9 @@ namespace Langulus::Math
    }
 
    /// Manual initialization with variadic head-tail                          
+   /// The count of elements in head and tail should sum to the matrix size   
+   ///   @param head - first element, scalar or vector                        
+   ///   @param tail... - any other elements, scalar or vector                
    TEMPLATE()
    template<class HEAD, class... TAIL>
    constexpr TME()::TMatrix(const HEAD& head, const TAIL&... tail) noexcept requires (sizeof...(TAIL) > 0) {

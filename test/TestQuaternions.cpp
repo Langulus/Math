@@ -20,9 +20,9 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 
 			THEN("The result should be correct") {
 				REQUIRE(x[0] == 0);
-				REQUIRE(x[1] == Approx(0.38268343236508978));
+				REQUIRE(x[1] == Approx(0.3826834323));
 				REQUIRE(x[2] == 0);
-				REQUIRE(x[3] == Approx(0.92387953251128674));
+				REQUIRE(x[3] == Approx(0.9238795325));
 			}
 		}
 
@@ -32,9 +32,9 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 
 			THEN("The result should be correct") {
 				REQUIRE(x[0] == 0);
-				REQUIRE(x[1] == Approx(0.38268343236508978));
+				REQUIRE(x[1] == Approx(0.3826834323));
 				REQUIRE(x[2] == 0);
-				REQUIRE(x[3] == Approx(0.92387953251128674));
+				REQUIRE(x[3] == Approx(0.9238795325));
 			}
 		}
 
@@ -43,15 +43,15 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 			auto as_mat = static_cast<TMatrix<T, 3, 3>>(x);
 
 			THEN("The result should be correct") {
-				REQUIRE(as_mat.Get(0, 0) == Approx(0.70710678118654746));
+				REQUIRE(as_mat.Get(0, 0) == Approx(0.70710678));
 				REQUIRE(as_mat.Get(1, 0) == 0);
-				REQUIRE(as_mat.Get(2, 0) == Approx(0.70710678118654757));
+				REQUIRE(as_mat.Get(2, 0) == Approx(0.70710678));
 				REQUIRE(as_mat.Get(0, 1) == 0);
 				REQUIRE(as_mat.Get(1, 1) == 1);
 				REQUIRE(as_mat.Get(2, 1) == 0);
-				REQUIRE(as_mat.Get(0, 2) == Approx(-0.70710678118654746));
+				REQUIRE(as_mat.Get(0, 2) == Approx(-0.70710678));
 				REQUIRE(as_mat.Get(1, 2) == 0);
-				REQUIRE(as_mat.Get(2, 2) == Approx(0.70710678118654757));
+				REQUIRE(as_mat.Get(2, 2) == Approx(0.70710678));
 			}
 		}
 	}
@@ -62,19 +62,19 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		x = TQuaternion<T>::FromAxisAngle(Cardinal::Up<T>, Degrees(45));
 		y = TQuaternion<T>::FromAxisAngle(Cardinal::Right<T>, Degrees(45));
 
-		REQUIRE(y[0] == Approx(0.38268343236508978));
+		REQUIRE(y[0] == Approx(0.3826834324));
 		REQUIRE(y[1] == 0);
 		REQUIRE(y[2] == 0);
-		REQUIRE(y[3] == Approx(0.92387953251128674));
+		REQUIRE(y[3] == Approx(0.9238795325));
 
 		WHEN("Multiplying the quaternions") {
 			r = x * y;
 
 			THEN("The result should be correct") {
-				REQUIRE(r[0] == Approx(0.35355339059327379));
-				REQUIRE(r[1] == Approx(0.35355339059327379));
-				REQUIRE(r[2] == Approx(-0.14644660940672624));
-				REQUIRE(r[3] == Approx(0.85355339059327373));
+				REQUIRE(r[0] == Approx(0.3535533906));
+				REQUIRE(r[1] == Approx(0.3535533906));
+				REQUIRE(r[2] == Approx(-0.1464466094));
+				REQUIRE(r[3] == Approx(0.8535533906));
 			}
 		}
 
@@ -82,10 +82,10 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 			r = y * x;
 
 			THEN("The result should be correct") {
-				REQUIRE(r[0] == Approx(0.35355339059327379));
-				REQUIRE(r[1] == Approx(0.35355339059327379));
-				REQUIRE(r[2] == Approx(0.14644660940672624));
-				REQUIRE(r[3] == Approx(0.85355339059327373));
+				REQUIRE(r[0] == Approx(0.3535533906));
+				REQUIRE(r[1] == Approx(0.3535533906));
+				REQUIRE(r[2] == Approx(0.1464466094));
+				REQUIRE(r[3] == Approx(0.8535533906));
 			}
 		}
 	}
@@ -106,14 +106,14 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 				REQUIRE(r1 != r2);
 
 				REQUIRE(r1.Length() == Approx(50));
-				REQUIRE(r1[0] == Approx(-35.355339059327378));
+				REQUIRE(r1[0] == Approx(-35.35533906));
 				REQUIRE(r1[1] == 0);
-				REQUIRE(r1[2] == Approx(35.355339059327378));
+				REQUIRE(r1[2] == Approx(35.35533906));
 
 				REQUIRE(r2.Length() == Approx(50));
-				REQUIRE(r2[0] == Approx(35.355339059327378));
+				REQUIRE(r2[0] == Approx(35.35533906));
 				REQUIRE(r2[1] == 0);
-				REQUIRE(r2[2] == Approx(35.355339059327378));
+				REQUIRE(r2[2] == Approx(35.35533906));
 			}
 		}
 
@@ -125,14 +125,14 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 				REQUIRE(r1 != r2);
 
 				REQUIRE(r1.Length() == Approx(50));
-				REQUIRE(r1[0] == Approx(35.355339059327378));
+				REQUIRE(r1[0] == Approx(35.35533906));
 				REQUIRE(r1[1] == 0);
-				REQUIRE(r1[2] == Approx(35.355339059327378));
+				REQUIRE(r1[2] == Approx(35.35533906));
 
 				REQUIRE(r2.Length() == Approx(50));
-				REQUIRE(r2[0] == Approx(-35.355339059327378));
+				REQUIRE(r2[0] == Approx(-35.35533906));
 				REQUIRE(r2[1] == 0);
-				REQUIRE(r2[2] == Approx(35.355339059327378));
+				REQUIRE(r2[2] == Approx(35.35533906));
 			}
 		}
 
@@ -141,7 +141,10 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 
 			THEN("The state must be perfectly conserved") {
 				auto back_to_quat = TQuaternion<T>(matrix);
-				REQUIRE(back_to_quat == orientation);
+				REQUIRE(back_to_quat[0] == Approx(orientation[0]));
+				REQUIRE(back_to_quat[1] == Approx(orientation[1]));
+				REQUIRE(back_to_quat[2] == Approx(orientation[2]));
+				REQUIRE(back_to_quat[3] == Approx(orientation[3]));
 			}
 		}
 	}
