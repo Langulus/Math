@@ -17,10 +17,10 @@ namespace Langulus::Math
 {
 
    template<CT::DenseNumber T>
-   class TQuaternion;
+   struct TQuaternion;
 
    template<CT::DenseNumber T, Count COLUMNS, Count ROWS = COLUMNS>
-   class TMatrix;
+   struct TMatrix;
 
    using Matrix2 = TMatrix<Real, 2>;
    using Matrix3 = TMatrix<Real, 3>;

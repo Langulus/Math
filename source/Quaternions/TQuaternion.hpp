@@ -13,7 +13,7 @@ namespace Langulus::Math
 {
 
    template<CT::DenseNumber>
-   class TQuaternion;
+   struct TQuaternion;
 
    using Quaternionf = TQuaternion<Float>;
    using Quaterniond = TQuaternion<Double>;

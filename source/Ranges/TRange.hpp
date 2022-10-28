@@ -12,7 +12,7 @@ namespace Langulus::Math
 {
 
    template<CT::ScalarOrVector>
-   class TRange;
+   struct TRange;
 
    using Range1f = TRange<vec1f>;
    using Range1d = TRange<vec1d>;

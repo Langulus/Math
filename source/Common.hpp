@@ -11,6 +11,12 @@
 #include <LangulusAnyness.hpp>
 #include <LangulusFlow.hpp>
 
+#if defined(LANGULUS_EXPORT_ALL) || defined(LANGULUS_EXPORT_MATH)
+   #define LANGULUS_API_MATH() LANGULUS_EXPORT()
+#else
+   #define LANGULUS_API_MATH() LANGULUS_IMPORT()
+#endif
+
 namespace Langulus::Math
 {
 

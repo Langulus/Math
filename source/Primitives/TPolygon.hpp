@@ -57,7 +57,7 @@ namespace Langulus::Math
       }
 
       /// Calculate signed distance                                           
-      NOD() auto SignedDistance(const T& p) const {
+      NOD() auto SignedDistance(const T&) const {
          TODO();
       }
    };

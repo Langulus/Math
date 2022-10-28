@@ -260,7 +260,7 @@ namespace Langulus::Math
 
       template<class AS, bool NORMALIZE = CT::Real<AS> && !CT::Real<T>>
       NOD() constexpr TVector<AS, S> AsCast() const noexcept;
-      template<Count = Math::Min(S, 3)>
+      template<Count = Math::Min(S, 3u)>
       NOD() constexpr auto Volume() const noexcept;
 
 

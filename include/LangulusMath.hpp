@@ -12,4 +12,4 @@
 #include "../source/TGradient.hpp"
 #include "../source/Numbers/TAngle.hpp"
 
-#define LANGULUS_MODULE_MATH()
+#define LANGULUS_LIBRARY_MATH() 1
