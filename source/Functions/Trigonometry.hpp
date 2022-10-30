@@ -87,7 +87,7 @@ namespace Langulus::Math
    /// Degree to radian conversion                                            
    ///   @param degrees - degrees to convert to radians                       
    template<CT::Dense T>
-   NOD() constexpr auto DegToRad(const T& degrees) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) constexpr auto DegToRad(const T& degrees) noexcept {
       if constexpr (CT::Real<T>)
          return degrees * PIxI180<T>;
       else
@@ -97,7 +97,7 @@ namespace Langulus::Math
    /// Radians to degrees conversion                                          
    ///   @param radians - radians to convert to degrees                       
    template<CT::Dense T>
-   NOD() constexpr auto RadToDeg(const T& radians) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) constexpr auto RadToDeg(const T& radians) noexcept {
       if constexpr (CT::Real<T>)
          return radians * PIix180<T>;
       else
@@ -108,7 +108,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T>
-   NOD() auto Cos(const T& a) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) auto Cos(const T& a) noexcept {
       if constexpr (CT::HasCos<T>)
          return a.Cos();
       else if constexpr (CT::Real<T>)
@@ -121,7 +121,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T>
-   NOD() auto Sin(const T& a) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) auto Sin(const T& a) noexcept {
       if constexpr (CT::HasSin<T>)
          return a.Sin();
       else if constexpr (CT::Real<T>)
@@ -134,7 +134,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T>
-   NOD() auto Atan(const T& a) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) auto Atan(const T& a) noexcept {
       if constexpr (CT::HasAtan<T>)
          return a.Atan();
       else if constexpr (CT::Real<T>)
@@ -147,7 +147,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T1, CT::Dense T2>
-   NOD() auto Atan2(const T1& a, const T2& b) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) auto Atan2(const T1& a, const T2& b) noexcept {
       if constexpr (CT::HasAtan2<T1, T2>)
          return a.Atan2(b);
       else if constexpr (CT::Real<T1, T2>)

@@ -43,4 +43,9 @@ aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Vectors SOURCE_FILES)
 add_library(Langulus.Math INTERFACE)
 
 target_include_directories(Langulus.Math INTERFACE include)
-target_link_libraries(Langulus.Math INTERFACE Langulus.RTTI Langulus.SIMD Langulus.Anyness Langulus.Flow)
+target_link_libraries(Langulus.Math 
+    INTERFACE   Langulus.RTTI 
+                Langulus.SIMD 
+                Langulus.Anyness
+                Langulus.Flow
+)

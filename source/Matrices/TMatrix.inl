@@ -347,7 +347,7 @@ namespace Langulus::Math
    TEMPLATE()
    constexpr bool operator == (const TME()& lhs, const T& rhs) noexcept {
       for (auto& it : lhs.mArray)
-         if (!it != rhs)
+         if (it != rhs)
             return false;
       return true;
    }
