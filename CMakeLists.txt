@@ -4,7 +4,7 @@ project(Langulus.Math)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Check if this project is built as standalone, or a part of something else
+# Check if this project is built as standalone, or a part of something else 
 if(PROJECT_IS_TOP_LEVEL)
     find_package(Git REQUIRED)
     execute_process(
@@ -30,7 +30,7 @@ if(PROJECT_IS_TOP_LEVEL)
 	add_subdirectory(test)
 endif()
 
-# Build and install Math library
+# Build and install Math library                                            
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Colors SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Functions SOURCE_FILES)
@@ -42,10 +42,10 @@ aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Ranges SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Vectors SOURCE_FILES)
 add_library(Langulus.Math INTERFACE)
 
-target_include_directories(Langulus.Math INTERFACE include)
+target_include_directories(Langulus.Math
+    INTERFACE   include
+)
+
 target_link_libraries(Langulus.Math 
-    INTERFACE   Langulus.RTTI 
-                Langulus.SIMD 
-                Langulus.Anyness
-                Langulus.Flow
+    INTERFACE   Langulus.Flow
 )
