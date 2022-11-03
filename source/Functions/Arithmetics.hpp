@@ -324,7 +324,7 @@ namespace Langulus::Math
       /// Compile-time square root using binary search                        
       /// Applicable only to unsigned integers                                
       template<CT::Unsigned T>
-      NOD() LANGULUS(ALWAYSINLINE) constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept {
+      NOD() constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept {
          if (lo == hi)
             return lo;
 

@@ -35,10 +35,12 @@ aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Colors SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Functions SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Matrices SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Numbers SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Primitives SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Quaternions SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Randomness SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Ranges SOURCE_FILES)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/SignedDistance SOURCE_FILES)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Vectors SOURCE_FILES)
 add_library(Langulus.Math INTERFACE)
 
@@ -47,5 +49,10 @@ target_include_directories(Langulus.Math
 )
 
 target_link_libraries(Langulus.Math 
-    INTERFACE   Langulus.Flow
+    INTERFACE   Langulus.Core
+                Langulus.Logger
+                Langulus.RTTI
+                Langulus.SIMD
+                Langulus.Anyness
+                Langulus.Flow
 )
