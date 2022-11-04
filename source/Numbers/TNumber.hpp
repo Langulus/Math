@@ -51,10 +51,16 @@ namespace Langulus::Math
       constexpr TNumber() noexcept = default;
       constexpr TNumber(const TNumber&) noexcept = default;
       constexpr TNumber(TNumber&&) noexcept = default;
+
       constexpr TNumber(const T& a) noexcept
          : mValue {a} {}
+
       constexpr TNumber(const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>)
          : mValue {a.mValue} {}
+
+      template<class N>
+      constexpr TNumber(const N& a) noexcept requires CT::Convertible<N, T>
+         : mValue {static_cast<T>(a)} {}
 
       TNumber& operator = (const TNumber&) noexcept = default;
       TNumber& operator = (TNumber&&) noexcept = default;
