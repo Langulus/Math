@@ -12,7 +12,7 @@ namespace Langulus::Math
 {
 
    /// Commonly used 3D normal                                                
-   using Normal = TNormal<vec3>;
+   using Normal = TNormal<Vec3>;
 
 } // namespace Langulus::Math
 

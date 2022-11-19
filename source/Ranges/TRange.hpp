@@ -14,56 +14,56 @@ namespace Langulus::Math
    template<CT::ScalarOrVector>
    struct TRange;
 
-   using Range1f = TRange<vec1f>;
-   using Range1d = TRange<vec1d>;
+   using Range1f = TRange<Vec1f>;
+   using Range1d = TRange<Vec1d>;
 
-   using Range2f = TRange<vec2f>;
-   using Range2d = TRange<vec2d>;
-   using Range3f = TRange<vec3f>;
-   using Range3d = TRange<vec3d>;
-   using Range4f = TRange<vec4f>;
-   using Range4d = TRange<vec4d>;
+   using Range2f = TRange<Vec2f>;
+   using Range2d = TRange<Vec2d>;
+   using Range3f = TRange<Vec3f>;
+   using Range3d = TRange<Vec3d>;
+   using Range4f = TRange<Vec4f>;
+   using Range4d = TRange<Vec4d>;
 
-   using Range1 = TRange<vec1>;
-   using Range2 = TRange<vec2>;
-   using Range3 = TRange<vec3>;
-   using Range4 = TRange<vec4>;
+   using Range1 = TRange<Vec1>;
+   using Range2 = TRange<Vec2>;
+   using Range3 = TRange<Vec3>;
+   using Range4 = TRange<Vec4>;
 
-   using Range1u8 = TRange<vec1u8>;
-   using Range1u16 = TRange<vec1u16>;
-   using Range1u32 = TRange<vec1u32>;
-   using Range1u64 = TRange<vec1u64>;
-   using Range1i8 = TRange<vec1i8>;
-   using Range1i16 = TRange<vec1i16>;
-   using Range1i32 = TRange<vec1i32>;
-   using Range1i64 = TRange<vec1i64>;
+   using Range1u8 = TRange<Vec1u8>;
+   using Range1u16 = TRange<Vec1u16>;
+   using Range1u32 = TRange<Vec1u32>;
+   using Range1u64 = TRange<Vec1u64>;
+   using Range1i8 = TRange<Vec1i8>;
+   using Range1i16 = TRange<Vec1i16>;
+   using Range1i32 = TRange<Vec1i32>;
+   using Range1i64 = TRange<Vec1i64>;
 
-   using Range2u8 = TRange<vec2u8>;
-   using Range2u16 = TRange<vec2u16>;
-   using Range2u32 = TRange<vec2u32>;
-   using Range2u64 = TRange<vec2u64>;
-   using Range2i8 = TRange<vec2i8>;
-   using Range2i16 = TRange<vec2i16>;
-   using Range2i32 = TRange<vec2i32>;
-   using Range2i64 = TRange<vec2i64>;
+   using Range2u8 = TRange<Vec2u8>;
+   using Range2u16 = TRange<Vec2u16>;
+   using Range2u32 = TRange<Vec2u32>;
+   using Range2u64 = TRange<Vec2u64>;
+   using Range2i8 = TRange<Vec2i8>;
+   using Range2i16 = TRange<Vec2i16>;
+   using Range2i32 = TRange<Vec2i32>;
+   using Range2i64 = TRange<Vec2i64>;
 
-   using Range3u8 = TRange<vec3u8>;
-   using Range3u16 = TRange<vec3u16>;
-   using Range3u32 = TRange<vec3u32>;
-   using Range3u64 = TRange<vec3u64>;
-   using Range3i8 = TRange<vec3i8>;
-   using Range3i16 = TRange<vec3i16>;
-   using Range3i32 = TRange<vec3i32>;
-   using Range3i64 = TRange<vec3i64>;
+   using Range3u8 = TRange<Vec3u8>;
+   using Range3u16 = TRange<Vec3u16>;
+   using Range3u32 = TRange<Vec3u32>;
+   using Range3u64 = TRange<Vec3u64>;
+   using Range3i8 = TRange<Vec3i8>;
+   using Range3i16 = TRange<Vec3i16>;
+   using Range3i32 = TRange<Vec3i32>;
+   using Range3i64 = TRange<Vec3i64>;
 
-   using Range4u8 = TRange<vec4u8>;
-   using Range4u16 = TRange<vec4u16>;
-   using Range4u32 = TRange<vec4u32>;
-   using Range4u64 = TRange<vec4u64>;
-   using Range4i8 = TRange<vec4i8>;
-   using Range4i16 = TRange<vec4i16>;
-   using Range4i32 = TRange<vec4i32>;
-   using Range4i64 = TRange<vec4i64>;
+   using Range4u8 = TRange<Vec4u8>;
+   using Range4u16 = TRange<Vec4u16>;
+   using Range4u32 = TRange<Vec4u32>;
+   using Range4u64 = TRange<Vec4u64>;
+   using Range4i8 = TRange<Vec4i8>;
+   using Range4i16 = TRange<Vec4i16>;
+   using Range4i32 = TRange<Vec4i32>;
+   using Range4i64 = TRange<Vec4i64>;
 
 } // namespace Langulus::Math
 
@@ -74,7 +74,7 @@ namespace Langulus::A
    /// range                                                                  
    struct Range {
       LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::TRange<Math::vec4>;
+      LANGULUS(CONCRETE) Math::TRange<Math::Vec4>;
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    

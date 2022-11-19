@@ -64,11 +64,11 @@ SCENARIO("Parsing scripts", "[code]") {
       }
    }
 
-   GIVEN("The script: vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))") {
-      const auto code = "vec2f(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))"_code;
+   GIVEN("The script: Vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))") {
+      const auto code = "Vec2f(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))"_code;
 
       WHEN("Parsed without optimization") {
-         Any required = Construct::From<vec2>(
+         Any required = Construct::From<Vec2>(
             Any::WrapCommon<Verb>(
                Verbs::Select {MetaOf<Traits::X>()}
                   .SetSource(

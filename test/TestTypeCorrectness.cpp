@@ -1,7 +1,7 @@
 #include "Main.hpp"
 #include <catch2/catch.hpp>
 
-TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]", vec2u8, vec2u16, vec2u32, vec2u64, vec2i8, vec2i16, vec2i32, vec2i64, vec2f, vec2d) {
+TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]", Vec2u8, Vec2u16, Vec2u32, Vec2u64, Vec2i8, Vec2i16, Vec2i32, Vec2i64, Vec2f, Vec2d) {
 	GIVEN("A 2D vector") {
 		auto meta = MetaData::Of<TestType>();
 		REQUIRE(meta != nullptr);

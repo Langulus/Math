@@ -14,10 +14,10 @@ namespace Langulus::Math
    template<CT::Vector>
    struct TColor;
 
-   using rgb24 = TColor<vec3u8>;
-   using rgba32 = TColor<vec4u8>;
-   using rgb96 = TColor<vec3f>;
-   using rgba128 = TColor<vec4f>;
+   using rgb24 = TColor<Vec3u8>;
+   using rgba32 = TColor<Vec4u8>;
+   using rgb96 = TColor<Vec3f>;
+   using rgba128 = TColor<Vec4f>;
 
    using rgba = rgba32;
    using rgb = rgb24;

@@ -12,10 +12,10 @@ namespace Langulus::Math
 {
 
    /// Commonly used samplers                                                 
-   using Sampler1 = TSampler<vec1>;
-   using Sampler2 = TSampler<vec2>;
-   using Sampler3 = TSampler<vec3>;
-   using Sampler4 = TSampler<vec4>;
+   using Sampler1 = TSampler<Vec1>;
+   using Sampler2 = TSampler<Vec2>;
+   using Sampler3 = TSampler<Vec3>;
+   using Sampler4 = TSampler<Vec4>;
 
 } // namespace Langulus::Math
 

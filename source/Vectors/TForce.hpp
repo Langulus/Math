@@ -12,8 +12,8 @@
 namespace Langulus::Math
 {
 
-   using Force2 = TForce<vec2>;
-   using Force3 = TForce<vec3>;
+   using Force2 = TForce<Vec2>;
+   using Force3 = TForce<Vec3>;
    using Force = Force3;
 
 } // namespace Langulus::Math

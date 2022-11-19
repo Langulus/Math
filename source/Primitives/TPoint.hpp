@@ -13,9 +13,9 @@ namespace Langulus::Math
 
    template<CT::ScalarOrVector> struct TPoint;
 
-   using Point1 = TPoint<vec1>;
-   using Point2 = TPoint<vec2>;
-   using Point3 = TPoint<vec3>;
+   using Point1 = TPoint<Vec1>;
+   using Point2 = TPoint<Vec2>;
+   using Point3 = TPoint<Vec3>;
 
    using Point = Point3;
 

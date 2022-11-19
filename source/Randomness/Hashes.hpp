@@ -55,8 +55,8 @@ namespace Langulus::Math
                ///  2 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec2 HoskinsHash21(float p) {\n"
-                     "   vec3 p3 = fract(p * vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
+                     "Vec2 HoskinsHash21(float p) {\n"
+                     "   Vec3 p3 = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yzx + 31.32);\n"
                      "   return fract((p3.xx + p3.yz) * p3.zy);\n"
                      "}\n\n";
@@ -71,8 +71,8 @@ namespace Langulus::Math
                ///  3 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec3 HoskinsHash31(float p) {\n"
-                     "   vec3 p3 = fract(p * vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
+                     "Vec3 HoskinsHash31(float p) {\n"
+                     "   Vec3 p3 = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yzx + 33.33);\n"
                      "   return fract((p3.xxy + p3.yzz) * p3.zyx);\n"
                      "}\n\n";
@@ -87,8 +87,8 @@ namespace Langulus::Math
                ///  4 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec4 HoskinsHash41(float p) {\n"
-                     "   vec4 p4 = fract(p * vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
+                     "Vec4 HoskinsHash41(float p) {\n"
+                     "   Vec4 p4 = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p4 += dot(p4, p4.wzxy + 33.33);\n"
                      "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
                      "}\n\n";
@@ -106,8 +106,8 @@ namespace Langulus::Math
                ///  1 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash12(vec2 p) {\n"
-                     "   vec3 p3 = fract(p.xyx * " + seed[0] + ");\n"
+                     "float HoskinsHash12(Vec2 p) {\n"
+                     "   Vec3 p3 = fract(p.xyx * " + seed[0] + ");\n"
                      "   p3 += dot(p3, p3.yzx + 33.33);\n"
                      "   return fract((p3.x + p3.y) * p3.z);\n"
                      "}\n\n";
@@ -122,8 +122,8 @@ namespace Langulus::Math
                ///  2 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec2 HoskinsHash22(vec2 p) {\n"
-                     "   vec3 p3 = fract(p.xyx * vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
+                     "Vec2 HoskinsHash22(Vec2 p) {\n"
+                     "   Vec3 p3 = fract(p.xyx * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yzx + 33.33);\n"
                      "   return fract((p3.xx + p3.yz) * p3.zy);\n"
                      "}\n\n";
@@ -138,8 +138,8 @@ namespace Langulus::Math
                ///  3 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec3 HoskinsHash22(vec2 p) {\n"
-                     "   vec3 p3 = fract(p.xyx * vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
+                     "Vec3 HoskinsHash22(Vec2 p) {\n"
+                     "   Vec3 p3 = fract(p.xyx * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yxz + 33.33);\n"
                      "   return fract((p3.xxy + p3.yzz) * p3.zyx);\n"
                      "}\n\n";
@@ -154,8 +154,8 @@ namespace Langulus::Math
                ///  4 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec4 HoskinsHash22(vec2 p) {\n"
-                     "   vec4 p4 = fract(p.xyxy * vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
+                     "Vec4 HoskinsHash22(Vec2 p) {\n"
+                     "   Vec4 p4 = fract(p.xyxy * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p4 += dot(p4, p4.wzxy + 33.33);\n"
                      "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
                      "}\n\n";
@@ -173,7 +173,7 @@ namespace Langulus::Math
                ///  1 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash13(vec3 p) {\n"
+                     "float HoskinsHash13(Vec3 p) {\n"
                      "   p = fract(p * " + seed[0] + ");\n"
                      "   p += dot(p, p.zyx + 31.32);\n"
                      "   return fract((p.x + p.y) * p.z);\n"
@@ -189,8 +189,8 @@ namespace Langulus::Math
                ///  2 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec2 HoskinsHash23(vec3 p) {\n"
-                     "   p = fract(p * vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
+                     "Vec2 HoskinsHash23(Vec3 p) {\n"
+                     "   p = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p += dot(p, p.yzx + 33.33);\n"
                      "   return fract((p.xx + p.yz) * p.zy);\n"
                      "}\n\n";
@@ -205,8 +205,8 @@ namespace Langulus::Math
                ///  3 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec3 HoskinsHash33(vec3 p) {\n"
-                     "   p = fract(p * vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
+                     "Vec3 HoskinsHash33(Vec3 p) {\n"
+                     "   p = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p += dot(p, p.yxz + 33.33);\n"
                      "   return fract((p.xxy + p.yxx) * p.zyx);\n"
                      "}\n\n";
@@ -221,8 +221,8 @@ namespace Langulus::Math
                ///  4 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec4 HoskinsHash43(vec3 p) {\n"
-                     "   vec4 p4 = fract(p.xyzx * vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
+                     "Vec4 HoskinsHash43(Vec3 p) {\n"
+                     "   Vec4 p4 = fract(p.xyzx * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p4 += dot(p4, p4.wzxy + 33.33);\n"
                      "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
                      "}\n\n";
@@ -240,7 +240,7 @@ namespace Langulus::Math
                ///  1 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash14(vec4 p) {\n"
+                     "float HoskinsHash14(Vec4 p) {\n"
                      "   p = fract(p * " + seed[0] + ");\n"
                      "   p += dot(p, p.ywxz + 32.31);\n"
                      "   return fract((p.x + p.y) * (p.z + p.w));\n"
@@ -256,8 +256,8 @@ namespace Langulus::Math
                ///  2 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec2 HoskinsHash24(vec4 p) {\n"
-                     "   p = fract(p * vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
+                     "Vec2 HoskinsHash24(Vec4 p) {\n"
+                     "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p += dot(p, p.wzxy + 33.33);\n"
                      "   return fract((p.xw + p.yz) * p.zy);\n"
                      "}\n\n";
@@ -272,8 +272,8 @@ namespace Langulus::Math
                ///  3 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec3 HoskinsHash34(vec4 p) {\n"
-                     "   p = fract(p * vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
+                     "Vec3 HoskinsHash34(Vec4 p) {\n"
+                     "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p += dot(p, p.wzxy + 33.33);\n"
                      "   return fract((p.zwx + p.yxw) * p.zwy);\n"
                      "}\n\n";
@@ -288,8 +288,8 @@ namespace Langulus::Math
                ///  4 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "vec4 HoskinsHash44(vec4 p) {\n"
-                     "   p = fract(p * vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
+                     "Vec4 HoskinsHash44(Vec4 p) {\n"
+                     "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p += dot(p, p.wzxy + 33.33);\n"
                      "   return fract((p.xxyz + p.yzzw) * p.zywx);\n"
                      "}\n\n";

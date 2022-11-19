@@ -32,12 +32,12 @@ namespace Langulus::Math
    } // namespace Langulus::Math::Colors
 
    /// Luma weights for BT.601 standard, used for convertion to grayscale     
-   constexpr vec3 LumaBT601 {0.299, 0.587, 0.114};
+   constexpr Vec3 LumaBT601 {0.299, 0.587, 0.114};
 
    /// Luma weights for BT.709 standard, used for convertion to grayscale     
-   constexpr vec3 LumaBT709 {0.2126, 0.7152, 0.0722};
+   constexpr Vec3 LumaBT709 {0.2126, 0.7152, 0.0722};
 
    /// Luma weights for BT.2100 standard, used for convertion to grayscale    
-   constexpr vec3 LumaBT2100 {0.2627, 0.6780, 0.0593};
+   constexpr Vec3 LumaBT2100 {0.2627, 0.6780, 0.0593};
 
 } // namespace Langulus::Math
