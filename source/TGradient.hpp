@@ -63,7 +63,7 @@ namespace Langulus::Math
    ///                                                                        
    ///   Templated gradient                                                   
    ///                                                                        
-   ///   Useful for capsulating continuous properties and getting their       
+   /// Useful for capsulating continuous properties and getting their         
    /// derivatives. Can capsulate anything, as long as it is arithmetic.      
    ///                                                                        
    template<class T, Count S>
@@ -94,7 +94,7 @@ namespace Langulus::Math
       /// Manual construction via a variadic head-tail                        
       ///   @param arguments... - list of states                              
       template<class... A>
-      constexpr TGradient(A&&... arguments) noexcept requires (!CT::Semantic<A...>)
+      constexpr TGradient(A&&... arguments) noexcept requires (!CT::Semantic<A...> && !CT::Deep<A...>)
          : mBuffer {Forward<A>(arguments)...} { }
 
       /// Access values in order of relevance (current value is at 0)         
