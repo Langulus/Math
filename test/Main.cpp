@@ -1,6 +1,9 @@
 #include "Main.hpp"
+
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
+
+LANGULUS_RTTI_BOUNDARY("Test")
 
 template<Count S>
 struct VectorTypeGenerator {
