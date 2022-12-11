@@ -31,10 +31,10 @@ namespace Langulus::A
    /// size of the same size                                                  
    template<Count S>
    struct SizeOfSize : public Size {
-      LANGULUS(CONCRETE) Math::TSize<Math::TVector<Real, S, 1>>;
+      LANGULUS(CONCRETE) Math::TSize<Math::TVector<::Langulus::Real, S, 1>>;
       LANGULUS_BASES(Size);
       static constexpr Count MemberCount {S};
-      static_assert(S > 0, "Size size must be greater than zero");
+      static_assert(S > 0, "Size must be greater than zero");
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    
@@ -60,7 +60,7 @@ namespace Langulus::Math
       using PointType = T;
       using typename T::MemberType;
       using T::MemberCount;
-      static_assert(T::DefaultMember != MemberType {1},
+      static_assert(T::DefaultMember == MemberType {1},
          "Size type does not default to 1");
       LANGULUS_BASES(A::SizeOfSize<MemberCount>, A::SizeOfType<MemberType>);
 
