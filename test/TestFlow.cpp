@@ -69,7 +69,7 @@ SCENARIO("Parsing scripts", "[code]") {
 
       WHEN("Parsed without optimization") {
          Any required = Construct::From<Vec2>(
-            Any::WrapCommon<Verb>(
+            Any::WrapAs<Verb>(
                Verbs::Select {MetaOf<Traits::X>()}
                   .SetSource(
                      Verbs::Select {MetaOf<Traits::Sampler>()}
