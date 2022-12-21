@@ -134,9 +134,9 @@ namespace Langulus::Math
 
          if constexpr (MemberCount < 3) {
             // 2D signed distance field                                 
-            const auto pq0 = v0 - e0 * Clamp01(v0.Dot(e0) / Dot2(e0));
-            const auto pq1 = v1 - e1 * Clamp01(v1.Dot(e1) / Dot2(e1));
-            const auto pq2 = v2 - e2 * Clamp01(v2.Dot(e2) / Dot2(e2));
+            const auto pq0 = v0 - e0 * Saturate(v0.Dot(e0) / Dot2(e0));
+            const auto pq1 = v1 - e1 * Saturate(v1.Dot(e1) / Dot2(e1));
+            const auto pq2 = v2 - e2 * Saturate(v2.Dot(e2) / Dot2(e2));
             const auto s = Sign(e0[0] * e2[1] - e0[1] * e2[0]);
 
             const T d = Min(
@@ -155,9 +155,9 @@ namespace Langulus::Math
                   Sign(e1.Cross(nor).Dot(v1)) +
                   Sign(e2.Cross(nor).Dot(v2)) < Real {2})
                ? Min(
-                  Dot2(e0 * Clamp01(e0.Dot(v0) / Dot2(e0)) - v0),
-                  Dot2(e1 * Clamp01(e1.Dot(v1) / Dot2(e1)) - v1),
-                  Dot2(e2 * Clamp01(e2.Dot(v2) / Dot2(e2)) - v2))
+                  Dot2(e0 * Saturate(e0.Dot(v0) / Dot2(e0)) - v0),
+                  Dot2(e1 * Saturate(e1.Dot(v1) / Dot2(e1)) - v1),
+                  Dot2(e2 * Saturate(e2.Dot(v2) / Dot2(e2)) - v2))
                : Sq(nor.Dot(v0)) / Dot2(nor)
             );
          }

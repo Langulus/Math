@@ -411,7 +411,7 @@ namespace Langulus::Math
 
    /// Clamp a value inside the interval [0:1]                                
    template<CT::Dense T>
-   NOD() LANGULUS(ALWAYSINLINE) constexpr decltype(auto) Clamp01(const T& v) noexcept {
+   NOD() LANGULUS(ALWAYSINLINE) constexpr decltype(auto) Saturate(const T& v) noexcept {
       return Clamp(v, T {0}, T {1});
    }
 
@@ -494,7 +494,7 @@ namespace Langulus::Math
    /// Smooth step (Hermite) interpolation, analogous to the GLSL function    
    template<CT::Dense T, CT::Dense MIN, CT::Dense MAX>
    NOD() LANGULUS(ALWAYSINLINE) constexpr auto SmoothStep(const MIN& min, const MAX& max, const T& x) noexcept {
-      const T t = Clamp01((x - T {min}) / T {max - min});
+      const T t = Saturate((x - T {min}) / T {max - min});
       return t * t * (-t * T {2} + T {3});
    }
 

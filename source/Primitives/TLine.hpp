@@ -120,7 +120,7 @@ namespace Langulus::Math
       NOD() auto SignedDistance(const PointType& point) const {
          const auto pa = point - mAB[0];
          const auto ba = mAB[1] - mAB[0];
-         const auto h = Clamp01(Dot(pa, ba) / Dot2(ba));
+         const auto h = Saturate(Dot(pa, ba) / Dot2(ba));
          return Length(pa - ba * h);
       }
 
