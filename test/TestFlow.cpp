@@ -23,8 +23,9 @@ SCENARIO("Parsing scripts", "[code]") {
 
       WHEN("Parsed without optimization") {
          Any required = Verbs::Add {
-            Verbs::Exponent {Real(2)}
+            Any {Verbs::Exponent {Real(2)}
                .SetSource(Real(4))
+            }
          }.SetMass(-1);
 
          const auto parsed = code.Parse(false);
@@ -50,10 +51,11 @@ SCENARIO("Parsing scripts", "[code]") {
 
       WHEN("Parsed without optimization") {
          Any required = Verbs::Add {
-            Verbs::Exponent {Real(2)}
+            Any {Verbs::Exponent {Real(2)}
                .SetSource(Verbs::Select {MetaOf<Traits::Y>()}
                   .SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
                )
+            }
          }.SetMass(-1);
 
          const auto parsed = code.Parse();
@@ -75,18 +77,18 @@ SCENARIO("Parsing scripts", "[code]") {
                      Verbs::Select {MetaOf<Traits::Sampler>()}
                   ),
                Verbs::Add {
-                  Verbs::Add {
-                     Verbs::Exponent {Real(2)}
+                  Any {Verbs::Add {
+                     Any {Verbs::Exponent {Real(2)}
                         .SetSource(
                            Verbs::Select {MetaOf<Traits::Y>()}
                               .SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
-                        )
+                        )}
                   }.SetSource(
                      Verbs::Multiply {Real(8.75)}
                         .SetSource(
                            Verbs::Select {MetaOf<Traits::Time>()}
                         )
-                  ).SetMass(-1)
+                  ).SetMass(-1)}
                }.SetMass(-1)
             )
          );
