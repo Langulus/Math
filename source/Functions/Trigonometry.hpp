@@ -49,7 +49,7 @@ namespace Langulus::Math
    ///   Constants                                                            
    ///                                                                        
    template<CT::Real T = Real>
-   constexpr T PI {3.1415926535897932385L};
+   constexpr T PI {static_cast<T>(3.1415926535897932385L)};
 
    template<CT::Real T = Real>
    constexpr T TAU {PI<T> * T {2}};
