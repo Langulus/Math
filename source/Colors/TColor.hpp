@@ -14,33 +14,37 @@ namespace Langulus::Math
    template<CT::Vector>
    struct TColor;
 
-   using rgb24 = TColor<Vec3u8>;
-   using rgba32 = TColor<Vec4u8>;
-   using rgb96 = TColor<Vec3f>;
-   using rgba128 = TColor<Vec4f>;
-
-   using rgba = rgba32;
-   using rgb = rgb24;
-
    template<CT::DenseNumber, CT::Dimension>
    struct TColorComponent;
 
-   using red8 = TColorComponent<uint8, Traits::R>;
-   using green8 = TColorComponent<uint8, Traits::G>;
-   using blue8 = TColorComponent<uint8, Traits::B>;
-   using alpha8 = TColorComponent<uint8, Traits::A>;
-   using red32 = TColorComponent<Float, Traits::R>;
-   using green32 = TColorComponent<Float, Traits::G>;
-   using blue32 = TColorComponent<Float, Traits::B>;
-   using alpha32 = TColorComponent<Float, Traits::A>;
-   using depth16 = TColorComponent<::std::uint16_t, Traits::D>;
-   using depth32 = TColorComponent<Float, Traits::D>;
+   using RGB24 = TColor<Vec3u8>;
+   using RGBA32 = TColor<Vec4u8>;
+   using RGBA = RGBA32;
+   using RGB = RGB24;
 
-   using red = red8;
-   using green = green8;
-   using blue = blue8;
-   using alpha = alpha8;
-   using depth = depth32;
+   using RGB96 = TColor<Vec3f>;
+   using RGBA128 = TColor<Vec4f>;
+   using RGBAf = RGBA128;
+   using RGBf = RGB96;
+
+   using Red8 = TColorComponent<uint8, Traits::R>;
+   using Green8 = TColorComponent<uint8, Traits::G>;
+   using Blue8 = TColorComponent<uint8, Traits::B>;
+   using Alpha8 = TColorComponent<uint8, Traits::A>;
+
+   using Red32 = TColorComponent<Float, Traits::R>;
+   using Green32 = TColorComponent<Float, Traits::G>;
+   using Blue32 = TColorComponent<Float, Traits::B>;
+   using Alpha32 = TColorComponent<Float, Traits::A>;
+
+   using Depth16 = TColorComponent<::std::uint16_t, Traits::D>;
+   using Depth32 = TColorComponent<Float, Traits::D>;
+
+   using Red = Red8;
+   using Green = Green8;
+   using Blue = Blue8;
+   using Alpha = Alpha8;
+   using Depth = Depth32;
 
 } // namespace Langulus::Math
 
@@ -51,7 +55,7 @@ namespace Langulus::A
    /// color                                                                  
    struct Color {
       LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::rgba;
+      LANGULUS(CONCRETE) Math::RGBA;
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    

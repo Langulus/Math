@@ -23,7 +23,9 @@ namespace Langulus::CT
 namespace Langulus::Math
 {
 
+   ///                                                                        
    /// Type used for representing angles in degrees                           
+   ///                                                                        
    template<CT::DenseNumber T>
    struct TDegrees : public TNumber<T, TDegrees<T>> {
       using Base = TNumber<T, TDegrees<T>>;
@@ -39,7 +41,9 @@ namespace Langulus::Math
       }
    };
 
+   ///                                                                        
    /// Type used for representing angles in radians                           
+   ///                                                                        
    template<CT::DenseNumber T>
    struct TRadians : public TNumber<T, TRadians<T>> {
       using Base = TNumber<T, TRadians<T>>;
@@ -89,6 +93,11 @@ namespace Langulus::Math
    using Pitchr = TPitch<Radians>;
    using Rolld = TRoll<Degrees>;
    using Rollr = TRoll<Radians>;
+
+   constexpr Degrees operator""_deg(long double n) noexcept { return n; }
+   constexpr Degrees operator""_deg(unsigned long long n) noexcept { return n; }
+   constexpr Radians operator""_rad(long double n) noexcept { return {n}; }
+   constexpr Radians operator""_rad(unsigned long long n) noexcept { return {n}; }
 
 } // namespace Langulus::Math
 

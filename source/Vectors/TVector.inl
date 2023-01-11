@@ -373,9 +373,9 @@ namespace Langulus::Math
    LANGULUS(ALWAYSINLINE) constexpr T TME()::LengthSquared() const noexcept {
       auto start = mArray;
       const auto end = mArray + S;
-      T accum = Sq(*(start++));
+      T accum = Math::Sq(*(start++));
       while (start != end)
-         accum += Sq(*(start++));
+         accum += Math::Sq(*(start++));
       return accum;
    }
 
@@ -474,7 +474,6 @@ namespace Langulus::Math
    TEMPLATE()
    template<TARGS(ALT)>
    LANGULUS(ALWAYSINLINE) constexpr auto& TME()::operator = (const TVEC(ALT)& vec) noexcept {
-      static_assert(S <= ALTS, "LHS must be of same or smaller size than RHS");
       new (this) TVector {vec};
       return *this;
    }
@@ -628,7 +627,7 @@ namespace Langulus::Math
    TEMPLATE()
    template<TARGS(ALT)>
    LANGULUS(ALWAYSINLINE) constexpr auto TME()::Max(const TVEC(ALT)& limits) const noexcept {
-      T result[Min(S, ALTS)];
+      T result[Math::Min(S, ALTS)];
       SIMD::Store(SIMD::Max(mArray, limits.mArray), result);
       return result;
    }
@@ -667,7 +666,7 @@ namespace Langulus::Math
       const auto end = mArray + S;
       T t = *(start++);
       while (start != end)
-         t = Max(*(start++), t);
+         t = Math::Max(*(start++), t);
       return t;
    }
 
@@ -679,7 +678,7 @@ namespace Langulus::Math
       const auto end = mArray + S;
       T t = *(start++);
       while (start != end)
-         t = Min(*(start++), t);
+         t = Math::Min(*(start++), t);
       return t;
    }
 
@@ -710,7 +709,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Sign(v);
+         *(it++) = Math::Sign(v);
       return result;
    }
 
@@ -720,7 +719,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Mod(v, period);
+         *(it++) = Math::Mod(v, period);
       return result;
    }
 
@@ -732,7 +731,7 @@ namespace Langulus::Math
       const T* lhs = mArray;
       const T* rhs = period.mArray;
       for (auto& v : result)
-         v = Mod(*(lhs++), *(rhs++));
+         v = Math::Mod(*(lhs++), *(rhs++));
       return result;
    }
 
@@ -742,7 +741,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Step(edge, v);
+         *(it++) = Math::Step(edge, v);
       return result;
    }
 
@@ -754,7 +753,7 @@ namespace Langulus::Math
       const T* lhs = mArray;
       const T* rhs = edge.mArray;
       for (auto& v : result)
-         v = Step(*(rhs++), *(lhs++));
+         v = Math::Step(*(rhs++), *(lhs++));
       return result;
    }
 
@@ -777,7 +776,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Frac(v);
+         *(it++) = Math::Frac(v);
       return result;
    }
 
@@ -787,7 +786,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Sqrt(v);
+         *(it++) = Math::Sqrt(v);
       return result;
    }
 
@@ -797,7 +796,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Exp(v);
+         *(it++) = Math::Exp(v);
       return result;
    }
 
@@ -807,7 +806,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Sin(v);
+         *(it++) = Math::Sin(v);
       return result;
    }
 
@@ -817,7 +816,7 @@ namespace Langulus::Math
       T result[S];
       T* it = result;
       for (auto& v : mArray)
-         *(it++) = Cos(v);
+         *(it++) = Math::Cos(v);
       return result;
    }
 
@@ -828,14 +827,14 @@ namespace Langulus::Math
          auto g1 = static_cast<const T*>(p1);
          auto g2 = static_cast<const T*>(p2);
          if constexpr (CT::Sparse<T>) {
-            if (**g1 < **g2)         return -1;
+            if (**g1 < **g2)        return -1;
             else if (**g1 > **g2)   return  1;
-            else                     return  0;
+            else                    return  0;
          }
          else {
-            if (*g1 < *g2)            return -1;
-            else if (*g1 > *g2)      return  1;
-            else                     return  0;
+            if (*g1 < *g2)          return -1;
+            else if (*g1 > *g2)     return  1;
+            else                    return  0;
          }
       };
 
@@ -915,7 +914,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator + (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::AddWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::AddWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector + Scalar                                                        
@@ -942,7 +941,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator - (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::SubtractWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::SubtractWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector - Scalar                                                        
@@ -971,7 +970,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator * (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::MultiplyWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::MultiplyWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector * Scalar                                                        
@@ -998,7 +997,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator / (const TVEC(LHS)& me, const TVEC(RHS)& other) {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::DivideWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::DivideWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector / Scalar                                                        
@@ -1027,7 +1026,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator << (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::ShiftLeftWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::ShiftLeftWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector << Scalar                                                       
@@ -1056,7 +1055,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator >> (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::ShiftRightWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::ShiftRightWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector >> Scalar                                                       
@@ -1085,7 +1084,7 @@ namespace Langulus::Math
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(ALWAYSINLINE) auto operator ^ (const TVEC(LHS)& me, const TVEC(RHS)& other) noexcept requires CT::Integer<LHST, RHST> {
       using TYPE = Lossless<LHST, RHST>;
-      return SIMD::XOrWrap<TVector<TYPE, Min(LHSS, RHSS)>>(me.mArray, other.mArray);
+      return SIMD::XOrWrap<TVector<TYPE, Math::Min(LHSS, RHSS)>>(me.mArray, other.mArray);
    }
 
    /// Vector ^ Scalar                                                        

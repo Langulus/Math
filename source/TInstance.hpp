@@ -57,7 +57,7 @@ namespace Langulus::Math
       using MatrixType = TMatrix<MemberType, MemberCount + 1, MemberCount + 1>;
       using RangeType = TRange<T>;
       using QuatType = TQuaternion<MemberType>;
-      using SizeType = TSize<T>;
+      using SizeType = TScale<T>;
 
    public:
       TInstance() noexcept = default;
@@ -104,7 +104,7 @@ namespace Langulus::Math
       void Move(MemberType, const TNormal<K>&, bool relative = false);
 
       template<class K>
-      void Move(MemberType, const TSize<K>&, bool relative = false);
+      void Move(MemberType, const TScale<K>&, bool relative = false);
 
       template<class K>
       void Move(MemberType, const TPoint<K>&, bool relative = false);

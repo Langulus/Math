@@ -322,7 +322,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not size is relative to current         
    TEMPLATE()
    template<class K>
-   void TME()::Move(MemberType sign, const TSize<K>& sizer, bool relative) {
+   void TME()::Move(MemberType sign, const TScale<K>& sizer, bool relative) {
       if (relative)
          mScale += sizer * sign;
       else

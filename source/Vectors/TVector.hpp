@@ -28,7 +28,7 @@ namespace Langulus::Math
    template<CT::Vector> struct TForce;
    template<CT::Vector> struct TNormal;
    template<CT::ScalarOrVector> struct TSampler;
-   template<CT::ScalarOrVector> struct TSize;
+   template<CT::ScalarOrVector> struct TScale;
 
    using Vec1 = TVector<Real, 1>;
    using Vec1f = TVector<Float, 1>;

@@ -21,8 +21,8 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional frustum");
 
       TPlane<T> mPlanes[MemberCount * 2];
