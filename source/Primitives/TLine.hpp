@@ -68,8 +68,8 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Line);
 
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
       T mAB[2] {};
@@ -153,8 +153,8 @@ namespace Langulus::Math
 
       using Base = TAny<T>;
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
       NOD() TLineLoop Clone() const {
@@ -177,8 +177,8 @@ namespace Langulus::Math
 
       using Base = TAny<T>;
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
       NOD() TLineStrip Clone() const {

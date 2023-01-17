@@ -10,4 +10,4 @@
 #include "Vectors/TNormal.hpp"
 #include "Vectors/TSampler.hpp"
 #include "Vectors/TForce.hpp"
-#include "Vectors/TSizer.hpp"
+#include "Vectors/TScale.hpp"

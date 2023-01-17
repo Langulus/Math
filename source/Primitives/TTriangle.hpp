@@ -68,8 +68,8 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Triangle);
 
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
 
       T mABC[3] {};
@@ -215,8 +215,8 @@ namespace Langulus::Math
 
       using Base = TAny<T>;
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
 
       NOD() TTriangleStrip Clone() const {
@@ -249,8 +249,8 @@ namespace Langulus::Math
 
       using Base = TAny<T>;
       using PointType = T;
-      using typename T::MemberType;
-      using T::MemberCount;
+      using MemberType = typename T::MemberType;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
 
       NOD() TTriangleFan Clone() const {
