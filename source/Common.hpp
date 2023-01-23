@@ -27,8 +27,12 @@ namespace Langulus::Math
 
 LANGULUS_EXCEPTION(Arithmetic);
 
-LANGULUS_DEFINE_TRAIT(Transformation,
+LANGULUS_DEFINE_TRAIT(ModelTransform,
    "Model transformation trait");
+LANGULUS_DEFINE_TRAIT(ViewTransform,
+   "View transformation trait");
+LANGULUS_DEFINE_TRAIT(ProjectTransform,
+   "Projection transformation trait");
 LANGULUS_DEFINE_TRAIT(Solid,
    "Solidity state");
 LANGULUS_DEFINE_TRAIT(Pickable,

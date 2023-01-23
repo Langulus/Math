@@ -11,18 +11,24 @@
 namespace Langulus::Math
 {
 
+   /// Default (human level) construction                                     
+   LANGULUS(ALWAYSINLINE)
    constexpr Level::Level() noexcept
       : TNumber {Level::Default} {}
 
-   constexpr Level::Level(const Level& other) noexcept
-      : TNumber {other.mValue} {}
-
+   /// Real number construction                                               
+   ///   @param octave - the real number to interpret as level                
+   LANGULUS(ALWAYSINLINE)
    constexpr Level::Level(const CT::Real auto& octave) noexcept {
       if (octave < Level::Min || octave > Level::Max)
          mValue = Level::OutOfBounds;
-      mValue = octave;
+      mValue = static_cast<Real>(octave);
    }
 
+   /// Integer number construction                                            
+   ///   @attention unsigned integers will be remapped to the signed range    
+   ///   @param octave - the integer to interpret as level                    
+   LANGULUS(ALWAYSINLINE)
    constexpr Level::Level(const CT::Integer auto& octave) noexcept {
       Real ioct;
       if constexpr (CT::Signed<decltype(octave)>)
@@ -35,17 +41,18 @@ namespace Langulus::Math
       mValue = ioct;
    }
 
-
    /// Get a factor for scaling a relative level to this one                  
    ///   @param level - the level to factor against                           
    ///   @param return the invlog scale that maps this to other               
-   inline Real Level::GetFactor(const Level& level) const noexcept {
+   LANGULUS(ALWAYSINLINE)
+   Real Level::GetFactor(const Level& level) const noexcept {
       return Math::Pow(Unit, level.mValue - mValue);
    }
 
    /// Get a reference point between two levels                               
    ///   @param level - the other level                                       
    ///   @return a middle level between this and other                        
+   LANGULUS(ALWAYSINLINE)
    constexpr Level Level::GetRefPoint(const Level& level) const noexcept {
       if (mValue == Level::OutOfBounds || level.mValue == Level::OutOfBounds) {
          // Reference point can't exist                                 
@@ -64,18 +71,21 @@ namespace Langulus::Math
    ///   @param o1 - the first level                                          
    ///   @param o2 - the second level                                         
    ///   @return a middle level                                               
+   LANGULUS(ALWAYSINLINE)
    constexpr Level Level::GetRefPoint(const Level& o1, const Level& o2) noexcept {
       return o1.GetRefPoint(o2);
    }
 
    /// Get a zero based offset from this level                                
    ///   @return the zero-based offset                                        
+   LANGULUS(ALWAYSINLINE)
    constexpr Real Level::GetOffset() const noexcept {
       return mValue - Level::Min;
    }
 
    /// Get a zero based offset from this level (as integer)                   
    ///   @return the zero-based offset                                        
+   LANGULUS(ALWAYSINLINE)
    constexpr Offset Level::GetOffsetInt() const noexcept {
       return static_cast<Offset>(mValue - Level::Min);
    }

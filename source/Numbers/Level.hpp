@@ -38,7 +38,7 @@ namespace Langulus::Math
    ///                                                                        
    struct Level : public TNumber<Real, Level> {
       constexpr Level() noexcept;
-      constexpr Level(const Level&) noexcept;
+      constexpr Level(const Level&) noexcept = default;
       constexpr Level(const CT::Real auto&) noexcept;
       constexpr Level(const CT::Integer auto&) noexcept;
 
