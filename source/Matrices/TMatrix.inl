@@ -486,24 +486,31 @@ namespace Langulus::Math
    ///                                                                        
    ///   CREATION                                                             
    ///                                                                        
-   /// Perspective constructor - LH perspective projection matrix             
+   /// Perspective constructor - left-handed perspective projection matrix    
+   ///   @param fieldOfView - an angle representing the horizontal field of   
+   ///                        view                                            
+   ///   @param aspect - the aspect ratio (width/height)                      
+   ///   @param near - the distance to the near clipping plane                
+   ///   @param far - the distance to the far clipping plane                  
+   ///   @return the projection matrix                                        
    TEMPLATE()
-   constexpr TME() TME()::PerspectiveFOV(const T& fieldOfView, const T& aspect, const T& near, const T& far) {
+   constexpr TME() TME()::PerspectiveFOV(const CT::Angle auto& fieldOfView, const T& aspect, const T& near, const T& far) {
       static_assert(IsSquare && Rows == 4,
          "Can't make a perspective matrix from this one");
 
       TME() result = Null();
-      const auto fd = T(1) / std::tan(fieldOfView / T(2));
-      const auto id = -T(1) / (far - near);
+      const auto fd = T {1} / ::std::tan(T {fieldOfView.GetRadians()} *T {0.5});
+      const auto id = -T {1} / (far - near);
       result.mArray[0] = fd;
       result.mArray[5] = fd * aspect;
       result.mArray[10] = far * id;
-      result.mArray[11] = T(-1);
+      result.mArray[11] = T {-1};
       result.mArray[14] = far * near * id;
       return result;
    }
 
-   /// Perspective constructor - LH perspective projection matrix             
+   /// Perspective constructor - left-handed perspective projection matrix    
+   /// described by a region on the near clipping plane                       
    TEMPLATE()
    constexpr TME() TME()::PerspectiveRegion(const T& left, const T& right, const T& top, const T& bottom, const T& near, const T& far) {
       static_assert(IsSquare && Rows == 4,

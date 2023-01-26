@@ -145,7 +145,7 @@ namespace Langulus::Math
       template<CT::DenseNumber N>
       NOD() constexpr decltype(auto) Adapt(const N&) const noexcept requires IsCompatible<N>;
 
-      NOD() static constexpr TMatrix PerspectiveFOV(const T&, const T&, const T&, const T&);
+      NOD() static constexpr TMatrix PerspectiveFOV(const CT::Angle auto&, const T&, const T&, const T&);
       NOD() static constexpr TMatrix PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&);
       NOD() static constexpr TMatrix Orthographic(const T&, const T&, const T&, const T&);
       NOD() static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>);
