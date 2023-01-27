@@ -24,7 +24,7 @@ namespace Langulus::Math
 {
 
    ///                                                                        
-   /// Type used for representing angles in degrees                           
+   ///   Type used for representing angles in degrees                         
    ///                                                                        
    template<CT::DenseNumber T>
    struct TDegrees : public TNumber<T, TDegrees<T>> {
@@ -32,6 +32,14 @@ namespace Langulus::Math
       using Base::Base;
       using Base::mValue;
       static constexpr bool Radians = false;
+
+      NOD() constexpr T GetRadians() const noexcept {
+         return DegToRad(mValue);
+      }
+
+      NOD() constexpr T GetDegrees() const noexcept {
+         return mValue;
+      }
 
       NOD() Lossless<Real, T> Cos() const noexcept {
          return Math::Cos(DegToRad(mValue));
@@ -42,7 +50,7 @@ namespace Langulus::Math
    };
 
    ///                                                                        
-   /// Type used for representing angles in radians                           
+   ///   Type used for representing angles in radians                         
    ///                                                                        
    template<CT::DenseNumber T>
    struct TRadians : public TNumber<T, TRadians<T>> {
@@ -50,6 +58,14 @@ namespace Langulus::Math
       using Base::Base;
       using Base::mValue;
       static constexpr bool Radians = true;
+
+      NOD() constexpr T GetRadians() const noexcept {
+         return mValue;
+      }
+
+      NOD() constexpr T GetDegrees() const noexcept {
+         return RadToDeg(mValue);
+      }
 
       NOD() Lossless<Real, T> Cos() const noexcept {
          return Math::Cos(mValue);
@@ -143,20 +159,6 @@ namespace Langulus::Math
       using Dimension = D;
       using T::T;
       using T::mValue;
-
-      NOD() constexpr decltype(auto) GetRadians() const noexcept {
-         if constexpr (T::Radians)
-            return mValue;
-         else
-            return DegToRad(mValue);
-      }
-
-      NOD() constexpr decltype(auto) GetDegrees() const noexcept {
-         if constexpr (T::Radians)
-            return RadToDeg(mValue);
-         else
-            return mValue;
-      }
 
       /// Convert from any angle to text                                      
       NOD() explicit operator Flow::Code() const {

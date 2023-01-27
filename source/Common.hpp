@@ -27,11 +27,11 @@ namespace Langulus::Math
 
 LANGULUS_EXCEPTION(Arithmetic);
 
-LANGULUS_DEFINE_TRAIT(ModelTransform,
+LANGULUS_DEFINE_TRAIT(Transform,
    "Model transformation trait");
-LANGULUS_DEFINE_TRAIT(ViewTransform,
+LANGULUS_DEFINE_TRAIT(View,
    "View transformation trait");
-LANGULUS_DEFINE_TRAIT(ProjectTransform,
+LANGULUS_DEFINE_TRAIT(Projection,
    "Projection transformation trait");
 LANGULUS_DEFINE_TRAIT(Solid,
    "Solidity state");
@@ -59,3 +59,5 @@ LANGULUS_DEFINE_TRAIT(Acceleration,
    "Acceleration trait");
 LANGULUS_DEFINE_TRAIT(Sampler,
    "Sampler trait, used for sampling surfaces/volumes");
+LANGULUS_DEFINE_TRAIT(Level,
+   "Level of an instance");
