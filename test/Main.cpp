@@ -14,7 +14,7 @@ struct VectorTypeGenerator {
 };
 
 int main(int argc, char* argv[]) {
-   (void) MetaOf<Traits::Transformation>();
+   (void) MetaOf<Traits::Transform>();
    (void) MetaOf<Traits::Solid>();
    (void) MetaOf<Traits::Pickable>();
    (void) MetaOf<Traits::Signed>();

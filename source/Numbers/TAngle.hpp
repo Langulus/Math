@@ -27,7 +27,7 @@ namespace Langulus::Math
    ///   Type used for representing angles in degrees                         
    ///                                                                        
    template<CT::DenseNumber T>
-   struct TDegrees : public TNumber<T, TDegrees<T>> {
+   struct TDegrees : TNumber<T, TDegrees<T>> {
       using Base = TNumber<T, TDegrees<T>>;
       using Base::Base;
       using Base::mValue;
@@ -53,7 +53,7 @@ namespace Langulus::Math
    ///   Type used for representing angles in radians                         
    ///                                                                        
    template<CT::DenseNumber T>
-   struct TRadians : public TNumber<T, TRadians<T>> {
+   struct TRadians : TNumber<T, TRadians<T>> {
       using Base = TNumber<T, TRadians<T>>;
       using Base::Base;
       using Base::mValue;
@@ -130,7 +130,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as      
    /// an angle of the same dimension                                         
    template<CT::Dimension D>
-   struct AngleOfDimension : public Angle {
+   struct AngleOfDimension : Angle {
       LANGULUS(CONCRETE) Math::TAngle<Math::Radians, D>;
       LANGULUS_BASES(Angle);
    };
@@ -138,7 +138,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as      
    /// an angle of the same type                                              
    template<CT::Angle T>
-   struct AngleOfType : public Angle {
+   struct AngleOfType : Angle {
       LANGULUS(CONCRETE) T;
       LANGULUS_BASES(Angle);
       using MemberType = T;
@@ -154,7 +154,7 @@ namespace Langulus::Math
    ///   Templated angle                                                      
    ///                                                                        
    template<CT::Angle T, CT::Dimension D>
-   struct TAngle : public T {
+   struct TAngle : T {
       LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
       using Dimension = D;
       using T::T;
