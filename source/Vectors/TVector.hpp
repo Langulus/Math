@@ -102,7 +102,7 @@ namespace Langulus::A
    /// vector of the same size                                                
    template<Count S>
    struct VectorOfSize : public Vector {
-      LANGULUS(CONCRETE) Math::TVector<Langulus::Real, S>;
+      LANGULUS(CONCRETE) Math::TVector<::Langulus::Real, S>;
       LANGULUS_BASES(Vector);
       static constexpr Count MemberCount {S};
       static_assert(S > 0, "Vector size must be greater than zero");
@@ -144,8 +144,14 @@ namespace Langulus::Math
 
       T mArray[S];
 
-      static constexpr Token GenerateClassName() noexcept;
-      LANGULUS(NAME) GenerateClassName();
+   private:
+      static constexpr auto DefaultClassName = RTTI::LastNameOf<TVector>();
+      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
+      static constexpr ClassName GenerateClassName() noexcept;
+      static constexpr ClassName GeneratedClassName = GenerateClassName();
+
+   public:
+      LANGULUS(NAME) GeneratedClassName.data();
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
       LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>, T);
@@ -207,7 +213,7 @@ namespace Langulus::Math
       static constexpr bool SwzRequirements = S > Max(0U, I...);
 
       /// Generate all combinations of all swizzle functions up to 4D         
-      #define PC_VSWIZZLE(name, ...) \
+      #define LANGULUS_TVECTOR_SWIZZLER(name, ...) \
          NOD() decltype(auto) name() noexcept requires (SwzRequirements<__VA_ARGS__>) { \
             return Swz<__VA_ARGS__>(); \
          } \
@@ -216,46 +222,46 @@ namespace Langulus::Math
          }
 
       /// 1D Swizzlers                                                        
-      PC_VSWIZZLE(x, 0U)
-      PC_VSWIZZLE(y, 1U)
-      PC_VSWIZZLE(z, 2U)
-      PC_VSWIZZLE(w, 3U)
+      LANGULUS_TVECTOR_SWIZZLER(x, 0U)
+      LANGULUS_TVECTOR_SWIZZLER(y, 1U)
+      LANGULUS_TVECTOR_SWIZZLER(z, 2U)
+      LANGULUS_TVECTOR_SWIZZLER(w, 3U)
 
       /// 2D Swizzlers                                                        
-      #define PC_VSWIZZLE2(name, ...) \
-         PC_VSWIZZLE(x##name, 0U, __VA_ARGS__)\
-         PC_VSWIZZLE(y##name, 1U, __VA_ARGS__)\
-         PC_VSWIZZLE(z##name, 2U, __VA_ARGS__)\
-         PC_VSWIZZLE(w##name, 3U, __VA_ARGS__)
+      #define LANGULUS_TVECTOR_SWIZZLER2(name, ...) \
+         LANGULUS_TVECTOR_SWIZZLER(x##name, 0U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER(y##name, 1U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER(z##name, 2U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER(w##name, 3U, __VA_ARGS__)
 
-      PC_VSWIZZLE2(x, 0U)
-      PC_VSWIZZLE2(y, 1U)
-      PC_VSWIZZLE2(z, 2U)
-      PC_VSWIZZLE2(w, 3U)
+      LANGULUS_TVECTOR_SWIZZLER2(x, 0U)
+      LANGULUS_TVECTOR_SWIZZLER2(y, 1U)
+      LANGULUS_TVECTOR_SWIZZLER2(z, 2U)
+      LANGULUS_TVECTOR_SWIZZLER2(w, 3U)
 
       /// 3D Swizzlers                                                        
-      #define PC_VSWIZZLE3(name, ...) \
-         PC_VSWIZZLE2(x##name, 0U, __VA_ARGS__)\
-         PC_VSWIZZLE2(y##name, 1U, __VA_ARGS__)\
-         PC_VSWIZZLE2(z##name, 2U, __VA_ARGS__)\
-         PC_VSWIZZLE2(w##name, 3U, __VA_ARGS__)
+      #define LANGULUS_TVECTOR_SWIZZLER3(name, ...) \
+         LANGULUS_TVECTOR_SWIZZLER2(x##name, 0U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER2(y##name, 1U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER2(z##name, 2U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER2(w##name, 3U, __VA_ARGS__)
 
-      PC_VSWIZZLE3(x, 0U)
-      PC_VSWIZZLE3(y, 1U)
-      PC_VSWIZZLE3(z, 2U)
-      PC_VSWIZZLE3(w, 3U)
+      LANGULUS_TVECTOR_SWIZZLER3(x, 0U)
+      LANGULUS_TVECTOR_SWIZZLER3(y, 1U)
+      LANGULUS_TVECTOR_SWIZZLER3(z, 2U)
+      LANGULUS_TVECTOR_SWIZZLER3(w, 3U)
 
       /// 4D Swizzlers                                                        
-      #define PC_VSWIZZLE4(name, ...) \
-         PC_VSWIZZLE3(x##name, 0U, __VA_ARGS__)\
-         PC_VSWIZZLE3(y##name, 1U, __VA_ARGS__)\
-         PC_VSWIZZLE3(z##name, 2U, __VA_ARGS__)\
-         PC_VSWIZZLE3(w##name, 3U, __VA_ARGS__)
+      #define LANGULUS_TVECTOR_SWIZZLER4(name, ...) \
+         LANGULUS_TVECTOR_SWIZZLER3(x##name, 0U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER3(y##name, 1U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER3(z##name, 2U, __VA_ARGS__)\
+         LANGULUS_TVECTOR_SWIZZLER3(w##name, 3U, __VA_ARGS__)
 
-      PC_VSWIZZLE4(x, 0U)
-      PC_VSWIZZLE4(y, 1U)
-      PC_VSWIZZLE4(z, 2U)
-      PC_VSWIZZLE4(w, 3U)
+      LANGULUS_TVECTOR_SWIZZLER4(x, 0U)
+      LANGULUS_TVECTOR_SWIZZLER4(y, 1U)
+      LANGULUS_TVECTOR_SWIZZLER4(z, 2U)
+      LANGULUS_TVECTOR_SWIZZLER4(w, 3U)
 
 
       template<class AS, bool NORMALIZE = CT::Real<AS> && !CT::Real<T>>
@@ -353,7 +359,7 @@ namespace Langulus::Math
       /// Creates a shuffled representation of a source vector, and commits   
       /// any changes to it upon destruction                                  
       template<TARGS(V), Offset... I>
-      class TProxyVector : public TVector<VT, sizeof...(I), VD> {
+      struct TProxyVector : TVector<VT, sizeof...(I), VD> {
       LANGULUS(UNINSERTABLE) true;
       private:
          using Base = TVector<VT, sizeof...(I), VD>;
@@ -375,12 +381,14 @@ namespace Langulus::Math
          TProxyVector(const TProxyVector&) = delete;
          TProxyVector(TProxyVector&&) = delete;
 
-         TProxyVector(TVEC(V)& source) noexcept
+         explicit TProxyVector(TVEC(V)& source) noexcept
             : mSource {source} {}
 
          ~TProxyVector() noexcept {
             Commit<0, I...>();
          }
+
+         using Base::operator =;
       };
 
    } // namespace Inner

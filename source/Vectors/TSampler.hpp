@@ -33,7 +33,7 @@ namespace Langulus::A
    /// sampler of the same size                                               
    template<Count S>
    struct SamplerOfSize : public Sampler {
-      LANGULUS(CONCRETE) Math::TSampler<Math::TVector<Real, S>>;
+      LANGULUS(CONCRETE) Math::TSampler<Math::TVector<Langulus::Real, S>>;
       LANGULUS_BASES(Sampler);
       static constexpr Count MemberCount {S};
       static_assert(S > 0, "Normal size must be greater than zero");

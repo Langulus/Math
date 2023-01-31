@@ -30,7 +30,7 @@ namespace Langulus::A
    /// normal of the same size                                                
    template<Count S>
    struct NormalOfSize : public Normal {
-      LANGULUS(CONCRETE) Math::TNormal<Math::TVector<Real, S>>;
+      LANGULUS(CONCRETE) Math::TNormal<Math::TVector<Langulus::Real, S>>;
       LANGULUS_BASES(Normal);
       static constexpr Count MemberCount {S};
       static_assert(S > 1, "Normal size must be greater than one");

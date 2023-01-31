@@ -15,7 +15,7 @@ namespace Langulus::Math
    ///   Templated number                                                     
    ///                                                                        
    /// Might seem pointless, but serves various kinds of purposes:            
-   ///   1. Provides a safety layer, that asserts underflows/overflows        
+   ///   1. Provides type-safety layer, that asserts underflows/overflows     
    ///      when building in safe-mode                                        
    ///   2. Provides consistent handling of infinities across all arithmetic  
    ///      types                                                             
@@ -25,7 +25,7 @@ namespace Langulus::Math
    ///   5. Makes all numbers equivalent to 1D vectors, and thus compatible   
    ///      with the CT::Vector concept                                       
    ///   6. Never allows for integer promotions, unless types differ, in      
-   ///      which case type promotion goes to no futher than the bigger type. 
+   ///      which case type promotion goes to no futher than the bigger type: 
    ///   -  Whenever you do int8 * int8, you get the truncated int8 as result,
    ///      instead of an int - whatever comes in will come out!              
    ///   -  Whenever you do int8 * int16, you get the truncated int16 as      
@@ -52,38 +52,34 @@ namespace Langulus::Math
       constexpr TNumber(const TNumber&) noexcept = default;
       constexpr TNumber(TNumber&&) noexcept = default;
 
-      constexpr TNumber(const T& a) noexcept
-         : mValue {a} {}
-
-      constexpr TNumber(const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>)
-         : mValue {a.mValue} {}
-
+      constexpr TNumber(const T& a) noexcept;
+      constexpr TNumber(const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>);
       template<class N>
-      constexpr TNumber(const N& a) noexcept requires CT::Convertible<N, T>
-         : mValue {static_cast<T>(a)} {}
+      constexpr TNumber(const N& a) noexcept requires CT::Convertible<N, T>;
 
       TNumber& operator = (const TNumber&) noexcept = default;
       TNumber& operator = (TNumber&&) noexcept = default;
-      TNumber& operator = (const T& a) noexcept {
-         mValue = a;
-         return *this;
-      }
-      TNumber& operator = (const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>) {
-         mValue = a.mValue;
-         return *this;
-      }
+      TNumber& operator = (const T& a) noexcept;
+      TNumber& operator = (const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>);
+
+      template<class TOKEN>
+      Flow::Code Serialize() const;
 
       /// All conversions are explicit only, to preserve type                 
-      constexpr explicit operator const T& () const noexcept {
-         return mValue;
-      }
+      constexpr explicit operator const T& () const noexcept;
+      constexpr explicit operator T& () noexcept;
+      explicit operator Flow::Code() const;
 
-      /// All conversions are explicit only, to preserve type                 
-      constexpr explicit operator T& () noexcept {
-         return mValue;
-      }
+      /// Prefix operators                                                    
+      TNumber& operator ++ () noexcept;
+      TNumber& operator -- () noexcept;
+
+      /// Suffix operators                                                    
+      NOD() TNumber operator ++ (int) noexcept;
+      NOD() TNumber operator -- (int) noexcept;
    };
 
+   /// A type-safe unsigned 8-bit integer, that won't get mistaken for a char 
    using uint8 = TNumber<::std::uint8_t>;
 
 

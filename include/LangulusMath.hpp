@@ -11,5 +11,6 @@
 #include "../source/TInstance.hpp"
 #include "../source/TGradient.hpp"
 #include "../source/Numbers/TAngle.hpp"
+#include "../source/LOD.hpp"
 
 #define LANGULUS_LIBRARY_MATH() 1

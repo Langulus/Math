@@ -33,9 +33,9 @@ namespace Langulus::Math
    ///   @param projectedView - projected view matrix                         
    template<CT::Vector T>
    TFrustum<T>::TFrustum(const TMatrix<MemberType, MemberCount + 1>& projectedView) noexcept {
-      const auto right = projectedView.Column(0);
-      const auto top = projectedView.Column(1);
-      const auto eye = projectedView.Column(MemberCount > 2 ? 3 : 2) * (-1);
+      const auto right = projectedView.GetColumn(0);
+      const auto top = projectedView.GetColumn(1);
+      const auto eye = projectedView.GetColumn(MemberCount > 2 ? 3 : 2) * (-1);
 
       mPlanes[Left] = TPlane<T>(eye + right);
       mPlanes[Right] = TPlane<T>(eye - right);
@@ -43,7 +43,7 @@ namespace Langulus::Math
       mPlanes[Bottom] = TPlane<T>(eye + top);
 
       if constexpr (MemberCount > 2) {
-         const auto far = projectedView.Column(2);
+         const auto far = projectedView.GetColumn(2);
          mPlanes[Near] = TPlane<T>(eye + far);
          mPlanes[Far] = TPlane<T>(eye - far);
       }

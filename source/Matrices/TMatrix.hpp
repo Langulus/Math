@@ -60,7 +60,7 @@ namespace Langulus::A
    /// matrix of the same column count                                        
    template<Count COLUMNS>
    struct MatrixOfColumns : public Matrix {
-      LANGULUS(CONCRETE) Math::TMatrix<Real, COLUMNS, COLUMNS>;
+      LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, COLUMNS>;
       LANGULUS_BASES(Matrix);
       static constexpr Count Columns {COLUMNS};
       static_assert(COLUMNS > 0, "Column count must be greater than zero");
@@ -70,7 +70,7 @@ namespace Langulus::A
    /// matrix of the same rows count                                          
    template<Count ROWS>
    struct MatrixOfRows : public Matrix {
-      LANGULUS(CONCRETE) Math::TMatrix<Real, ROWS, ROWS>;
+      LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, ROWS, ROWS>;
       LANGULUS_BASES(Matrix);
       static constexpr Count Rows {ROWS};
       static_assert(ROWS > 0, "Row count must be greater than zero");
@@ -80,7 +80,7 @@ namespace Langulus::A
    /// matrix of the same column and row count                                
    template<Count COLUMNS, Count ROWS>
    struct MatrixOfSize : public Matrix {
-      LANGULUS(CONCRETE) Math::TMatrix<Real, COLUMNS, ROWS>;
+      LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, ROWS>;
       LANGULUS_BASES(Matrix);
       static constexpr Count Columns {COLUMNS};
       static constexpr Count Rows {ROWS};
@@ -120,9 +120,27 @@ namespace Langulus::Math
       static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
       union {
-         T mArray[MemberCount];
+         T mArray[MemberCount] {};
          ColumnType mColumns[Columns];
       };
+
+   private:
+      static constexpr auto DefaultClassName = RTTI::LastNameOf<TMatrix>();
+      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
+      static constexpr ClassName GenerateClassName() noexcept;
+      static constexpr ClassName GeneratedClassName = GenerateClassName();
+
+   public:
+      LANGULUS(NAME) GeneratedClassName.data();
+      LANGULUS(POD) CT::POD<T>;
+      LANGULUS(NULLIFIABLE) false;
+      LANGULUS_BASES(
+         A::MatrixOfSize<COLUMNS, ROWS>, 
+         A::MatrixOfColumns<COLUMNS>,
+         A::MatrixOfRows<ROWS>,
+         A::MatrixOfType<T>, 
+         T
+      );
 
    public:
       constexpr TMatrix() noexcept;

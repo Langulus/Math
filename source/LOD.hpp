@@ -1,0 +1,56 @@
+///                                                                           
+/// Langulus::Math                                                            
+/// Copyright(C) 2014 Dimo Markov <langulusteam@gmail.com>                    
+///                                                                           
+/// Distributed under GNU General Public License v3+                          
+/// See LICENSE file, or https://www.gnu.org/licenses                         
+///                                                                           
+#pragma once
+#include "Numbers/Level.hpp"
+
+namespace Langulus::Math
+{
+
+   using LODIndex = int32_t;
+   using AbsoluteLODIndex = uint32_t;
+
+   ///                                                                        
+   ///   Level of detail state                                                
+   ///                                                                        
+   /// A helper structure that is used to fetch the correct LOD index. LOD    
+   /// index is a geometry/texture, that is designed to represent a zoomed-in 
+   /// or a zoomed-out region of another geometry/texture. These regions can  
+   /// be generated on the fly, or may reuse existing geometry/texture.       
+   ///                                                                        
+   struct LOD {
+      Level mLevel;
+      Matrix4 mView;
+      Matrix4 mViewInverted;
+      Matrix4 mModel;
+      TFrustum<Vec3> mFrustum;
+
+      // Calculated after Transform()                                   
+      Matrix4 mModelView;
+      Vec4 mOrigin;
+      Real mRadius;
+      Real mDistanceToSurface;
+      Real mLODIndex;
+
+      static constexpr LODIndex MinIndex = -6;
+      static constexpr LODIndex MaxIndex = 6;
+      static constexpr LODIndex IndexCount = MaxIndex - MinIndex + 1;
+
+   public:
+      LOD() = default;
+      LOD(const Level&, const Matrix4& view, const Matrix4& proj);
+
+      void Transform();
+      void Transform(const Matrix4&);
+      NOD() Real GetNormalizedDistance() const noexcept;
+      NOD() Real GetIndex() const noexcept;
+      NOD() AbsoluteLODIndex GetAbsoluteIndex() const noexcept;
+   };
+
+} // namespace Langulus::Math
+
+#include "LOD.inl"

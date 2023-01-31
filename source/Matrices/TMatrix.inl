@@ -11,6 +11,44 @@
 namespace Langulus::Math
 {
 
+   /// Pick a shorter token, based on member count and type                   
+   /// This should be made more elegant when true constexpr string literals   
+   /// become available in the standard                                       
+   TEMPLATE()
+   constexpr typename TME()::ClassName TME()::GenerateClassName() noexcept {
+      ClassName name {};
+      ::std::size_t offset {};
+
+      if constexpr (COLUMNS > 4 || ROWS > 4) {
+         for (auto i : DefaultClassName)
+            name[offset++] = i;
+         name[offset++] = '\0';
+         return name;
+      }
+
+      // Write prefix                                                   
+      constexpr Token prefix = "Matrix";
+      for (auto i : prefix)
+         name[offset++] = i;
+
+      // Write columns and rows                                         
+      if constexpr (COLUMNS == ROWS) {
+         name[offset++] = '0' + COLUMNS;
+      }
+      else {
+         name[offset++] = '0' + COLUMNS;
+         name[offset++] = 'x';
+         name[offset++] = '0' + ROWS;
+      }
+
+      // Write suffix                                                   
+      constexpr Token suffix = TypeSuffix<T>();
+      for (auto i : suffix)
+         name[offset++] = i;
+      name[offset++] = '\0';
+      return name;
+   }
+
    ///                                                                        
    ///   CONSTRUCTION                                                         
    ///                                                                        
@@ -392,7 +430,7 @@ namespace Langulus::Math
    ///   @return a reference to the element                                   
    TEMPLATE()
    constexpr T& TME()::Get(const Offset col, const Offset row) noexcept {
-      return mColumns[col][row];
+      return *(mArray + col + COLUMNS * row);
    }
 
    /// Get a 2D cell from the matrix (const)                                  
@@ -401,7 +439,7 @@ namespace Langulus::Math
    ///   @return a constant reference to the element                          
    TEMPLATE()
    constexpr const T& TME()::Get(const Offset col, const Offset row) const noexcept {
-      return mColumns[col][row];
+      return *(mArray + col + COLUMNS * row);
    }
 
    /// Get right axis                                                         
