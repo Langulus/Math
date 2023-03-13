@@ -10,72 +10,73 @@
 
 namespace Langulus::Math
 {
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   constexpr TNUM()::TNumber(const T& a) noexcept
+   constexpr TME()::TNumber(const T& a) noexcept
       : mValue {a} {}
 
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   constexpr TNUM()::TNumber(const W& a) noexcept requires (!CT::Same<T, W>)
+   constexpr TME()::TNumber(const W& a) noexcept requires (!CT::Same<T, W>)
       : mValue {a.mValue} {}
 
-   template<TARGS()> template<class N>
+   TEMPLATE()
+   template<class N>
    LANGULUS(ALWAYSINLINE)
-   constexpr TNUM()::TNumber(const N& a) noexcept requires CT::Convertible<N, T>
+   constexpr TME()::TNumber(const N& a) noexcept requires CT::Convertible<N, T>
       : mValue {static_cast<T>(a)} {}
 
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   TNUM()& TNUM()::operator = (const T& a) noexcept {
+   TME()& TME()::operator = (const T& a) noexcept {
       mValue = a;
       return *this;
    }
 
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   TNUM()& TNUM()::operator = (const W& a) noexcept requires (!CT::Same<T, W>) {
+   TME()& TME()::operator = (const W& a) noexcept requires (!CT::Same<T, W>) {
       mValue = a.mValue;
       return *this;
    }
 
    /// All conversions are explicit only, to preserve type                 
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   constexpr TNUM()::operator const T& () const noexcept {
+   constexpr TME()::operator const T& () const noexcept {
       return mValue;
    }
 
    /// All conversions are explicit only, to preserve type                 
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   constexpr TNUM()::operator T& () noexcept {
+   constexpr TME()::operator T& () noexcept {
       return mValue;
    }
 
    /// Prefix increment operator                                              
    ///   @return the modified value                                           
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   TNUM()& TNUM()::operator ++ () noexcept {
+   TME()& TME()::operator ++ () noexcept {
       ++mValue;
       return *this;
    }
 
    /// Prefix decrement operator                                              
    ///   @return the modified value                                           
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   TNUM()& TNUM()::operator -- () noexcept {
+   TME()& TME()::operator -- () noexcept {
       --mValue;
       return *this;
    }
 
    /// Suffix increment operator                                              
    ///   @return the previous value                                           
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   TNUM() TNUM()::operator ++ (int) noexcept {
+   TME() TME()::operator ++ (int) noexcept {
       const auto backup = *this;
       operator ++ ();
       return backup;
@@ -83,9 +84,9 @@ namespace Langulus::Math
 
    /// Suffix decrement operator                                              
    ///   @return the previous value                                           
-   template<TARGS()>
+   TEMPLATE()
    LANGULUS(ALWAYSINLINE)
-   TNUM() TNUM()::operator -- (int) noexcept {
+   TME() TME()::operator -- (int) noexcept {
       const auto backup = *this;
       operator -- ();
       return backup;
