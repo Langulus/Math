@@ -398,17 +398,17 @@ namespace Langulus::Math
       auto& sz = s[2];
 
       constexpr K one {1};
-      result.Get(0, 0) = (one - (yy + zz)) * sx;
-      result.Get(1, 0) = (xy + wz) * sx;
-      result.Get(2, 0) = (xz - wy) * sx;
+      result.mColumns[0][0] = (one - (yy + zz)) * sx;
+      result.mColumns[1][0] = (xy + wz) * sx;
+      result.mColumns[2][0] = (xz - wy) * sx;
 
-      result.Get(0, 1) = (xy - wz) * sy;
-      result.Get(1, 1) = (one - (xx + zz)) * sy;
-      result.Get(2, 1) = (yz + wx) * sy;
+      result.mColumns[0][1] = (xy - wz) * sy;
+      result.mColumns[1][1] = (one - (xx + zz)) * sy;
+      result.mColumns[2][1] = (yz + wx) * sy;
 
-      result.Get(0, 2) = (xz + wy) * sz;
-      result.Get(1, 2) = (yz - wx) * sz;
-      result.Get(2, 2) = (one - (xx + yy)) * sz;
+      result.mColumns[0][2] = (xz + wy) * sz;
+      result.mColumns[1][2] = (yz - wx) * sz;
+      result.mColumns[2][2] = (one - (xx + yy)) * sz;
 
       result.SetPosition(p);
       return result;

@@ -73,11 +73,11 @@ namespace Langulus::Math
             for (Offset row = 0; row < Math::Min(ROWS, ALTR); ++row) {
                if constexpr (CT::Same<ALTT, T>) {
                   // Direct copy                                        
-                  Get(col, row) = a.Get(col, row);
+                  mColumns[col][row] = a.mColumns[col][row];
                }
                else {
                   // Conversion                                         
-                  Get(col, row) = static_cast<T>(a.Get(col, row));
+                  mColumns[col][row] = static_cast<T>(a.mColumns[col][row]);
                }
             }
          }
@@ -90,7 +90,7 @@ namespace Langulus::Math
       }
       else {
          // Direct memory copy (fastest)                                
-         memcpy(mArray, a.mArray, sizeof(T) * MemberCount);
+         CopyMemory(mArray, a.mArray);
       }
    }
 
@@ -130,7 +130,7 @@ namespace Langulus::Math
       const auto e = Adapt(x);
       for (Offset c = 0; c < Columns; ++c)
          for (Offset r = 0; r < Rows; ++r)
-            Get(c, r) = (c == r) ? e : T {0};
+            mColumns[c][r] = (c == r) ? e : T {0};
    }
 
    /// Construct from an unbounded array                                      
@@ -319,7 +319,7 @@ namespace Langulus::Math
          LT r[C] = {};
          for (Offset vr = 0; vr < C; ++vr) {
             for (Offset mc = 0; mc < Math::Min(C, LHSC); ++mc)
-               r[vr] += me.Get(mc, vr) * vec[mc];
+               r[vr] += me.mColumns[mc][vr] * vec[mc];
          }
          return r;
       }
@@ -359,7 +359,7 @@ namespace Langulus::Math
          LT r[C] = {};
          for (Offset vr = 0; vr < C; ++vr) {
             for (Offset mc = 0; mc < Math::Min(C, RHSR); ++mc)
-               r[vr] += me.Get(vr, mc) * vec[mc];
+               r[vr] += me.mColumns[vr][mc] * vec[mc];
          }
          return r;
       }
@@ -590,15 +590,15 @@ namespace Langulus::Math
       up = forward.Cross(right);
 
       TME() result = Identity();
-      result.Get(0, 0) = right[0];
-      result.Get(1, 0) = right[1];
-      result.Get(2, 0) = right[2];
-      result.Get(0, 1) = up[0];
-      result.Get(1, 1) = up[1];
-      result.Get(2, 1) = up[2];
-      result.Get(0, 2) = forward[0];
-      result.Get(1, 2) = forward[1];
-      result.Get(2, 2) = forward[2];
+      result.mColumns[0][0] = right[0];
+      result.mColumns[1][0] = right[1];
+      result.mColumns[2][0] = right[2];
+      result.mColumns[0][1] = up[0];
+      result.mColumns[1][1] = up[1];
+      result.mColumns[2][1] = up[2];
+      result.mColumns[0][2] = forward[0];
+      result.mColumns[1][2] = forward[1];
+      result.mColumns[2][2] = forward[2];
       return result;
    }
 
@@ -774,7 +774,7 @@ namespace Langulus::Math
       TME() result = *this;
       for (int i = 0; i < Columns; ++i) {
          for (int j = 0; j < i; ++j) {
-            pcSwap(result.Get(i, j), result.Get(j, i));
+            ::std::swap(result.mColumns[i][j], result.mColumns[j][i]);
          }
       }
       return result;
@@ -791,7 +791,7 @@ namespace Langulus::Math
             //  Copying into temporary matrix only those element        
             //  which are not in given row and column                   
             if (row != p && col != q) {
-               temp.Get(j++, i) = Get(col, row);
+               temp.mColumns[j++][i] = mColumns[col][row];
 
                // Row is filled, so increase row index and              
                // reset col index                                       
@@ -814,14 +814,14 @@ namespace Langulus::Math
 
       // Base case : if matrix contains single element                  
       if (n == 1)
-         return Get(0, 0);
+         return mColumns[0][0];
 
       TME() temp;
       T sign = 1;
       for (int f = 0; f < n; f++) {
          // Getting Cofactor of A[0][f]                                 
          temp = Cofactor(0, f, n);
-         D += sign * Get(f, 0) * temp.Determinant(n - 1);
+         D += sign * mColumns[f][0] * temp.Determinant(n - 1);
 
          // terms are to be added with alternate sign                   
          sign = -sign;
@@ -848,7 +848,7 @@ namespace Langulus::Math
 
             // Interchanging rows and columns to get the transpose      
             // of the cofactor matrix                                   
-            adj.Get(i, j) = sign * temp.Determinant(Rows - 1);
+            adj.mColumns[i][j] = sign * temp.Determinant(Rows - 1);
          }
       }
       return adj;

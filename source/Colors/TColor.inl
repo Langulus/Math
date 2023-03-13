@@ -202,8 +202,9 @@ namespace Langulus::Math
          }
       };
 
-      constexpr MemberType d3 {3};
-      if constexpr (CT::Real<MemberType>) {
+      constexpr bool IsReal = CT::Real<TypeOf<T>>;
+      constexpr TypeOf<T> d3 {3};
+      if constexpr (IsReal) {
          const auto red = static_cast<::std::uint8_t>(
             Clamp01(mArray[0]) * d3);
          const auto green = static_cast<::std::uint8_t>(
