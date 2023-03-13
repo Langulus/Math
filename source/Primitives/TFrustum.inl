@@ -32,7 +32,7 @@ namespace Langulus::Math
    /// Create a frustum by deconstructing a view*projection matrix            
    ///   @param projectedView - projected view matrix                         
    template<CT::Vector T>
-   TFrustum<T>::TFrustum(const TMatrix<MemberType, MemberCount + 1>& projectedView) noexcept {
+   TFrustum<T>::TFrustum(const MatrixType& projectedView) noexcept {
       const auto right = projectedView.GetColumn(0);
       const auto top = projectedView.GetColumn(1);
       const auto eye = projectedView.GetColumn(MemberCount > 2 ? 3 : 2) * (-1);

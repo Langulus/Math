@@ -188,8 +188,6 @@ namespace Langulus::Math
       NOD() constexpr const ColumnType& operator [] (Offset) const noexcept;
       NOD() constexpr T* GetRaw() noexcept;
       NOD() constexpr const T* GetRaw() const noexcept;
-      NOD() constexpr T& Get(Offset, Offset) noexcept;
-      NOD() constexpr const T& Get(Offset, Offset) const noexcept;
       NOD() RowType GetRow(Offset) const noexcept;
       NOD() const ColumnType& GetColumn(Offset) const noexcept;
 

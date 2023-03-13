@@ -101,7 +101,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// vector of the same size                                                
    template<Count S>
-   struct VectorOfSize : public Vector {
+   struct VectorOfSize : Vector {
       LANGULUS(CONCRETE) Math::TVector<::Langulus::Real, S>;
       LANGULUS_BASES(Vector);
       static constexpr Count MemberCount {S};
@@ -111,10 +111,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// vector of the same type                                                
    template<CT::DenseNumber T>
-   struct VectorOfType : public Vector {
+   struct VectorOfType : Vector {
       LANGULUS(CONCRETE) Math::TVector<T, 4>;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(Vector);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A
@@ -136,7 +136,6 @@ namespace Langulus::Math
    TEMPLATE()
    struct TVector {
       static_assert(S >= 1, "Can't have a vector of zero size");
-      using MemberType = T;
       static constexpr Count MemberCount = S;
       static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
       template<CT::DenseNumber N>
@@ -154,6 +153,7 @@ namespace Langulus::Math
       LANGULUS(NAME) GeneratedClassName.data();
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>, T);
 
    public:

@@ -18,23 +18,23 @@ namespace Langulus::Math
    struct TPlane {
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional plane");
 
       // Default orientation is always towards user                     
-      T mNormal {Cardinal::Backward<MemberType>};
+      T mNormal {Cardinal::Backward<TypeOf<T>>};
 
       // The offset of the plane, along the normal                      
-      MemberType mOffset {0};
+      TypeOf<T> mOffset {0};
 
    public:
       constexpr TPlane() noexcept = default;
-      constexpr TPlane(const T& normal, MemberType offset) noexcept;
-      constexpr TPlane(const TVector<MemberType, MemberCount + 1>& column) noexcept;
+      constexpr TPlane(const T& normal, TypeOf<T> offset) noexcept;
+      constexpr TPlane(const TVector<TypeOf<T>, MemberCount + 1>& column) noexcept;
       constexpr TPlane(const T& offset) noexcept;
 
       TPlane& Flip() noexcept;

@@ -41,8 +41,8 @@ namespace Langulus::Math
             , Conditional<CT::Signed<T>, A::SignedInteger, A::UnsignedInteger>
          >
       );
+      LANGULUS(TYPED) T;
 
-      using MemberType = T;
       static constexpr Count MemberCount {1};
 
       T mValue {};
@@ -52,15 +52,15 @@ namespace Langulus::Math
       constexpr TNumber(const TNumber&) noexcept = default;
       constexpr TNumber(TNumber&&) noexcept = default;
 
-      constexpr TNumber(const T& a) noexcept;
-      constexpr TNumber(const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>);
+      constexpr TNumber(const T&) noexcept;
+      constexpr TNumber(const WRAPPER&) noexcept requires (!CT::Same<T, WRAPPER>);
       template<class N>
-      constexpr TNumber(const N& a) noexcept requires CT::Convertible<N, T>;
+      constexpr TNumber(const N&) noexcept requires CT::Convertible<N, T>;
 
       TNumber& operator = (const TNumber&) noexcept = default;
       TNumber& operator = (TNumber&&) noexcept = default;
-      TNumber& operator = (const T& a) noexcept;
-      TNumber& operator = (const WRAPPER& a) noexcept requires (!CT::Same<T, WRAPPER>);
+      TNumber& operator = (const T&) noexcept;
+      TNumber& operator = (const WRAPPER&) noexcept requires (!CT::Same<T, WRAPPER>);
 
       template<class TOKEN>
       Flow::Code Serialize() const;

@@ -67,7 +67,7 @@ SCENARIO("Parsing scripts", "[code]") {
    }
 
    GIVEN("The script: Vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))") {
-      const auto code = "Vec2f(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))"_code;
+      const auto code = "Vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))"_code;
 
       WHEN("Parsed without optimization") {
          Any required = Construct::From<Vec2>(

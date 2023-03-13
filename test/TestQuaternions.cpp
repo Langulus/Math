@@ -43,15 +43,15 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 			auto as_mat = static_cast<TMatrix<T, 3, 3>>(x);
 
 			THEN("The result should be correct") {
-				REQUIRE(as_mat.Get(0, 0) == Approx(0.70710678));
-				REQUIRE(as_mat.Get(1, 0) == 0);
-				REQUIRE(as_mat.Get(2, 0) == Approx(0.70710678));
-				REQUIRE(as_mat.Get(0, 1) == 0);
-				REQUIRE(as_mat.Get(1, 1) == 1);
-				REQUIRE(as_mat.Get(2, 1) == 0);
-				REQUIRE(as_mat.Get(0, 2) == Approx(-0.70710678));
-				REQUIRE(as_mat.Get(1, 2) == 0);
-				REQUIRE(as_mat.Get(2, 2) == Approx(0.70710678));
+				REQUIRE(as_mat[0][0] == Approx(0.70710678));
+				REQUIRE(as_mat[1][0] == 0);
+				REQUIRE(as_mat[2][0] == Approx(0.70710678));
+				REQUIRE(as_mat[0][1] == 0);
+				REQUIRE(as_mat[1][1] == 1);
+				REQUIRE(as_mat[2][1] == 0);
+				REQUIRE(as_mat[0][2] == Approx(-0.70710678));
+				REQUIRE(as_mat[1][2] == 0);
+				REQUIRE(as_mat[2][2] == Approx(0.70710678));
 			}
 		}
 	}

@@ -424,29 +424,11 @@ namespace Langulus::Math
       return mArray;
    }
 
-   /// Get a 2D cell from the matrix                                          
-   ///   @param col - column index [0; COLS)                                  
-   ///   @param row - row index [0; ROWS)                                     
-   ///   @return a reference to the element                                   
-   TEMPLATE()
-   constexpr T& TME()::Get(const Offset col, const Offset row) noexcept {
-      return *(mArray + col + COLUMNS * row);
-   }
-
-   /// Get a 2D cell from the matrix (const)                                  
-   ///   @param col - column index [0; COLS)                                  
-   ///   @param row - row index [0; ROWS)                                     
-   ///   @return a constant reference to the element                          
-   TEMPLATE()
-   constexpr const T& TME()::Get(const Offset col, const Offset row) const noexcept {
-      return *(mArray + col + COLUMNS * row);
-   }
-
    /// Get right axis                                                         
    TEMPLATE()
    constexpr TVector<T, 3> TME()::GetRight() const noexcept {
       if constexpr (IsSquare && Rows > 2)
-         return {Get(0, 0), Get(1, 0), Get(2, 0)};
+         return {mColumns[0][0], mColumns[1][0], mColumns[2][0]};
       else LANGULUS_ERROR("Can't get right axis of this matrix");
    }
 
@@ -454,7 +436,7 @@ namespace Langulus::Math
    TEMPLATE()
    constexpr TVector<T, 3> TME()::GetUp() const noexcept {
       if constexpr (IsSquare && Rows > 2)
-         return {Get(0, 1), Get(1, 1), Get(2, 1)};
+         return {mColumns[0][1], mColumns[1][1], mColumns[2][1]};
       else LANGULUS_ERROR("Can't get up axis of this matrix");
    }
 
@@ -462,7 +444,7 @@ namespace Langulus::Math
    TEMPLATE()
    constexpr TVector<T, 3> TME()::GetView() const noexcept {
       if constexpr (IsSquare && Rows > 2)
-         return {Get(0, 2), Get(1, 2), Get(2, 2)};
+         return {mColumns[0][2], mColumns[1][2], mColumns[2][2]};
       else LANGULUS_ERROR("Can't get view axis of this matrix");
    }
 
@@ -697,7 +679,7 @@ namespace Langulus::Math
    constexpr TME() TME()::Scalar(const T& xx) noexcept {
       TME() temp = Null();
       for (Count col = 0; col < Columns; ++col)
-         temp.Get(col, col) = xx;
+         temp[col][col] = xx;
       return temp;
    }
 
@@ -708,9 +690,9 @@ namespace Langulus::Math
       TME() temp = Null();
       Count col;
       for (col = 0; col < Min(SIZE, Columns); ++col)
-         temp.Get(col, col) = xx[col];
+         temp[col][col] = xx[col];
       for (col = SIZE; col < Columns; ++col)
-         temp.Get(col, col) = T(1);
+         temp[col][col] = T(1);
       return temp;
    }
 

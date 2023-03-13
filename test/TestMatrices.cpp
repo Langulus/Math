@@ -60,16 +60,12 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 			THEN("The result should be correct") {
 				REQUIRE(x4.GetColumn(3)[0] == T(5));
 				REQUIRE(x4[3][0] == T(5));
-				REQUIRE(x4.Get(3, 0) == T(5));
 				REQUIRE(x4.GetColumn(3)[1] == T(12));
 				REQUIRE(x4[3][1] == T(12));
-				REQUIRE(x4.Get(3, 1) == T(12));
 				REQUIRE(x4.GetColumn(3)[2] == T(2));
 				REQUIRE(x4[3][2] == T(2));
-				REQUIRE(x4.Get(3, 2) == T(2));
 				REQUIRE(x4.GetColumn(3)[3] == T(1));
 				REQUIRE(x4[3][3] == T(1));
-				REQUIRE(x4.Get(3, 3) == T(1));
 			}
 		}
 
@@ -80,33 +76,16 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 			testMat4 x4z = testMat4::Rotation(Radians(0), Radians(0), Degrees(45));
 
 			THEN("The result should be correct") {
-				REQUIRE(x2.Get(0, 0) == Approx(0.70711));
-				REQUIRE(x2.Get(1, 0) == Approx(-0.70711));
-				REQUIRE(x2.Get(0, 1) == Approx(0.70711));
-				REQUIRE(x2.Get(1, 1) == Approx(0.70711));
 				REQUIRE(x2[0][0] == Approx(0.70711));
 				REQUIRE(x2[1][0] == Approx(-0.70711));
 				REQUIRE(x2[0][1] == Approx(0.70711));
 				REQUIRE(x2[1][1] == Approx(0.70711));
 
-				REQUIRE(x4z.Get(0, 0) == Approx(0.70711));
-				REQUIRE(x4z.Get(1, 0) == Approx(-0.70711));
-				REQUIRE(x4z.Get(0, 1) == Approx(0.70711));
-				REQUIRE(x4z.Get(1, 1) == Approx(0.70711));
 				REQUIRE(x4z[0][0] == Approx(0.70711));
 				REQUIRE(x4z[1][0] == Approx(-0.70711));
 				REQUIRE(x4z[0][1] == Approx(0.70711));
 				REQUIRE(x4z[1][1] == Approx(0.70711));
 
-				REQUIRE(x3.Get(0, 0) == Approx(0.70711));
-				REQUIRE(x3.Get(1, 0) == Approx(0.5));
-				REQUIRE(x3.Get(2, 0) == Approx(0.5));
-				REQUIRE(x3.Get(0, 1) == Approx(0));
-				REQUIRE(x3.Get(1, 1) == Approx(0.70711));
-				REQUIRE(x3.Get(2, 1) == Approx(-0.70711));
-				REQUIRE(x3.Get(0, 2) == Approx(-0.70711));
-				REQUIRE(x3.Get(1, 2) == Approx(0.5));
-				REQUIRE(x3.Get(2, 2) == Approx(0.5));
 				REQUIRE(x3[0][0] == Approx(0.70711));
 				REQUIRE(x3[1][0] == Approx(0.5));
 				REQUIRE(x3[2][0] == Approx(0.5));
@@ -117,22 +96,6 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 				REQUIRE(x3[1][2] == Approx(0.5));
 				REQUIRE(x3[2][2] == Approx(0.5));
 
-				REQUIRE(x4.Get(0, 0) == Approx(0.70711));
-				REQUIRE(x4.Get(1, 0) == Approx(0.5));
-				REQUIRE(x4.Get(2, 0) == Approx(0.5));
-				REQUIRE(x4.Get(3, 0) == 0);
-				REQUIRE(x4.Get(0, 1) == 0);
-				REQUIRE(x4.Get(1, 1) == Approx(0.70711));
-				REQUIRE(x4.Get(2, 1) == Approx(-0.70711));
-				REQUIRE(x4.Get(3, 1) == 0);
-				REQUIRE(x4.Get(0, 2) == Approx(-0.70711));
-				REQUIRE(x4.Get(1, 2) == Approx(0.5));
-				REQUIRE(x4.Get(2, 2) == Approx(0.5));
-				REQUIRE(x4.Get(3, 2) == 0);
-				REQUIRE(x4.Get(0, 3) == 0);
-				REQUIRE(x4.Get(1, 3) == 0);
-				REQUIRE(x4.Get(2, 3) == 0);
-				REQUIRE(x4.Get(3, 3) == Approx(1));
 				REQUIRE(x4[0][0] == Approx(0.70711));
 				REQUIRE(x4[1][0] == Approx(0.5));
 				REQUIRE(x4[2][0] == Approx(0.5));
@@ -158,10 +121,6 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 			x4 = testMat4::Scalar(testVec4(1, 2, 3, 4));
 
 			THEN("The result should be correct") {
-				REQUIRE(x2.Get(0, 0) == T(1));
-				REQUIRE(x2.Get(1, 0) == T(0));
-				REQUIRE(x2.Get(0, 1) == T(0));
-				REQUIRE(x2.Get(1, 1) == T(2));
 				REQUIRE(x2[0][0] == T(1));
 				REQUIRE(x2[1][0] == T(0));
 				REQUIRE(x2[0][1] == T(0));

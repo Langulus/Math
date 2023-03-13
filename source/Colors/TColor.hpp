@@ -61,7 +61,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// color of the same size                                                 
    template<Count S>
-   struct ColorOfSize : public Color {
+   struct ColorOfSize : Color {
       LANGULUS(CONCRETE) Math::TColor<Math::TVector<Math::uint8, S>>;
       LANGULUS_BASES(Color);
       static constexpr Count MemberCount {S};
@@ -71,10 +71,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// color of the same type                                                 
    template<CT::DenseNumber T>
-   struct ColorOfType : public Color {
+   struct ColorOfType : Color {
       LANGULUS(CONCRETE) Math::TColor<Math::TVector<T, 4>>;
       LANGULUS_BASES(Color);
-      using MemberType = T;
+      LANGULUS(TYPED) T;
    };
 
 } // namespace Langulus::A
@@ -87,16 +87,15 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    template<CT::Vector T>
-   struct TColor : public T {
-   public:
-      using PointType = T;
-      using MemberType = typename T::MemberType;
-      static constexpr Count MemberCount = T::MemberCount;
-      LANGULUS_BASES(A::ColorOfSize<MemberCount>, A::ColorOfType<MemberType>);
-
-   public:
+   struct TColor : T {
+      using T::MemberCount;
       using T::T;
       using T::mArray;
+
+      LANGULUS_BASES(
+         A::ColorOfSize<MemberCount>, 
+         A::ColorOfType<TypeOf<T>>
+      );
 
       constexpr TColor(Logger::Color);
 

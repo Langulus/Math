@@ -16,7 +16,7 @@ namespace Langulus::Math
    ///   @param normal - the plane normal                                     
    ///   @param offset - the plane distance from origin                       
    template<CT::Vector T>
-   constexpr TPlane<T>::TPlane(const T& normal, MemberType offset) noexcept
+   constexpr TPlane<T>::TPlane(const T& normal, TypeOf<T> offset) noexcept
       : mNormal {normal}
       , mOffset {offset} {
       Normalize();
@@ -25,7 +25,7 @@ namespace Langulus::Math
    /// Construction from a matrix column                                      
    ///   @param column - the column                                           
    template<CT::Vector T>
-   constexpr TPlane<T>::TPlane(const TVector<MemberType, MemberCount + 1>& column) noexcept
+   constexpr TPlane<T>::TPlane(const TVector<TypeOf<T>, MemberCount + 1>& column) noexcept
       : mNormal {column}
       , mOffset {column[3]} {
       Normalize();
@@ -44,8 +44,8 @@ namespace Langulus::Math
    ///   @return a reference to this plane                                    
    template<CT::Vector T>
    TPlane<T>& TPlane<T>::Flip() noexcept {
-      mNormal *= MemberType {-1};
-      mOffset *= MemberType {-1};
+      mNormal *= TypeOf<T> {-1};
+      mOffset *= TypeOf<T> {-1};
       return *this;
    }
 
@@ -65,7 +65,7 @@ namespace Langulus::Math
    ///   @return true if at least one offset is zero                          
    template<CT::Vector T>
    constexpr bool TPlane<T>::IsDegenerate() const noexcept {
-      return mNormal.Length() == MemberType {0};
+      return mNormal.Length() == TypeOf<T> {0};
    }
 
    /// Check if plane is hollow                                               
@@ -80,7 +80,7 @@ namespace Langulus::Math
    ///   @return the distance to the primitive                                
    template<CT::Vector T>
    auto TPlane<T>::SignedDistance(const T& point) const {
-      return ::Langulus::Math::SignedDistance(point, *this);
+      return Math::SignedDistance(point, *this);
    }
 
 } // namespace Langulus::Math

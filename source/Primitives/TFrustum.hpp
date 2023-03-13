@@ -18,12 +18,13 @@ namespace Langulus::Math
    template<CT::Vector T>
    struct TFrustum {
       LANGULUS(POD) true;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
-      using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional frustum");
+      using PointType = T;
+      using MatrixType = TMatrix<TypeOf<T>, MemberCount + 1>;
 
       TPlane<T> mPlanes[MemberCount * 2];
 
@@ -31,7 +32,7 @@ namespace Langulus::Math
 
    public:
       TFrustum() noexcept;
-      TFrustum(const TMatrix<MemberType, MemberCount + 1>&) noexcept;
+      TFrustum(const MatrixType&) noexcept;
 
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool IsHollow() const noexcept;
