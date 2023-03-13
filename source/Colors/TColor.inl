@@ -214,7 +214,7 @@ namespace Langulus::Math
          return ColorMap[red][green][blue];
       }
       else {
-         constexpr auto third = ::std::numeric_limits<MemberType>::max() / d3;
+         constexpr auto third = ::std::numeric_limits<TypeOf<T>>::max() / d3;
          return ColorMap
             [mArray[0] / third]
             [mArray[1] / third]
