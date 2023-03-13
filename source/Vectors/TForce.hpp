@@ -87,7 +87,7 @@ namespace Langulus::Math
             result += x;
             result += ", ";
          }
-         result += Text {mLevel};
+         result += static_cast<Flow::Code>(mLevel);
          result += Flow::Code::CloseScope;
          return result;
       }
