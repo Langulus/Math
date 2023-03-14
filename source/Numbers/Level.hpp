@@ -36,11 +36,15 @@ namespace Langulus::Math
    ///            +-----------+-----------+-----------+-----------+           
    ///   Atoms    |     |     |     |     |     |     |     |     |           
    ///                                                                        
-   struct Level : public TNumber<Real, Level> {
+   struct Level : TNumber<Real, Level> {
+      using Base = TNumber<Real, Level>;
+
       constexpr Level() noexcept;
-      constexpr Level(const Level&) noexcept = default;
       constexpr Level(const CT::Real auto&) noexcept;
       constexpr Level(const CT::Integer auto&) noexcept;
+
+      using Base::TNumber;
+      using Base::operator =;
 
       static constexpr Real Unit = 1000;
       static constexpr Real Exponent = 3;

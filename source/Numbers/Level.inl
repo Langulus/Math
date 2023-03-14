@@ -14,7 +14,7 @@ namespace Langulus::Math
    /// Default (human level) construction                                     
    LANGULUS(ALWAYSINLINE)
    constexpr Level::Level() noexcept
-      : TNumber {Level::Default} {}
+      : Base {Level::Default} {}
 
    /// Real number construction                                               
    ///   @param octave - the real number to interpret as level                
