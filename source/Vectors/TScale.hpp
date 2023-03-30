@@ -30,7 +30,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// size of the same size                                                  
    template<Count S>
-   struct ScaleOfSize : public Scale {
+   struct ScaleOfSize : Scale {
       LANGULUS(CONCRETE) Math::TScale<Math::TVector<::Langulus::Real, S, 1>>;
       LANGULUS_BASES(Scale);
       static constexpr Count MemberCount {S};
@@ -40,10 +40,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// size of the same type                                                  
    template<CT::DenseNumber T>
-   struct ScaleOfType : public Scale {
+   struct ScaleOfType : Scale {
       LANGULUS(CONCRETE) Math::TScale<Math::TVector<T, 3, 1>>;
       LANGULUS_BASES(Scale);
-      using MemberType = T;
+      LANGULUS(TYPED) T;
    };
 
 } // namespace Langulus::A
@@ -56,13 +56,17 @@ namespace Langulus::Math
    /// Vector specialization that defaults to 1 and is used for scaling       
    ///                                                                        
    template<CT::ScalarOrVector T>
-   struct TScale : public T {
-      using PointType = T;
-      using typename T::MemberType;
+   struct TScale : T {
       using T::MemberCount;
-      static_assert(T::DefaultMember == MemberType {1},
-         "Size type does not default to 1");
-      LANGULUS_BASES(A::ScaleOfSize<MemberCount>, A::ScaleOfType<MemberType>);
+
+      LANGULUS(TYPED) TypeOf<T>;
+      LANGULUS_BASES(
+         A::ScaleOfSize<MemberCount>, 
+         A::ScaleOfType<TypeOf<T>>
+      );
+
+      static_assert(T::DefaultMember == TypeOf<T> {1},
+         "Scaling type does not default to 1");
 
    public:
       using T::T;

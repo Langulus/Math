@@ -32,7 +32,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// sampler of the same size                                               
    template<Count S>
-   struct SamplerOfSize : public Sampler {
+   struct SamplerOfSize : Sampler {
       LANGULUS(CONCRETE) Math::TSampler<Math::TVector<Langulus::Real, S>>;
       LANGULUS_BASES(Sampler);
       static constexpr Count MemberCount {S};
@@ -42,10 +42,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// sampler of the same type                                               
    template<CT::DenseNumber T>
-   struct SamplerOfType : public Sampler {
+   struct SamplerOfType : Sampler {
       LANGULUS(CONCRETE) Math::TSampler<Math::TVector<T, 3>>;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(Sampler);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A
@@ -58,12 +58,15 @@ namespace Langulus::Math
    /// It's just a vector, specialized for accessing textures/volumes         
    ///                                                                        
    template<CT::ScalarOrVector T>
-   struct TSampler : public T {
+   struct TSampler : T {
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 0, "Sampler size must be greater than zero");
-      LANGULUS_BASES(A::SamplerOfSize<MemberCount>, A::SamplerOfType<MemberType>);
+      LANGULUS(TYPED) TypeOf<T>;
+      LANGULUS_BASES(
+         A::SamplerOfSize<MemberCount>, 
+         A::SamplerOfType<TypeOf<T>>
+      );
 
    public:
       using T::T;

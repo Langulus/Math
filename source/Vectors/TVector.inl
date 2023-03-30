@@ -155,7 +155,7 @@ namespace Langulus::Math
          " - must be CT::Vector or a number");
    }
 
-   /// Construct from component, if its index is smaller than SIZE            
+   /// Construct from a vector component                                      
    ///   @param a - component to set                                          
    TEMPLATE()
    template<CT::DenseNumber N, CT::Dimension D>
@@ -167,7 +167,7 @@ namespace Langulus::Math
    }
 
    /// Write the body of the vector (reused in vector specializations)        
-   ///   @param result - [out] the resulting body                             
+   ///   @return the resulting body                                           
    TEMPLATE()
    template<class TOKEN>
    Flow::Code TME()::Serialize() const {
@@ -178,7 +178,7 @@ namespace Langulus::Math
       }
 
       for (Offset i = 0; i < S; ++i) {
-         result += Text {mArray[i]};
+         result += Flow::Code {mArray[i]};
          if (i < S - 1)
             result += ", ";
       }
@@ -1256,6 +1256,45 @@ namespace Langulus::Math
       bool result = false;
       SIMD::Equals(other, me.mArray, result);
       return result;
+   }
+
+   ///                                                                        
+   ///   Iteration                                                            
+   ///                                                                        
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr T* TME()::begin() noexcept {
+      return mArray;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr T* TME()::end() noexcept {
+      return mArray + S;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr T* TME()::last() noexcept {
+      return mArray + S - 1;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr const T* TME()::begin() const noexcept {
+      return mArray;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr const T* TME()::end() const noexcept {
+      return mArray + S;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr const T* TME()::last() const noexcept {
+      return mArray + S - 1;
    }
 
 } // namespace Langulus::Math

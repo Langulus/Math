@@ -59,7 +59,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// matrix of the same column count                                        
    template<Count COLUMNS>
-   struct MatrixOfColumns : public Matrix {
+   struct MatrixOfColumns : Matrix {
       LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, COLUMNS>;
       LANGULUS_BASES(Matrix);
       static constexpr Count Columns {COLUMNS};
@@ -69,7 +69,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// matrix of the same rows count                                          
    template<Count ROWS>
-   struct MatrixOfRows : public Matrix {
+   struct MatrixOfRows : Matrix {
       LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, ROWS, ROWS>;
       LANGULUS_BASES(Matrix);
       static constexpr Count Rows {ROWS};
@@ -79,7 +79,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// matrix of the same column and row count                                
    template<Count COLUMNS, Count ROWS>
-   struct MatrixOfSize : public Matrix {
+   struct MatrixOfSize : Matrix {
       LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, ROWS>;
       LANGULUS_BASES(Matrix);
       static constexpr Count Columns {COLUMNS};
@@ -91,10 +91,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// matrix of the same type                                                
    template<CT::DenseNumber T>
-   struct MatrixOfType : public Matrix {
+   struct MatrixOfType : Matrix {
       LANGULUS(CONCRETE) Math::TMatrix<T, 4, 4>;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(Matrix);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A
@@ -107,7 +107,6 @@ namespace Langulus::Math
    ///                                                                        
    TEMPLATE()
    struct TMatrix {
-      using MemberType = T;
       using ColumnType = TVector<T, ROWS>;
       using RowType = TVector<T, COLUMNS>;
       using TransposeType = TMatrix<T, ROWS, COLUMNS>;
@@ -120,8 +119,8 @@ namespace Langulus::Math
       static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
       union {
-         T mArray[MemberCount] {};
-         ColumnType mColumns[Columns];
+         ColumnType mColumns[Columns] {};
+         T mArray[MemberCount];
       };
 
    private:
@@ -134,6 +133,7 @@ namespace Langulus::Math
       LANGULUS(NAME) GeneratedClassName.data();
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) false;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(
          A::MatrixOfSize<COLUMNS, ROWS>, 
          A::MatrixOfColumns<COLUMNS>,
@@ -208,13 +208,22 @@ namespace Langulus::Math
       ///                                                                     
       NOD() explicit operator Flow::Code() const;
 
-   public:
       NOD() constexpr T Determinant() const noexcept;
       NOD() constexpr TMatrix Transpose() const noexcept;
       NOD() constexpr TMatrix Cofactor(int, int, int) const noexcept;
       NOD() constexpr T Determinant(int) const noexcept;
       NOD() constexpr TMatrix Adjoint() const noexcept;
       NOD() TMatrix Invert() const;
+
+      ///                                                                     
+      ///   Iteration                                                         
+      ///                                                                     
+      NOD() constexpr ColumnType* begin() noexcept;
+      NOD() constexpr ColumnType* end() noexcept;
+      NOD() constexpr ColumnType* last() noexcept;
+      NOD() constexpr const ColumnType* begin() const noexcept;
+      NOD() constexpr const ColumnType* end() const noexcept;
+      NOD() constexpr const ColumnType* last() const noexcept;
 
    private:
       template<Count SIZE, Count NEXT_SIZE = SIZE - 1>

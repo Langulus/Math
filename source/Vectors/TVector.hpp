@@ -346,6 +346,16 @@ namespace Langulus::Math
       NOD() operator TVector<T, ALTS>& () noexcept requires (ALTS < S);
       template<Count ALTS>
       NOD() operator const TVector<T, ALTS>& () const noexcept requires (ALTS < S);
+
+      ///                                                                     
+      ///   Iteration                                                         
+      ///                                                                     
+      NOD() constexpr T* begin() noexcept;
+      NOD() constexpr T* end() noexcept;
+      NOD() constexpr T* last() noexcept;
+      NOD() constexpr const T* begin() const noexcept;
+      NOD() constexpr const T* end() const noexcept;
+      NOD() constexpr const T* last() const noexcept;
    };
    #pragma pack(pop)
 

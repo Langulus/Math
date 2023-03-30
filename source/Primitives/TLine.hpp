@@ -11,9 +11,14 @@
 namespace Langulus::Math
 {
 
-   template<CT::Vector> struct TLine;
-   template<CT::Vector> struct TLineLoop;
-   template<CT::Vector> struct TLineStrip;
+   template<CT::Vector>
+   struct TLine;
+
+   template<CT::Vector>
+   struct TLineLoop;
+
+   template<CT::Vector>
+   struct TLineStrip;
 
    using Line2 = TLine<Point2>;
    using Line3 = TLine<Point3>;
@@ -65,10 +70,10 @@ namespace Langulus::Math
    struct TLine {
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Line);
 
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
@@ -77,7 +82,7 @@ namespace Langulus::Math
    public:
       /// Default construction (along x)                                      
       constexpr TLine() noexcept {
-         mAB[1][0] = MemberType {0};
+         mAB[1][0] = TypeOf<T> {0};
       }
 
       /// Manual construction from two points of any type                     
@@ -104,13 +109,13 @@ namespace Langulus::Math
       ///   @param radius - the line radius used for tolerance                
       ///   @return true if line has no radius or no length                   
       NOD() bool IsDegenerate() const noexcept {
-         return (mAB[0] - mAB[1]).Length() == MemberType {0};
+         return (mAB[0] - mAB[1]).Length() == TypeOf<T> {0};
       }
 
       /// Subdivide line                                                      
       ///   @return the two new lines                                         
       NOD() ::std::array<TLine, 2> Subdivide() const noexcept {
-         const T midpoint = mAB[0] + (mAB[1] - mAB[0]) / MemberType {2};
+         const T midpoint = mAB[0] + (mAB[1] - mAB[0]) / TypeOf<T> {2};
          return {{mAB[0], midpoint}, {midpoint, mAB[1]}};
       }
 
@@ -147,21 +152,16 @@ namespace Langulus::Math
    /// the previous, and the last point forms a line with the first one       
    ///                                                                        
    template<CT::Vector T>
-   struct TLineLoop : public TAny<T> {
+   struct TLineLoop : TAny<T> {
       LANGULUS(DEEP) false;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineLoop);
 
       using Base = TAny<T>;
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
-
-      NOD() TLineLoop Clone() const {
-         TLineLoop cloned;
-         static_cast<Base&>(cloned) = Base::Clone();
-         return cloned;
-      }
+      static_assert(MemberCount > 1,
+         "Lines don't exist below two dimensions");
    };
 
 
@@ -171,21 +171,16 @@ namespace Langulus::Math
    /// the previous                                                           
    ///                                                                        
    template<CT::Vector T>
-   struct TLineStrip : public TAny<T> {
+   struct TLineStrip : TAny<T> {
       LANGULUS(DEEP) false;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineStrip);
 
       using Base = TAny<T>;
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
-
-      NOD() TLineStrip Clone() const {
-         TLineStrip cloned;
-         static_cast<Base&>(cloned) = Base::Clone();
-         return cloned;
-      }
+      static_assert(MemberCount > 1,
+         "Lines don't exist below two dimensions");
    };
 
 } // namespace Langulus::Math

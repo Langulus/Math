@@ -11,9 +11,14 @@
 namespace Langulus::Math
 {
 
-   template<CT::Vector> struct TTriangle;
-   template<CT::Vector> struct TTriangleStrip;
-   template<CT::Vector> struct TTriangleFan;
+   template<CT::Vector>
+   struct TTriangle;
+
+   template<CT::Vector>
+   struct TTriangleStrip;
+
+   template<CT::Vector>
+   struct TTriangleFan;
 
    using Triangle2 = TTriangle<Point2>;
    using Triangle3 = TTriangle<Point3>;
@@ -65,10 +70,10 @@ namespace Langulus::Math
    struct TTriangle {
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Triangle);
 
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
 
@@ -202,28 +207,25 @@ namespace Langulus::Math
    ///   A templated triangle strip                                           
    /// List of points, forming triangles, by always sharing the last two      
    /// points in the sequence                                                 
+   ///                                                                        
    ///      1________3_______ 5     Notice all trianlges are clockwise        
    ///      /\      /\      /       0,1,2 - first triangle                    
    ///     /  \    /  \    /        2,1,3 - second triangle                   
    ///    /    \  /    \  /         2,3,4 - third triangle                    
    ///   /______\/______\/          4,3,5 - fourth triangle                   
    ///  0        2        4                                                   
+   ///                                                                        
    template<CT::Vector T>
-   struct TTriangleStrip : public TAny<T> {
+   struct TTriangleStrip : TAny<T> {
       LANGULUS(DEEP) false;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleStrip);
 
       using Base = TAny<T>;
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
-
-      NOD() TTriangleStrip Clone() const {
-         TTriangleStrip cloned;
-         static_cast<Base&>(cloned) = Base::Clone();
-         return cloned;
-      }
+      static_assert(MemberCount > 1,
+         "Triangles don't exist below two dimensions");
    };
 
 
@@ -242,22 +244,18 @@ namespace Langulus::Math
    ///             \  /                                                       
    ///              \/                                                        
    ///               5                                                        
+   ///                                                                        
    template<CT::Vector T>
-   struct TTriangleFan : public TAny<T> {
+   struct TTriangleFan : TAny<T> {
       LANGULUS(DEEP) false;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleFan);
 
       using Base = TAny<T>;
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
-
-      NOD() TTriangleFan Clone() const {
-         TTriangleFan cloned;
-         static_cast<Base&>(cloned) = Base::Clone();
-         return cloned;
-      }
+      static_assert(MemberCount > 1,
+         "Triangles don't exist below two dimensions");
    };
 
 } // namespace Langulus::Math

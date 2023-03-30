@@ -29,7 +29,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// normal of the same size                                                
    template<Count S>
-   struct NormalOfSize : public Normal {
+   struct NormalOfSize : Normal {
       LANGULUS(CONCRETE) Math::TNormal<Math::TVector<Langulus::Real, S>>;
       LANGULUS_BASES(Normal);
       static constexpr Count MemberCount {S};
@@ -39,10 +39,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// normal of the same type                                                
    template<CT::DenseNumber T>
-   struct NormalOfType : public Normal {
+   struct NormalOfType : Normal {
       LANGULUS(CONCRETE) Math::TNormal<Math::TVector<T, 4>>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(Normal);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A
@@ -58,10 +58,13 @@ namespace Langulus::Math
    template<CT::Vector T>
    struct TNormal : public T {
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Normal size must be greater than one");
-      LANGULUS_BASES(A::NormalOfSize<MemberCount>, A::NormalOfType<MemberType>);
+      LANGULUS(TYPED) TypeOf<T>;
+      LANGULUS_BASES(
+         A::NormalOfSize<MemberCount>, 
+         A::NormalOfType<TypeOf<T>>
+      );
 
    public:
       using T::T;

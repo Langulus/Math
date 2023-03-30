@@ -152,8 +152,10 @@ namespace Langulus::Math
          "This matrix is too powerful for your array");
 
       const Decay<N>* source = a;
-      for (auto& v : mArray)
-         v = Adapt(*(source++));
+      for (auto& column : mColumns) {
+         for (auto& v : column)
+            v = Adapt(*(source++));
+      }
    }
 
    /// Adapt a component to the matrix's internal type                        
@@ -940,6 +942,46 @@ namespace Langulus::Math
          return result;
       }
       else LANGULUS_ERROR("Matrix inversion code not implemented");
+   }
+
+   
+   ///                                                                        
+   ///   Iteration                                                            
+   ///                                                                        
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr typename TME()::ColumnType* TME()::begin() noexcept {
+      return mColumns;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr typename TME()::ColumnType* TME()::end() noexcept {
+      return mColumns + COLUMNS;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr typename TME()::ColumnType* TME()::last() noexcept {
+      return mColumns + COLUMNS - 1;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr const typename TME()::ColumnType* TME()::begin() const noexcept {
+      return mColumns;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr const typename TME()::ColumnType* TME()::end() const noexcept {
+      return mColumns + COLUMNS;
+   }
+
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   constexpr const typename TME()::ColumnType* TME()::last() const noexcept {
+      return mColumns + COLUMNS - 1;
    }
 
 } // namespace Langulus::Math

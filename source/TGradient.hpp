@@ -11,10 +11,10 @@
 namespace Langulus::Math
 {
 
-   template<class T, Count S>
+   template<class T, Count S = 2>
    class TGradient;
 
-   template<class T, Count S>
+   template<class T, Count S = 2>
    using TGrad = TGradient<T, S>;
 
    template<class T>

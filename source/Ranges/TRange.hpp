@@ -80,7 +80,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// range of the same size                                                 
    template<Count S>
-   struct RangeOfSize : public Range {
+   struct RangeOfSize : Range {
       LANGULUS(CONCRETE) Math::TRange<Math::TVector<Real, S>>;
       LANGULUS_BASES(Range);
       static constexpr Count MemberCount {S};
@@ -89,10 +89,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// range of the same type                                                 
    template<CT::DenseNumber T>
-   struct RangeOfType : public Range {
+   struct RangeOfType : Range {
       LANGULUS(CONCRETE) Math::TRange<Math::TVector<T, 4>>;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(Range);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A
@@ -107,9 +107,12 @@ namespace Langulus::Math
    template<CT::ScalarOrVector T>
    struct TRange {
       using PointType = T;
-      using MemberType = typename T::MemberType;
       static constexpr Count MemberCount = T::MemberCount;
-      LANGULUS_BASES(A::RangeOfSize<MemberCount>, A::RangeOfType<MemberType>);
+      LANGULUS(TYPED) TypeOf<T>;
+      LANGULUS_BASES(
+         A::RangeOfSize<MemberCount>, 
+         A::RangeOfType<TypeOf<T>>
+      );
 
       PointType mMin;
       PointType mMax;
