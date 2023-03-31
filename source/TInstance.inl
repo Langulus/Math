@@ -20,7 +20,7 @@ namespace Langulus::Math
    ///   @return the AABB range                                               
    TEMPLATE()
    typename TME()::RangeType TME()::GetRange(Level level) const {
-      const auto halfSize = GetScale() * MemberType(0.5);
+      const auto halfSize = GetScale() * ScalarType {.5};
       const auto factor = Pow(Level::Unit, mLevel - level);
       const auto position = GetPosition();
       return RangeType {position - halfSize, position + halfSize} * factor;
@@ -69,7 +69,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
-   typename TME()::PointType TME()::GetPositionNext(const MemberType& dt) const noexcept {
+   typename TME()::PointType TME()::GetPositionNext(const ScalarType& dt) const noexcept {
       return mPosition + mVelocity * dt;
    }
 
@@ -77,7 +77,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
-   typename TME()::PointType TME()::GetPositionPrev(const MemberType& dt) const noexcept {
+   typename TME()::PointType TME()::GetPositionPrev(const ScalarType& dt) const noexcept {
       return mPosition - mVelocity * dt;
    }
 
@@ -85,7 +85,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
-   typename TME()::PointType TME()::GetVelocityNext(const MemberType& dt) const noexcept {
+   typename TME()::PointType TME()::GetVelocityNext(const ScalarType& dt) const noexcept {
       return mVelocity + mAcceleration * dt;
    }
 
@@ -93,7 +93,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
-   typename TME()::PointType TME()::GetVelocityPrev(const MemberType& dt) const noexcept {
+   typename TME()::PointType TME()::GetVelocityPrev(const ScalarType& dt) const noexcept {
       return mVelocity - mAcceleration * dt;
    }
 
@@ -101,21 +101,21 @@ namespace Langulus::Math
    ///   @return the oriented right vector                                    
    TEMPLATE()
    typename TME()::PointType TME()::GetRight() const noexcept {
-      return GetAim() * Cardinal::Right<MemberType>;
+      return GetAim() * Cardinal::Right<ScalarType>;
    }
 
    /// Get the up normal of the instance                                      
    ///   @return the oriented up vector                                       
    TEMPLATE()
    typename TME()::PointType TME()::GetUp() const noexcept {
-      return GetAim() * Cardinal::Up<MemberType>;
+      return GetAim() * Cardinal::Up<ScalarType>;
    }
 
    /// Get the forward normal of the instance                                 
    ///   @return the oriented forward vector                                  
    TEMPLATE()
    typename TME()::PointType TME()::GetForward() const noexcept {
-      return GetAim() * Cardinal::Forward<MemberType>;
+      return GetAim() * Cardinal::Forward<ScalarType>;
    }
 
    /// Get scale, relative to a given octave                                  
@@ -261,16 +261,16 @@ namespace Langulus::Math
    TEMPLATE()
    typename TME()::PointType TME()::RandomPosition(RNG& rng, const RangeType& range) const {
       // Clamp inside object                                            
-      const auto thisscale = GetScale() * MemberType {.5};
+      const auto thisscale = GetScale() * ScalarType {.5};
       const auto innerscale = thisscale * range.mMin;
       const auto outerscale = thisscale * range.mMax;
 
       // Get a random vector                                            
       const auto rnewpos = PointType {
-         rng.Get<MemberType>(),
-         rng.Get<MemberType>(),
-         rng.Get<MemberType>()
-      } * MemberType {2} - MemberType {1};
+         rng.Get<ScalarType>(),
+         rng.Get<ScalarType>(),
+         rng.Get<ScalarType>()
+      } *ScalarType {2} - ScalarType {1};
 
       auto newpos = rnewpos * (outerscale - innerscale);
       newpos[0] += innerscale[0] * Math::Sign(newpos[0]);
@@ -285,7 +285,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not the angle is relative to current    
    TEMPLATE()
    template<CT::Angle A, CT::Dimension D>
-   void TME()::Rotate(MemberType sign, const TAngle<A, D>& angle, bool relative) {
+   void TME()::Rotate(ScalarType sign, const TAngle<A, D>& angle, bool relative) {
       if (relative) {
          // The rotation axis is relative                               
          mAim *= QuatType::FromAngle(angle * sign);
@@ -309,7 +309,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not normal is relative to current       
    TEMPLATE()
    template<class K>
-   void TME()::Move(MemberType sign, const TNormal<K>& normal, bool relative) {
+   void TME()::Move(ScalarType sign, const TNormal<K>& normal, bool relative) {
       if (relative)
          mUseVelocity += -mAim * (normal * sign);
       else
@@ -322,7 +322,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not size is relative to current         
    TEMPLATE()
    template<class K>
-   void TME()::Move(MemberType sign, const TScale<K>& sizer, bool relative) {
+   void TME()::Move(ScalarType sign, const TScale<K>& sizer, bool relative) {
       if (relative)
          mScale += sizer * sign;
       else
@@ -335,7 +335,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not position is relative to current     
    TEMPLATE()
    template<class K>
-   void TME()::Move(MemberType sign, const TPoint<K>& position, bool relative) {
+   void TME()::Move(ScalarType sign, const TPoint<K>& position, bool relative) {
       if (relative)
          mPosition = -mAim * (sign * PointType {position});
       else
@@ -348,7 +348,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not force is relative to current        
    TEMPLATE()
    template<class K>
-   void TME()::Move(MemberType sign, const TForce<K>& force, bool relative) {
+   void TME()::Move(ScalarType sign, const TForce<K>& force, bool relative) {
       if (relative)
          mUseVelocity += -mAim * (force * sign);
       else
@@ -497,7 +497,7 @@ namespace Langulus::Math
    ///   @param sign - the sign for the change                                
    ///   @param octave - the octave offset                                    
    TEMPLATE()
-   void TME()::ChangeLevel(MemberType sign, const Level& octave, bool relative) {
+   void TME()::ChangeLevel(ScalarType sign, const Level& octave, bool relative) {
       if (relative)
          mUseLevelChange += octave * Level {sign};
       else

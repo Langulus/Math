@@ -42,10 +42,10 @@ namespace Langulus::Math
    struct TRay {
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Ray);
 
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Rays don't exist below two dimensions");
 
@@ -65,23 +65,23 @@ namespace Langulus::Math
       }
 
       /// Get a point along the ray                                           
-      NOD() constexpr T Point(const MemberType& distance) const noexcept {
+      NOD() constexpr T Point(const TypeOf<T>& distance) const noexcept {
          return mOrigin + mNormal * distance;
       }
 
       /// Move the ray origin                                                 
-      NOD() constexpr TRay& Step(const MemberType& distance) noexcept {
+      NOD() constexpr TRay& Step(const TypeOf<T>& distance) noexcept {
          mOrigin += mNormal * distance;
          return *this;
       }
 
-      NOD() constexpr TRay Stepped(const MemberType& distance) const noexcept {
+      NOD() constexpr TRay Stepped(const TypeOf<T>& distance) const noexcept {
          TRay copy = *this;
          return copy.Step(distance);
       }
 
       /// Self-dot the ray                                                    
-      NOD() constexpr MemberType Dot() const noexcept {
+      NOD() constexpr TypeOf<T> Dot() const noexcept {
          return Dot(mOrigin, mNormal);
       }
    };

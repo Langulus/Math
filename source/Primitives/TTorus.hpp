@@ -17,16 +17,16 @@ namespace Langulus::Math
    template<CT::Vector T, CT::Dimension D = Traits::Y>
    struct TTorus {
       LANGULUS(POD) true;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount == 3, "Can't have a non-three-dimensional torus");
       static_assert(D::Index < 3, "Can't extend torus in that dimension");
 
-      MemberType mOuterRadius {.5};
-      MemberType mInnerRadius {.5};
+      TypeOf<T> mOuterRadius {.5};
+      TypeOf<T> mInnerRadius {.5};
 
    public:
       /// Check if torus is degenerate                                        
@@ -46,15 +46,15 @@ namespace Langulus::Math
       ///   @return the distance to the primitive                             
       NOD() auto SignedDistance(const T& point) const {
          if constexpr (CT::Same<D, Traits::X>) {
-            const auto q = TVector<MemberType, 2>(point.yz().Length() - mOuterRadius, point[0]);
+            const auto q = TVector<TypeOf<T>, 2>(point.yz().Length() - mOuterRadius, point[0]);
             return q.Length() - mInnerRadius;
          }
          else if constexpr (CT::Same<D, Traits::Y>) {
-            const auto q = TVector<MemberType, 2>(point.xz().Length() - mOuterRadius, point[1]);
+            const auto q = TVector<TypeOf<T>, 2>(point.xz().Length() - mOuterRadius, point[1]);
             return q.Length() - mInnerRadius;
          }
          else if constexpr (CT::Same<D, Traits::Z>) {
-            const auto q = TVector<MemberType, 2>(point.xy().Length() - mOuterRadius, point[2]);
+            const auto q = TVector<TypeOf<T>, 2>(point.xy().Length() - mOuterRadius, point[2]);
             return q.Length() - mInnerRadius;
          }
          else LANGULUS_ERROR("Unsupported dimension");

@@ -18,20 +18,20 @@ namespace Langulus::Math
    template<CT::Vector T, CT::Dimension D = Traits::Y>
    struct TCone {
       LANGULUS(POD) true;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
       using Dimension = D;
       using T::MemberCount;
       static_assert(MemberCount == 3, "Can't have a non-3D cone");
       static_assert(D::Index < 3, "Can't extend cone in that dimension");
 
       // Size of the cone                                               
-      MemberType mHeight {.5};
+      TypeOf<T> mHeight {.5};
 
       // Angle of the cone's slope                                      
-      TRadians<MemberType> mAngle {HALFPI<MemberType>};
+      TRadians<TypeOf<T>> mAngle {HALFPI<TypeOf<T>>};
 
    public:
       NOD() constexpr bool IsDegenerate() const noexcept;

@@ -140,8 +140,8 @@ namespace Langulus::A
    template<CT::Angle T>
    struct AngleOfType : Angle {
       LANGULUS(CONCRETE) T;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(Angle);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A

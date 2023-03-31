@@ -15,11 +15,10 @@ namespace Langulus::Math
    ///   Color channel                                                        
    ///                                                                        
    template<CT::DenseNumber T, CT::Dimension D>
-   struct TColorComponent : public TNumber<T, TColorComponent<T, D>> {
+   struct TColorComponent : TNumber<T, TColorComponent<T, D>> {
+      LANGULUS(TYPED) T;
       using Base = TNumber<T, TColorComponent<T, D>>;
-   public:
       using Dimension = D;
-      using MemberType = T;
       using Base::Base;
    };
 

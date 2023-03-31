@@ -20,7 +20,7 @@ namespace Langulus::Math
    using Quaternion = TQuaternion<Real>;
 
    template<CT::Vector T>
-   NOD() TMatrix<typename T::MemberType, T::MemberCount + 1> pcCompose(const TQuaternion<typename T::MemberType>&, const T & = 0, const T & = 1) noexcept;
+   NOD() TMatrix<TypeOf<T>, T::MemberCount + 1> pcCompose(const TQuaternion<TypeOf<T>>&, const T& = 0, const T& = 1) noexcept;
 
 } // namespace Langulus::Math
 
@@ -37,10 +37,10 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// quaternion of the same type                                            
    template<CT::DenseNumber T>
-   struct QuaternionOfType : public Quaternion {
+   struct QuaternionOfType : Quaternion {
       LANGULUS(CONCRETE) Math::TQuaternion<T>;
+      LANGULUS(TYPED) T;
       LANGULUS_BASES(Quaternion);
-      using MemberType = T;
    };
 
 } // namespace Langulus::A
@@ -52,9 +52,10 @@ namespace Langulus::Math
    ///   Templated quaternion                                                 
    ///                                                                        
    template<CT::DenseNumber T>
-   struct TQuaternion : public TVector<T, 4> {
+   struct TQuaternion : TVector<T, 4> {
       using Base = TVector<T, 4>;
       LANGULUS_BASES(Base, A::QuaternionOfType<T>);
+
       using Base::Base;
       using Base::mArray;
 
@@ -380,9 +381,9 @@ namespace Langulus::Math
    ///   @param s - the scale                                                 
    ///   @return the composed matrix                                          
    template<CT::Vector T>
-   NOD() TMatrix<typename T::MemberType, T::MemberCount + 1>
-      pcCompose(const TQuaternion<typename T::MemberType>& q, const T& p, const T& s) noexcept {
-      using K = typename T::MemberType;
+   NOD() TMatrix<TypeOf<T>, T::MemberCount + 1>
+      pcCompose(const TQuaternion<TypeOf<T>>& q, const T& p, const T& s) noexcept {
+      using K = TypeOf<T>;
       TMatrix<K, T::MemberCount + 1> result;
       auto& x = q[0];
       auto& y = q[1];

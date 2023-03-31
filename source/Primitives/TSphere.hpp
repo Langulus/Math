@@ -18,14 +18,14 @@ namespace Langulus::Math
    struct TSphere {
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
-      MemberType mRadius {.5};
+      TypeOf<T> mRadius {.5};
 
    public:
       /// Check if sphere is degenerate                                       
@@ -57,10 +57,10 @@ namespace Langulus::Math
    public:
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
@@ -86,7 +86,7 @@ namespace Langulus::Math
       NOD() auto SignedDistance(const T& point) const {
          const auto k0 = (point / mRadii).Length();
          const auto k1 = (point / (mRadii * mRadii)).Length();
-         return k0 * (k0 - MemberType {1}) / k1;
+         return k0 * (k0 - TypeOf<T> {1}) / k1;
       }
    };
 

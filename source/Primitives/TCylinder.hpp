@@ -36,16 +36,16 @@ namespace Langulus::Math
    template<CT::Vector T, CT::Dimension D = Traits::Y>
    struct TCylinder {
       LANGULUS(POD) true;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
       using Dimension = D;
       using T::MemberCount;
       static_assert(MemberCount == 3, "Can't have a non-3D cylinder");
       static_assert(D::Index < 3, "Can't extend cylinder in that dimension");
 
-      MemberType mRadius {.5};
+      TypeOf<T> mRadius {.5};
 
    public:
       NOD() constexpr bool IsDegenerate() const noexcept;
@@ -76,14 +76,14 @@ namespace Langulus::Math
    ///            |<--->| mRadius                                          |  
    ///                                                                     |  
    template<CT::Vector T, CT::Dimension D = Traits::Y>
-   struct TCylinderCapped : public TCylinder<T, D> {
+   struct TCylinderCapped : TCylinder<T, D> {
+      LANGULUS(TYPED) TypeOf<T>;
       using Base = TCylinder<T>;
       using typename Base::PointType;
-      using typename Base::MemberType;
       using Base::MemberCount;
       using Base::mRadius;
 
-      MemberType mHeight {.5};
+      TypeOf<T> mHeight {.5};
 
    public:
       NOD() constexpr bool IsDegenerate() const noexcept;

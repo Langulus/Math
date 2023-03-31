@@ -51,12 +51,12 @@ namespace Langulus::Math
    template<CT::Vector T>
    class TInstance {
    public:
+      using ScalarType = TypeOf<T>;
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
-      using MatrixType = TMatrix<MemberType, MemberCount + 1, MemberCount + 1>;
+      using MatrixType = TMatrix<ScalarType, MemberCount + 1, MemberCount + 1>;
       using RangeType = TRange<T>;
-      using QuatType = TQuaternion<MemberType>;
+      using QuatType = TQuaternion<ScalarType>;
       using SizeType = TScale<T>;
 
    public:
@@ -65,10 +65,10 @@ namespace Langulus::Math
       NOD() RangeType GetRange(Level) const;
       NOD() RangeType GetRangeRotated(Level) const;
 
-      NOD() PointType GetPositionNext(const MemberType&) const noexcept;
-      NOD() PointType GetPositionPrev(const MemberType&) const noexcept;
-      NOD() PointType GetVelocityNext(const MemberType&) const noexcept;
-      NOD() PointType GetVelocityPrev(const MemberType&) const noexcept;
+      NOD() PointType GetPositionNext(const ScalarType&) const noexcept;
+      NOD() PointType GetPositionPrev(const ScalarType&) const noexcept;
+      NOD() PointType GetVelocityNext(const ScalarType&) const noexcept;
+      NOD() PointType GetVelocityPrev(const ScalarType&) const noexcept;
 
       NOD() PointType GetRight() const noexcept;
       NOD() PointType GetUp() const noexcept;
@@ -98,21 +98,21 @@ namespace Langulus::Math
       void Move(Verb&);
 
       template<CT::Angle A, CT::Dimension D>
-      void Rotate(MemberType, const TAngle<A, D>&, bool relative = false);
+      void Rotate(ScalarType, const TAngle<A, D>&, bool relative = false);
 
       template<class K>
-      void Move(MemberType, const TNormal<K>&, bool relative = false);
+      void Move(ScalarType, const TNormal<K>&, bool relative = false);
 
       template<class K>
-      void Move(MemberType, const TScale<K>&, bool relative = false);
+      void Move(ScalarType, const TScale<K>&, bool relative = false);
 
       template<class K>
-      void Move(MemberType, const TPoint<K>&, bool relative = false);
+      void Move(ScalarType, const TPoint<K>&, bool relative = false);
 
       template<class K>
-      void Move(MemberType, const TForce<K>&, bool relative = false);
+      void Move(ScalarType, const TForce<K>&, bool relative = false);
 
-      void ChangeLevel(MemberType, const Level&, bool relative = false);
+      void ChangeLevel(ScalarType, const Level&, bool relative = false);
 
       bool operator == (const TInstance&) const noexcept;
 
@@ -155,14 +155,14 @@ namespace Langulus::Math
       // physical movement is completely dependent on the simulation    
       // energy transfer. However, sometimes that is not an option, and 
       // involves quite elaborate tweeking and testing to behave well.  
-      MemberType mSimBoundness = 1;
-      MemberType mUseBoundness = 1;
+      ScalarType mSimBoundness = 1;
+      ScalarType mUseBoundness = 1;
 
       // Instance solidity. Solid instances are colliders.              
       // Nonsolid instances are never tested for collision.             
       // Volumes of water/air can have partial solidity, causing drag   
       // 1 is perfect solidity, while 0 is perfect permittance          
-      MemberType mSolid = 0;
+      ScalarType mSolid = 0;
 
       // Pickable instances are selectable by mouse ray                 
       bool mPickable = true;

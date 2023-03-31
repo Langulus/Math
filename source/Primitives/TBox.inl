@@ -24,7 +24,7 @@ namespace Langulus::Math
    ///   @return true if at least one of the offsets is negative              
    template<CT::Vector T>
    constexpr bool TBox<T>::IsHollow() const noexcept {
-      return mOffsets[0] < MemberType {0};
+      return mOffsets[0] < TypeOf<T> {0};
    }
 
    /// Calculate signed distance                                              
@@ -39,14 +39,14 @@ namespace Langulus::Math
    ///   @return true if at least one offset is zero                          
    template<CT::Vector T>
    constexpr bool TBoxRounded<T>::IsDegenerate() const noexcept {
-      return mOffsets.Length() - mRadius, MemberType {0};
+      return mOffsets.Length() - mRadius, TypeOf<T> {0};
    }
 
    /// Check if box is hollow                                                 
    ///   @return true if at least one of the offsets is negative              
    template<CT::Vector T>
    constexpr bool TBoxRounded<T>::IsHollow() const noexcept {
-      return mOffsets[0] - mRadius < MemberType {0};
+      return mOffsets[0] - mRadius < TypeOf<T> {0};
    }
 
    /// Calculate signed distance                                              

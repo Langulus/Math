@@ -15,10 +15,10 @@ namespace Langulus::Math
    ///   Vector component                                                     
    ///                                                                        
    template<CT::DenseNumber T, CT::Dimension D>
-   struct TVectorComponent : public TNumber<T, TVectorComponent<T, D>> {
+   struct TVectorComponent : TNumber<T, TVectorComponent<T, D>> {
+      LANGULUS(TYPED) T;
       using Base = TNumber<T, TVectorComponent<T, D>>;
       using Dimension = D;
-      using MemberType = T;
       using Base::Base;
    };
 

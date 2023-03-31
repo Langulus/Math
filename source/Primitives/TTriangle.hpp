@@ -114,7 +114,7 @@ namespace Langulus::Math
       /// Subdivide triangle                                                  
       ///   @return the four new triangles                                    
       NOD() ::std::array<TTriangle, 4> Subdivide() const noexcept {
-         constexpr MemberType two {2};
+         constexpr TypeOf<T> two {2};
          const T m01 = mABC[0] + (mABC[1] - mABC[0]) / two;
          const T m12 = mABC[1] + (mABC[2] - mABC[1]) / two;
          const T m20 = mABC[2] + (mABC[0] - mABC[2]) / two;

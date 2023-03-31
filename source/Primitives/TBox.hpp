@@ -28,10 +28,10 @@ namespace Langulus::Math
    template<CT::Vector T>
    struct TBox {
       LANGULUS(POD) true;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional box");
 
@@ -58,14 +58,13 @@ namespace Langulus::Math
    ///    \-------------/   <- mRadius from origin of rounded parts        |  
    ///                                                                     |  
    template<CT::Vector T>
-   struct TBoxRounded : public TBox<T> {
+   struct TBoxRounded : TBox<T> {
       using Base = TBox<T>;
       using typename Base::PointType;
-      using typename Base::MemberType;
       using Base::MemberCount;
       using Base::mOffsets;
 
-      MemberType mRadius;
+      TypeOf<T> mRadius;
 
    public:
       NOD() constexpr bool IsDegenerate() const noexcept;

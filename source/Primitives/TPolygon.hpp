@@ -11,7 +11,8 @@
 namespace Langulus::Math
 {
 
-   template<CT::Vector> struct TPolygon;
+   template<CT::Vector>
+   struct TPolygon;
 
    using Polygon2 = TPolygon<Point2>;
    using Polygon3 = TPolygon<Point3>;
@@ -40,8 +41,9 @@ namespace Langulus::Math
    /// A list of coplanar points that form a surface with a complex edge      
    ///                                                                        
    template<CT::Vector T>
-   struct TPolygon : public TAny<T> {
+   struct TPolygon : TAny<T> {
       LANGULUS(DEEP) false;
+      LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Polygon);
 
       using Base = TAny<T>;
@@ -49,12 +51,6 @@ namespace Langulus::Math
       using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
-
-      NOD() TPolygon Clone() const {
-         TPolygon cloned;
-         static_cast<Base&>(cloned) = Base::Clone();
-         return cloned;
-      }
 
       /// Calculate signed distance                                           
       NOD() auto SignedDistance(const T&) const {
