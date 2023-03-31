@@ -48,7 +48,6 @@ namespace Langulus::Math
 
       using Base = TAny<T>;
       using PointType = T;
-      using typename T::MemberType;
       using T::MemberCount;
       static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
 

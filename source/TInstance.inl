@@ -208,7 +208,7 @@ namespace Langulus::Math
    TEMPLATE()
    void TME()::ConstrainPosition(const TME()& limits, const RangeType& range) {
       // Clamp inside object                                            
-      constexpr MemberType half {.5};
+      constexpr ScalarType half {.5};
       const auto thisscale = GetScale() * half;
       const auto otherscale = limits.GetScale() * half;
       const auto innerscale = (otherscale + thisscale) * range.mMin;
