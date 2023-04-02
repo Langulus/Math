@@ -156,6 +156,7 @@ namespace Langulus::Math
    template<CT::Angle T, CT::Dimension D>
    struct TAngle : T {
       LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
+
       using Dimension = D;
       using T::T;
       using T::mValue;

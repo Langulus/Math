@@ -102,8 +102,8 @@ namespace Langulus::Math
       template<CT::DenseNumber ALTT, CT::Dimension D>
       constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;
 
-      NOD() explicit operator Flow::Code() const;
-      NOD() explicit operator Logger::Color() const;
+      operator Flow::Code() const;
+      operator Logger::Color() const;
    };
    #pragma pack(pop)
 

@@ -62,13 +62,11 @@ namespace Langulus::Math
       TNumber& operator = (const T&) noexcept;
       TNumber& operator = (const WRAPPER&) noexcept requires (!CT::Same<T, WRAPPER>);
 
-      template<class TOKEN>
-      Flow::Code Serialize() const;
-
       /// All conversions are explicit only, to preserve type                 
       constexpr explicit operator const T& () const noexcept;
       constexpr explicit operator T& () noexcept;
-      explicit operator Flow::Code() const;
+
+      operator Flow::Code() const;
 
       /// Prefix operators                                                    
       TNumber& operator ++ () noexcept;

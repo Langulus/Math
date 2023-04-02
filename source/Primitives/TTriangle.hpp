@@ -226,6 +226,8 @@ namespace Langulus::Math
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
+
+      using Base::TAny;
    };
 
 
@@ -256,6 +258,8 @@ namespace Langulus::Math
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
+
+      using Base::TAny;
    };
 
 } // namespace Langulus::Math

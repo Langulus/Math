@@ -40,18 +40,33 @@ namespace Langulus::Math
       return *this;
    }
 
-   /// All conversions are explicit only, to preserve type                 
+   /// All conversions are explicit only, to preserve type                    
    TEMPLATE()
    LANGULUS(ALWAYSINLINE)
    constexpr TME()::operator const T& () const noexcept {
       return mValue;
    }
 
-   /// All conversions are explicit only, to preserve type                 
+   /// All conversions are explicit only, to preserve type                    
    TEMPLATE()
    LANGULUS(ALWAYSINLINE)
    constexpr TME()::operator T& () noexcept {
       return mValue;
+   }
+
+   /// Convert from any angle to text                                         
+   TEMPLATE()
+   LANGULUS(ALWAYSINLINE)
+   TME()::operator Flow::Code() const {
+      Flow::Code result;
+      result += MetaOf<W>();
+      result += Flow::Code::OpenScope;
+      if constexpr (CT::Same<T, uint8_t>)
+         result += Flow::Code {static_cast<unsigned int>(mValue)};
+      else
+         result += Flow::Code {mValue};
+      result += Flow::Code::CloseScope;
+      return result;
    }
 
    /// Prefix increment operator                                              
