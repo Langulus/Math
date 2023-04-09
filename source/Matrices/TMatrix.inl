@@ -949,37 +949,37 @@ namespace Langulus::Math
    ///   Iteration                                                            
    ///                                                                        
    TEMPLATE()
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    constexpr typename TME()::ColumnType* TME()::begin() noexcept {
       return mColumns;
    }
 
    TEMPLATE()
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    constexpr typename TME()::ColumnType* TME()::end() noexcept {
       return mColumns + COLUMNS;
    }
 
    TEMPLATE()
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    constexpr typename TME()::ColumnType* TME()::last() noexcept {
       return mColumns + COLUMNS - 1;
    }
 
    TEMPLATE()
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType* TME()::begin() const noexcept {
       return mColumns;
    }
 
    TEMPLATE()
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType* TME()::end() const noexcept {
       return mColumns + COLUMNS;
    }
 
    TEMPLATE()
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType* TME()::last() const noexcept {
       return mColumns + COLUMNS - 1;
    }

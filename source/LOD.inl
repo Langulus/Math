@@ -12,7 +12,7 @@ namespace Langulus::Math
 {
 
    /// LOD state construction                                                 
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    LOD::LOD(const Level& level, const Matrix4& view, const Matrix4& proj)
       : mLevel {level}
       , mView {view}
@@ -20,7 +20,7 @@ namespace Langulus::Math
       , mFrustum {mViewInverted * proj} {}
 
    /// Create an identity LOD state                                           
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    void LOD::Transform() {
       mModel = {};
       mModelView = mViewInverted;
@@ -33,7 +33,7 @@ namespace Langulus::Math
    /// Recalculate LOD state by specifying the model matrix                   
    ///   @attention assumes the view matrices have been set prior             
    ///   @param model - the model transformation                              
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    void LOD::Transform(const Matrix4& model) {
       mModel = model;
       mModelView = mModel * mViewInverted;
@@ -56,7 +56,7 @@ namespace Langulus::Math
    /// Get the distance from the camera to the model's bounding sphere        
    /// surface, divided by the bounding sphere size                           
    ///   @return the distance                                                 
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    Real LOD::GetNormalizedDistance() const noexcept {
       return mDistanceToSurface / mRadius;
    }
@@ -70,14 +70,14 @@ namespace Langulus::Math
    /// If index is above zero, then we're observing too close                 
    /// At zero we're observing the default quality asset                      
    ///   @return the LOD index                                                
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    Real LOD::GetIndex() const noexcept {
       return mLODIndex;
    }
 
    /// Get LOD index in the range [0;IndexCount)                              
    ///   @return the absolute index                                           
-   LANGULUS(ALWAYSINLINE)
+   LANGULUS(INLINED)
    AbsoluteLODIndex LOD::GetAbsoluteIndex() const noexcept {
       return static_cast<AbsoluteLODIndex>(
          static_cast<LODIndex>(mLODIndex) - MinIndex
