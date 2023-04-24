@@ -379,11 +379,11 @@ namespace Langulus::Math
 
       private:
          /// Commit the changes                                               
-         template<Offset FROM, Offset TO, Offset... TAIL>
          void Commit() noexcept {
-            mSource.mArray[TO] = mArray[FROM];
-            if constexpr (sizeof...(TAIL))
-               Commit<FROM + 1, TAIL...>();
+            constexpr Offset sequence [] {I...};
+            auto from = mArray;
+            for (auto& to : sequence)
+               mSource.mArray[to] = *(++from);
          }
 
       public:
@@ -395,7 +395,7 @@ namespace Langulus::Math
             : mSource {source} {}
 
          ~TProxyVector() noexcept {
-            Commit<0, I...>();
+            Commit();
          }
 
          using Base::operator =;
