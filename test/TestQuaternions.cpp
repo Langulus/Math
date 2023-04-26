@@ -1,4 +1,5 @@
 #include "Main.hpp"
+#include <Math/Quaternions.hpp>
 #include <catch2/catch.hpp>
 
 TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {

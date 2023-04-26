@@ -1,4 +1,10 @@
 ﻿#include "Main.hpp"
+#include <Flow/Verbs/Add.hpp>
+#include <Flow/Verbs/Exponent.hpp>
+#include <Flow/Verbs/Select.hpp>
+#include <Flow/Verbs/Multiply.hpp>
+#include <Flow/Verbs/Interpret.hpp>
+#include <Math/Vectors.hpp>
 #include <catch2/catch.hpp>
 
 /// See https://github.com/catchorg/Catch2/blob/devel/docs/tostring.md        

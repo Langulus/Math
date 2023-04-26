@@ -1,4 +1,5 @@
 #include "Main.hpp"
+#include <Math/Vectors.hpp>
 #include <catch2/catch.hpp>
 
 TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {

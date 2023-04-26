@@ -6,6 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
+#include <Flow/Verb.hpp>
 #include "TNumber.hpp"
 
 namespace Langulus::Math

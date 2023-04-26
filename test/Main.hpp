@@ -1,5 +1,5 @@
 #pragma once
-#include <LangulusMath.hpp>
+#include <Math/Common.hpp>
 
 using namespace ::Langulus;
 using namespace ::Langulus::Anyness;

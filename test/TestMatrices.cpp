@@ -1,4 +1,5 @@
 #include "Main.hpp"
+#include <Math/Matrices.hpp>
 #include <catch2/catch.hpp>
 
 TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
