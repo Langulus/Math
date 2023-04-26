@@ -39,9 +39,6 @@ namespace Langulus::Verbs
 namespace Langulus::Math
 {
 
-   using LevelRange = TRange<Level>;
-
-
    ///                                                                        
    ///   SPATIAL INSTANCE                                                     
    ///                                                                        

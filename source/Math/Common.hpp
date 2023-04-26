@@ -6,10 +6,9 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include <LangulusRTTI.hpp>
-#include <LangulusSIMD.hpp>
-#include <LangulusAnyness.hpp>
-#include <LangulusFlow.hpp>
+#include <Core/Exceptions.hpp>
+#include <Anyness/Trait.hpp>
+#include <Flow/Flow.hpp>
 
 #if defined(LANGULUS_EXPORT_ALL) || defined(LANGULUS_EXPORT_MATH)
    #define LANGULUS_API_MATH() LANGULUS_EXPORT()
@@ -21,7 +20,7 @@ namespace Langulus::Math
 {
 
    using namespace ::Langulus::Anyness;
-   using ::Langulus::Flow::Verb;
+   using Flow::Verb;
 
 } // namespace Langulus::Math
 
@@ -61,3 +60,6 @@ LANGULUS_DEFINE_TRAIT(Sampler,
    "Sampler trait, used for sampling surfaces/volumes");
 LANGULUS_DEFINE_TRAIT(Level,
    "Level of an instance");
+
+/// Make the rest of the code aware, that Langulus::Math has been included    
+#define LANGULUS_LIBRARY_MATH() 1

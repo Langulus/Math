@@ -41,7 +41,7 @@ aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/source/Vectors LANGULUS_MATH_SO
 add_library(Langulus.Math INTERFACE)
 
 target_include_directories(Langulus.Math
-    INTERFACE   include
+    INTERFACE   source
 )
 
 target_link_libraries(Langulus.Math 

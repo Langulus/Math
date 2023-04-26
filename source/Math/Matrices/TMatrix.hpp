@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Vectors.hpp"
+#include "../Numbers/TAngle.hpp"
 
 #define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
 #define TMAT(a) TMatrix<a##T, a##C, a##R>

@@ -8,6 +8,7 @@
 #pragma once
 #include "TVector.hpp"
 #include "../Numbers/TVectorComponent.hpp"
+#include <SIMD/SIMD.hpp>
 
 namespace Langulus::Math
 {

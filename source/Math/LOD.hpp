@@ -7,6 +7,8 @@
 ///                                                                           
 #pragma once
 #include "Numbers/Level.hpp"
+#include "Matrices/TMatrix.hpp"
+#include "Primitives/TFrustum.hpp"
 
 namespace Langulus::Math
 {
