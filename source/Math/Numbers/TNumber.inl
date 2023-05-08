@@ -7,57 +7,66 @@
 ///                                                                           
 #pragma once
 #include <Flow/Verb.hpp>
+#include <Flow/Code.hpp>
 #include "TNumber.hpp"
 
 namespace Langulus::Math
 {
-   TEMPLATE()
-   LANGULUS(INLINED)
+
+   /// Construct from fundamental number                                      
+   ///   @param a - value to set                                              
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TNumber(const T& a) noexcept
       : mValue {a} {}
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   /// Construct from wrapper number                                          
+   ///   @param a - value to set                                              
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TNumber(const W& a) noexcept requires (!CT::Same<T, W>)
       : mValue {a.mValue} {}
 
+   /// Converting constructor                                                 
+   ///   @tparam N - type of number to convert from                           
+   ///   @param a - value to set                                              
    TEMPLATE()
    template<class N>
    LANGULUS(INLINED)
    constexpr TME()::TNumber(const N& a) noexcept requires CT::Convertible<N, T>
       : mValue {static_cast<T>(a)} {}
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   /// Copy from fundamental number                                           
+   ///   @param a - value to set                                              
+   ///   @return a reference to this number                                   
+   TEMPLATE() LANGULUS(INLINED)
    TME()& TME()::operator = (const T& a) noexcept {
       mValue = a;
       return *this;
    }
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   /// Copy from wrapper number                                               
+   ///   @param a - value to set                                              
+   ///   @return a reference to this number                                   
+   TEMPLATE() LANGULUS(INLINED)
    TME()& TME()::operator = (const W& a) noexcept requires (!CT::Same<T, W>) {
       mValue = a.mValue;
       return *this;
    }
 
    /// All conversions are explicit only, to preserve type                    
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::operator const T& () const noexcept {
       return mValue;
    }
 
    /// All conversions are explicit only, to preserve type                    
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::operator T& () noexcept {
       return mValue;
    }
 
-   /// Convert from any angle to text                                         
-   TEMPLATE()
-   LANGULUS(INLINED)
+   /// Stringify the number                                                   
+   ///   @return a string                                                     
+   TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       Flow::Code result;
       result += MetaOf<W>();
@@ -72,8 +81,7 @@ namespace Langulus::Math
 
    /// Prefix increment operator                                              
    ///   @return the modified value                                           
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    TME()& TME()::operator ++ () noexcept {
       ++mValue;
       return *this;
@@ -81,8 +89,7 @@ namespace Langulus::Math
 
    /// Prefix decrement operator                                              
    ///   @return the modified value                                           
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    TME()& TME()::operator -- () noexcept {
       --mValue;
       return *this;
@@ -90,8 +97,7 @@ namespace Langulus::Math
 
    /// Suffix increment operator                                              
    ///   @return the previous value                                           
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    TME() TME()::operator ++ (int) noexcept {
       const auto backup = *this;
       operator ++ ();
@@ -100,22 +106,25 @@ namespace Langulus::Math
 
    /// Suffix decrement operator                                              
    ///   @return the previous value                                           
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    TME() TME()::operator -- (int) noexcept {
       const auto backup = *this;
       operator -- ();
       return backup;
    }
 
-   /// Returns an inverted number                                             
+   /// Returns an inverted number (standing operator)                         
+   ///   @param a - number to invert                                          
    template<TARGS(RHS)>
    LANGULUS(INLINED)
    constexpr auto operator - (const TNUM(RHS)& a) noexcept requires CT::Signed<RHST> {
       return TNUM(RHS) {-a.mValue};
    }
 
-   /// Returns the sum of two numbers                                         
+   /// Returns the sum of two numbers (standing operator)                     
+   ///   @param lhs - left number                                             
+   ///   @param rhs - right number                                            
+   ///   @return the addition, picking a lossless type between the two        
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
    constexpr auto operator + (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
@@ -145,7 +154,10 @@ namespace Langulus::Math
       return lhs + rhs.mValue;
    }
 
-   /// Returns the difference of two numbers                                  
+   /// Returns the difference of two numbers (standing operator)              
+   ///   @param lhs - left number                                             
+   ///   @param rhs - right number                                            
+   ///   @return the difference, picking a lossless type between the two      
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
    constexpr auto operator - (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
@@ -164,7 +176,10 @@ namespace Langulus::Math
       return lhs - rhs.mValue;
    }
 
-   /// Returns the product of two numbers                                     
+   /// Returns the product of two numbers (standing operator)                 
+   ///   @param lhs - left number                                             
+   ///   @param rhs - right number                                            
+   ///   @return the product, picking a lossless type between the two         
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
    constexpr auto operator * (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
@@ -200,7 +215,10 @@ namespace Langulus::Math
          return RHSW {static_cast<RHST>(lhs * rhs.mValue)};
    }
 
-   /// Returns the division of two numbers                                    
+   /// Returns the division of two numbers (standing operator)                
+   ///   @param lhs - left number                                             
+   ///   @param rhs - right number                                            
+   ///   @return the division, picking a lossless type between the two        
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
    constexpr auto operator / (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) requires CT::Same<LHSW, RHSW> {
@@ -237,7 +255,10 @@ namespace Langulus::Math
    }
    
    /// Returns the remainder (a.k.a. modulation) of a division                
-   /// We augment c++ builtin types, by providing % operators for Real, too   
+   /// We augment c++ builtin types, by providing % operators for Reals, too  
+   ///   @param lhs - left number                                             
+   ///   @param rhs - right number                                            
+   ///   @return the modulo, picking a lossless type between the two          
    template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
    constexpr auto operator % (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) requires CT::Same<LHSW, RHSW> {
