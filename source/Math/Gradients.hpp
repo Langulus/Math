@@ -93,8 +93,8 @@ namespace Langulus::Math
 
       /// Manual construction via a variadic head-tail                        
       ///   @param arguments... - list of states                              
-      template<class... A>
-      constexpr TGradient(A&&... arguments) noexcept requires (!CT::Semantic<A...> && !CT::Deep<A...>)
+      template<CT::NotSemantic... A>
+      constexpr TGradient(A&&... arguments) noexcept
          : mBuffer {Forward<A>(arguments)...} { }
 
       /// Access values in order of relevance (current value is at 0)         
