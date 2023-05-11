@@ -92,9 +92,19 @@ namespace Langulus::Math
       using T::T;
       using T::mArray;
 
+   private:
+      static constexpr auto DefaultClassName = RTTI::LastNameOf<TColor>();
+      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
+      static constexpr ClassName GenerateClassName() noexcept;
+      static constexpr ClassName GeneratedClassName = GenerateClassName();
+
+   public:
+      LANGULUS(NAME) GeneratedClassName.data();
+
       LANGULUS_BASES(
          A::ColorOfSize<MemberCount>, 
-         A::ColorOfType<TypeOf<T>>
+         A::ColorOfType<TypeOf<T>>,
+         T
       );
 
       constexpr TColor(Logger::Color);

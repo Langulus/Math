@@ -7,10 +7,50 @@
 ///                                                                           
 #pragma once
 #include "TColor.hpp"
+
 #define TEMPLATE() template<CT::Vector T>
 
 namespace Langulus::Math
 {
+   
+   /// Pick a shorter token, based on member count and type                   
+   /// This should be made more elegant when true constexpr string literals   
+   /// become available in the standard                                       
+   TEMPLATE()
+   constexpr typename TColor<T>::ClassName TColor<T>::GenerateClassName() noexcept {
+      ClassName name {};
+      ::std::size_t offset {};
+
+      // Write prefix                                                   
+      switch (MemberCount) {
+      case 1:
+         for (auto i : "Grayscale")
+            name[offset++] = i;
+         break;
+      case 2:
+         for (auto i : "GrayscaleA")
+            name[offset++] = i;
+         break;
+      case 3:
+         for (auto i : "RGB")
+            name[offset++] = i;
+         break;
+      case 4:
+         for (auto i : "RGBA")
+            name[offset++] = i;
+         break;
+      default:
+         for (auto i : DefaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write suffix                                                   
+      --offset;
+      for (auto i : TypeSuffix<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
 
    /// Covert a console color to a 3-component color                          
    ///   @param from - the console color to create from                       

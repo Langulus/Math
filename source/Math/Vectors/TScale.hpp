@@ -11,9 +11,78 @@
 namespace Langulus::Math
 {
 
-   using Scale3 = TScale<TVector<Real, 3, 1>>;
-   using Scale2 = TScale<TVector<Real, 2, 1>>;
-   using Scale = Scale3;
+   template<CT::ScalarOrVector T>
+   struct TScale;
+
+   using Scale1      = TScale<TVector<Real, 1, 1>>;
+   using Scale1f     = TScale<TVector<Float, 1, 1>>;
+   using Scale1d     = TScale<TVector<Double, 1, 1>>;
+   using Scale1i     = TScale<TVector<signed, 1, 1>>;
+   using Scale1u     = TScale<TVector<unsigned, 1, 1>>;
+   using Scale1i8    = TScale<TVector<::std::int8_t, 1, 1>>;
+   using Scale1u8    = TScale<TVector<uint8, 1, 1>>;
+   using Scale1i16   = TScale<TVector<::std::int16_t, 1, 1>>;
+   using Scale1u16   = TScale<TVector<::std::uint16_t, 1, 1>>;
+   using Scale1i32   = TScale<TVector<::std::int32_t, 1, 1>>;
+   using Scale1u32   = TScale<TVector<::std::uint32_t, 1, 1>>;
+   using Scale1i64   = TScale<TVector<::std::int64_t, 1, 1>>;
+   using Scale1u64   = TScale<TVector<::std::uint64_t, 1, 1>>;
+
+   using Scale2      = TScale<TVector<Real, 2, 1>>;
+   using Scale2f     = TScale<TVector<Float, 2, 1>>;
+   using Scale2d     = TScale<TVector<Double, 2, 1>>;
+   using Scale2i     = TScale<TVector<signed, 2, 1>>;
+   using Scale2u     = TScale<TVector<unsigned, 2, 1>>;
+   using Scale2i8    = TScale<TVector<::std::int8_t, 2, 1>>;
+   using Scale2u8    = TScale<TVector<uint8, 2, 1>>;
+   using Scale2i16   = TScale<TVector<::std::int16_t, 2, 1>>;
+   using Scale2u16   = TScale<TVector<::std::uint16_t, 2, 1>>;
+   using Scale2i32   = TScale<TVector<::std::int32_t, 2, 1>>;
+   using Scale2u32   = TScale<TVector<::std::uint32_t, 2, 1>>;
+   using Scale2i64   = TScale<TVector<::std::int64_t, 2, 1>>;
+   using Scale2u64   = TScale<TVector<::std::uint64_t, 2, 1>>;
+
+   using Scale3      = TScale<TVector<Real, 3, 1>>;
+   using Scale3f     = TScale<TVector<Float, 3, 1>>;
+   using Scale3d     = TScale<TVector<Double, 3, 1>>;
+   using Scale3i     = TScale<TVector<signed, 3, 1>>;
+   using Scale3u     = TScale<TVector<unsigned, 3, 1>>;
+   using Scale3i8    = TScale<TVector<::std::int8_t, 3, 1>>;
+   using Scale3u8    = TScale<TVector<uint8, 3, 1>>;
+   using Scale3i16   = TScale<TVector<::std::int16_t, 3, 1>>;
+   using Scale3u16   = TScale<TVector<::std::uint16_t, 3, 1>>;
+   using Scale3i32   = TScale<TVector<::std::int32_t, 3, 1>>;
+   using Scale3u32   = TScale<TVector<::std::uint32_t, 3, 1>>;
+   using Scale3i64   = TScale<TVector<::std::int64_t, 3, 1>>;
+   using Scale3u64   = TScale<TVector<::std::uint64_t, 3, 1>>;
+
+   using Scale4      = TScale<TVector<Real, 4, 1>>;
+   using Scale4f     = TScale<TVector<Float, 4, 1>>;
+   using Scale4d     = TScale<TVector<Double, 4, 1>>;
+   using Scale4i     = TScale<TVector<signed, 4, 1>>;
+   using Scale4u     = TScale<TVector<unsigned, 4, 1>>;
+   using Scale4i8    = TScale<TVector<::std::int8_t, 4, 1>>;
+   using Scale4u8    = TScale<TVector<uint8, 4, 1>>;
+   using Scale4i16   = TScale<TVector<::std::int16_t, 4, 1>>;
+   using Scale4u16   = TScale<TVector<::std::uint16_t, 4, 1>>;
+   using Scale4i32   = TScale<TVector<::std::int32_t, 4, 1>>;
+   using Scale4u32   = TScale<TVector<::std::uint32_t, 4, 1>>;
+   using Scale4i64   = TScale<TVector<::std::int64_t, 4, 1>>;
+   using Scale4u64   = TScale<TVector<::std::uint64_t, 4, 1>>;
+
+   using Scale       = Scale3;
+   using Scalef      = Scale3f;
+   using Scaled      = Scale3d;
+   using Scalei      = Scale3i;
+   using Scaleu      = Scale3u;
+   using Scalei8     = Scale3i8;
+   using Scaleu8     = Scale3u8;
+   using Scalei16    = Scale3i16;
+   using Scaleu16    = Scale3u16;
+   using Scalei32    = Scale3i32;
+   using Scaleu32    = Scale3u32;
+   using Scalei64    = Scale3i64;
+   using Scaleu64    = Scale3u64;
 
 } // namespace Langulus::Math
 
@@ -62,13 +131,22 @@ namespace Langulus::Math
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(
          A::ScaleOfSize<MemberCount>, 
-         A::ScaleOfType<TypeOf<T>>
+         A::ScaleOfType<TypeOf<T>>,
+         T
       );
 
       static_assert(T::DefaultMember == TypeOf<T> {1},
          "Scaling type does not default to 1");
 
+   private:
+      static constexpr auto DefaultClassName = RTTI::LastNameOf<TScale>();
+      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
+      static constexpr ClassName GenerateClassName() noexcept;
+      static constexpr ClassName GeneratedClassName = GenerateClassName();
+
    public:
+      LANGULUS(NAME) GeneratedClassName.data();
+
       using T::T;
       using T::mArray;
 
@@ -79,3 +157,5 @@ namespace Langulus::Math
    };
 
 } // namespace Langulus::Math
+
+#include "TScale.inl"

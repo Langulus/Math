@@ -25,66 +25,75 @@ namespace Langulus::Math
    template<CT::DenseNumber T, Count C, int DEFAULT = 0>
    struct TVector;
 
-   template<CT::Vector> struct TForce;
-   template<CT::Vector> struct TNormal;
-   template<CT::ScalarOrVector> struct TSampler;
-   template<CT::ScalarOrVector> struct TScale;
+   using Vec1     = TVector<Real, 1>;
+   using Vec1f    = TVector<Float, 1>;
+   using Vec1d    = TVector<Double, 1>;
+   using Vec1i    = TVector<signed, 1>;
+   using Vec1u    = TVector<unsigned, 1>;
+   using Vec1i8   = TVector<::std::int8_t, 1>;
+   using Vec1u8   = TVector<uint8, 1>;
+   using Vec1i16  = TVector<::std::int16_t, 1>;
+   using Vec1u16  = TVector<::std::uint16_t, 1>;
+   using Vec1i32  = TVector<::std::int32_t, 1>;
+   using Vec1u32  = TVector<::std::uint32_t, 1>;
+   using Vec1i64  = TVector<::std::int64_t, 1>;
+   using Vec1u64  = TVector<::std::uint64_t, 1>;
 
-   using Vec1 = TVector<Real, 1>;
-   using Vec1f = TVector<Float, 1>;
-   using Vec1d = TVector<Double, 1>;
-   using Vec1i = TVector<signed, 1>;
-   using Vec1u = TVector<unsigned, 1>;
-   using Vec1i8 = TVector<::std::int8_t, 1>;
-   using Vec1u8 = TVector<uint8, 1>;
-   using Vec1i16 = TVector<::std::int16_t, 1>;
-   using Vec1u16 = TVector<::std::uint16_t, 1>;
-   using Vec1i32 = TVector<::std::int32_t, 1>;
-   using Vec1u32 = TVector<::std::uint32_t, 1>;
-   using Vec1i64 = TVector<::std::int64_t, 1>;
-   using Vec1u64 = TVector<::std::uint64_t, 1>;
+   using Vec2     = TVector<Real, 2>;
+   using Vec2f    = TVector<Float, 2>;
+   using Vec2d    = TVector<Double, 2>;
+   using Vec2i    = TVector<signed, 2>;
+   using Vec2u    = TVector<unsigned, 2>;
+   using Vec2i8   = TVector<::std::int8_t, 2>;
+   using Vec2u8   = TVector<uint8, 2>;
+   using Vec2i16  = TVector<::std::int16_t, 2>;
+   using Vec2u16  = TVector<::std::uint16_t, 2>;
+   using Vec2i32  = TVector<::std::int32_t, 2>;
+   using Vec2u32  = TVector<::std::uint32_t, 2>;
+   using Vec2i64  = TVector<::std::int64_t, 2>;
+   using Vec2u64  = TVector<::std::uint64_t, 2>;
 
-   using Vec2 = TVector<Real, 2>;
-   using Vec2f = TVector<Float, 2>;
-   using Vec2d = TVector<Double, 2>;
-   using Vec2i = TVector<signed, 2>;
-   using Vec2u = TVector<unsigned, 2>;
-   using Vec2i8 = TVector<::std::int8_t, 2>;
-   using Vec2u8 = TVector<uint8, 2>;
-   using Vec2i16 = TVector<::std::int16_t, 2>;
-   using Vec2u16 = TVector<::std::uint16_t, 2>;
-   using Vec2i32 = TVector<::std::int32_t, 2>;
-   using Vec2u32 = TVector<::std::uint32_t, 2>;
-   using Vec2i64 = TVector<::std::int64_t, 2>;
-   using Vec2u64 = TVector<::std::uint64_t, 2>;
+   using Vec3     = TVector<Real, 3>;
+   using Vec3f    = TVector<Float, 3>;
+   using Vec3d    = TVector<Double, 3>;
+   using Vec3i    = TVector<signed, 3>;
+   using Vec3u    = TVector<unsigned, 3>;
+   using Vec3i8   = TVector<::std::int8_t, 3>;
+   using Vec3u8   = TVector<uint8, 3>;
+   using Vec3i16  = TVector<::std::int16_t, 3>;
+   using Vec3u16  = TVector<::std::uint16_t, 3>;
+   using Vec3i32  = TVector<::std::int32_t, 3>;
+   using Vec3u32  = TVector<::std::uint32_t, 3>;
+   using Vec3i64  = TVector<::std::int64_t, 3>;
+   using Vec3u64  = TVector<::std::uint64_t, 3>;
 
-   using Vec3 = TVector<Real, 3>;
-   using Vec3f = TVector<Float, 3>;
-   using Vec3d = TVector<Double, 3>;
-   using Vec3i = TVector<signed, 3>;
-   using Vec3u = TVector<unsigned, 3>;
-   using Vec3i8 = TVector<::std::int8_t, 3>;
-   using Vec3u8 = TVector<uint8, 3>;
-   using Vec3i16 = TVector<::std::int16_t, 3>;
-   using Vec3u16 = TVector<::std::uint16_t, 3>;
-   using Vec3i32 = TVector<::std::int32_t, 3>;
-   using Vec3u32 = TVector<::std::uint32_t, 3>;
-   using Vec3i64 = TVector<::std::int64_t, 3>;
-   using Vec3u64 = TVector<::std::uint64_t, 3>;
-
-   using Vec4 = TVector<Real, 4>;
-   using Vec4f = TVector<Float, 4>;
-   using Vec4d = TVector<Double, 4>;
-   using Vec4i = TVector<signed, 4>;
-   using Vec4u = TVector<unsigned, 4>;
-   using Vec4i8 = TVector<::std::int8_t, 4>;
-   using Vec4u8 = TVector<uint8, 4>;
-   using Vec4i16 = TVector<::std::int16_t, 4>;
-   using Vec4u16 = TVector<::std::uint16_t, 4>;
-   using Vec4i32 = TVector<::std::int32_t, 4>;
-   using Vec4u32 = TVector<::std::uint32_t, 4>;
-   using Vec4i64 = TVector<::std::int64_t, 4>;
-   using Vec4u64 = TVector<::std::uint64_t, 4>;
+   using Vec4     = TVector<Real, 4>;
+   using Vec4f    = TVector<Float, 4>;
+   using Vec4d    = TVector<Double, 4>;
+   using Vec4i    = TVector<signed, 4>;
+   using Vec4u    = TVector<unsigned, 4>;
+   using Vec4i8   = TVector<::std::int8_t, 4>;
+   using Vec4u8   = TVector<uint8, 4>;
+   using Vec4i16  = TVector<::std::int16_t, 4>;
+   using Vec4u16  = TVector<::std::uint16_t, 4>;
+   using Vec4i32  = TVector<::std::int32_t, 4>;
+   using Vec4u32  = TVector<::std::uint32_t, 4>;
+   using Vec4i64  = TVector<::std::int64_t, 4>;
+   using Vec4u64  = TVector<::std::uint64_t, 4>;
+   
+   using Vec      = Vec4;
+   using Vecf     = Vec4f;
+   using Vecd     = Vec4d;
+   using Veci     = Vec4i;
+   using Vecu     = Vec4u;
+   using Veci8    = Vec4i8;
+   using Vecu8    = Vec4u8;
+   using Veci16   = Vec4i16;
+   using Vecu16   = Vec4u16;
+   using Veci32   = Vec4i32;
+   using Vecu32   = Vec4u32;
+   using Veci64   = Vec4i64;
+   using Vecu64   = Vec4u64;
 
 } // namespace Langulus::Math
 
@@ -154,7 +163,11 @@ namespace Langulus::Math
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
       LANGULUS(TYPED) T;
-      LANGULUS_BASES(A::VectorOfSize<S>, A::VectorOfType<T>, T);
+      LANGULUS_BASES(
+         A::VectorOfSize<S>, 
+         A::VectorOfType<T>,
+         T
+      );
 
    public:
       constexpr TVector() noexcept;
