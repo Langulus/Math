@@ -1,4 +1,4 @@
-project(Langulus::Math::Test)
+project(LangulusMathTest)
 
 add_executable(LangulusMathTest
     Main.cpp
@@ -16,7 +16,7 @@ target_link_libraries(LangulusMathTest
 )
 
 add_test(
-	NAME		Langulus::Math::Test
+	NAME		LangulusMathTest
 	COMMAND		LangulusMathTest
 )
 
