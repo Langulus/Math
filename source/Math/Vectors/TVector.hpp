@@ -11,11 +11,6 @@
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
 
-#define TARGS(a) CT::DenseNumber a##T, Count a##S, int a##D
-#define TVEC(a) TVector<a##T, a##S, a##D>
-#define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
-#define TME() TVector<T, S, DEFAULT>
-
 namespace Langulus::Math
 {
 
@@ -128,6 +123,11 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
+#define TARGS(a) CT::DenseNumber a##T, Count a##S, int a##D
+#define TVEC(a) TVector<a##T, a##S, a##D>
+#define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
+#define TME() TVector<T, S, DEFAULT>
+
 namespace Langulus::Math
 {
 
@@ -168,6 +168,7 @@ namespace Langulus::Math
          A::VectorOfType<T>,
          T
       );
+      LANGULUS_CONVERSIONS(Flow::Code);
 
    public:
       constexpr TVector() noexcept;
@@ -189,6 +190,8 @@ namespace Langulus::Math
 
       template<CT::DenseNumber N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
+
+      TVector(const Descriptor&);
 
       template<class TOKEN>
       Flow::Code Serialize() const;
@@ -619,9 +622,9 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
-#include "TVector.inl"
-
 #undef TARGS
 #undef TVEC
 #undef TEMPLATE
 #undef TME
+
+#include "TVector.inl"

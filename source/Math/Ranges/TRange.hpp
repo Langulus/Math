@@ -219,10 +219,6 @@ namespace Langulus::Math
          return mMin == a.mMin && mMax == a.mMax;
       }
 
-      NOD() constexpr bool operator != (const TRange& a) const noexcept {
-         return !(*this == a);
-      }
-
       NOD() constexpr bool operator >= (const TRange& a) const noexcept {
          return mMin >= a.mMin || mMax >= a.mMax;
       }

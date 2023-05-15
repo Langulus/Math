@@ -1,24 +1,23 @@
-project(Langulus_Test_Math)
+project(Langulus::Math::Test)
 
-# Configure Catch2 library
-download_project(
-	PROJ                Catch2
-	GIT_REPOSITORY      https://github.com/catchorg/Catch2.git
-	GIT_TAG             v2.x
-	UPDATE_DISCONNECTED 1
-)
-add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
-
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} LANGULUS_MATH_TEST_SOURCES)
-add_executable(Test.Math ${LANGULUS_MATH_TEST_SOURCES})
-
-target_link_libraries(Test.Math
-	PRIVATE		Langulus.Math
-				Catch2
+add_executable(LangulusMathTest
+    Main.cpp
+    TestFlow.cpp
+    TestFunctions.cpp
+    TestMatrices.cpp
+    TestQuaternions.cpp
+    TestTypeCorrectness.cpp
+    TestVectors.cpp
 )
 
-if(MSVC)
-	target_compile_options(Test.Math PRIVATE /bigobj)
-endif()
+target_link_libraries(LangulusMathTest
+    PRIVATE     LangulusMath
+                Catch2
+)
 
-add_test(NAME Test.Math COMMAND Test.Math)
+add_test(
+	NAME		Langulus::Math::Test
+	COMMAND		LangulusMathTest
+)
+
+langulus_copy_dlls(LangulusMathTest ON LangulusMathTest)

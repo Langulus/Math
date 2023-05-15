@@ -9,6 +9,12 @@
 #include "TVector.hpp"
 #include "../Numbers/TVectorComponent.hpp"
 #include <SIMD/SIMD.hpp>
+#include <Flow/Verbs/Interpret.hpp>
+
+#define TARGS(a) CT::DenseNumber a##T, Count a##S, int a##D
+#define TVEC(a) TVector<a##T, a##S, a##D>
+#define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
+#define TME() TVector<T, S, DEFAULT>
 
 namespace Langulus::Math
 {
@@ -161,6 +167,66 @@ namespace Langulus::Math
       : TVector {} {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
       mArray[D::Index] = Adapt(a.mValue);
+   }
+   
+   /// Construct from a descriptor                                            
+   ///   @param desc - the descriptor to scan                                 
+   TEMPLATE()
+   TME()::TVector(const Descriptor& desc) {
+      LANGULUS_ASSUME(UserAssumes, !desc.IsEmpty(),
+         "Empty descriptor for TVector");
+
+      // Scan descriptor contents                                       
+      Offset initialized = 0;
+      if (!desc.ForEach([&](const T& element) {
+         // Most simple case                                            
+         mArray[initialized++] = element;
+      })) {
+         // Do a more indepth analysis                                  
+         if (desc.CastsTo<A::Number>()) {
+            // Initializing with 'some sort' of number(s)               
+            TODO();
+         }
+         else if (desc.CastsTo<A::Vector>()) {
+            // Initializing with 'some sort' of vector(s)               
+            TODO();
+         }
+         else if (desc.IsDeep()) {
+            // Initialize via complex sequence of numbers and vectors   
+            TODO();
+         }
+         else {
+            Logger::Error(
+               "Unexpected argument for TVector construction: ",
+               static_cast<const Any&>(desc));
+            LANGULUS_THROW(Construct,
+               "Bad TVector descriptor argument");
+         }
+      }
+
+      switch (initialized) {
+      case 0:
+         // Nothing was initialized. This is always an error in the     
+         // context of the descriptor-constructor. If descriptor was    
+         // empty, the default constructor would've been explicitly     
+         // called, instead of this one. This way we can differentiate  
+         // whether or not a vector object was successfully initialized.
+         Logger::Error(
+            "Bad TVector constructor, nothing was initialized: ",
+            static_cast<const Any&>(desc));
+         LANGULUS_THROW(Construct,
+            "Bad TVector descriptor");
+      case 1:
+         // Only one provided element is handled as scalar constructor  
+         for (; initialized < S; ++initialized)
+            mArray[initialized] = mArray[0];
+         break;
+      default:
+         // Initialize unavailable elements to the vector's default     
+         for (; initialized < S; ++initialized)
+            mArray[initialized] = static_cast<T>(DEFAULT);
+         break;
+      }
    }
 
    /// Write the body of the vector (reused in vector specializations)        
@@ -1254,3 +1320,7 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
+#undef TARGS
+#undef TVEC
+#undef TEMPLATE
+#undef TME
