@@ -178,14 +178,67 @@ namespace Langulus::Math
 
       // Scan descriptor contents                                       
       Offset initialized = 0;
-      if (!desc.ForEach([&](const T& element) {
+      if (!desc.ForEach([&](const T& element) noexcept {
          // Most simple case                                            
          mArray[initialized++] = element;
       })) {
          // Do a more indepth analysis                                  
          if (desc.CastsTo<A::Number>()) {
             // Initializing with 'some sort' of number(s)               
-            TODO();
+            desc.ForEach(
+               // Most common types of numbers come first               
+               [&](const Real& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const int& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const long& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const unsigned int& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const unsigned long& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               // All the rest                                          
+               [&](const float& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const double& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+
+               [&](const ::std::int8_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::uint8_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::int16_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::uint16_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::int32_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::uint32_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::int64_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+               [&](const ::std::uint64_t& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               },
+                  
+               [&](const bool& n) noexcept {
+                  mArray[initialized++] = static_cast<T>(n);
+               }
+            );
          }
          else if (desc.CastsTo<A::Vector>()) {
             // Initializing with 'some sort' of vector(s)               
