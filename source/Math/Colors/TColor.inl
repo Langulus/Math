@@ -47,8 +47,10 @@ namespace Langulus::Math
 
       // Write suffix                                                   
       --offset;
-      for (auto i : TypeSuffix<TypeOf<T>>())
-         name[offset++] = i;
+      if constexpr (!CT::SameAsOneOf<TypeOf<T>, uint8, ::std::uint8_t>) {
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+      }
       return name;
    }
 
@@ -212,7 +214,19 @@ namespace Langulus::Math
    /// Serialize the color to flow code                                       
    TEMPLATE()
    TColor<T>::operator Flow::Code() const {
-      return T::template Serialize<TColor>();
+      if constexpr (CT::SameAsOneOf<TypeOf<T>, uint8, ::std::uint8_t>) {
+         // Write as hex, if standard unsigned 8 bit color component    
+         Flow::Code result;
+         result += MetaOf<TColor>();
+         result += Flow::Code::OpenScope;
+         auto bytes = reinterpret_cast<const Byte*>(mArray);
+         const auto bytesEnd = bytes + sizeof(mArray);
+         while (bytes != bytesEnd)
+            Flow::Serial::ToHex(*(bytes++), result);
+         result += Flow::Code::CloseScope;
+         return Abandon(result);
+      }
+      else return T::template Serialize<TColor>();
    }
 
    /// Covert to a console color                                              

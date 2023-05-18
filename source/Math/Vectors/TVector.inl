@@ -42,7 +42,7 @@ namespace Langulus::Math
       name[offset++] = '0' + S;
 
       // Write suffix                                                   
-      for (auto i : TypeSuffix<T>())
+      for (auto i : SuffixOf<T>())
          name[offset++] = i;
       return name;
    }
@@ -293,11 +293,8 @@ namespace Langulus::Math
          result += Flow::Code::OpenScope;
       }
 
-      for (Offset i = 0; i < S; ++i) {
-         result += Flow::Code {mArray[i]};
-         if (i < S - 1)
-            result += ", ";
-      }
+      auto data = Block::From(mArray, S);
+      result += Flow::Serialize<Flow::Code>(data);
 
       if constexpr (S > 1 || !CT::Same<TME(), TOKEN>)
          result += Flow::Code::CloseScope;

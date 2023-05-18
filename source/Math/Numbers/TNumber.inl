@@ -6,9 +6,13 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include <Flow/Verb.hpp>
-#include <Flow/Code.hpp>
 #include "TNumber.hpp"
+#include <Flow/Verbs/Interpret.hpp>
+
+#define TARGS(a) CT::Dense a##T, CT::Dense a##W
+#define TNUM(a) TNumber<a##T, a##W>
+#define TEMPLATE() template<CT::Dense T, CT::Dense W>
+#define TME() TNumber<T, W>
 
 namespace Langulus::Math
 {
@@ -69,13 +73,14 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       Flow::Code result;
-      result += MetaOf<W>();
-      result += Flow::Code::OpenScope;
-      if constexpr (CT::Same<T, uint8_t>)
-         result += Flow::Code {static_cast<unsigned int>(mValue)};
-      else
-         result += Flow::Code {mValue};
-      result += Flow::Code::CloseScope;
+      if constexpr (CT::Same<T, W>)
+         result += Flow::Serialize<Flow::Code>(mValue);
+      else {
+         result += MetaOf<W>();
+         result += Flow::Code::OpenScope;
+         result += Flow::Serialize<Flow::Code>(mValue);
+         result += Flow::Code::CloseScope;
+      }
       return result;
    }
 
@@ -567,3 +572,8 @@ namespace Langulus::Math
    }
 
 } // namespace Langulus::Math
+
+#undef TARGS
+#undef TNUM
+#undef TEMPLATE
+#undef TME

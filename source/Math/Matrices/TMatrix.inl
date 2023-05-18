@@ -22,7 +22,6 @@ namespace Langulus::Math
       if constexpr (COLUMNS > 4 || ROWS > 4) {
          for (auto i : DefaultClassName)
             name[offset++] = i;
-         name[offset++] = '\0';
          return name;
       }
 
@@ -42,10 +41,8 @@ namespace Langulus::Math
       }
 
       // Write suffix                                                   
-      constexpr Token suffix = TypeSuffix<T>();
-      for (auto i : suffix)
+      for (auto i : SuffixOf<T>())
          name[offset++] = i;
-      name[offset++] = '\0';
       return name;
    }
 

@@ -35,13 +35,15 @@ namespace Langulus::Math
    struct TNumber {
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      LANGULUS(TYPED) T;
+      LANGULUS(SUFFIX) SuffixOf<T>();
       LANGULUS_BASES(
          Conditional<CT::Real<T>
             , A::Real
             , Conditional<CT::Signed<T>, A::SignedInteger, A::UnsignedInteger>
          >
       );
-      LANGULUS(TYPED) T;
+      LANGULUS_CONVERSIONS(Flow::Code);
 
       static constexpr Count MemberCount {1};
 
@@ -282,9 +284,10 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
-#include "TNumber.inl"
-
 #undef TARGS
 #undef TNUM
 #undef TEMPLATE
 #undef TME
+
+#include "TNumber.inl"
+

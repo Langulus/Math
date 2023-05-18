@@ -36,7 +36,7 @@ namespace Langulus::Math
       name[offset++] = '0' + MemberCount;
 
       // Write suffix                                                   
-      for (auto i : TypeSuffix<TypeOf<T>>())
+      for (auto i : SuffixOf<TypeOf<T>>())
          name[offset++] = i;
       return name;
    }
