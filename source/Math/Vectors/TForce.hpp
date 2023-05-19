@@ -140,7 +140,7 @@ namespace Langulus::Math
       Level mLevel {};
 
    private:
-      static constexpr auto DefaultClassName = RTTI::LastNameOf<TForce>();
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TForce>();
       using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
       static constexpr ClassName GenerateClassName() noexcept;
       static constexpr ClassName GeneratedClassName = GenerateClassName();
@@ -161,7 +161,7 @@ namespace Langulus::Math
       /// Convert from any force to text                                      
       NOD() explicit operator Flow::Code() const {
          Flow::Code result;
-         result += MetaOf<TForce>();
+         result += NameOf<TForce>();
          result += Flow::Code::OpenScope;
          auto& asVector = static_cast<const T&>(*this);
          for (auto& x : asVector) {

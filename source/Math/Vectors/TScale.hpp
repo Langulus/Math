@@ -139,7 +139,7 @@ namespace Langulus::Math
          "Scaling type does not default to 1");
 
    private:
-      static constexpr auto DefaultClassName = RTTI::LastNameOf<TScale>();
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TScale>();
       using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
       static constexpr ClassName GenerateClassName() noexcept;
       static constexpr ClassName GeneratedClassName = GenerateClassName();

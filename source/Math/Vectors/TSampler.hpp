@@ -137,7 +137,7 @@ namespace Langulus::Math
       );
 
    private:
-      static constexpr auto DefaultClassName = RTTI::LastNameOf<TSampler>();
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TSampler>();
       using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
       static constexpr ClassName GenerateClassName() noexcept;
       static constexpr ClassName GeneratedClassName = GenerateClassName();

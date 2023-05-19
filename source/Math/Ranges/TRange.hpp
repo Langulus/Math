@@ -151,7 +151,7 @@ namespace Langulus::Math
       /// Convert any range to text                                           
       NOD() explicit operator Flow::Code() const {
          Flow::Code result;
-         result += MetaOf<TRange>();
+         result += NameOf<TRange>();
          result += Flow::Code::OpenScope;
             result += mMin.operator Flow::Code();
             result += ", ";

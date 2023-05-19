@@ -42,7 +42,7 @@ namespace Langulus::Math
    #pragma pack(push, 1)
    template<CT::ScalarOrVector T>
    struct TPoint : T {
-      LANGULUS(NAME) RTTI::NameOf<TPoint>();
+      LANGULUS(NAME) RTTI::CppNameOf<TPoint>();
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Point, T);
 

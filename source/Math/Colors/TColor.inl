@@ -23,12 +23,8 @@ namespace Langulus::Math
 
       // Write prefix                                                   
       switch (MemberCount) {
-      case 1:
-         for (auto i : "Grayscale")
-            name[offset++] = i;
-         break;
       case 2:
-         for (auto i : "GrayscaleA")
+         for (auto i : "Grayscale")
             name[offset++] = i;
          break;
       case 3:
@@ -39,17 +35,19 @@ namespace Langulus::Math
          for (auto i : "RGBA")
             name[offset++] = i;
          break;
-      default:
-         for (auto i : DefaultClassName)
-            name[offset++] = i;
-         return name;
       }
 
       // Write suffix                                                   
       --offset;
       if constexpr (!CT::SameAsOneOf<TypeOf<T>, uint8, ::std::uint8_t>) {
-         for (auto i : SuffixOf<TypeOf<T>>())
-            name[offset++] = i;
+         if constexpr (CT::Same<TypeOf<T>, float>)
+            name[offset++] = 'f';
+         else if constexpr (CT::Same<TypeOf<T>, double>)
+            name[offset++] = 'd';
+         else {
+            for (auto i : SuffixOf<TypeOf<T>>())
+               name[offset++] = i;
+         }
       }
       return name;
    }
@@ -217,7 +215,7 @@ namespace Langulus::Math
       if constexpr (CT::SameAsOneOf<TypeOf<T>, uint8, ::std::uint8_t>) {
          // Write as hex, if standard unsigned 8 bit color component    
          Flow::Code result;
-         result += MetaOf<TColor>();
+         result += NameOf<TColor>();
          result += Flow::Code::OpenScope;
          auto bytes = reinterpret_cast<const Byte*>(mArray);
          const auto bytesEnd = bytes + sizeof(mArray);

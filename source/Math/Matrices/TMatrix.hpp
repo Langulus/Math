@@ -125,7 +125,7 @@ namespace Langulus::Math
       };
 
    private:
-      static constexpr auto DefaultClassName = RTTI::LastNameOf<TMatrix>();
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TMatrix>();
       using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
       static constexpr ClassName GenerateClassName() noexcept;
       static constexpr ClassName GeneratedClassName = GenerateClassName();

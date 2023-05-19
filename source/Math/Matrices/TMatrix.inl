@@ -491,7 +491,7 @@ namespace Langulus::Math
    TEMPLATE()
    TME()::operator Flow::Code() const {
       Flow::Code result;
-      result += MetaOf<TMatrix>();
+      result += NameOf<TMatrix>();
       result += Flow::Code::OpenScope;
       for (Offset i = 0; i < MemberCount; ++i) {
          result += (*this)[i];

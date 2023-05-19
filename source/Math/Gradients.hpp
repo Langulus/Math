@@ -207,7 +207,7 @@ namespace Langulus::Math
       /// Convert to text                                                     
       NOD() explicit operator Flow::Code() const {
          Flow::Code result;
-         result += MetaOf<TGradient>();
+         result += NameOf<TGradient>();
          result += Flow::Code::OpenScope;
          for (Offset i = 0; i < S; ++i) {
             result += Text {(*this)[i]};

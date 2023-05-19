@@ -76,7 +76,7 @@ namespace Langulus::Math
       if constexpr (CT::Same<T, W>)
          result += Flow::Serialize<Flow::Code>(mValue);
       else {
-         result += MetaOf<W>();
+         result += NameOf<W>();
          result += Flow::Code::OpenScope;
          result += Flow::Serialize<Flow::Code>(mValue);
          result += Flow::Code::CloseScope;

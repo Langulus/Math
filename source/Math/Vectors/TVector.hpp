@@ -153,7 +153,7 @@ namespace Langulus::Math
       T mArray[S];
 
    private:
-      static constexpr auto DefaultClassName = RTTI::LastNameOf<TVector>();
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TVector>();
       using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
       static constexpr ClassName GenerateClassName() noexcept;
       static constexpr ClassName GeneratedClassName = GenerateClassName();

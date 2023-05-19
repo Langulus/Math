@@ -92,8 +92,11 @@ namespace Langulus::Math
       using T::T;
       using T::mArray;
 
+      static_assert(MemberCount > 1 && MemberCount < 5,
+         "Invalid number of channels");
+
    private:
-      static constexpr auto DefaultClassName = RTTI::LastNameOf<TColor>();
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TColor>();
       using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
       static constexpr ClassName GenerateClassName() noexcept;
       static constexpr ClassName GeneratedClassName = GenerateClassName();
