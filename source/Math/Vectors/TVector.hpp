@@ -591,31 +591,31 @@ namespace Langulus::Math
    {
 
       /// Canonical world origin                                              
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Origin {0, 0, 0, 0};
 
       /// Canonical forward vector, pointing towards the screen, positive Z   
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Forward {0, 0, 1, 0};
 
       /// Canonical backward vector, pointing towards user, in negative Z     
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Backward {0, 0, -1, 0};
 
       /// Canonical up vector, pointing from the ground up, in positive Y     
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Up {0, 1, 0, 0};
 
       /// Canonical down vector, pointing in gravity's direction, negative Y  
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Down {0, -1, 0, 0};
 
       /// Canonical right vector, pointing to right hand, positive X          
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Right {1, 0, 0, 0};
 
       /// Canonical left vector, pointing to left hand, negative X            
-      template<CT::DenseNumber T>
+      template<CT::DenseNumber T = Real>
       constexpr TVector<T, 4> Left {-1, 0, 0, 0};
 
    } // Langulus::Math::Cardinal

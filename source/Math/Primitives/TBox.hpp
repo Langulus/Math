@@ -6,7 +6,52 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "Primitive.hpp"
+#include "TPoint.hpp"
+
+namespace Langulus
+{
+   namespace Math
+   {
+
+      template<CT::Vector>
+      struct TBox;
+
+      template<CT::Vector>
+      struct TBoxRounded;
+
+      using Box2 = TBox<Point2>;
+      using Box3 = TBox<Point3>;
+
+      using BoxRounded2 = TBoxRounded<Point2>;
+      using BoxRounded3 = TBoxRounded<Point3>;
+
+      using Box = Box3;
+      using BoxRounded = BoxRounded3;
+
+   } // namespace Langulus::Math
+
+   namespace A
+   {
+
+      /// An abstract box                                                     
+      struct Box {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::Box;
+         LANGULUS_BASES(Primitive);
+      };
+
+   } // namespace Langulus::A
+
+   namespace CT
+   {
+
+      /// Concept for distinguishing box primitives                           
+      template<class... T>
+      concept Box = (DerivedFrom<T, A::Box> && ...);
+
+   } // namespace Langulus::CT
+
+} // namespace Langulus
 
 namespace Langulus::Math
 {
@@ -26,10 +71,11 @@ namespace Langulus::Math
    ///   +---------------+                                                 |  
    ///                                                                     |  
    template<CT::Vector T>
-   struct TBox {
-      LANGULUS(POD) true;
+   struct TBox : A::Box {
+      LANGULUS(ABSTRACT) false;
+      LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Primitive);
+      LANGULUS_BASES(A::Box);
 
       using PointType = T;
       using T::MemberCount;

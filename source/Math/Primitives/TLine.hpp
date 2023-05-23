@@ -8,56 +8,66 @@
 #pragma once
 #include "TPoint.hpp"
 
-namespace Langulus::Math
+namespace Langulus
 {
+   namespace Math
+   {
 
-   template<CT::Vector>
-   struct TLine;
+      template<CT::Vector>
+      struct TLine;
 
-   template<CT::Vector>
-   struct TLineLoop;
+      template<CT::Vector>
+      struct TLineLoop;
 
-   template<CT::Vector>
-   struct TLineStrip;
+      template<CT::Vector>
+      struct TLineStrip;
 
-   using Line2 = TLine<Point2>;
-   using Line3 = TLine<Point3>;
-   using LineLoop2 = TLineLoop<Point2>;
-   using LineLoop3 = TLineLoop<Point3>;
-   using LineStrip2 = TLineStrip<Point2>;
-   using LineStrip3 = TLineStrip<Point3>;
+      using Line2 = TLine<Point2>;
+      using Line3 = TLine<Point3>;
+      using LineLoop2 = TLineLoop<Point2>;
+      using LineLoop3 = TLineLoop<Point3>;
+      using LineStrip2 = TLineStrip<Point2>;
+      using LineStrip3 = TLineStrip<Point3>;
 
-   using Line = Line3;
-   using LineLoop = LineLoop3;
-   using LineStrip = LineStrip3;
+      using Line = Line3;
+      using LineLoop = LineLoop3;
+      using LineStrip = LineStrip3;
 
-} // namespace Langulus::Math
+   } // namespace Langulus::Maht
 
-namespace Langulus::A
-{
+   namespace A
+   {
 
-   ///   An abstract line, also used as a topology type                       
-   struct Line {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Line;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract line, also used as a topology type                      
+      struct Line : Topology {
+         LANGULUS(CONCRETE) Math::Line;
+         LANGULUS_BASES(Topology);
+      };
 
-   ///   An abstract line loop, also used as a topology type                  
-   struct LineLoop {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::LineLoop;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract line loop, also used as a topology type                 
+      struct LineLoop : Line {
+         LANGULUS(CONCRETE) Math::LineLoop;
+         LANGULUS_BASES(Line);
+      };
 
-   ///   An abstract line strip, also used as a topology type                 
-   struct LineStrip {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::LineStrip;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract line strip, also used as a topology type                
+      struct LineStrip : Line {
+         LANGULUS(CONCRETE) Math::LineStrip;
+         LANGULUS_BASES(Line);
+      };
 
-} // namespace Langulus::A
+   } // namespace Langulus::A
+
+   namespace CT
+   {
+
+      /// Concept for distinguishing line primitives                          
+      template<class... T>
+      concept Line = (DerivedFrom<T, A::Line> && ...);
+
+   } // namespace Langulus::CT
+
+} // namespace Langulus
 
 namespace Langulus::Math
 {
@@ -67,7 +77,8 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    template<CT::Vector T>
-   struct TLine {
+   struct TLine : A::Line {
+      LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -152,12 +163,13 @@ namespace Langulus::Math
    /// the previous, and the last point forms a line with the first one       
    ///                                                                        
    template<CT::Vector T>
-   struct TLineLoop : TAny<T> {
-      LANGULUS(DEEP) false;
+   struct TLineLoop : A::LineLoop {
+      LANGULUS(ABSTRACT) false;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineLoop);
 
-      using Base = TAny<T>;
+      TAny<T> mPoints;
+
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
@@ -171,12 +183,13 @@ namespace Langulus::Math
    /// the previous                                                           
    ///                                                                        
    template<CT::Vector T>
-   struct TLineStrip : TAny<T> {
-      LANGULUS(DEEP) false;
+   struct TLineStrip : A::LineStrip {
+      LANGULUS(ABSTRACT) false;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineStrip);
 
-      using Base = TAny<T>;
+      TAny<T> mPoints;
+
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,

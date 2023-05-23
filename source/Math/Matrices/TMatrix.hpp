@@ -9,6 +9,8 @@
 #include "../Vectors.hpp"
 #include "../Numbers/TAngle.hpp"
 
+LANGULUS_DEFINE_TRAIT(Perspective, "Perspective state (boolean)");
+
 #define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
 #define TMAT(a) TMatrix<a##T, a##C, a##R>
 #define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>

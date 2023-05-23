@@ -8,30 +8,45 @@
 #pragma once
 #include "Primitive.hpp"
 
-namespace Langulus::Math
+namespace Langulus
 {
+   namespace Math
+   {
 
-   template<CT::ScalarOrVector> struct TPoint;
+      template<CT::ScalarOrVector>
+      struct TPoint;
 
-   using Point1 = TPoint<Vec1>;
-   using Point2 = TPoint<Vec2>;
-   using Point3 = TPoint<Vec3>;
+      using Point1 = TPoint<Vec1>;
+      using Point2 = TPoint<Vec2>;
+      using Point3 = TPoint<Vec3>;
 
-   using Point = Point3;
+      using Point = Point3;
 
-} // namespace Langulus::Math
+   } // namespace Langulus::CT
 
-namespace Langulus::A
-{
+   namespace A
+   {
 
-   ///   An abstract point, also used as a topology type                      
-   struct Point {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Point;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract point, also used as a topology type                     
+      struct Point : Topology {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::Point;
+         LANGULUS_BASES(Topology);
+      };
 
-} // namespace Langulus::A
+   } // namespace Langulus::A
+
+   namespace CT
+   {
+
+      /// Concept for distinguishing point primitives                         
+      template<class... T>
+      concept Point = CT::ScalarOrVector<T...>
+         || (DerivedFrom<T, A::Point> && ...);
+
+   } // namespace Langulus::CT
+
+} // namespace Langulus
 
 namespace Langulus::Math
 {

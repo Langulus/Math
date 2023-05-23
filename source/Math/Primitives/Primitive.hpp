@@ -6,20 +6,44 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Matrices/TMatrix.hpp"
-#include "../Functions/Trigonometry.hpp"
+#include "../Common.hpp"
 
-namespace Langulus::A
+LANGULUS_DEFINE_TRAIT(Topology, "Topology type");
+
+namespace Langulus
 {
+   namespace A
+   {
 
-   struct Primitive {
-      LANGULUS(INFO) "An abstract primitive";
-      LANGULUS(ABSTRACT) true;
-   };
+      ///                                                                     
+      ///   An abstract primitive                                             
+      ///                                                                     
+      struct Primitive {
+         LANGULUS(INFO) "An abstract primitive";
+         LANGULUS(ABSTRACT) true;
+      };
 
-   struct Topology : public Primitive {
-      LANGULUS(INFO) "An abstract topology";
-      LANGULUS_BASES(Primitive);
-   };
+      ///                                                                     
+      ///   An abstract topology                                              
+      ///                                                                     
+      struct Topology : Primitive {
+         LANGULUS(INFO) "An abstract topology";
+         LANGULUS_BASES(Primitive);
+      };
 
-} // namespace Langulus::A
+   } // namespace Langulus::A
+
+   namespace CT
+   {
+
+      /// Concept for distinguishing primitives                               
+      template<class... T>
+      concept Primitive = (DerivedFrom<T, A::Primitive> && ...);
+
+      /// Concept for distinguishing topologies                               
+      template<class... T>
+      concept Topology = (DerivedFrom<T, A::Topology> && ...);
+
+   } // namespace Langulus::CT
+
+} // namespace Langulus

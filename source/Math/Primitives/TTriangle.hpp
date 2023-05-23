@@ -8,56 +8,67 @@
 #pragma once
 #include "TPoint.hpp"
 
-namespace Langulus::Math
+namespace Langulus
 {
+   namespace Math
+   {
 
-   template<CT::Vector>
-   struct TTriangle;
+      template<CT::Vector>
+      struct TTriangle;
 
-   template<CT::Vector>
-   struct TTriangleStrip;
+      template<CT::Vector>
+      struct TTriangleStrip;
 
-   template<CT::Vector>
-   struct TTriangleFan;
+      template<CT::Vector>
+      struct TTriangleFan;
 
-   using Triangle2 = TTriangle<Point2>;
-   using Triangle3 = TTriangle<Point3>;
-   using TriangleStrip2 = TTriangleStrip<Point2>;
-   using TriangleStrip3 = TTriangleStrip<Point3>;
-   using TriangleFan2 = TTriangleFan<Point2>;
-   using TriangleFan3 = TTriangleFan<Point3>;
+      using Triangle2 = TTriangle<Point2>;
+      using Triangle3 = TTriangle<Point3>;
+      using TriangleStrip2 = TTriangleStrip<Point2>;
+      using TriangleStrip3 = TTriangleStrip<Point3>;
+      using TriangleFan2 = TTriangleFan<Point2>;
+      using TriangleFan3 = TTriangleFan<Point3>;
 
-   using Triangle = Triangle3;
-   using TriangleStrip = TriangleStrip3;
-   using TriangleFan = TriangleFan3;
+      using Triangle = Triangle3;
+      using TriangleStrip = TriangleStrip3;
+      using TriangleFan = TriangleFan3;
 
-} // namespace Langulus::Math
+   } // namespace Langulus::Math
 
-namespace Langulus::A
-{
+   namespace A
+   {
 
-   ///   An abstract triangle, also used as a topology type                   
-   struct Triangle {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Triangle;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract triangle, also used as a topology type                  
+      struct Triangle : Topology {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::Triangle;
+         LANGULUS_BASES(Topology);
+      };
 
-   ///   An abstract triangle strip, also used as a topology type             
-   struct TriangleStrip {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::TriangleStrip;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract triangle strip, also used as a topology type            
+      struct TriangleStrip : Triangle {
+         LANGULUS(CONCRETE) Math::TriangleStrip;
+         LANGULUS_BASES(Triangle);
+      };
 
-   ///   An abstract triangle fan, also used as a topology type               
-   struct TriangleFan {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::TriangleFan;
-      LANGULUS_BASES(Topology);
-   };
+      /// An abstract triangle fan, also used as a topology type              
+      struct TriangleFan : Triangle {
+         LANGULUS(CONCRETE) Math::TriangleFan;
+         LANGULUS_BASES(Triangle);
+      };
 
-} // namespace Langulus::A
+   } // namespace Langulus::A
+
+   namespace CT
+   {
+
+      /// Concept for distinguishing triangle primitives                      
+      template<class... T>
+      concept Triangle = (DerivedFrom<T, A::Triangle> && ...);
+
+   } // namespace Langulus::CT
+
+} // namespace Langulus
 
 namespace Langulus::Math
 {
@@ -67,7 +78,8 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    template<CT::Vector T>
-   struct TTriangle {
+   struct TTriangle : A::Triangle {
+      LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -216,18 +228,16 @@ namespace Langulus::Math
    ///  0        2        4                                                   
    ///                                                                        
    template<CT::Vector T>
-   struct TTriangleStrip : TAny<T> {
-      LANGULUS(DEEP) false;
+   struct TTriangleStrip : A::TriangleStrip {
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleStrip);
 
-      using Base = TAny<T>;
+      TAny<T> mPoints;
+
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
-
-      using Base::TAny;
    };
 
 
@@ -248,18 +258,16 @@ namespace Langulus::Math
    ///               5                                                        
    ///                                                                        
    template<CT::Vector T>
-   struct TTriangleFan : TAny<T> {
-      LANGULUS(DEEP) false;
+   struct TTriangleFan : A::TriangleFan {
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleFan);
 
-      using Base = TAny<T>;
+      TAny<T> mPoints;
+
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
-
-      using Base::TAny;
    };
 
 } // namespace Langulus::Math
