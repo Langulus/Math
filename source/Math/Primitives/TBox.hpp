@@ -34,7 +34,7 @@ namespace Langulus
    {
 
       /// An abstract box                                                     
-      struct Box {
+      struct Box : Primitive {
          LANGULUS(ABSTRACT) true;
          LANGULUS(CONCRETE) Math::Box;
          LANGULUS_BASES(Primitive);
@@ -78,7 +78,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Box);
 
       using PointType = T;
-      using T::MemberCount;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional box");
 
       T mOffsets {.5};

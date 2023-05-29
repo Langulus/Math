@@ -42,7 +42,7 @@ namespace Langulus::Math
          Primitive,
          // Triplanar (aka box mapping)                                 
          Triplanar,
-         // Cube mapping                                                
+         // Cube mapping (aka skybox mapping)                           
          Cube,
          // Face mapping, where each face maps to the same unit region  
          Face,
