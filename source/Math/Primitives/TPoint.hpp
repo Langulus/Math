@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "Primitive.hpp"
+#include "../Vectors/TVector.hpp"
 
 namespace Langulus
 {

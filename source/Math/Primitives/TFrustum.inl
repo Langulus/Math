@@ -8,11 +8,13 @@
 #pragma once
 #include "TFrustum.hpp"
 
+#define TEMPLATE() template<CT::Vector T>
+
 namespace Langulus::Math
 {
 
    /// Default unit frustum construction                                      
-   template<CT::Vector T>
+   TEMPLATE() LANGULUS(INLINED)
    TFrustum<T>::TFrustum() noexcept {
       const T right {0.5, 0, 0};
       const T top {0, 0.5, 0};
@@ -31,7 +33,7 @@ namespace Langulus::Math
 
    /// Create a frustum by deconstructing a view*projection matrix            
    ///   @param projectedView - projected view matrix                         
-   template<CT::Vector T>
+   TEMPLATE() LANGULUS(INLINED)
    TFrustum<T>::TFrustum(const MatrixType& projectedView) noexcept {
       const auto right = projectedView.GetColumn(0);
       const auto top = projectedView.GetColumn(1);
@@ -51,7 +53,7 @@ namespace Langulus::Math
 
    /// Check if frustum is degenerate                                         
    ///   @return true if at least one of the planes is degenerate             
-   template<CT::Vector T>
+   TEMPLATE() LANGULUS(INLINED)
    constexpr bool TFrustum<T>::IsDegenerate() const noexcept {
       for (auto& plane : mPlanes)
          if (plane.IsDegenerate())
@@ -61,7 +63,7 @@ namespace Langulus::Math
 
    /// Check if frustum is hollow                                             
    ///   @return true if at least one of the offsets is negative              
-   template<CT::Vector T>
+   TEMPLATE() LANGULUS(INLINED)
    constexpr bool TFrustum<T>::IsHollow() const noexcept {
       TODO();
       return false;
@@ -70,7 +72,7 @@ namespace Langulus::Math
    /// Calculate signed distance                                              
    ///   @param point - point to check distance from                          
    ///   @return the distance to the primitive                                
-   template<CT::Vector T>
+   TEMPLATE() LANGULUS(INLINED)
    auto TFrustum<T>::SignedDistance(const T& point) const {
       return Min(
          mPlanes[0].SignedDistance(point),
@@ -85,7 +87,7 @@ namespace Langulus::Math
    /// Intersect with an AABB                                                 
    ///   @param box - 2D/3D axis-aligned bounding box                         
    ///   @return true if box intersects the frustum                           
-   template<CT::Vector T>
+   TEMPLATE() LANGULUS(INLINED)
    bool TFrustum<T>::Intersects(const TRange<T>& box) const noexcept {
       if (box.IsDegenerate() || box.Length().IsDegenerate())
          return false;
@@ -107,3 +109,5 @@ namespace Langulus::Math
    }
 
 } // namespace Langulus::Math
+
+#undef TEMPLATE

@@ -91,68 +91,28 @@ namespace Langulus::Math
       T mAB[2] {};
 
    public:
-      /// Default construction (along x)                                      
-      constexpr TLine() noexcept {
-         mAB[1][0] = TypeOf<T> {0};
-      }
+      constexpr TLine() noexcept;
 
-      /// Manual construction from two points of any type                     
-      ///   @param p1 - first point                                           
-      ///   @param p2 - second point                                          
       template<CT::Vector ALT_T = T>
-      constexpr TLine(const ALT_T& p1, const ALT_T& p2) noexcept
-         : mAB {p1, p2} {}
+      constexpr TLine(const ALT_T&, const ALT_T&) noexcept;
 
-      /// Manual construction from two points of any type (unsafe)            
-      ///   @param points - pointer to the two points                         
       template<CT::Vector ALT_T = T>
-      constexpr TLine(const ALT_T* points) noexcept
-         : mAB {points[0], points[1]} {}
+      constexpr TLine(const ALT_T*) noexcept;
 
-      /// Manual construction from two points of any type, indexed            
-      ///   @param points - pointer to the two points                         
-      ///   @param indices - indices for the points array                     
       template<CT::Vector ALT_T = T, CT::Integer IDX>
-      constexpr TLine(const ALT_T* points, const IDX(&indices)[2]) noexcept
-         : mAB {points[indices[0]], points[indices[1]]} {}
+      constexpr TLine(const ALT_T*, const IDX(&)[2]) noexcept;
 
-      /// Check if line is degenerate                                         
-      ///   @param radius - the line radius used for tolerance                
-      ///   @return true if line has no radius or no length                   
-      NOD() bool IsDegenerate() const noexcept {
-         return (mAB[0] - mAB[1]).Length() == TypeOf<T> {0};
-      }
+      NOD() bool IsDegenerate() const noexcept;
 
-      /// Subdivide line                                                      
-      ///   @return the two new lines                                         
-      NOD() ::std::array<TLine, 2> Subdivide() const noexcept {
-         const T midpoint = mAB[0] + (mAB[1] - mAB[0]) / TypeOf<T> {2};
-         return {{mAB[0], midpoint}, {midpoint, mAB[1]}};
-      }
+      NOD() ::std::array<TLine, 2> Subdivide() const noexcept;
 
-      /// Calculate signed distance                                           
-      ///   @param point - the point from which distance is calculated        
-      ///   @return the distance                                              
-      NOD() auto SignedDistance(const PointType& point) const {
-         const auto pa = point - mAB[0];
-         const auto ba = mAB[1] - mAB[0];
-         const auto h = Saturate(Dot(pa, ba) / Dot2(ba));
-         return Length(pa - ba * h);
-      }
+      NOD() auto SignedDistance(const PointType&) const;
 
-      /// Access points                                                       
-      NOD() auto& operator [] (Offset index) const noexcept {
-         return mAB[index];
-      }
-      NOD() auto& operator [] (Offset index) noexcept {
-         return mAB[index];
-      }
+      NOD() auto& operator [] (Offset) const noexcept;
+      NOD() auto& operator [] (Offset) noexcept;
 
-      /// Convert to other kinds of lines                                     
       template<CT::Vector ALT>
-      NOD() explicit operator TLine<ALT>() const noexcept {
-         return {static_cast<ALT>(mAB[0]), static_cast<ALT>(mAB[1])};
-      }
+      NOD() explicit operator TLine<ALT>() const noexcept;
    };
    #pragma pack(pop)
 
@@ -198,3 +158,4 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
+#include "TLine.inl"
