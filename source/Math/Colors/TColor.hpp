@@ -8,8 +8,6 @@
 #pragma once
 #include "../Numbers/TColorComponent.hpp"
 
-LANGULUS_DEFINE_TRAIT(Color, "Color trait");
-
 namespace Langulus::Math
 {
 

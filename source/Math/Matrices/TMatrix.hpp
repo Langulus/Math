@@ -11,11 +11,6 @@
 
 LANGULUS_DEFINE_TRAIT(Perspective, "Perspective state (boolean)");
 
-#define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
-#define TMAT(a) TMatrix<a##T, a##C, a##R>
-#define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
-#define TME() TMatrix<T, COLUMNS, ROWS>
-
 namespace Langulus::Math
 {
 
@@ -25,27 +20,28 @@ namespace Langulus::Math
    template<CT::DenseNumber T, Count COLUMNS, Count ROWS = COLUMNS>
    struct TMatrix;
 
-   using Matrix2 = TMatrix<Real, 2>;
-   using Matrix3 = TMatrix<Real, 3>;
-   using Matrix4 = TMatrix<Real, 4>;
+   using Mat2 = TMatrix<Real, 2>;
+   using Mat3 = TMatrix<Real, 3>;
+   using Mat4 = TMatrix<Real, 4>;
 
-   using Matrix2f = TMatrix<Float, 2>;
-   using Matrix3f = TMatrix<Float, 3>;
-   using Matrix4f = TMatrix<Float, 4>;
+   using Mat2f = TMatrix<Float, 2>;
+   using Mat3f = TMatrix<Float, 3>;
+   using Mat4f = TMatrix<Float, 4>;
 
-   using Matrix2d = TMatrix<Double, 2>;
-   using Matrix3d = TMatrix<Double, 3>;
-   using Matrix4d = TMatrix<Double, 4>;
+   using Mat2d = TMatrix<Double, 2>;
+   using Mat3d = TMatrix<Double, 3>;
+   using Mat4d = TMatrix<Double, 4>;
 
-   using Matrix2i = TMatrix<int, 2>;
-   using Matrix3i = TMatrix<int, 3>;
-   using Matrix4i = TMatrix<int, 4>;
+   using Mat2i = TMatrix<int, 2>;
+   using Mat3i = TMatrix<int, 3>;
+   using Mat4i = TMatrix<int, 4>;
 
-   using Matrix2u = TMatrix<unsigned, 2>;
-   using Matrix3u = TMatrix<unsigned, 3>;
-   using Matrix4u = TMatrix<unsigned, 4>;
+   using Mat2u = TMatrix<unsigned, 2>;
+   using Mat3u = TMatrix<unsigned, 3>;
+   using Mat4u = TMatrix<unsigned, 4>;
 
-   using Matrix = Matrix4;
+   using Matrix = Mat4;
+   using Mat = Matrix;
 
 } // namespace Langulus::Math
 
@@ -101,6 +97,11 @@ namespace Langulus::A
    };
 
 } // namespace Langulus::A
+
+#define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
+#define TMAT(a) TMatrix<a##T, a##C, a##R>
+#define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+#define TME() TMatrix<T, COLUMNS, ROWS>
 
 namespace Langulus::Math
 {
@@ -293,9 +294,10 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
-#include "TMatrix.inl"
-
 #undef TARGS
 #undef TMAT
 #undef TEMPLATE
 #undef TME
+
+#include "TMatrix.inl"
+

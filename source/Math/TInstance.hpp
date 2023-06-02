@@ -12,6 +12,7 @@
 #include "Vectors.hpp"
 #include "Quaternions/TQuaternion.hpp"
 #include "Primitives.hpp"
+#include "Randomness.hpp"
 
 #define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
@@ -165,7 +166,7 @@ namespace Langulus::Math
       bool mPickable = true;
 
       // Instance hollowness. Hollow instances are inverted. (ie rooms) 
-      // This way we can reuse geometry like cube, to make an empty box 
+      // This helps reuse geometry like cube, to make an empty box      
       // It also changes the face winding if not doublesided            
       bool mSigned = false;
 

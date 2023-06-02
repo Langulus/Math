@@ -26,13 +26,13 @@ namespace Langulus::Math
    ///                                                                        
    struct LOD {
       Level mLevel;
-      Matrix4 mView;
-      Matrix4 mViewInverted;
-      Matrix4 mModel;
+      Mat4 mView;
+      Mat4 mViewInverted;
+      Mat4 mModel;
       TFrustum<Vec3> mFrustum;
 
       // Calculated after Transform()                                   
-      Matrix4 mModelView;
+      Mat4 mModelView;
       Vec4 mOrigin;
       Real mRadius;
       Real mDistanceToSurface;
@@ -44,10 +44,10 @@ namespace Langulus::Math
 
    public:
       LOD() = default;
-      LOD(const Level&, const Matrix4& view, const Matrix4& proj);
+      LOD(const Level&, const Mat4& view, const Mat4& proj);
 
       void Transform();
-      void Transform(const Matrix4&);
+      void Transform(const Mat4&);
       NOD() Real GetNormalizedDistance() const noexcept;
       NOD() Real GetIndex() const noexcept;
       NOD() AbsoluteLODIndex GetAbsoluteIndex() const noexcept;

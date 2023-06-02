@@ -8,6 +8,11 @@
 #pragma once
 #include "TMatrix.hpp"
 
+#define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
+#define TMAT(a) TMatrix<a##T, a##C, a##R>
+#define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+#define TME() TMatrix<T, COLUMNS, ROWS>
+
 namespace Langulus::Math
 {
 
@@ -945,40 +950,39 @@ namespace Langulus::Math
    ///                                                                        
    ///   Iteration                                                            
    ///                                                                        
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr typename TME()::ColumnType* TME()::begin() noexcept {
       return mColumns;
    }
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr typename TME()::ColumnType* TME()::end() noexcept {
       return mColumns + COLUMNS;
    }
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr typename TME()::ColumnType* TME()::last() noexcept {
       return mColumns + COLUMNS - 1;
    }
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType* TME()::begin() const noexcept {
       return mColumns;
    }
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType* TME()::end() const noexcept {
       return mColumns + COLUMNS;
    }
 
-   TEMPLATE()
-   LANGULUS(INLINED)
+   TEMPLATE() LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType* TME()::last() const noexcept {
       return mColumns + COLUMNS - 1;
    }
 
 } // namespace Langulus::Math
+
+#undef TARGS
+#undef TMAT
+#undef TEMPLATE
+#undef TME

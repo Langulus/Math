@@ -12,14 +12,17 @@ namespace Langulus::Math
 {
 
    /// LOD state construction                                                 
+   ///   @param level - the level the camera is on                            
+   ///   @param view - the camera view transformation                         
+   ///   @param proj - the camera projection transformation                   
    LANGULUS(INLINED)
-   LOD::LOD(const Level& level, const Matrix4& view, const Matrix4& proj)
+   LOD::LOD(const Level& level, const Mat4& view, const Mat4& proj)
       : mLevel {level}
       , mView {view}
       , mViewInverted {view.Invert()}
       , mFrustum {mViewInverted * proj} {}
 
-   /// Create an identity LOD state                                           
+   /// Recalculate LOD state by specifying an identity model matrix           
    LANGULUS(INLINED)
    void LOD::Transform() {
       mModel = {};
@@ -34,7 +37,7 @@ namespace Langulus::Math
    ///   @attention assumes the view matrices have been set prior             
    ///   @param model - the model transformation                              
    LANGULUS(INLINED)
-   void LOD::Transform(const Matrix4& model) {
+   void LOD::Transform(const Mat4& model) {
       mModel = model;
       mModelView = mModel * mViewInverted;
       mOrigin = mModelView.GetPosition();
@@ -66,9 +69,9 @@ namespace Langulus::Math
    /// Calculate the LOD index via log10 distance from a sphere to            
    /// the camera view. You can imagine it as the number of zeroes behind     
    /// or in front of the distance                                            
-   /// If index is below zero, then we're observing from afar                 
-   /// If index is above zero, then we're observing too close                 
-   /// At zero we're observing the default quality asset                      
+   ///   If index is below zero, then we're observing from afar               
+   ///   If index is above zero, then we're observing too close               
+   ///   At zero we're observing the default quality asset                    
    ///   @return the LOD index                                                
    LANGULUS(INLINED)
    Real LOD::GetIndex() const noexcept {
