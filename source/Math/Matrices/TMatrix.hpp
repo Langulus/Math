@@ -77,7 +77,7 @@ namespace Langulus::A
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// matrix of the same column and row count                                
-   template<Count COLUMNS, Count ROWS>
+   template<Count COLUMNS, Count ROWS = COLUMNS>
    struct MatrixOfSize : Matrix {
       LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, ROWS>;
       LANGULUS_BASES(Matrix);
