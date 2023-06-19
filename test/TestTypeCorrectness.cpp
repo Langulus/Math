@@ -8,7 +8,7 @@ TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]",
 	Vec2f, Vec2d
 ) {
 	GIVEN("A 2D vector") {
-		auto meta = MetaData::Of<TestType>();
+		auto meta = MetaOf<TestType>();
 		REQUIRE(meta != nullptr);
 
 		WHEN("Interpreted as number") {

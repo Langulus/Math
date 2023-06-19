@@ -20,24 +20,28 @@ namespace Langulus::Math
    /// and doesn't rely on trigonometry functions that lose accuracy with     
    /// high values.                                                           
    ///                                                                        
-   template<CT::Real T>
+   ///   @tparam DOUT - number of output dimensions                           
+   ///   @tparam DIN - number of input dimensions                             
+   ///   @tparam T - real number type to use for computation                  
+   template<Count DOUT, Count DIN, CT::Real T = Real>
    struct THoskins {
-      /// Perform the specific hashing function                               
-      template<Count DOUT, Count DIN, bool GET_GLSL = false>
-      NOD() static constexpr auto Hash(TVector<T, DIN> p = {}) noexcept {
-         static_assert(DIN >= 1 && DIN <= 4, 
-            "Hoskin's hashes work only for inputs of 1-4 components");
-         static_assert(DOUT >= 1 && DOUT <= 4, 
-            "Hoskin's hashes work only for outputs of 1-4 components");
+      static_assert(DIN >= 1 && DIN <= 4,
+         "Hoskin's hashes work only for inputs of 1-4 components");
+      static_assert(DOUT >= 1 && DOUT <= 4,
+         "Hoskin's hashes work only for outputs of 1-4 components");
 
-         constexpr TVector<T, 4> seed = {.1031, .1030, .0973, .1099};
+      using V = TVector<T, 4>;
+      static constexpr V seed {.1031, .1030, .0973, .1099};
 
+      /// Perform the hashing function, or get an equivalent shader code      
+      template<bool GET_GLSL = false>
+      NOD() static auto Hash(V p = {}) noexcept(!GET_GLSL) {
          if constexpr (DIN == 1) {
             if constexpr (DOUT == 1) {
                ///  1 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash11(float p) {\n"
+                     "float HoskinsHash1(float p) {\n"
                      "   p = fract(p * " + seed[0] + ");\n"
                      "   p *= p + 33.33;\n"
                      "   p *= p + p;\n"
@@ -55,7 +59,7 @@ namespace Langulus::Math
                ///  2 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec2 HoskinsHash21(float p) {\n"
+                     "Vec2 HoskinsHash2(float p) {\n"
                      "   Vec3 p3 = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yzx + 31.32);\n"
                      "   return fract((p3.xx + p3.yz) * p3.zy);\n"
@@ -71,7 +75,7 @@ namespace Langulus::Math
                ///  3 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec3 HoskinsHash31(float p) {\n"
+                     "Vec3 HoskinsHash3(float p) {\n"
                      "   Vec3 p3 = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yzx + 33.33);\n"
                      "   return fract((p3.xxy + p3.yzz) * p3.zyx);\n"
@@ -87,7 +91,7 @@ namespace Langulus::Math
                ///  4 out, 1 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec4 HoskinsHash41(float p) {\n"
+                     "Vec4 HoskinsHash4(float p) {\n"
                      "   Vec4 p4 = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p4 += dot(p4, p4.wzxy + 33.33);\n"
                      "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
@@ -106,7 +110,7 @@ namespace Langulus::Math
                ///  1 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash12(Vec2 p) {\n"
+                     "float HoskinsHash1(Vec2 p) {\n"
                      "   Vec3 p3 = fract(p.xyx * " + seed[0] + ");\n"
                      "   p3 += dot(p3, p3.yzx + 33.33);\n"
                      "   return fract((p3.x + p3.y) * p3.z);\n"
@@ -122,7 +126,7 @@ namespace Langulus::Math
                ///  2 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec2 HoskinsHash22(Vec2 p) {\n"
+                     "Vec2 HoskinsHash2(Vec2 p) {\n"
                      "   Vec3 p3 = fract(p.xyx * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yzx + 33.33);\n"
                      "   return fract((p3.xx + p3.yz) * p3.zy);\n"
@@ -138,7 +142,7 @@ namespace Langulus::Math
                ///  3 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec3 HoskinsHash22(Vec2 p) {\n"
+                     "Vec3 HoskinsHash3(Vec2 p) {\n"
                      "   Vec3 p3 = fract(p.xyx * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p3 += dot(p3, p3.yxz + 33.33);\n"
                      "   return fract((p3.xxy + p3.yzz) * p3.zyx);\n"
@@ -154,7 +158,7 @@ namespace Langulus::Math
                ///  4 out, 2 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec4 HoskinsHash22(Vec2 p) {\n"
+                     "Vec4 HoskinsHash4(Vec2 p) {\n"
                      "   Vec4 p4 = fract(p.xyxy * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p4 += dot(p4, p4.wzxy + 33.33);\n"
                      "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
@@ -173,7 +177,7 @@ namespace Langulus::Math
                ///  1 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash13(Vec3 p) {\n"
+                     "float HoskinsHash1(Vec3 p) {\n"
                      "   p = fract(p * " + seed[0] + ");\n"
                      "   p += dot(p, p.zyx + 31.32);\n"
                      "   return fract((p.x + p.y) * p.z);\n"
@@ -189,7 +193,7 @@ namespace Langulus::Math
                ///  2 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec2 HoskinsHash23(Vec3 p) {\n"
+                     "Vec2 HoskinsHash2(Vec3 p) {\n"
                      "   p = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p += dot(p, p.yzx + 33.33);\n"
                      "   return fract((p.xx + p.yz) * p.zy);\n"
@@ -205,7 +209,7 @@ namespace Langulus::Math
                ///  3 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec3 HoskinsHash33(Vec3 p) {\n"
+                     "Vec3 HoskinsHash3(Vec3 p) {\n"
                      "   p = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
                      "   p += dot(p, p.yxz + 33.33);\n"
                      "   return fract((p.xxy + p.yxx) * p.zyx);\n"
@@ -221,7 +225,7 @@ namespace Langulus::Math
                ///  4 out, 3 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec4 HoskinsHash43(Vec3 p) {\n"
+                     "Vec4 HoskinsHash4(Vec3 p) {\n"
                      "   Vec4 p4 = fract(p.xyzx * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p4 += dot(p4, p4.wzxy + 33.33);\n"
                      "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
@@ -240,7 +244,7 @@ namespace Langulus::Math
                ///  1 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "float HoskinsHash14(Vec4 p) {\n"
+                     "float HoskinsHash1(Vec4 p) {\n"
                      "   p = fract(p * " + seed[0] + ");\n"
                      "   p += dot(p, p.ywxz + 32.31);\n"
                      "   return fract((p.x + p.y) * (p.z + p.w));\n"
@@ -256,7 +260,7 @@ namespace Langulus::Math
                ///  2 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec2 HoskinsHash24(Vec4 p) {\n"
+                     "Vec2 HoskinsHash2(Vec4 p) {\n"
                      "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p += dot(p, p.wzxy + 33.33);\n"
                      "   return fract((p.xw + p.yz) * p.zy);\n"
@@ -272,7 +276,7 @@ namespace Langulus::Math
                ///  3 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec3 HoskinsHash34(Vec4 p) {\n"
+                     "Vec3 HoskinsHash3(Vec4 p) {\n"
                      "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p += dot(p, p.wzxy + 33.33);\n"
                      "   return fract((p.zwx + p.yxw) * p.zwy);\n"
@@ -288,7 +292,7 @@ namespace Langulus::Math
                ///  4 out, 4 in...                                            
                if constexpr (GET_GLSL) {
                   return Text() +
-                     "Vec4 HoskinsHash44(Vec4 p) {\n"
+                     "Vec4 HoskinsHash4(Vec4 p) {\n"
                      "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
                      "   p += dot(p, p.wzxy + 33.33);\n"
                      "   return fract((p.xxyz + p.yzzw) * p.zywx);\n"
@@ -306,28 +310,44 @@ namespace Langulus::Math
       }
    };
 
-   /// Sine hashes                                                            
+
+   ///                                                                        
+   /// Sine-based hashes                                                      
+   ///                                                                        
    /// These may be inconsistent on different GPUs and degrade with larger n  
-   template<class T>
-   NOD() T pcMSinHash(const T& n) noexcept {
-      return pcFrac(pcSin(n) * T(43758.5453123));
+   ///                                                                        
+
+   /// 1-1 sin hash                                                           
+   ///   @tparam T - real type to use (deducible)                             
+   ///   @param n - the number to hash                                        
+   template<CT::Real T>
+   NOD() T SinHash(const T& n) noexcept {
+      return Frac(Sin(n) * T {43758.5453123});
    }
 
-   template<class T>
-   NOD() T pcMSinHash(const TVector<T, 2>& p) noexcept {
-      T h = pcDot(p, TVector<T, 2>(T(127.1), T(311.7)));
-      return pcFrac(pcSin(h) * T(43758.5453123));
+   /// 1-2 sin hash                                                           
+   ///   @tparam T - real type to use (deducible)                             
+   ///   @param n - the number to hash                                        
+   template<CT::Real T>
+   NOD() T SinHash(const TVector<T, 2>& p) noexcept {
+      T h = Dot(p, TVector<T, 2>(T {127.1}, T {311.7}));
+      return Frac(Sin(h) * T {43758.5453123});
    }
 
-   template<class T>
-   NOD() T pcMSinHash(const TVector<T, 3>& p) noexcept {
-      T h = pcDot(p, TVector<T, 3>(T(127.1), T(311.7), T(758.5453123)));
-      return pcFrac(pcSin(h) * T(43758.5453123));
+   /// 1-3 sin hash                                                           
+   ///   @tparam T - real type to use (deducible)                             
+   ///   @param n - the number to hash                                        
+   template<CT::Real T>
+   NOD() T SinHash(const TVector<T, 3>& p) noexcept {
+      T h = Dot(p, TVector<T, 3>(T {127.1}, T {311.7}, T {758.5453123}));
+      return Frac(Sin(h) * T {43758.5453123});
    }
 
    /// Integer hashes                                                         
-   template<class T>
-   NOD() auto pcMIntHash(const T& n) noexcept {
+   ///   @tparam T - integer type to use (deducible)                          
+   ///   @param n - the number to hash                                        
+   template<CT::Integer T>
+   NOD() auto IntHash(const T& n) noexcept {
       return n * (n ^ (n >> 15));
    }
 
