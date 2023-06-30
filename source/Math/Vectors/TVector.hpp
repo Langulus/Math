@@ -6,7 +6,6 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Functions/Arithmetics.hpp"
 #include "../Functions/Trigonometry.hpp"
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
@@ -127,6 +126,7 @@ namespace Langulus::A
 #define TVEC(a) TVector<a##T, a##S, a##D>
 #define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
 #define TME() TVector<T, S, DEFAULT>
+
 
 namespace Langulus::Math
 {

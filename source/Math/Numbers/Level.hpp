@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "TNumber.hpp"
-#include "../Functions/Arithmetics.hpp"
+
 
 namespace Langulus::Math
 {

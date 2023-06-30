@@ -1,15 +1,17 @@
 #include "Main.hpp"
-#include <Flow/Verbs/Add.hpp>
 #include <Flow/Verbs/Associate.hpp>
 #include <Flow/Verbs/Catenate.hpp>
 #include <Flow/Verbs/Conjunct.hpp>
 #include <Flow/Verbs/Create.hpp>
 #include <Flow/Verbs/Do.hpp>
-#include <Flow/Verbs/Exponent.hpp>
 #include <Flow/Verbs/Interpret.hpp>
-#include <Flow/Verbs/Multiply.hpp>
 #include <Flow/Verbs/Select.hpp>
+
+#include <Math/Verbs/Add.hpp>
+#include <Math/Verbs/Exponent.hpp>
+#include <Math/Verbs/Multiply.hpp>
 #include <Math/Vectors.hpp>
+
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
 

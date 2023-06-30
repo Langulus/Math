@@ -1,5 +1,6 @@
 #pragma once
 #include <Math/Common.hpp>
+#include <Flow/Resolvable.hpp>
 
 using namespace ::Langulus;
 using namespace ::Langulus::Anyness;
@@ -15,3 +16,10 @@ using namespace ::Langulus::Math;
 #define SIGNED_TYPES          SIGNED_INTEGER_TYPES, REAL_TYPES
 #define ALL_TYPES             UNSIGNED_TYPES, SIGNED_TYPES
 
+/// A mockup of a fraction                                                    
+struct Fraction : public Flow::Resolvable {
+   LANGULUS(ABSTRACT) false;
+   LANGULUS(UNINSERTABLE) false;
+   LANGULUS_BASES(Resolvable);
+   Fraction() : Resolvable(MetaOf<Fraction>()) {}
+};

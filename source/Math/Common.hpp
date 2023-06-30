@@ -8,7 +8,7 @@
 #pragma once
 #include <Core/Exceptions.hpp>
 #include <Anyness/Trait.hpp>
-#include <Flow/Flow.hpp>
+#include <Flow/Verb.hpp>
 
 #if defined(LANGULUS_EXPORT_ALL) || defined(LANGULUS_EXPORT_MATH)
    #define LANGULUS_API_MATH() LANGULUS_EXPORT()
@@ -63,3 +63,15 @@ LANGULUS_DEFINE_TRAIT(Level,
 
 /// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1
+
+/// Namespace containing all built-in Langulus verbs                          
+namespace Langulus::Verbs
+{
+
+   struct Exponent;
+   struct Multiply;
+   struct Modulate;
+   struct Randomize;
+   struct Add;
+
+} // namespace Langulus::Verbs

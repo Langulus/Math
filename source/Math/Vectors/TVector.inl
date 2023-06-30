@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "TVector.hpp"
+#include "../Functions/Arithmetics.hpp"
 #include "../Numbers/TVectorComponent.hpp"
 #include <SIMD/SIMD.hpp>
 #include <Flow/Verbs/Interpret.hpp>
@@ -15,6 +16,7 @@
 #define TVEC(a) TVector<a##T, a##S, a##D>
 #define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
 #define TME() TVector<T, S, DEFAULT>
+
 
 namespace Langulus::Math
 {
