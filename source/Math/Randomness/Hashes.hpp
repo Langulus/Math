@@ -32,6 +32,10 @@ namespace Langulus::Math
 
       using V = TVector<T, 4>;
       static constexpr V seed {.1031, .1030, .0973, .1099};
+      static constexpr auto v1 = CT::Same<Real, float> ? "float" : "double";
+      static constexpr auto v2 = CT::Same<Real, float> ? "vec2" : "vec2d";
+      static constexpr auto v3 = CT::Same<Real, float> ? "vec3" : "vec3d";
+      static constexpr auto v4 = CT::Same<Real, float> ? "vec4" : "vec4d";
 
       /// Perform the hashing function, or get an equivalent shader code      
       template<bool GET_GLSL = false>
@@ -40,67 +44,86 @@ namespace Langulus::Math
             if constexpr (DOUT == 1) {
                ///  1 out, 1 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "float HoskinsHash1(float p) {\n"
-                     "   p = fract(p * " + seed[0] + ");\n"
-                     "   p *= p + 33.33;\n"
-                     "   p *= p + p;\n"
-                     "   return fract(p);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash1({0} p) {{
+                           p = fract(p * {1});
+                           p *= p + 33.33;
+                           p *= p + p;
+                           return fract(p);
+                        }}
+                     )shader",
+                     v1, seed[0]
+                  );
                }
                else {
-                  p = pcFrac(p * seed[0]);
-                  p *= p + T(33.33);
+                  p = Frac(p * seed[0]);
+                  p *= p + T {33.33};
                   p *= p + p;
-                  return T(pcFrac(p));
+                  return T {Frac(p)};
                }
             }
             else if constexpr (DOUT == 2) {
                ///  2 out, 1 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec2 HoskinsHash2(float p) {\n"
-                     "   Vec3 p3 = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
-                     "   p3 += dot(p3, p3.yzx + 31.32);\n"
-                     "   return fract((p3.xx + p3.yz) * p3.zy);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash2({1} p) {{
+                           {2} p3 = fract(p * {2}({3}, {4}, {5}));
+                           p3 += dot(p3, p3.yzx + 31.32);
+                           return fract((p3.xx + p3.yz) * p3.zy);
+                        }}
+                     )shader",
+                     v2, v1, v3,
+                     seed[0], seed[1], seed[2]
+                  );
                }
                else {
-                  auto p3 = pcFrac(p[0] * TVec<T, 3>(seed));
-                  p3 += p3.Dot(p3.yzx() + T(31.32));
-                  return pcFrac((p3.xx() + p3.yz()) * p3.zy());
+                  auto p3 = Frac(p[0] * TVector<T, 3> {seed});
+                  p3 += p3.Dot(p3.yzx() + T {31.32});
+                  return Frac((p3.xx() + p3.yz()) * p3.zy());
                }
             }
             else if constexpr (DOUT == 3) {
                ///  3 out, 1 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec3 HoskinsHash3(float p) {\n"
-                     "   Vec3 p3 = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
-                     "   p3 += dot(p3, p3.yzx + 33.33);\n"
-                     "   return fract((p3.xxy + p3.yzz) * p3.zyx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash3({1} p) {{
+                           {0} p3 = fract(p * {0}({2}, {3}, {4}));
+                           p3 += dot(p3, p3.yzx + 33.33);
+                           return fract((p3.xxy + p3.yzz) * p3.zyx);
+                        }}
+                     )shader",
+                     v3, v1,
+                     seed[0], seed[1], seed[2]
+                  );
                }
                else {
-                  auto p3 = pcFrac(p[0] * TVec<T, 3>(seed));
-                  p3 += p3.Dot(p3.yzx() + T(33.33));
-                  return pcFrac((p3.xxy() + p3.yzz()) * p3.zyx());
+                  auto p3 = Frac(p[0] * TVector<T, 3> {seed});
+                  p3 += p3.Dot(p3.yzx() + T {33.33});
+                  return Frac((p3.xxy() + p3.yzz()) * p3.zyx());
                }
             }
             else if constexpr (DOUT == 4) {
                ///  4 out, 1 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec4 HoskinsHash4(float p) {\n"
-                     "   Vec4 p4 = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
-                     "   p4 += dot(p4, p4.wzxy + 33.33);\n"
-                     "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash4({1} p) {{
+                           {0} p4 = fract(p * {0}({2}, {3}, {4}, {5}));
+                           p4 += dot(p4, p4.wzxy + 33.33);
+                           return fract((p4.xxyz + p4.yzzw) * p4.zywx);
+                        }}
+                     )shader",
+                     v4, v1,
+                     seed[0], seed[1], seed[2], seed[3]
+                  );
                }
                else {
-                  auto p4 = pcFrac(p[0] * seed);
-                  p4 += p4.Dot(p4.wzxy() + T(33.33));
-                  return pcFrac((p4.xxyz() + p4.yzzw()) * p4.zywx());
+                  auto p4 = Frac(p[0] * seed);
+                  p4 += p4.Dot(p4.wzxy() + T {33.33});
+                  return Frac((p4.xxyz() + p4.yzzw()) * p4.zywx());
                }
             }
             else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 1");
@@ -109,65 +132,84 @@ namespace Langulus::Math
             if constexpr (DOUT == 1) {
                ///  1 out, 2 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "float HoskinsHash1(Vec2 p) {\n"
-                     "   Vec3 p3 = fract(p.xyx * " + seed[0] + ");\n"
-                     "   p3 += dot(p3, p3.yzx + 33.33);\n"
-                     "   return fract((p3.x + p3.y) * p3.z);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash1({1} p) {{
+                           {2} p3 = fract(p.xyx * {3});
+                           p3 += dot(p3, p3.yzx + 33.33);
+                           return fract((p3.x + p3.y) * p3.z);
+                        }}
+                     )shader",
+                     v1, v2, v3, seed[0]
+                  );
                }
                else {
-                  auto p3 = pcFrac(p.xyx() * seed[0]);
-                  p3 += p3.Dot(p3.yzx() + T(33.33));
-                  return T(pcFrac((p3[0] + p3[1]) * p3[2]));
+                  auto p3 = Frac(p.xyx() * seed[0]);
+                  p3 += p3.Dot(p3.yzx() + T {33.33});
+                  return T {Frac((p3[0] + p3[1]) * p3[2])};
                }
             }
             else if constexpr (DOUT == 2) {
                ///  2 out, 2 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec2 HoskinsHash2(Vec2 p) {\n"
-                     "   Vec3 p3 = fract(p.xyx * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
-                     "   p3 += dot(p3, p3.yzx + 33.33);\n"
-                     "   return fract((p3.xx + p3.yz) * p3.zy);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash2({0} p) {{
+                           {1} p3 = fract(p.xyx * {1}({2}, {3}, {4}));
+                           p3 += dot(p3, p3.yzx + 33.33);
+                           return fract((p3.xx + p3.yz) * p3.zy);
+                        }}
+                     )shader",
+                     v2, v3,
+                     seed[0], seed[1], seed[2]
+                  );
                }
                else {
-                  auto p3 = pcFrac(p.xyx() * TVec<T, 3>(seed));
-                  p3 += p3.Dot(p3.yzx() + T(33.33));
-                  return pcFrac((p3.xx() + p3.yz()) * p3.zy());
+                  auto p3 = Frac(p.xyx() * TVector<T, 3> {seed});
+                  p3 += p3.Dot(p3.yzx() + T {33.33});
+                  return Frac((p3.xx() + p3.yz()) * p3.zy());
                }
             }
             else if constexpr (DOUT == 3) {
                ///  3 out, 2 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec3 HoskinsHash3(Vec2 p) {\n"
-                     "   Vec3 p3 = fract(p.xyx * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
-                     "   p3 += dot(p3, p3.yxz + 33.33);\n"
-                     "   return fract((p3.xxy + p3.yzz) * p3.zyx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash3({1} p) {{
+                           {0} p3 = fract(p.xyx * {0}({2}, {3}, {4}));
+                           p3 += dot(p3, p3.yxz + 33.33);
+                           return fract((p3.xxy + p3.yzz) * p3.zyx);
+                        }}
+                     )shader",
+                     v3, v2,
+                     seed[0], seed[1], seed[2]
+                  );
                }
                else {
-                  auto p3 = pcFrac(p.xyx() * TVec<T, 3>(seed));
-                  p3 += p3.Dot(p3.yxz() + T(33.33));
-                  return pcFrac((p3.xxy() + p3.yzz()) * p3.zyx());
+                  auto p3 = Frac(p.xyx() * TVector<T, 3> {seed});
+                  p3 += p3.Dot(p3.yxz() + T {33.33});
+                  return Frac((p3.xxy() + p3.yzz()) * p3.zyx());
                }
             }
             else if constexpr (DOUT == 4) {
                ///  4 out, 2 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec4 HoskinsHash4(Vec2 p) {\n"
-                     "   Vec4 p4 = fract(p.xyxy * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
-                     "   p4 += dot(p4, p4.wzxy + 33.33);\n"
-                     "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash4({1} p) {{
+                           {0} p4 = fract(p.xyxy * {0}({2}, {3}, {4}, {5}));
+                           p4 += dot(p4, p4.wzxy + 33.33);
+                           return fract((p4.xxyz + p4.yzzw) * p4.zywx);
+                        }}
+                     )shader",
+                     v4, v2,
+                     seed[0], seed[1], seed[2], seed[3]
+                  );
                }
                else {
-                  auto p4 = pcFrac(p.xyxy() * seed);
-                  p4 += p4.Dot(p4.wzxy() + T(33.33));
-                  return pcFrac((p4.xxyz() + p4.yzzw()) * p4.zywx());
+                  auto p4 = Frac(p.xyxy() * seed);
+                  p4 += p4.Dot(p4.wzxy() + T {33.33});
+                  return Frac((p4.xxyz() + p4.yzzw()) * p4.zywx());
                }
             }
             else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 2");
@@ -176,65 +218,83 @@ namespace Langulus::Math
             if constexpr (DOUT == 1) {
                ///  1 out, 3 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "float HoskinsHash1(Vec3 p) {\n"
-                     "   p = fract(p * " + seed[0] + ");\n"
-                     "   p += dot(p, p.zyx + 31.32);\n"
-                     "   return fract((p.x + p.y) * p.z);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash1({1} p) {{
+                           p = fract(p * {2});
+                           p += dot(p, p.zyx + 31.32);
+                           return fract((p.x + p.y) * p.z);
+                        }}
+                     )shader",
+                     v1, v3,
+                     seed[0]
+                  );
                }
                else {
-                  p = pcFrac(p * seed[0]);
-                  p += p.Dot(p.zyx() + T(31.32));
-                  return T(pcFrac((p[0] + p[1]) * p[2]));
+                  p = Frac(p * seed[0]);
+                  p += p.Dot(p.zyx() + T {31.32});
+                  return T {Frac((p[0] + p[1]) * p[2])};
                }
             }
             else if constexpr (DOUT == 2) {
                ///  2 out, 3 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec2 HoskinsHash2(Vec3 p) {\n"
-                     "   p = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
-                     "   p += dot(p, p.yzx + 33.33);\n"
-                     "   return fract((p.xx + p.yz) * p.zy);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash2({1} p) {{
+                           p = fract(p * {1}({2}, {3}, {4}));
+                           p += dot(p, p.yzx + 33.33);
+                           return fract((p.xx + p.yz) * p.zy);
+                        }}
+                     )shader",
+                     v2, v3, 
+                     seed[0], seed[1], seed[2]
+                  );
                }
                else {
-                  p = pcFrac(p * TVec<T, 3>(seed));
-                  p += p.Dot(p.yzx() + T(33.33));
-                  return pcFrac((p.xx() + p.yz()) * p.zy());
+                  p = Frac(p * TVector<T, 3> {seed});
+                  p += p.Dot(p.yzx() + T {33.33});
+                  return Frac((p.xx() + p.yz()) * p.zy());
                }
             }
             else if constexpr (DOUT == 3) {
                ///  3 out, 3 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec3 HoskinsHash3(Vec3 p) {\n"
-                     "   p = fract(p * Vec3(" + seed[0] + ", " + seed[1] + ", " + seed[2] + "));\n"
-                     "   p += dot(p, p.yxz + 33.33);\n"
-                     "   return fract((p.xxy + p.yxx) * p.zyx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash3({0} p) {{
+                           p = fract(p * {0}({1}, {2}, {3}));
+                           p += dot(p, p.yxz + 33.33);
+                           return fract((p.xxy + p.yxx) * p.zyx);
+                        }}
+                     )shader",
+                     v3, seed[0], seed[1], seed[2]
+                  );
                }
                else {
-                  p = pcFrac(p * TVec<T, 3>(seed));
-                  p += p.Dot(p.yxz() + T(33.33));
-                  return pcFrac((p.xxy() + p.yxx()) * p.zyx());
+                  p = Frac(p * TVector<T, 3> {seed});
+                  p += p.Dot(p.yxz() + T {33.33});
+                  return Frac((p.xxy() + p.yxx()) * p.zyx());
                }
             }
             else if constexpr (DOUT == 4) {
                ///  4 out, 3 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec4 HoskinsHash4(Vec3 p) {\n"
-                     "   Vec4 p4 = fract(p.xyzx * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
-                     "   p4 += dot(p4, p4.wzxy + 33.33);\n"
-                     "   return fract((p4.xxyz + p4.yzzw) * p4.zywx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash4({1} p) {{
+                           {0} p4 = fract(p.xyzx * {0}({2}, {3}, {4}, {5}));
+                           p4 += dot(p4, p4.wzxy + 33.33);
+                           return fract((p4.xxyz + p4.yzzw) * p4.zywx);
+                        }}
+                     )shader",
+                     v4, v3, seed[0], seed[1], seed[2], seed[3]
+                  );
                }
                else {
-                  auto p4 = pcFrac(p.xyzx() * seed);
-                  p4 += p4.Dot(p4.wzxy() + T(33.33));
-                  return pcFrac((p4.xxyz() + p4.yzzw()) * p4.zywx());
+                  auto p4 = Frac(p.xyzx() * seed);
+                  p4 += p4.Dot(p4.wzxy() + T {33.33});
+                  return Frac((p4.xxyz() + p4.yzzw()) * p4.zywx());
                }
             }
             else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 3");
@@ -243,65 +303,83 @@ namespace Langulus::Math
             if constexpr (DOUT == 1) {
                ///  1 out, 4 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "float HoskinsHash1(Vec4 p) {\n"
-                     "   p = fract(p * " + seed[0] + ");\n"
-                     "   p += dot(p, p.ywxz + 32.31);\n"
-                     "   return fract((p.x + p.y) * (p.z + p.w));\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash1({1} p) {{
+                           p = fract(p * {2});
+                           p += dot(p, p.ywxz + 32.31);
+                           return fract((p.x + p.y) * (p.z + p.w));
+                        }}
+                     )shader",
+                     v1, v4, seed[0]
+                  );
                }
                else {
-                  p = pcFrac(p * seed[0]);
-                  p += p.Dot(p.ywxz() + T(32.31));
-                  return T(pcFrac((p[0] + p[1]) * (p[2] + p[3])));
+                  p = Frac(p * seed[0]);
+                  p += p.Dot(p.ywxz() + T {32.31});
+                  return T {Frac((p[0] + p[1]) * (p[2] + p[3]))};
                }
             }
             else if constexpr (DOUT == 2) {
                ///  2 out, 4 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec2 HoskinsHash2(Vec4 p) {\n"
-                     "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
-                     "   p += dot(p, p.wzxy + 33.33);\n"
-                     "   return fract((p.xw + p.yz) * p.zy);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash2({1] p) {{
+                           p = fract(p * {1}({2}, {3}, {4}, {5}));
+                           p += dot(p, p.wzxy + 33.33);
+                           return fract((p.xw + p.yz) * p.zy);
+                        }}
+                     )shader",
+                     v2, v4,
+                     seed[0], seed[1], seed[2], seed[3]
+                  );
                }
                else {
-                  p = pcFrac(p * seed);
-                  p += p.Dot(p.wzxy() + T(33.33));
-                  return pcFrac((p.xw() + p.yz()) * p.zy());
+                  p = Frac(p * seed);
+                  p += p.Dot(p.wzxy() + T {33.33});
+                  return Frac((p.xw() + p.yz()) * p.zy());
                }
             }
             else if constexpr (DOUT == 3) {
                ///  3 out, 4 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec3 HoskinsHash3(Vec4 p) {\n"
-                     "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
-                     "   p += dot(p, p.wzxy + 33.33);\n"
-                     "   return fract((p.zwx + p.yxw) * p.zwy);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash3({1} p) {{
+                           p = fract(p * {1}({2}, {3}, {4}, {5}));
+                           p += dot(p, p.wzxy + 33.33);
+                           return fract((p.zwx + p.yxw) * p.zwy);
+                        }}
+                     )shader",
+                     v3, v4,
+                     seed[0], seed[1], seed[2], seed[3]
+                  );
                }
                else {
-                  p = pcFrac(p * seed);
-                  p += p.Dot(p.wzxy() + T(33.33));
-                  return pcFrac((p.zwx() + p.yxw()) * p.zwy());
+                  p = Frac(p * seed);
+                  p += p.Dot(p.wzxy() + T {33.33});
+                  return Frac((p.zwx() + p.yxw()) * p.zwy());
                }
             }
             else if constexpr (DOUT == 4) {
                ///  4 out, 4 in...                                            
                if constexpr (GET_GLSL) {
-                  return Text() +
-                     "Vec4 HoskinsHash4(Vec4 p) {\n"
-                     "   p = fract(p * Vec4(" + seed[0] + ", " + seed[1] + ", " + seed[2] + ", " + seed[3] + "));\n"
-                     "   p += dot(p, p.wzxy + 33.33);\n"
-                     "   return fract((p.xxyz + p.yzzw) * p.zywx);\n"
-                     "}\n\n";
+                  return TemplateFill(
+                     R"shader(
+                        {0} HoskinsHash4({0} p) {{
+                           p = fract(p * {0}({1}, {2}, {3}, {4}));
+                           p += dot(p, p.wzxy + 33.33);
+                           return fract((p.xxyz + p.yzzw) * p.zywx);
+                        }}
+                     )shader",
+                     v4, seed[0], seed[1], seed[2], seed[3]
+                  );
                }
                else {
-                  p = pcFrac(p * seed);
-                  p += p.Dot(p.wzxy() + T(33.33));
-                  return pcFrac((p.xxyz() + p.yzzw()) * p.zywx());
+                  p = Frac(p * seed);
+                  p += p.Dot(p.wzxy() + T {33.33});
+                  return Frac((p.xxyz() + p.yzzw()) * p.zywx());
                }
             }
             else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 4");

@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "Common.hpp"
+#include "../Common.hpp"
 
 
 namespace Langulus::CT
