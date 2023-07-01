@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Functions/Trigonometry.hpp"
+#include "../Functions/Arithmetics.hpp"
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
 
