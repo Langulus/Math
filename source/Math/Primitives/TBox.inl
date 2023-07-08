@@ -14,6 +14,34 @@
 
 namespace Langulus::Math
 {
+   
+   /// Pick a shorter token, based on dimensions and type                     
+   /// This should be made more elegant when true constexpr string literals   
+   /// become available in the standard                                       
+   TEMPLATE()
+   constexpr typename TBox<T>::ClassName TBox<T>::GenerateClassName() noexcept {
+      ClassName name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : DefaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Box")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
 
    /// Check if box is degenerate                                             
    ///   @return true if at least one offset is zero                          
@@ -35,6 +63,35 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    auto TBox<T>::SignedDistance(const T& point) const {
       return Math::SignedDistance(point, *this);
+   }
+
+
+   /// Pick a shorter token, based on dimensions and type                     
+   /// This should be made more elegant when true constexpr string literals   
+   /// become available in the standard                                       
+   TEMPLATE()
+   constexpr typename TBoxRounded<T>::ClassName TBoxRounded<T>::GenerateClassName() noexcept {
+      ClassName name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : DefaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "BoxRounded")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
    }
 
    /// Check if box is degenerate                                             

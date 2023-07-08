@@ -72,6 +72,14 @@ namespace Langulus::Math
    ///                                                                     |  
    template<CT::Vector T>
    struct TBox : A::Box {
+   private:
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TBox>();
+      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
+      static constexpr ClassName GenerateClassName() noexcept;
+      static constexpr ClassName GeneratedClassName = GenerateClassName();
+
+   public:
+      LANGULUS(NAME) GeneratedClassName.data();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -105,6 +113,15 @@ namespace Langulus::Math
    ///                                                                     |  
    template<CT::Vector T>
    struct TBoxRounded : TBox<T> {
+   private:
+      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TBoxRounded>();
+      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
+      static constexpr ClassName GenerateClassName() noexcept;
+      static constexpr ClassName GeneratedClassName = GenerateClassName();
+
+   public:
+      LANGULUS(NAME) GeneratedClassName.data();
+
       using Base = TBox<T>;
       using typename Base::PointType;
       using Base::MemberCount;
