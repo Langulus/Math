@@ -16,14 +16,6 @@
    #define LANGULUS_API_MATH() LANGULUS_IMPORT()
 #endif
 
-namespace Langulus::Math
-{
-
-   using namespace ::Langulus::Anyness;
-   using Flow::Verb;
-
-} // namespace Langulus::Math
-
 LANGULUS_EXCEPTION(Arithmetic);
 
 LANGULUS_DEFINE_TRAIT(Transform,
@@ -60,6 +52,8 @@ LANGULUS_DEFINE_TRAIT(Sampler,
    "Sampler trait, used for sampling surfaces/volumes");
 LANGULUS_DEFINE_TRAIT(Level,
    "Level of an instance");
+LANGULUS_DEFINE_TRAIT(Interpolator,
+   "Interpolation mode");
 
 /// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1
@@ -73,5 +67,37 @@ namespace Langulus::Verbs
    struct Modulate;
    struct Randomize;
    struct Add;
+   struct Lerp;
+   struct Cerp;
 
 } // namespace Langulus::Verbs
+
+namespace Langulus::Math
+{
+
+   using namespace ::Langulus::Anyness;
+   using Flow::Verb;
+
+   /// Register traits                                                        
+   inline void RegisterTraits() {
+      (void)MetaTrait::Of<Traits::Transform>();
+      (void)MetaTrait::Of<Traits::View>();
+      (void)MetaTrait::Of<Traits::Projection>();
+      (void)MetaTrait::Of<Traits::Solid>();
+      (void)MetaTrait::Of<Traits::Pickable>();
+      (void)MetaTrait::Of<Traits::Signed>();
+      (void)MetaTrait::Of<Traits::Bilateral>();
+      (void)MetaTrait::Of<Traits::Static>();
+      (void)MetaTrait::Of<Traits::Boundness>();
+      (void)MetaTrait::Of<Traits::Relative>();
+      (void)MetaTrait::Of<Traits::Place>();
+      (void)MetaTrait::Of<Traits::Size>();
+      (void)MetaTrait::Of<Traits::Aim>();
+      (void)MetaTrait::Of<Traits::Velocity>();
+      (void)MetaTrait::Of<Traits::Acceleration>();
+      (void)MetaTrait::Of<Traits::Sampler>();
+      (void)MetaTrait::Of<Traits::Level>();
+      (void)MetaTrait::Of<Traits::Interpolator>();
+   }
+
+} // namespace Langulus::Math

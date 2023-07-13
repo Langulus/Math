@@ -13,8 +13,11 @@ namespace Langulus::Verbs
 {
    using namespace Flow;
 
+
+   ///                                                                        
    /// Exponent/Root verb                                                     
    /// Performs exponentiation or root                                        
+   ///                                                                        
    struct Exponent : ArithmeticVerb<Exponent, true> {
       LANGULUS(POSITIVE_VERB) "Exponent";
       LANGULUS(NEGATIVE_VERB) "Root";
@@ -41,6 +44,7 @@ namespace Langulus::Verbs
       template<CT::Data... T>
       static bool OperateOnTypes(const Block&, Block&, Verb&);
    };
-}
+
+} // namespace Langulus::Verbs
 
 #include "Exponent.inl"

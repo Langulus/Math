@@ -13,9 +13,12 @@ namespace Langulus::Verbs
 {
    using namespace Flow;
 
-   /// Multiply/Divide verb                                                   
+
+   ///                                                                        
+   ///   Multiply/Divide verb                                                 
    /// Performs arithmetic multiplication or division                         
    /// If context is no specified, it is always 1                             
+   ///                                                                        
    struct Multiply : ArithmeticVerb<Multiply, false> {
       LANGULUS(POSITIVE_VERB) "Multiply";
       LANGULUS(NEGATIVE_VERB) "Divide";
@@ -47,6 +50,7 @@ namespace Langulus::Verbs
       template<CT::Data... T>
       static bool OperateOnTypes(Block&, Verb&);
    };
-}
+
+} // namespace Langulus::Verbs
 
 #include "Multiply.inl"

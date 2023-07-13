@@ -13,8 +13,11 @@ namespace Langulus::Verbs
 {
    using namespace Flow;
 
-   /// Add/Subtract verb                                                      
+
+   ///                                                                        
+   ///   Add/Subtract verb                                                    
    /// Performs arithmetic addition or subtraction                            
+   ///                                                                        
    struct Add : ArithmeticVerb<Add, true> {
       LANGULUS(POSITIVE_VERB) "Add";
       LANGULUS(NEGATIVE_VERB) "Subtract";
@@ -45,6 +48,7 @@ namespace Langulus::Verbs
       template<CT::Data... T>
       static bool OperateOnTypes(Block&, Verb&);
    };
-}
+
+} // namespace Langulus::Verbs
 
 #include "Add.inl"

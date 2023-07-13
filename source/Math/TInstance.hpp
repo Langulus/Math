@@ -16,35 +16,14 @@
 
 #define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
-namespace Langulus::Verbs
-{
-
-   /// Move verb                                                              
-   /// Performs spatial movement/rotation on a physical instance              
-   struct Move : public StaticVerb<Move> {
-      LANGULUS(VERB) "Move";
-      LANGULUS(INFO) "Performs spatial movement/rotation on physical instances";
-
-      template<CT::Data T, CT::Data... A>
-      static constexpr bool AvailableFor() noexcept;
-      template<CT::Data T, CT::Data... A>
-      static constexpr auto Of() noexcept;
-
-      template<CT::Data T>
-      static bool ExecuteIn(T&, Verb&);
-   };
-
-} // namespace Langulus::Verbs
-
-
 namespace Langulus::Math
 {
 
    ///                                                                        
    ///   SPATIAL INSTANCE                                                     
    ///                                                                        
-   /// Provides higher level functionality regarding rotation, translation,   
-   /// scaling, primitive collisions.                                         
+   /// Provides higher level functionality for rotation, translation,         
+   /// scaling, and primitive collisions.                                     
    ///                                                                        
    template<CT::Vector T>
    class TInstance {

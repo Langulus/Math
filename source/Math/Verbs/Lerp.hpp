@@ -15,13 +15,12 @@ namespace Langulus::Verbs
 
 
    ///                                                                        
-   ///   Randomization verb                                                   
+   /// Linear interpolation verb                                              
    ///                                                                        
-   struct Randomize : ArithmeticVerb<Randomize, false> {
-      LANGULUS(VERB) "Randomize";
-      LANGULUS(OPERATOR) "Rand";
-      LANGULUS(PRECEDENCE) 9;
-      LANGULUS(INFO) "Performs randomization";
+   struct Lerp : ArithmeticVerb<Modulate, false> {
+      LANGULUS(VERB) "Lerp";
+      LANGULUS(PRECEDENCE) 10;
+      LANGULUS(INFO) "Performs linear interpolation";
 
       using ArithmeticVerb::ArithmeticVerb;
 
@@ -44,4 +43,4 @@ namespace Langulus::Verbs
 
 } // namespace Langulus::Verbs
 
-#include "Randomize.inl"
+#include "Lerp.inl"
