@@ -8,54 +8,56 @@
 #pragma once
 #include "TPoint.hpp"
 
-namespace Langulus::Math
+namespace Langulus
 {
+   namespace Math
+   {
+      template<CT::Vector>
+      struct TPolygon;
 
-   template<CT::Vector>
-   struct TPolygon;
+      using Polygon2 = TPolygon<Point2>;
+      using Polygon3 = TPolygon<Point3>;
 
-   using Polygon2 = TPolygon<Point2>;
-   using Polygon3 = TPolygon<Point3>;
+      using Polygon = Polygon3;
 
-   using Polygon = Polygon3;
+   } // namespace Langulus::Math
 
-} // namespace Langulus::Math
+   namespace A
+   {
 
-namespace Langulus::A
-{
+      /// An abstract polygon, also used as a topology type                   
+      struct Polygon {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::Polygon;
+         LANGULUS_BASES(Topology);
+      };
 
-   ///   An abstract polygon, also used as a topology type                    
-   struct Polygon {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Polygon;
-      LANGULUS_BASES(Topology);
-   };
+   } // namespace Langulus::A
 
-} // namespace Langulus::A
+   namespace Math
+   {
 
-namespace Langulus::Math
-{
+      ///                                                                     
+      ///   A templated polygon                                               
+      /// A list of coplanar points that form a surface with a complex edge   
+      ///                                                                     
+      template<CT::Vector T>
+      struct TPolygon : TAny<T> {
+         LANGULUS(DEEP) false;
+         LANGULUS(TYPED) TypeOf<T>;
+         LANGULUS_BASES(A::Polygon);
 
-   ///                                                                        
-   ///   A templated polygon                                                  
-   /// A list of coplanar points that form a surface with a complex edge      
-   ///                                                                        
-   template<CT::Vector T>
-   struct TPolygon : TAny<T> {
-      LANGULUS(DEEP) false;
-      LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Polygon);
+         using Base = TAny<T>;
+         using PointType = T;
+         static constexpr auto MemberCount = T::MemberCount;
+         static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
 
-      using Base = TAny<T>;
-      using PointType = T;
-      using T::MemberCount;
-      static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
+         /// Calculate signed distance                                        
+         NOD() auto SignedDistance(const T&) const {
+            TODO();
+         }
+      };
 
-      /// Calculate signed distance                                           
-      NOD() auto SignedDistance(const T&) const {
-         TODO();
-      }
-   };
+   } // namespace Langulus::Math
 
-} // namespace Langulus::Math
-
+} // namespace Langulus

@@ -13,45 +13,6 @@
 namespace Langulus::Math
 {
    
-   /// Pick a shorter token, based on member count and type                   
-   /// This should be made more elegant when true constexpr string literals   
-   /// become available in the standard                                       
-   TEMPLATE()
-   constexpr typename TColor<T>::ClassName TColor<T>::GenerateClassName() noexcept {
-      ClassName name {};
-      ::std::size_t offset {};
-
-      // Write prefix                                                   
-      switch (MemberCount) {
-      case 2:
-         for (auto i : "Grayscale")
-            name[offset++] = i;
-         break;
-      case 3:
-         for (auto i : "RGB")
-            name[offset++] = i;
-         break;
-      case 4:
-         for (auto i : "RGBA")
-            name[offset++] = i;
-         break;
-      }
-
-      // Write suffix                                                   
-      --offset;
-      if constexpr (!CT::SameAsOneOf<TypeOf<T>, uint8, ::std::uint8_t>) {
-         if constexpr (CT::Same<TypeOf<T>, float>)
-            name[offset++] = 'f';
-         else if constexpr (CT::Same<TypeOf<T>, double>)
-            name[offset++] = 'd';
-         else {
-            for (auto i : SuffixOf<TypeOf<T>>())
-               name[offset++] = i;
-         }
-      }
-      return name;
-   }
-
    /// Covert a console color to a 3-component color                          
    ///   @param from - the console color to create from                       
    TEMPLATE()

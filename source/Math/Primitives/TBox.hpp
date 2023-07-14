@@ -51,6 +51,62 @@ namespace Langulus
 
    } // namespace Langulus::CT
 
+   /// Custom name generator at compile-time for boxes                        
+   template<CT::Vector T>
+   constexpr auto CustomName(Of<Math::TBox<T>>&&) noexcept {
+      using CLASS = Math::TBox<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Box")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+
+   /// Custom name generator at compile-time for rounded boxes                
+   template<CT::Vector T>
+   constexpr auto CustomName(Of<Math::TBoxRounded<T>>&&) noexcept {
+      using CLASS = Math::TBoxRounded<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "BoxRounded")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+
 } // namespace Langulus
 
 namespace Langulus::Math
@@ -72,14 +128,7 @@ namespace Langulus::Math
    ///                                                                     |  
    template<CT::Vector T>
    struct TBox : A::Box {
-   private:
-      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TBox>();
-      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
-      static constexpr ClassName GenerateClassName() noexcept;
-      static constexpr ClassName GeneratedClassName = GenerateClassName();
-
-   public:
-      LANGULUS(NAME) GeneratedClassName.data();
+      LANGULUS(NAME) CustomNameOf<TBox>::Generate();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -91,7 +140,6 @@ namespace Langulus::Math
 
       T mOffsets {.5};
 
-   public:
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool IsHollow() const noexcept;
       NOD() auto SignedDistance(const T&) const;
@@ -113,14 +161,7 @@ namespace Langulus::Math
    ///                                                                     |  
    template<CT::Vector T>
    struct TBoxRounded : TBox<T> {
-   private:
-      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TBoxRounded>();
-      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
-      static constexpr ClassName GenerateClassName() noexcept;
-      static constexpr ClassName GeneratedClassName = GenerateClassName();
-
-   public:
-      LANGULUS(NAME) GeneratedClassName.data();
+      LANGULUS(NAME) CustomNameOf<TBoxRounded>::Generate();
 
       using Base = TBox<T>;
       using typename Base::PointType;
@@ -129,7 +170,6 @@ namespace Langulus::Math
 
       TypeOf<T> mRadius;
 
-   public:
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool IsHollow() const noexcept;
       NOD() auto SignedDistance(const T&) const;

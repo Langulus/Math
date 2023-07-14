@@ -21,34 +21,6 @@
 namespace Langulus::Math
 {
 
-   /// Pick a shorter token, based on member count and type                   
-   /// This should be made more elegant when true constexpr string literals   
-   /// become available in the standard                                       
-   TEMPLATE()
-   constexpr typename TME()::ClassName TME()::GenerateClassName() noexcept {
-      ClassName name {};
-      ::std::size_t offset {};
-
-      if constexpr (S > 4) {
-         for (auto i : DefaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Vec")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + S;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
-      return name;
-   }
-
    /// Default vector constructor initialized all components to DefaultMember 
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
@@ -138,22 +110,31 @@ namespace Langulus::Math
    TEMPLATE()
    template<class HEAD, class... TAIL>
    LANGULUS(INLINED)
-   constexpr TME()::TVector(const HEAD& head, const TAIL&... tail) noexcept requires (S > 1 && sizeof...(TAIL) > 0) {
+   constexpr TME()::TVector(const HEAD& head, const TAIL&... tail) noexcept requires (sizeof...(TAIL) > 0) {
       if constexpr (CT::Vector<HEAD>) {
+         // First element is a vector...                                
          if constexpr (HEAD::MemberCount < MemberCount) {
-            for (Offset i = 0; i < HEAD::MemberCount; ++i)
+            // ... but that vector is smaller than this one             
+            for (auto i = 0u; i < HEAD::MemberCount; ++i)
                mArray[i] = Adapt(head[i]);
+
+            // Form the tail as a new vector and copy the rest          
             const TVector<T, MemberCount - HEAD::MemberCount> theRest {tail...};
-            for (Offset i = HEAD::MemberCount; i < MemberCount; ++i)
+            for (auto i = HEAD::MemberCount; i < MemberCount; ++i)
                mArray[i] = theRest.mArray[i - HEAD::MemberCount];
          }
          else LANGULUS_ERROR("More elements provided than required");
       }
       else if constexpr (IsCompatible<HEAD>) {
+         // First element is a scalar, so copy it...                    
          mArray[0] = Adapt(head);
-         const TVector<T, MemberCount - 1> theRest {tail...};
-         for (Offset i = 1; i < MemberCount; ++i)
-            mArray[i] = theRest.mArray[i - 1];
+
+         if constexpr (MemberCount - 1 > 0) {
+            // Form the tail as a new vector and copy the rest          
+            const TVector<T, MemberCount - 1> theRest {tail...};
+            for (auto i = 1u; i < MemberCount; ++i)
+               mArray[i] = theRest.mArray[i - 1];
+         }
       }
       else LANGULUS_ERROR(
          "Bad element type in dense vector unfolding constructor"

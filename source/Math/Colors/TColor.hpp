@@ -8,118 +8,153 @@
 #pragma once
 #include "../Numbers/TColorComponent.hpp"
 
-namespace Langulus::Math
+namespace Langulus
 {
+   namespace Math
+   {
+      template<CT::Vector>
+      struct TColor;
 
-   template<CT::Vector>
-   struct TColor;
+      template<CT::DenseNumber, CT::Dimension>
+      struct TColorComponent;
 
-   template<CT::DenseNumber, CT::Dimension>
-   struct TColorComponent;
+      using RGB24 = TColor<Vec3u8>;
+      using RGBA32 = TColor<Vec4u8>;
+      using RGBA = RGBA32;
+      using RGB = RGB24;
 
-   using RGB24 = TColor<Vec3u8>;
-   using RGBA32 = TColor<Vec4u8>;
-   using RGBA = RGBA32;
-   using RGB = RGB24;
+      using RGB96 = TColor<Vec3f>;
+      using RGBA128 = TColor<Vec4f>;
+      using RGBAf = RGBA128;
+      using RGBf = RGB96;
 
-   using RGB96 = TColor<Vec3f>;
-   using RGBA128 = TColor<Vec4f>;
-   using RGBAf = RGBA128;
-   using RGBf = RGB96;
+      using Red8 = TColorComponent<uint8, Traits::R>;
+      using Green8 = TColorComponent<uint8, Traits::G>;
+      using Blue8 = TColorComponent<uint8, Traits::B>;
+      using Alpha8 = TColorComponent<uint8, Traits::A>;
 
-   using Red8 = TColorComponent<uint8, Traits::R>;
-   using Green8 = TColorComponent<uint8, Traits::G>;
-   using Blue8 = TColorComponent<uint8, Traits::B>;
-   using Alpha8 = TColorComponent<uint8, Traits::A>;
+      using Red32 = TColorComponent<Float, Traits::R>;
+      using Green32 = TColorComponent<Float, Traits::G>;
+      using Blue32 = TColorComponent<Float, Traits::B>;
+      using Alpha32 = TColorComponent<Float, Traits::A>;
 
-   using Red32 = TColorComponent<Float, Traits::R>;
-   using Green32 = TColorComponent<Float, Traits::G>;
-   using Blue32 = TColorComponent<Float, Traits::B>;
-   using Alpha32 = TColorComponent<Float, Traits::A>;
+      using Depth16 = TColorComponent<::std::uint16_t, Traits::D>;
+      using Depth32 = TColorComponent<Float, Traits::D>;
 
-   using Depth16 = TColorComponent<::std::uint16_t, Traits::D>;
-   using Depth32 = TColorComponent<Float, Traits::D>;
+      using Red = Red8;
+      using Green = Green8;
+      using Blue = Blue8;
+      using Alpha = Alpha8;
+      using Depth = Depth32;
 
-   using Red = Red8;
-   using Green = Green8;
-   using Blue = Blue8;
-   using Alpha = Alpha8;
-   using Depth = Depth32;
+   } // namespace Langulus::Math
 
-} // namespace Langulus::Math
+   namespace A
+   {
 
-namespace Langulus::A
-{
+      /// Used as an imposed base for any type that can be interpretable as a 
+      /// color                                                               
+      struct Color {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::RGBA;
+      };
 
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// color                                                                  
-   struct Color {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::RGBA;
-   };
+      /// Used as an imposed base for any type that can be interpretable as a 
+      /// color of the same size                                              
+      template<Count S>
+      struct ColorOfSize : Color {
+         LANGULUS(CONCRETE) Math::TColor<Math::TVector<Math::uint8, S>>;
+         LANGULUS_BASES(Color);
+         static constexpr Count MemberCount {S};
+         static_assert(S > 0, "Color size must be greater than zero");
+      };
 
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// color of the same size                                                 
-   template<Count S>
-   struct ColorOfSize : Color {
-      LANGULUS(CONCRETE) Math::TColor<Math::TVector<Math::uint8, S>>;
-      LANGULUS_BASES(Color);
-      static constexpr Count MemberCount {S};
-      static_assert(S > 0, "Color size must be greater than zero");
-   };
+      /// Used as an imposed base for any type that can be interpretable as a 
+      /// color of the same type                                              
+      template<CT::DenseNumber T>
+      struct ColorOfType : Color {
+         LANGULUS(CONCRETE) Math::TColor<Math::TVector<T, 4>>;
+         LANGULUS_BASES(Color);
+         LANGULUS(TYPED) T;
+      };
 
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// color of the same type                                                 
-   template<CT::DenseNumber T>
-   struct ColorOfType : Color {
-      LANGULUS(CONCRETE) Math::TColor<Math::TVector<T, 4>>;
-      LANGULUS_BASES(Color);
-      LANGULUS(TYPED) T;
-   };
+   } // namespace Langulus::A
 
-} // namespace Langulus::A
-
-namespace Langulus::Math
-{
-
-   ///                                                                        
-   ///   Templated color                                                      
-   ///                                                                        
-   #pragma pack(push, 1)
+   
+   /// Custom name generator at compile-time for colors                       
    template<CT::Vector T>
-   struct TColor : T {
-      using T::MemberCount;
-      using T::T;
-      using T::mArray;
+   constexpr auto CustomName(Of<Math::TColor<T>>&&) noexcept {
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TColor<T>>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
 
-      static_assert(MemberCount > 1 && MemberCount < 5,
-         "Invalid number of channels");
+      // Write prefix                                                   
+      switch (T::MemberCount) {
+      case 2:
+         for (auto i : "Grayscale")
+            name[offset++] = i;
+         break;
+      case 3:
+         for (auto i : "RGB")
+            name[offset++] = i;
+         break;
+      case 4:
+         for (auto i : "RGBA")
+            name[offset++] = i;
+         break;
+      }
 
-   private:
-      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TColor>();
-      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
-      static constexpr ClassName GenerateClassName() noexcept;
-      static constexpr ClassName GeneratedClassName = GenerateClassName();
+      // Write suffix                                                   
+      --offset;
+      if constexpr (!CT::SameAsOneOf<TypeOf<T>, Math::uint8, ::std::uint8_t>) {
+         if constexpr (CT::Same<TypeOf<T>, float>)
+            name[offset++] = 'f';
+         else if constexpr (CT::Same<TypeOf<T>, double>)
+            name[offset++] = 'd';
+         else {
+            for (auto i : SuffixOf<TypeOf<T>>())
+               name[offset++] = i;
+         }
+      }
+      return name;
+   }
+   
+   namespace Math
+   {
 
-   public:
-      LANGULUS(NAME) GeneratedClassName.data();
+      ///                                                                     
+      ///   Templated color                                                   
+      ///                                                                     
+      #pragma pack(push, 1)
+      template<CT::Vector T>
+      struct TColor : T {
+         using T::MemberCount;
+         using T::T;
+         using T::mArray;
 
-      LANGULUS_BASES(
-         A::ColorOfSize<MemberCount>, 
-         A::ColorOfType<TypeOf<T>>,
-         T
-      );
+         static_assert(MemberCount > 1 && MemberCount < 5,
+            "Invalid number of channels");
 
-      constexpr TColor(Logger::Color);
+      public:
+         LANGULUS(NAME) CustomNameOf<TColor>::Generate();
+         LANGULUS_BASES(
+            A::ColorOfSize<MemberCount>, 
+            A::ColorOfType<TypeOf<T>>,
+            T
+         );
 
-      template<CT::DenseNumber ALTT, CT::Dimension D>
-      constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;
+         constexpr TColor(Logger::Color);
 
-      operator Flow::Code() const;
-      operator Logger::Color() const;
-   };
-   #pragma pack(pop)
+         template<CT::DenseNumber ALTT, CT::Dimension D>
+         constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;
 
-} // namespace Langulus::Math
+         operator Flow::Code() const;
+         operator Logger::Color() const;
+      };
+      #pragma pack(pop)
+
+   } // namespace Langulus::Math
+
+} // namespace Langulus
 
 #include "TColor.inl"

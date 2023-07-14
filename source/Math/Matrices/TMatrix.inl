@@ -16,41 +16,6 @@
 namespace Langulus::Math
 {
 
-   /// Pick a shorter token, based on member count and type                   
-   /// This should be made more elegant when true constexpr string literals   
-   /// become available in the standard                                       
-   TEMPLATE()
-   constexpr typename TME()::ClassName TME()::GenerateClassName() noexcept {
-      ClassName name {};
-      ::std::size_t offset {};
-
-      if constexpr (COLUMNS > 4 || ROWS > 4) {
-         for (auto i : DefaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      constexpr Token prefix = "Matrix";
-      for (auto i : prefix)
-         name[offset++] = i;
-
-      // Write columns and rows                                         
-      if constexpr (COLUMNS == ROWS) {
-         name[offset++] = '0' + COLUMNS;
-      }
-      else {
-         name[offset++] = '0' + COLUMNS;
-         name[offset++] = 'x';
-         name[offset++] = '0' + ROWS;
-      }
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
-      return name;
-   }
-
    ///                                                                        
    ///   CONSTRUCTION                                                         
    ///                                                                        

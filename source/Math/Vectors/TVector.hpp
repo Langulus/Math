@@ -129,6 +129,37 @@ namespace Langulus::A
 #define TME() TVector<T, S, DEFAULT>
 
 
+namespace Langulus
+{
+   /// Custom name generator at compile-time for vectors                      
+   TEMPLATE()
+   constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (S > 4) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Vec")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + S;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<T>())
+         name[offset++] = i;
+
+      return name;
+   }
+}
+
 namespace Langulus::Math
 {
 
@@ -153,14 +184,8 @@ namespace Langulus::Math
 
       T mArray[S];
 
-   private:
-      static constexpr auto DefaultClassName = RTTI::LastCppNameOf<TVector>();
-      using ClassName = ::std::array<char, DefaultClassName.size() + 1>;
-      static constexpr ClassName GenerateClassName() noexcept;
-      static constexpr ClassName GeneratedClassName = GenerateClassName();
-
    public:
-      LANGULUS(NAME) GeneratedClassName.data();
+      LANGULUS(NAME) CustomNameOf<TVector>::Generate();
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
       LANGULUS(TYPED) T;
@@ -178,7 +203,7 @@ namespace Langulus::Math
       constexpr TVector(const TVEC(ALT)&) noexcept;
 
       template<class HEAD, class... TAIL>
-      constexpr TVector(const HEAD&, const TAIL&...) noexcept requires (S > 1 && sizeof...(TAIL) > 0);
+      constexpr TVector(const HEAD&, const TAIL&...) noexcept requires (sizeof...(TAIL) > 0);
 
       template<CT::DenseNumber N>
       constexpr TVector(const N&) noexcept requires IsCompatible<N>;

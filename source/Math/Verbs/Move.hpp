@@ -13,7 +13,7 @@ namespace Langulus::Verbs
 
    ///                                                                        
    /// Move verb                                                              
-   /// Performs spatial movement/rotation on a physical instance              
+   /// Performs spatial movement/rotation/scaling on a physical instance      
    ///                                                                        
    struct Move : public StaticVerb<Move> {
       LANGULUS(VERB) "Move";

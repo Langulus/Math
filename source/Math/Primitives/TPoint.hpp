@@ -46,37 +46,67 @@ namespace Langulus
          || (DerivedFrom<T, A::Point> && ...);
 
    } // namespace Langulus::CT
+   
+   /// Custom name generator at compile-time for points                       
+   template<CT::ScalarOrVector T>
+   constexpr auto CustomName(Of<Math::TPoint<T>>&&) noexcept {
+      using CLASS = Math::TPoint<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Point")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+   
+   namespace Math
+   {
+
+      ///                                                                     
+      ///   A concrete point                                                  
+      ///                                                                     
+      #pragma pack(push, 1)
+      template<CT::ScalarOrVector T>
+      struct TPoint : T {
+         LANGULUS(NAME) CustomNameOf<TPoint>::Generate();
+         LANGULUS(TYPED) TypeOf<T>;
+         LANGULUS_BASES(A::Point, T);
+
+         using T::MemberCount;
+         using T::T;
+         using T::operator =;
+
+         /// Convert from any point to text                                   
+         NOD() explicit operator Flow::Code() const {
+            return T::template Serialize<TPoint>();
+         }
+
+         /// Calculate signed distance                                        
+         ///   @param point - point to check distance from                    
+         ///   @return the distance to the primitive                          
+         NOD() auto SignedDistance(const T& point) const {
+            return (point - *this).Length();
+         }
+      };
+      #pragma pack(pop)
+
+   } // namespace Langulus::Math
 
 } // namespace Langulus
 
-namespace Langulus::Math
-{
-
-   ///                                                                        
-   ///   A concrete point                                                     
-   ///                                                                        
-   #pragma pack(push, 1)
-   template<CT::ScalarOrVector T>
-   struct TPoint : T {
-      LANGULUS(NAME) RTTI::CppNameOf<TPoint>();
-      LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Point, T);
-
-      using T::MemberCount;
-      using T::T;
-
-      /// Convert from any point to text                                      
-      NOD() explicit operator Flow::Code() const {
-         return T::template Serialize<TPoint>();
-      }
-
-      /// Calculate signed distance                                           
-      ///   @param point - point to check distance from                       
-      ///   @return the distance to the primitive                             
-      NOD() auto SignedDistance(const T& point) const {
-         return (point - *this).Length();
-      }
-   };
-   #pragma pack(pop)
-
-} // namespace Langulus::Math
