@@ -162,6 +162,16 @@ namespace Langulus
          constexpr TNormal(const T& other)
             : T {other.Normalize()} {}
 
+         /// Descriptor constructor                                           
+         ///   @param d - the descriptor                                      
+         TNormal(const Descriptor& d)
+            : T {d} {
+            const auto l = T::Length();
+            if (l == T {}) UNLIKELY()
+               LANGULUS_THROW(Arithmetic, "Degenerate normal");
+            *this *= (T {1} / l);
+         }
+
          /// Convert from any normal to text                                  
          NOD() explicit operator Flow::Code() const {
             return T::template Serialize<TNormal>();
