@@ -156,7 +156,7 @@ namespace Langulus::Math
    ///   @param desc - the descriptor to scan                                 
    TEMPLATE()
    TME()::TVector(const Descriptor& desc) {
-      LANGULUS_ASSUME(UserAssumes, !desc.IsEmpty(),
+      LANGULUS_ASSUME(UserAssumes, desc,
          "Empty descriptor for TVector");
 
       // Scan descriptor contents                                       
