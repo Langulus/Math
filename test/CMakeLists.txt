@@ -3,6 +3,7 @@ project(LangulusMathTest)
 add_executable(LangulusMathTest
     Main.cpp
     TestFlow.cpp
+    TestConstructors.cpp
     TestRTTI.cpp
     TestFunctions.cpp
     TestMatrices.cpp
