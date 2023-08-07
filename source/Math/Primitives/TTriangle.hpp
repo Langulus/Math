@@ -64,7 +64,15 @@ namespace Langulus
 
       /// Concept for distinguishing triangle primitives                      
       template<class... T>
-      concept Triangle = (DerivedFrom<T, A::Triangle> && ...);
+      concept Triangle = ((DerivedFrom<T, A::Triangle>) && ...);
+
+      /// Concept for distinguishing triangle strip topologies                
+      template<class... T>
+      concept TriangleStrip = ((DerivedFrom<T, A::TriangleStrip>) && ...);
+
+      /// Concept for distinguishing triangle fan topologies                  
+      template<class... T>
+      concept TriangleFan = ((DerivedFrom<T, A::TriangleFan>) && ...);
 
    } // namespace Langulus::CT
 

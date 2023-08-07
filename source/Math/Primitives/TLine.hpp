@@ -63,7 +63,15 @@ namespace Langulus
 
       /// Concept for distinguishing line primitives                          
       template<class... T>
-      concept Line = (DerivedFrom<T, A::Line> && ...);
+      concept Line = ((DerivedFrom<T, A::Line>) && ...);
+
+      /// Concept for distinguishing line loop primitives                     
+      template<class... T>
+      concept LineLoop = ((DerivedFrom<T, A::LineLoop>) && ...);
+
+      /// Concept for distinguishing line strip primitives                    
+      template<class... T>
+      concept LineStrip = ((DerivedFrom<T, A::LineStrip>) && ...);
 
    } // namespace Langulus::CT
 

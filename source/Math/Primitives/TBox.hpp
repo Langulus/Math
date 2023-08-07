@@ -19,11 +19,11 @@ namespace Langulus
       template<CT::Vector>
       struct TBoxRounded;
 
-      using Box2 = TBox<Point2>;
-      using Box3 = TBox<Point3>;
+      using Box2 = TBox<Vec2>;
+      using Box3 = TBox<Vec3>;
 
-      using BoxRounded2 = TBoxRounded<Point2>;
-      using BoxRounded3 = TBoxRounded<Point3>;
+      using BoxRounded2 = TBoxRounded<Vec2>;
+      using BoxRounded3 = TBoxRounded<Vec3>;
 
       using Box = Box3;
       using BoxRounded = BoxRounded3;
@@ -47,7 +47,7 @@ namespace Langulus
 
       /// Concept for distinguishing box primitives                           
       template<class... T>
-      concept Box = (DerivedFrom<T, A::Box> && ...);
+      concept Box = ((DerivedFrom<T, A::Box>) && ...);
 
    } // namespace Langulus::CT
 

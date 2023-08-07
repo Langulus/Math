@@ -38,11 +38,11 @@ namespace Langulus
 
       /// Concept for distinguishing primitives                               
       template<class... T>
-      concept Primitive = (DerivedFrom<T, A::Primitive> && ...);
+      concept Primitive = ((DerivedFrom<T, A::Primitive>) && ...);
 
       /// Concept for distinguishing topologies                               
       template<class... T>
-      concept Topology = (DerivedFrom<T, A::Topology> && ...);
+      concept Topology = ((DerivedFrom<T, A::Topology>) && ...);
 
    } // namespace Langulus::CT
 

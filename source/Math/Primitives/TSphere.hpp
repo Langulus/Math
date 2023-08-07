@@ -6,7 +6,107 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "Primitive.hpp"
+#include "TPoint.hpp"
+
+namespace Langulus
+{
+   namespace Math
+   {
+
+      template<CT::Vector>
+      struct TSphere;
+
+      template<CT::Vector>
+      struct TEllipsoid;
+
+      using Circle = TSphere<Point2>;
+      using Sphere = TSphere<Point3>;
+
+      using Ellipsoid2 = TEllipsoid<Point2>;
+      using Ellipsoid3 = TEllipsoid<Point3>;
+      using Ellipsoid = Ellipsoid3;
+
+   } // namespace Langulus::Math
+
+   namespace A
+   {
+
+      /// An abstract sphere                                                  
+      struct Sphere : Primitive {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::Sphere;
+         LANGULUS_BASES(Primitive);
+      };
+
+   } // namespace Langulus::A
+
+   namespace CT
+   {
+
+      /// Concept for distinguishing sphere primitives                        
+      template<class... T>
+      concept Sphere = ((DerivedFrom<T, A::Sphere>) && ...);
+
+   } // namespace Langulus::CT
+
+
+   /// Custom name generator at compile-time for boxes                        
+   template<CT::Vector T>
+   constexpr auto CustomName(Of<Math::TSphere<T>>&&) noexcept {
+      using CLASS = Math::TSphere<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+      else if constexpr (T::MemberCount == 3) {
+         for (auto i : "Sphere")
+            name[offset++] = i;
+      }
+      else if constexpr (T::MemberCount == 2) {
+         for (auto i : "Circle")
+            name[offset++] = i;
+      }
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+
+   /// Custom name generator at compile-time for rounded boxes                
+   template<CT::Vector T>
+   constexpr auto CustomName(Of<Math::TEllipsoid<T>>&&) noexcept {
+      using CLASS = Math::TEllipsoid<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Ellipsoid")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+
+} // namespace Langulus
 
 namespace Langulus::Math
 {
@@ -16,13 +116,14 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TSphere {
+      LANGULUS(NAME) CustomNameOf<TSphere>::Generate();
+      LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
-      LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Primitive);
+      LANGULUS_BASES(A::Sphere);
 
       using PointType = T;
-      using T::MemberCount;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
       TypeOf<T> mRadius {.5};
@@ -55,13 +156,14 @@ namespace Langulus::Math
    template<CT::Vector T>
    struct TEllipsoid {
    public:
+      LANGULUS(NAME) CustomNameOf<TEllipsoid>::Generate();
+      LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
-      LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Primitive);
+      LANGULUS_BASES(A::Sphere);
 
       using PointType = T;
-      using T::MemberCount;
+      static constexpr Count MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
       // A radius for each cardinal direction                           

@@ -43,7 +43,7 @@ namespace Langulus
 
       /// Concept for distinguishing cylinder primitives                      
       template<class... T>
-      concept Cylinder = (DerivedFrom<T, A::Cylinder> && ...);
+      concept Cylinder = ((DerivedFrom<T, A::Cylinder>) && ...);
 
    } // namespace Langulus::CT
 

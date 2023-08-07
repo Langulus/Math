@@ -26,7 +26,7 @@ namespace Langulus::Math
    template<CT::Vector ALT_T>
    LANGULUS(INLINED)
    constexpr TLine<T>::TLine(const ALT_T& p1, const ALT_T& p2) noexcept
-      : mAB {p1, p2} {}
+      : mAB {T{p1}, T{p2}} {}
 
    /// Manual construction from two points of any type (unsafe)            
    ///   @param points - pointer to the two points                         

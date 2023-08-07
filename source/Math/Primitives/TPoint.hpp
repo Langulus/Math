@@ -42,8 +42,7 @@ namespace Langulus
 
       /// Concept for distinguishing point primitives                         
       template<class... T>
-      concept Point = CT::ScalarOrVector<T...>
-         || (DerivedFrom<T, A::Point> && ...);
+      concept Point = CT::ScalarOrVector<T...> || ((DerivedFrom<T, A::Point>) && ...);
 
    } // namespace Langulus::CT
    
