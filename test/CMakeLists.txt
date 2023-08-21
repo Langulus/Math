@@ -1,5 +1,3 @@
-project(LangulusMathTest)
-
 add_executable(LangulusMathTest
     Main.cpp
     TestFlow.cpp

@@ -4,14 +4,11 @@
 
 LANGULUS_EXCEPTION_HANDLER
 
-#if LANGULUS_FEATURE(MEMORY_STATISTICS)
-static bool statistics_provided = false;
-static Anyness::Allocator::Statistics memory_statistics;
-#endif
-
 TEMPLATE_TEST_CASE("Vector static creation from code", "[vec]",
    Vec1, Vec2, Vec3, Vec4
 ) {
+   Allocator::State memoryState;
+
    GIVEN("Default construction") {
       const Code code = Code {NameOf<TestType>()} + "()";
       
@@ -24,21 +21,8 @@ TEMPLATE_TEST_CASE("Vector static creation from code", "[vec]",
             REQUIRE(parsed == required);
          }
       }
-      
-      #if LANGULUS_FEATURE(MEMORY_STATISTICS)
-         Fractalloc.CollectGarbage();
 
-         // Detect memory leaks                                         
-         if (statistics_provided) {
-            if (memory_statistics != Fractalloc.GetStatistics()) {
-               Fractalloc.DumpPools();
-               memory_statistics = Fractalloc.GetStatistics();
-               FAIL("Memory leak detected");
-            }
-         }
-
-         memory_statistics = Fractalloc.GetStatistics();
-         statistics_provided = true;
-      #endif
+      // Check for memory leaks after each cycle                        
+      REQUIRE(memoryState.Assert());
    }
 }
