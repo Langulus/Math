@@ -164,7 +164,7 @@ namespace Langulus
 
          /// Descriptor constructor                                           
          ///   @param d - the descriptor                                      
-         TNormal(const Descriptor& d)
+         TNormal(const Neat& d)
             : T {d} {
             const auto l = T::Length();
             if (l == T {}) UNLIKELY()

@@ -217,7 +217,7 @@ namespace Langulus::Math
       template<CT::DenseNumber N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
-      TVector(const Descriptor&);
+      TVector(const Neat&);
 
       template<class TOKEN>
       Flow::Code Serialize() const;

@@ -9,15 +9,15 @@ TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]",
 ) {
 	GIVEN("A 2D vector") {
 		auto meta = MetaOf<TestType>();
-		REQUIRE(meta != nullptr);
+		REQUIRE(meta);
 
 		WHEN("Interpreted as number") {
 			THEN("Requirements should be met") {
-				REQUIRE(meta->template CastsTo<A::Number>());
-				REQUIRE(!meta->template CastsTo<A::Number>(1));
-				REQUIRE(meta->template CastsTo<A::Number>(2));
-				REQUIRE(!meta->template CastsTo<A::Number>(3));
-				REQUIRE(!meta->template CastsTo<A::Number>(4));
+				REQUIRE(		meta->template CastsTo<A::Number>( ));
+				REQUIRE(not meta->template CastsTo<A::Number>(1));
+				REQUIRE(		meta->template CastsTo<A::Number>(2));
+				REQUIRE(not meta->template CastsTo<A::Number>(3));
+				REQUIRE(not meta->template CastsTo<A::Number>(4));
 			}
 		}
 	}
@@ -36,5 +36,5 @@ TEMPLATE_TEST_CASE("Padding and alignment checks", "[sizes]", ALL_TYPES) {
 	REQUIRE(sizeof(TVector<T, 1>[12]) == sizeof(TVector<T, 2>[6]));
 	REQUIRE(sizeof(TVector<T, 2>[12]) == sizeof(TVector<T, 3>[8]));
 	REQUIRE(sizeof(TVector<T, 2>[12]) == sizeof(TVector<T, 4>[6]));
-	REQUIRE(sizeof(TVector<T, 3>[8]) == sizeof(TVector<T, 4>[6]));
+	REQUIRE(sizeof(TVector<T, 3>[ 8]) == sizeof(TVector<T, 4>[6]));
 }

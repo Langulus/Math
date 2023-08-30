@@ -155,89 +155,15 @@ namespace Langulus::Math
    /// Construct from a descriptor                                            
    ///   @param desc - the descriptor to scan                                 
    TEMPLATE()
-   TME()::TVector(const Descriptor& desc) {
+   TME()::TVector(const Neat& desc) {
       LANGULUS_ASSUME(UserAssumes, desc,
          "Empty descriptor for TVector");
 
-      // Scan descriptor contents                                       
-      Offset initialized = 0;
-      if (!desc.ForEach([&](const T& element) noexcept {
-         // Most simple case                                            
-         mArray[initialized++] = element;
-      })) {
-         // Do a more indepth analysis                                  
-         if (desc.CastsTo<A::Number>()) {
-            // Initializing with 'some sort' of number(s)               
-            desc.ForEach(
-               // Most common types of numbers come first               
-               [&](const Real& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const int& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const long& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const unsigned int& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const unsigned long& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               // All the rest                                          
-               [&](const float& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const double& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-
-               [&](const ::std::int8_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::uint8_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::int16_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::uint16_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::int32_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::uint32_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::int64_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-               [&](const ::std::uint64_t& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               },
-                  
-               [&](const bool& n) noexcept {
-                  mArray[initialized++] = static_cast<T>(n);
-               }
-            );
-         }
-         else if (desc.CastsTo<A::Vector>()) {
-            // Initializing with 'some sort' of vector(s)               
-            TODO();
-         }
-         else if (desc.IsDeep()) {
-            // Initialize via complex sequence of numbers and vectors   
-            TODO();
-         }
-         else {
-            Logger::Error(
-               "Unexpected argument for TVector construction: ",
-               static_cast<const Any&>(desc));
-            LANGULUS_THROW(Construct,
-               "Bad TVector descriptor argument");
-         }
+      // Attempt initializing without any conversion                    
+      auto initialized = desc.ExtractData(mArray);
+      if (not initialized) {
+         // Attempt converting anything to T                            
+         initialized = desc.ExtractDataAs(mArray);
       }
 
       switch (initialized) {
@@ -254,6 +180,7 @@ namespace Langulus::Math
             "Bad TVector descriptor");
       case 1:
          // Only one provided element is handled as scalar constructor  
+         // Copy first element in array to the rest                     
          for (; initialized < S; ++initialized)
             mArray[initialized] = mArray[0];
          break;

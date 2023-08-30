@@ -1,8 +1,7 @@
 ﻿#include "Main.hpp"
+#include <Math/Vectors.hpp>
 #include <Flow/Verbs/Create.hpp>
 #include <Flow/Verbs/Select.hpp>
-#include <Flow/Verbs/Interpret.hpp>
-#include <Math/Vectors.hpp>
 #include <Math/Verbs/Add.hpp>
 #include <Math/Verbs/Exponent.hpp>
 #include <Math/Verbs/Multiply.hpp>

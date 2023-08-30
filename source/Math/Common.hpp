@@ -80,24 +80,24 @@ namespace Langulus::Math
 
    /// Register traits                                                        
    inline void RegisterTraits() {
-      (void)MetaTrait::Of<Traits::Transform>();
-      (void)MetaTrait::Of<Traits::View>();
-      (void)MetaTrait::Of<Traits::Projection>();
-      (void)MetaTrait::Of<Traits::Solid>();
-      (void)MetaTrait::Of<Traits::Pickable>();
-      (void)MetaTrait::Of<Traits::Signed>();
-      (void)MetaTrait::Of<Traits::Bilateral>();
-      (void)MetaTrait::Of<Traits::Static>();
-      (void)MetaTrait::Of<Traits::Boundness>();
-      (void)MetaTrait::Of<Traits::Relative>();
-      (void)MetaTrait::Of<Traits::Place>();
-      (void)MetaTrait::Of<Traits::Size>();
-      (void)MetaTrait::Of<Traits::Aim>();
-      (void)MetaTrait::Of<Traits::Velocity>();
-      (void)MetaTrait::Of<Traits::Acceleration>();
-      (void)MetaTrait::Of<Traits::Sampler>();
-      (void)MetaTrait::Of<Traits::Level>();
-      (void)MetaTrait::Of<Traits::Interpolator>();
+      (void) MetaOf<Traits::Transform>();
+      (void) MetaOf<Traits::View>();
+      (void) MetaOf<Traits::Projection>();
+      (void) MetaOf<Traits::Solid>();
+      (void) MetaOf<Traits::Pickable>();
+      (void) MetaOf<Traits::Signed>();
+      (void) MetaOf<Traits::Bilateral>();
+      (void) MetaOf<Traits::Static>();
+      (void) MetaOf<Traits::Boundness>();
+      (void) MetaOf<Traits::Relative>();
+      (void) MetaOf<Traits::Place>();
+      (void) MetaOf<Traits::Size>();
+      (void) MetaOf<Traits::Aim>();
+      (void) MetaOf<Traits::Velocity>();
+      (void) MetaOf<Traits::Acceleration>();
+      (void) MetaOf<Traits::Sampler>();
+      (void) MetaOf<Traits::Level>();
+      (void) MetaOf<Traits::Interpolator>();
    }
 
 } // namespace Langulus::Math
