@@ -14,7 +14,6 @@ TEMPLATE_TEST_CASE("Vector static creation from code", "[vec]",
       
       WHEN("Parsed") {
          Any required = TestType {};
-
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
          THEN("The parsed contents must match the requirements") {
