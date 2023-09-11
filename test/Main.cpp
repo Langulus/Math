@@ -1,3 +1,11 @@
+///                                                                           
+/// Langulus::Math                                                            
+/// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
+/// Part of the Langulus framework, see https://langulus.com                  
+///                                                                           
+/// Distributed under GNU General Public License v3+                          
+/// See LICENSE file, or https://www.gnu.org/licenses                         
+///                                                                           
 #include "Main.hpp"
 #include <Flow/Verbs/Associate.hpp>
 #include <Flow/Verbs/Catenate.hpp>
