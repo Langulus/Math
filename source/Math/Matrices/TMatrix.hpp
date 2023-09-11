@@ -112,7 +112,7 @@ namespace Langulus
       ::std::array<char, defaultClassName.size() + 1> name {};
       ::std::size_t offset {};
 
-      if constexpr (COLUMNS > 4 || ROWS > 4) {
+      if constexpr (COLUMNS > 4 or ROWS > 4) {
          for (auto i : defaultClassName)
             name[offset++] = i;
          return name;
@@ -155,8 +155,6 @@ namespace Langulus
          static constexpr Count Rows = ROWS;
          static constexpr Count MemberCount = Columns * Rows;
          static constexpr bool IsSquare = Columns == Rows;
-         template<CT::DenseNumber N>
-         static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
          union {
             ColumnType mColumns[Columns] {};
@@ -178,35 +176,22 @@ namespace Langulus
 
       public:
          constexpr TMatrix() noexcept;
-
          template<TARGS(ALT)>
          constexpr TMatrix(const TMAT(ALT)&) noexcept;
+         constexpr TMatrix(const CT::Number auto&) noexcept;
+         template<class T1, class T2, class... TAIL>
+         constexpr TMatrix(const T1&, const T2&, const TAIL&...) noexcept;
 
-         template<class HEAD, class... TAIL>
-         constexpr TMatrix(const HEAD&, const TAIL&...) noexcept requires (sizeof...(TAIL) > 0);
-
-         template<CT::DenseNumber N>
-         constexpr TMatrix(const N&) noexcept requires IsCompatible<N>;
-
-         template<CT::DenseNumber N>
-         constexpr TMatrix(const N*) noexcept requires IsCompatible<N>;
-
-         template<CT::Array N>
-         constexpr TMatrix(const N&) noexcept requires IsCompatible<Decay<N>>;
-
-         template<CT::DenseNumber N>
-         NOD() constexpr decltype(auto) Adapt(const N&) const noexcept requires IsCompatible<N>;
+         NOD() constexpr decltype(auto) Adapt(const CT::DenseNumber auto&) const noexcept;
 
          NOD() static constexpr TMatrix PerspectiveFOV(const CT::Angle auto&, const T&, const T&, const T&);
          NOD() static constexpr TMatrix PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&);
          NOD() static constexpr TMatrix Orthographic(const T&, const T&, const T&, const T&);
          NOD() static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>);
-         template<CT::Angle A>
-         NOD() static constexpr TMatrix Rotation(const A&) noexcept requires (ROWS >= 2 && COLUMNS >= 2);
-         template<CT::Angle A>
-         NOD() static constexpr TMatrix RotationAxis(const TVector<T, 3>&, const A&) noexcept requires (ROWS >= 3 && COLUMNS >= 3);
+         NOD() static constexpr TMatrix Rotation(const CT::Angle auto&) noexcept requires (ROWS >= 2 and COLUMNS >= 2);
+         NOD() static constexpr TMatrix RotationAxis(const TVector<T, 3>&, const CT::Angle auto&) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
          template<CT::Angle PITCH, CT::Angle YAW, CT::Angle ROLL = Radians>
-         NOD() static constexpr TMatrix Rotation(const PITCH&, const YAW&, const ROLL& = Radians {0}) noexcept requires (ROWS >= 3 && COLUMNS >= 3);
+         NOD() static constexpr TMatrix Rotation(const PITCH&, const YAW&, const ROLL& = Radians {0}) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
          NOD() static constexpr TMatrix Translation(const TVector<T, 4>&) noexcept;
          NOD() static constexpr TMatrix Scalar(const T&) noexcept;
          template<Count SIZE>
@@ -230,8 +215,8 @@ namespace Langulus
          NOD() constexpr TVector<T, 3> GetView() const noexcept;
          NOD() constexpr TVector<T, 3> GetScale() const noexcept;
 
-         NOD() constexpr const TVector<T, ROWS-1>& GetPosition() const noexcept requires (ROWS > 2 && COLUMNS > 2);
-         constexpr TMatrix& SetPosition(const TVector<T, ROWS - 1>&) noexcept requires (ROWS > 2 && COLUMNS > 2);
+         NOD() constexpr const TVector<T, ROWS-1>& GetPosition() const noexcept requires (ROWS > 2 and COLUMNS > 2);
+         constexpr TMatrix& SetPosition(const TVector<T, ROWS - 1>&) noexcept requires (ROWS > 2 and COLUMNS > 2);
 
          NOD() constexpr bool IsIdentity() const noexcept;
          NOD() constexpr bool IsNull() const noexcept;
@@ -305,13 +290,13 @@ namespace Langulus
       constexpr TME()& operator /= (TME()&, const T&) noexcept;
 
       template<TARGS(LHS), CT::DenseNumber K, Count C>
-      NOD() constexpr TVector<K, C> operator * (const TMAT(LHS)&, const TVector<K, C>&) noexcept requires (C <= LHSC && C > 1);
+      NOD() constexpr TVector<K, C> operator * (const TMAT(LHS)&, const TVector<K, C>&) noexcept requires (C <= LHSC and C > 1);
 
       template<TARGS(RHS), CT::DenseNumber K, Count C>
-      NOD() constexpr TVector<K, C> operator * (const TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSR && C > 1);
+      NOD() constexpr TVector<K, C> operator * (const TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSR and C > 1);
 
       template<TARGS(RHS), CT::DenseNumber K, Count C>
-      constexpr TVector<K, C>& operator *= (TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC && C > 1);
+      constexpr TVector<K, C>& operator *= (TVector<K, C>&, const TMAT(RHS)&) noexcept requires (C <= RHSC and C > 1);
 
 
       ///                                                                     

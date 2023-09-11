@@ -21,7 +21,7 @@ namespace Langulus::Math
    ///   CONSTRUCTION                                                         
    ///                                                                        
    /// Default constructor (identity)                                         
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix() noexcept {
       *this = Identity();
    }
@@ -30,30 +30,24 @@ namespace Langulus::Math
    ///   @param a - differently sized matrix                                  
    TEMPLATE()
    template<TARGS(ALT)>
+   LANGULUS(INLINED)
    constexpr TME()::TMatrix(const TMAT(ALT)& a) noexcept {
-      if constexpr (ALTC != COLUMNS || ALTR != ROWS) {
-         if constexpr (ALTC < COLUMNS || ALTR < ROWS) {
+      if constexpr (ALTC != COLUMNS or ALTR != ROWS) {
+         if constexpr (ALTC < COLUMNS or ALTR < ROWS) {
             // If copied region is smaller, make sure to reset          
             *this = Identity();
          }
 
          for (Offset col = 0; col < Math::Min(COLUMNS, ALTC); ++col) {
             for (Offset row = 0; row < Math::Min(ROWS, ALTR); ++row) {
-               if constexpr (CT::Same<ALTT, T>) {
-                  // Direct copy                                        
-                  mColumns[col][row] = a.mColumns[col][row];
-               }
-               else {
-                  // Conversion                                         
-                  mColumns[col][row] = static_cast<T>(a.mColumns[col][row]);
-               }
+               mColumns[col][row] = Adapt(a.mColumns[col][row]);
             }
          }
       }
-      else if constexpr (!CT::Same<ALTT, T>) {
+      else if constexpr (not CT::Same<ALTT, T>) {
          for (int i = 0; i < MemberCount; ++i) {
             // Convert all elements                                     
-            mArray[i] = static_cast<T>(a.mArray[i]);
+            mArray[i] = Adapt(a.mArray[i]);
          }
       }
       else {
@@ -61,86 +55,84 @@ namespace Langulus::Math
          CopyMemory(mArray, a.mArray);
       }
    }
+   
+   /// Construct from number(s)                                               
+   ///   @param x - if scalar value - spread across the matrix diagonals      
+   ///              if array - use it to fill column by column                
+   ///              if pointer - use it to fill column by column              
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TMatrix(const CT::Number auto& x) noexcept {
+      using N = Deref<decltype(x)>;
+
+      if constexpr (CT::Dense<N>) {
+         const auto e = Adapt(x);
+         for (Offset c = 0; c < Columns; ++c)
+            for (Offset r = 0; r < Rows; ++r)
+               mColumns[c][r] = (c == r) ? e : T {0};
+      }
+      else if constexpr (CT::Array<N>) {
+         static_assert(ExtentOf<N> >= MemberCount,
+            "This matrix is too powerful for your array");
+
+         const Deext<N>* source = x;
+         for (auto& column : mColumns) {
+            for (auto& v : column)
+               v = Adapt(*(source++));
+         }
+      }
+      else if constexpr (CT::Sparse<N>) {
+         N source = x;
+         for (auto& v : mArray)
+            v = Adapt(*(source++));
+      }
+      else LANGULUS_ERROR("Bad constructor by numbers");
+   }
 
    /// Manual initialization with variadic head-tail                          
    /// The count of elements in head and tail should sum to the matrix size   
    ///   @param head - first element, scalar or vector                        
    ///   @param tail... - any other elements, scalar or vector                
    TEMPLATE()
-   template<class HEAD, class... TAIL>
-   constexpr TME()::TMatrix(const HEAD& head, const TAIL&... tail) noexcept requires (sizeof...(TAIL) > 0) {
-      if constexpr (CT::Vector<HEAD>) {
-         if constexpr (HEAD::MemberCount < MemberCount) {
-            for (Offset i = 0; i < HEAD::MemberCount; ++i)
-               (*this)[i] = static_cast<T>(head[i]);
-            const TVector<T, MemberCount - HEAD::MemberCount> theRest {tail...};
-            for (Offset i = HEAD::MemberCount; i < MemberCount; ++i)
-               (*this)[i] = theRest[i - HEAD::MemberCount];
+   template<class T1, class T2, class... TAIL>
+   LANGULUS(INLINED)
+   constexpr TME()::TMatrix(const T1& t1, const T2& t2, const TAIL&... tail) noexcept {
+      if constexpr (CT::Vector<T1>) {
+         if constexpr (T1::MemberCount < MemberCount) {
+            for (Offset i = 0; i < T1::MemberCount; ++i)
+               (*this)[i] = Adapt(t1[i]);
+            const TVector<T, MemberCount - T1::MemberCount> theRest {t2, tail...};
+            for (Offset i = T1::MemberCount; i < MemberCount; ++i)
+               (*this)[i] = theRest[i - T1::MemberCount];
          }
          else LANGULUS_ERROR("More elements provided than required");
       }
-      else if constexpr (IsCompatible<HEAD>) {
-         (*this)[0] = static_cast<T>(head);
-         const TVector<T, MemberCount - 1> theRest {tail...};
+      else {
+         (*this)[0] = Adapt(t1);
+         const TVector<T, MemberCount - 1> theRest {t2, tail...};
          for (Offset i = 1; i < MemberCount; ++i)
             (*this)[i] = theRest[i - 1];
-      }
-      else LANGULUS_ERROR(
-         "Bad element type in matrix unfolding constructor"
-         " - must be numbers and/or vectors");
-   }
-
-   /// Scalar constructor - sets all diagonal components                      
-   ///   @param x - scalar value to spread across the matrix diagonals        
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   constexpr TME()::TMatrix(const N& x) noexcept requires IsCompatible<N> {
-      const auto e = Adapt(x);
-      for (Offset c = 0; c < Columns; ++c)
-         for (Offset r = 0; r < Rows; ++r)
-            mColumns[c][r] = (c == r) ? e : T {0};
-   }
-
-   /// Construct from an unbounded array                                      
-   ///   @attention very unsafe                                               
-   ///   @param a - pointer to first element in an unbounded array            
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   constexpr TME()::TMatrix(const N* a) noexcept requires IsCompatible<N> {
-      for (auto& v : mArray)
-         v = Adapt(*(a++));
-   }
-
-   /// Construct from bounded array                                           
-   ///   @param a - bounded array                                             
-   TEMPLATE()
-   template<CT::Array N>
-   constexpr TME()::TMatrix(const N& a) noexcept requires IsCompatible<Decay<N>> {
-      static_assert(ExtentOf<N> >= MemberCount,
-         "This matrix is too powerful for your array");
-
-      const Decay<N>* source = a;
-      for (auto& column : mColumns) {
-         for (auto& v : column)
-            v = Adapt(*(source++));
       }
    }
 
    /// Adapt a component to the matrix's internal type                        
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   constexpr decltype(auto) TME()::Adapt(const N& item) const noexcept requires IsCompatible<N> {
-      if constexpr (!CT::Same<N, T>)
-         return static_cast<T>(item);
+   ///   @param x - the component to adapt                                    
+   ///   @return the adapted component                                        
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr decltype(auto) TME()::Adapt(const CT::DenseNumber auto& x) const noexcept {
+      using N = Deref<decltype(x)>;
+      static_assert(CT::Convertible<N, T>, "Incompatible number");
+
+      if constexpr (not CT::Same<N, T>)
+         return static_cast<T>(x);
       else
-         return item;
+         return x;
    }
 
    ///                                                                        
    ///   ARITHMETICS                                                          
    ///                                                                        
    /// Multiply two matrices - not commutative                                
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator * (const TME()& lhs, const TME()& rhs) noexcept {
       TME() r = TME()::Null();
       for (Offset col = 0; col < COLUMNS; ++col) {
@@ -153,7 +145,7 @@ namespace Langulus::Math
    }
 
    /// Add two matrices                                                       
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator + (const TME()& me, const TME()& other) noexcept {
       TME() result(me);
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
@@ -162,7 +154,7 @@ namespace Langulus::Math
    }
 
    /// Subtract two matrices                                                  
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator - (const TME()& me, const TME()& other) noexcept {
       TME() result(me);
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
@@ -171,7 +163,7 @@ namespace Langulus::Math
    }
 
    /// Multiply matrix by a scalar                                            
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator * (const TME()& me, const T& s) noexcept {
       TME() result(me);
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
@@ -180,13 +172,13 @@ namespace Langulus::Math
    }
 
    /// Multiply scalar by a matrix                                            
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator * (const T& s, const TME()& me) noexcept {
       return me * s;
    }
 
    /// Divide the matrix by a scalar - not commutative                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator / (const TME()& me, const T& s) noexcept {
       const auto inv_s = T(1) / s;
       TME() result(me);
@@ -196,7 +188,7 @@ namespace Langulus::Math
    }
 
    /// Divide the scalar by a matrix - not commutative                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() operator / (const T& s, const TME()& me) noexcept {
       TME() result(me);
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
@@ -205,13 +197,13 @@ namespace Langulus::Math
    }
 
    /// Destructive multiplication of two matrices (not commutative)           
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& operator *= (TME()& me, const TME()& other) noexcept {
       return me = me * other;
    }
 
    /// Destructive addition of two matrices. Not commutative                  
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& operator += (TME()& me, const TME()& other) noexcept {
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
          me.mArray[idx] += other.mArray[idx];
@@ -219,7 +211,7 @@ namespace Langulus::Math
    }
 
    /// Destructive subtraction of two matrices. Not commutative               
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& operator -= (TME()& me, const TME()& other) noexcept {
       for (Offset idx = 0; idx < me.MemberCount; ++idx)
          me.mArray[idx] -= other.mArray[idx];
@@ -227,7 +219,7 @@ namespace Langulus::Math
    }
 
    /// Destructive multiplication by a scalar. Not commutative                
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& operator *= (TME()& me, const T& s) noexcept {
       for (auto& it : me.mArray)
          it *= s;
@@ -235,7 +227,7 @@ namespace Langulus::Math
    }
 
    /// Destructive division by a scalar. Not commutative                      
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& operator /= (TME()& me, const T& s) noexcept {
       const auto inv_s = T(1) / s;
       for (auto& it : me.mArray)
@@ -248,14 +240,14 @@ namespace Langulus::Math
    template<TARGS(LHS), CT::DenseNumber T, Count C>
    constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSC && C > 1) {
       using LT = Lossless<T, LHST>;
-      if constexpr (LHSC == LHSR && LHSC == 2) {
+      if constexpr (LHSC == LHSR and LHSC == 2) {
          // 2x2 matrix * row optimization                               
          return {
             me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1],
             me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1]
          };
       }
-      else if constexpr (LHSC == LHSR && LHSC == 3) {
+      else if constexpr (LHSC == LHSR and LHSC == 3) {
          // 3x3 matrix * row optimization                               
          return {
             me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2],
@@ -300,14 +292,14 @@ namespace Langulus::Math
    template<TARGS(RHS), CT::DenseNumber T, Count C>
    constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSR && C > 1) {
       using LT = Lossless<T, RHST>;
-      if constexpr (RHSC == RHSR && RHSC == 2) {
+      if constexpr (RHSC == RHSR and RHSC == 2) {
          // 2x2 column * matrix optimization                            
          return {
             me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1],
             me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1]
          };
       }
-      else if constexpr (RHSC == RHSR && RHSC == 3) {
+      else if constexpr (RHSC == RHSR and RHSC == 3) {
          // 3x3 column * matrix optimization                            
          return {
             me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2],
@@ -315,7 +307,7 @@ namespace Langulus::Math
             me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2]
          };
       }
-      else if constexpr (RHSC == RHSR && RHSC == 4) {
+      else if constexpr (RHSC == RHSR and RHSC == 4) {
          // 4x4 column * matrix optimization                            
          return {
             me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3] * vec[3],
@@ -337,6 +329,7 @@ namespace Langulus::Math
 
    /// Destructive multiplication of a row vector                             
    template<TARGS(RHS), CT::DenseNumber T, Count C>
+   LANGULUS(INLINED)
    constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
       return vec = vec * me;
    }
@@ -346,13 +339,13 @@ namespace Langulus::Math
    ///   COMPARISON                                                           
    ///                                                                        
    /// Compare with another matrix                                            
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr bool operator == (const TME()& lhs, const TME()& rhs) noexcept {
       return 0 == memcmp(lhs.mArray, rhs.mArray, sizeof(lhs.mArray));
    }
 
    /// Compare with scalar                                                    
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr bool operator == (const TME()& lhs, const T& rhs) noexcept {
       for (auto& it : lhs.mArray)
          if (it != rhs)
@@ -367,7 +360,7 @@ namespace Langulus::Math
    /// Access 1D index                                                        
    ///   @param i - index [0; MemberCount)                                    
    ///   @return a reference to the element                                   
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr typename TME()::ColumnType& TME()::operator [] (const Offset i) noexcept {
       return mColumns[i];
    }
@@ -375,65 +368,65 @@ namespace Langulus::Math
    /// Access 1D index (const)                                                
    ///   @param i - index [0; COLS*ROWS)                                      
    ///   @return a reference to the element                                   
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr const typename TME()::ColumnType& TME()::operator [] (const Offset i) const noexcept {
       return mColumns[i];
    }
 
    /// Access raw data                                                        
    ///   @return pointer to the first element                                 
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::GetRaw() noexcept {
       return mArray;
    }
 
    /// Access raw data (const)                                                
    ///   @return pointer to the first element                                 
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::GetRaw() const noexcept {
       return mArray;
    }
 
    /// Get right axis                                                         
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TVector<T, 3> TME()::GetRight() const noexcept {
-      if constexpr (IsSquare && Rows > 2)
+      if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][0], mColumns[1][0], mColumns[2][0]};
       else LANGULUS_ERROR("Can't get right axis of this matrix");
    }
 
    /// Get up axis                                                            
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TVector<T, 3> TME()::GetUp() const noexcept {
-      if constexpr (IsSquare && Rows > 2)
+      if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][1], mColumns[1][1], mColumns[2][1]};
       else LANGULUS_ERROR("Can't get up axis of this matrix");
    }
 
    /// Get view axis                                                          
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TVector<T, 3> TME()::GetView() const noexcept {
-      if constexpr (IsSquare && Rows > 2)
+      if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][2], mColumns[1][2], mColumns[2][2]};
       else LANGULUS_ERROR("Can't get view axis of this matrix");
    }
 
    /// Get translation                                                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TVector<T, 3> TME()::GetScale() const noexcept {
-      if constexpr (IsSquare && Rows > 2)
+      if constexpr (IsSquare and Rows > 2)
          return {GetRight().Length(), GetUp().Length(), GetView().Length()};
       else LANGULUS_ERROR("Can't get translation of this matrix");
    }
 
    /// Get translation                                                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr const TVector<T, ROWS - 1>& TME()::GetPosition() const noexcept requires (ROWS > 2 && COLUMNS > 2) {
       return mColumns[COLUMNS - 1];
    }
 
    /// Set translation                                                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::SetPosition(const TVector<T, ROWS - 1>& position) noexcept requires (ROWS > 2 && COLUMNS > 2) {
       static_cast<TVector<T, ROWS - 1>&>(mColumns[COLUMNS - 1]) = position;
       return *this;
@@ -442,7 +435,7 @@ namespace Langulus::Math
    /// Get a whole row                                                        
    ///   @param idx - row index                                               
    ///   @return a row                                                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    typename TME()::RowType TME()::GetRow(Offset idx) const noexcept {
       T r[COLUMNS];
       for (int i = 0; i < COLUMNS; ++i)
@@ -453,7 +446,7 @@ namespace Langulus::Math
    /// Get a whole column                                                     
    ///   @param idx - column index                                            
    ///   @return a column                                                     
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    const typename TME()::ColumnType& TME()::GetColumn(Offset idx) const noexcept {
       return mColumns[idx];
    }
@@ -485,7 +478,7 @@ namespace Langulus::Math
    ///   @return the projection matrix                                        
    TEMPLATE()
    constexpr TME() TME()::PerspectiveFOV(const CT::Angle auto& fieldOfView, const T& aspect, const T& near, const T& far) {
-      static_assert(IsSquare && Rows == 4,
+      static_assert(IsSquare and Rows == 4,
          "Can't make a perspective matrix from this one");
 
       TME() result = Null();
@@ -503,7 +496,7 @@ namespace Langulus::Math
    /// described by a region on the near clipping plane                       
    TEMPLATE()
    constexpr TME() TME()::PerspectiveRegion(const T& left, const T& right, const T& top, const T& bottom, const T& near, const T& far) {
-      static_assert(IsSquare && Rows == 4,
+      static_assert(IsSquare and Rows == 4,
          "Can't make a perspective matrix from this one");
 
       TME() result = Null();
@@ -528,10 +521,10 @@ namespace Langulus::Math
    /// Orthographic constructor - LH orthographic projection matrix           
    TEMPLATE()
    constexpr TME() TME()::Orthographic(const T& width, const T& height, const T& near, const T& far) {
-      static_assert(IsSquare && Rows == 4,
+      static_assert(IsSquare and Rows == 4,
          "Can't make an orthogonal matrix from this one");
       const auto range = far - near;
-      if (range == 0 || width == 0 || height == 0)
+      if (range == 0 or width == 0 or height == 0)
          throw Except::DivisionByZero();
 
       TME() result = Null();
@@ -548,7 +541,7 @@ namespace Langulus::Math
    /// Look at constructor - LH lookat matrix                                 
    TEMPLATE()
    constexpr TME() TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up) {
-      static_assert(IsSquare && Rows > 2,
+      static_assert(IsSquare and Rows > 2,
          "Can't make a look-at matrix from this one");
 
       forward = forward.Normalize();
@@ -574,8 +567,7 @@ namespace Langulus::Math
 
    /// Create a rotational matrix (for 2x2 matrix, only around z)             
    TEMPLATE()
-   template<CT::Angle A>
-   constexpr TME() TME()::Rotation(const A& roll) noexcept requires (ROWS >= 2 && COLUMNS >= 2) {
+   constexpr TME() TME()::Rotation(const CT::Angle auto& roll) noexcept requires (ROWS >= 2 && COLUMNS >= 2) {
       auto cosR = Math::Cos(roll);
       auto sinR = Math::Sin(roll);
 
@@ -590,8 +582,7 @@ namespace Langulus::Math
    /// Create a rotational matrix based on axis and angle                     
    /// Builds a 3D rotation matrix created from normalized axis and an angle  
    TEMPLATE()
-   template<CT::Angle A>
-   constexpr TME() TME()::RotationAxis(const TVector<T, 3>& axis, const A& a) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
+   constexpr TME() TME()::RotationAxis(const TVector<T, 3>& axis, const CT::Angle auto& a) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
       const T c = Math::Cos(a);
       const T s = Math::Sin(a);
 
@@ -638,14 +629,14 @@ namespace Langulus::Math
    }
 
    /// Translational constructor                                              
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() TME()::Translation(const TVector<T, 4>& position) noexcept {
       TME() temp;
       return temp.SetPosition(position);
    }
 
    /// Scalar constructor (uniform)                                           
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() TME()::Scalar(const T& xx) noexcept {
       TME() temp = Null();
       for (Count col = 0; col < Columns; ++col)
@@ -667,26 +658,26 @@ namespace Langulus::Math
    }
 
    /// Set to identity                                                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() TME()::Identity() noexcept {
       return Scalar(T(1));
    }
 
    /// Check if identity                                                      
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::IsIdentity() const noexcept {
       return *this == Identity();
    }
 
    /// Set to null                                                            
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() TME()::Null() noexcept {
       T temp[MemberCount] = {};
       return temp;
    }
 
    /// Check if null                                                          
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::IsNull() const noexcept {
       return *this == Null();
    }
@@ -730,7 +721,7 @@ namespace Langulus::Math
 
    /// Calculate the determinant of the matrix                                
    ///   @return the determinant of the matrix                                
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr T TME()::Determinant() const noexcept {
       static_assert(IsSquare, "Can't get determinant of a non-square matrix");
       return InnerDeterminant<Columns>(mArray);
@@ -738,7 +729,7 @@ namespace Langulus::Math
 
    /// Transpose the matrix                                                   
    ///   @return the transposed matrix                                        
-   TEMPLATE()
+   TEMPLATE() LANGULUS(INLINED)
    constexpr TME() TME()::Transpose() const noexcept {
       static_assert(IsSquare, "Can't transpose non-square matrix");
       TME() result = *this;
@@ -760,7 +751,7 @@ namespace Langulus::Math
          for (int col = 0; col < n; col++) {
             //  Copying into temporary matrix only those element        
             //  which are not in given row and column                   
-            if (row != p && col != q) {
+            if (row != p and col != q) {
                temp.mColumns[j++][i] = mColumns[col][row];
 
                // Row is filled, so increase row index and              

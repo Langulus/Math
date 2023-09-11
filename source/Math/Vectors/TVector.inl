@@ -65,81 +65,71 @@ namespace Langulus::Math
       }
    }
 
-   /// Construction from scalar                                               
-   ///   @param a - scalar to copy                                            
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr TME()::TVector(const N& a) noexcept requires IsCompatible<N> {
-      if constexpr (S == 1)
-         *mArray = Adapt(a);
-      else {
-         const auto scalar = Adapt(a);
-         for (auto& v : mArray)
-            v = scalar;
-      }
-   }
-   
-   /// Construction from an unbounded array                                   
-   ///   @attention very unsafe                                               
-   ///   @param a - array to copy                                             
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr TME()::TVector(const N* a) noexcept requires IsCompatible<N> {
-      for (auto& v : mArray)
-         v = Adapt(*(a++));
-   }
-   
-   /// Construction from a bounded array                                      
-   ///   @param a - array to copy                                             
-   TEMPLATE()
-   template<CT::Array N>
-   LANGULUS(INLINED)
-   constexpr TME()::TVector(const N& a) noexcept requires IsCompatible<Decay<N>> {
-      static_assert(ExtentOf<N> >= S,
-         "This vector is too powerful for your array");
+   /// Construct from number(s)                                               
+   ///   @param x - if scalar value - spread across the vector                
+   ///              if array - use it to fill element by element              
+   ///              if pointer - use it to fill element by element            
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TVector(const CT::Number auto& a) noexcept {
+      using N = Deref<decltype(a)>;
 
-      const Decay<N>* source = a;
-      for (auto& v : mArray)
-         v = Adapt(*(source++));
+      if constexpr (CT::Dense<N>) {
+         if constexpr (S == 1)
+            *mArray = Adapt(a);
+         else {
+            const auto scalar = Adapt(a);
+            for (auto& v : mArray)
+               v = scalar;
+         }
+      }
+      else if constexpr (CT::Array<N>) {
+         static_assert(ExtentOf<N> >= S,
+            "This vector is too powerful for your array");
+
+         const Deext<N>* source = a;
+         for (auto& v : mArray)
+            v = Adapt(*(source++));
+      }
+      else if constexpr (CT::Sparse<N>) {
+         N source = a;
+         for (auto& v : mArray)
+            v = Adapt(*(source++));
+      }
+      else LANGULUS_ERROR("Bad constructor by numbers");
    }
 
    /// Manual construction via a variadic head-tail                           
    /// Any of the elements can be another vector, as long all vectors'        
    /// element counts and scalars sum up to this vector type's size           
    TEMPLATE()
-   template<class HEAD, class... TAIL>
+   template<class T1, class T2, class... TAIL>
    LANGULUS(INLINED)
-   constexpr TME()::TVector(const HEAD& head, const TAIL&... tail) noexcept requires (sizeof...(TAIL) > 0) {
-      if constexpr (CT::Vector<HEAD>) {
+   constexpr TME()::TVector(const T1& t1, const T2& t2, const TAIL&... tail) noexcept {
+      if constexpr (CT::Vector<T1>) {
          // First element is a vector...                                
-         if constexpr (HEAD::MemberCount < MemberCount) {
+         if constexpr (T1::MemberCount < MemberCount) {
             // ... but that vector is smaller than this one             
-            for (auto i = 0u; i < HEAD::MemberCount; ++i)
-               mArray[i] = Adapt(head[i]);
+            for (auto i = 0u; i < T1::MemberCount; ++i)
+               mArray[i] = Adapt(t1[i]);
 
             // Form the tail as a new vector and copy the rest          
-            const TVector<T, MemberCount - HEAD::MemberCount> theRest {tail...};
-            for (auto i = HEAD::MemberCount; i < MemberCount; ++i)
-               mArray[i] = theRest.mArray[i - HEAD::MemberCount];
+            const TVector<T, MemberCount - T1::MemberCount> theRest {t2, tail...};
+            for (auto i = T1::MemberCount; i < MemberCount; ++i)
+               mArray[i] = theRest.mArray[i - T1::MemberCount];
          }
          else LANGULUS_ERROR("More elements provided than required");
       }
-      else if constexpr (IsCompatible<HEAD>) {
+      else {
          // First element is a scalar, so copy it...                    
-         mArray[0] = Adapt(head);
+         mArray[0] = Adapt(t1);
 
          if constexpr (MemberCount - 1 > 0) {
             // Form the tail as a new vector and copy the rest          
-            const TVector<T, MemberCount - 1> theRest {tail...};
+            const TVector<T, MemberCount - 1> theRest {t2, tail...};
             for (auto i = 1u; i < MemberCount; ++i)
                mArray[i] = theRest.mArray[i - 1];
          }
       }
-      else LANGULUS_ERROR(
-         "Bad element type in dense vector unfolding constructor"
-         " - must be CT::Vector or a number");
    }
 
    /// Construct from a vector component                                      
@@ -199,7 +189,7 @@ namespace Langulus::Math
    template<class TOKEN>
    Flow::Code TME()::Serialize() const {
       Flow::Code result;
-      if constexpr (S > 1 || !CT::Same<TME(), TOKEN>) {
+      if constexpr (S > 1 or not CT::Same<TME(), TOKEN>) {
          result += MetaOf<TOKEN>();
          result += Flow::Code::OpenScope;
       }
@@ -207,7 +197,7 @@ namespace Langulus::Math
       auto data = Block::From(mArray, S);
       result += Flow::Serialize<Flow::Code>(data);
 
-      if constexpr (S > 1 || !CT::Same<TME(), TOKEN>)
+      if constexpr (S > 1 or not CT::Same<TME(), TOKEN>)
          result += Flow::Code::CloseScope;
 
       return Abandon(result);
@@ -219,15 +209,18 @@ namespace Langulus::Math
       return Serialize<TME()>();
    }
 
-   /// Get the value of a specific component index                            
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const N& item) const noexcept requires IsCompatible<N> {
-      if constexpr (!CT::Same<N, T>)
-         return static_cast<T>(item);
+   /// Adapt a component to the vector's internal type                        
+   ///   @param x - the component to adapt                                    
+   ///   @return the adapted component                                        
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr decltype(auto) TME()::Adapt(const CT::DenseNumber auto& x) const noexcept {
+      using N = Deref<decltype(x)>;
+      static_assert(CT::Convertible<N, T>, "Incompatible number");
+
+      if constexpr (not CT::Same<N, T>)
+         return static_cast<T>(x);
       else
-         return item;
+         return x;
    }
 
 
@@ -391,10 +384,8 @@ namespace Langulus::Math
    /// Copy scalar                                                            
    ///   @param scalar - the scalar value                                     
    ///   @return a reference to this vector                                   
-   TEMPLATE()
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto& TME()::operator = (const N& scalar) noexcept {
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr auto& TME()::operator = (const CT::DenseNumber auto& scalar) noexcept {
       new (this) TVector {scalar};
       return *this;
    }
@@ -825,7 +816,7 @@ namespace Langulus::Math
    TEMPLATE()
    template<CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr TME()::operator N () const noexcept requires (S == 1 && IsCompatible<N>) {
+   constexpr TME()::operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>) {
       return static_cast<N>(*mArray);
    }
    

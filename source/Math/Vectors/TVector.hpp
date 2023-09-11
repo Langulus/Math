@@ -180,8 +180,6 @@ namespace Langulus::Math
       static_assert(S >= 1, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
       static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
-      template<CT::DenseNumber N>
-      static constexpr bool IsCompatible = CT::Convertible<N, T>;
 
       T mArray[S];
 
@@ -199,22 +197,11 @@ namespace Langulus::Math
 
    public:
       constexpr TVector() noexcept;
-
       template<TARGS(ALT)>
       constexpr TVector(const TVEC(ALT)&) noexcept;
-
-      template<class HEAD, class... TAIL>
-      constexpr TVector(const HEAD&, const TAIL&...) noexcept requires (sizeof...(TAIL) > 0);
-
-      template<CT::DenseNumber N>
-      constexpr TVector(const N&) noexcept requires IsCompatible<N>;
-
-      template<CT::DenseNumber N>
-      constexpr TVector(const N*) noexcept requires IsCompatible<N>;
-
-      template<CT::Array N>
-      constexpr TVector(const N&) noexcept requires IsCompatible<Decay<N>>;
-
+      template<class T1, class T2, class... TAIL>
+      constexpr TVector(const T1&, const T2&, const TAIL&...) noexcept;
+      constexpr TVector(const CT::Number auto&) noexcept;
       template<CT::DenseNumber N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
@@ -225,8 +212,7 @@ namespace Langulus::Math
 
       NOD() explicit operator Flow::Code() const;
 
-      template<CT::DenseNumber N>
-      NOD() constexpr decltype(auto) Adapt(const N&) const noexcept requires IsCompatible<N>;
+      NOD() constexpr decltype(auto) Adapt(const CT::DenseNumber auto&) const noexcept;
 
 
       ///                                                                     
@@ -316,8 +302,7 @@ namespace Langulus::Math
       ///                                                                     
       ///   Compare                                                           
       ///                                                                     
-      template<CT::DenseNumber N>
-      constexpr auto& operator = (const N&) noexcept;
+      constexpr auto& operator = (const CT::DenseNumber auto&) noexcept;
 
       template<TARGS(ALT)>
       constexpr auto& operator = (const TVEC(ALT)&) noexcept;
@@ -329,7 +314,7 @@ namespace Langulus::Math
       NOD() constexpr T Dot(const TVEC(ALT)&) const noexcept;
 
       template<TARGS(ALT)>
-      NOD() constexpr TVector<T, 3> Cross(const TVEC(ALT)&) const noexcept requires (S >= 3 && ALTS >= 3);
+      NOD() constexpr TVector<T, 3> Cross(const TVEC(ALT)&) const noexcept requires (S >= 3 and ALTS >= 3);
 
       NOD() constexpr auto Normalize() const requires (S > 1);
 
@@ -383,7 +368,7 @@ namespace Langulus::Math
       NOD() constexpr operator const T& () const noexcept requires (S == 1);
 
       template<CT::DenseNumber N>
-      NOD() explicit constexpr operator N () const noexcept requires (S == 1 && IsCompatible<N>);
+      NOD() explicit constexpr operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>);
 
       template<Count ALTS>
       NOD() operator TVector<T, ALTS>& () noexcept requires (ALTS < S);
