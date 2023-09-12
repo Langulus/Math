@@ -238,7 +238,7 @@ namespace Langulus::Math
    /// Multiply by a row vector                                               
    ///   @return a column vector result                                       
    template<TARGS(LHS), CT::DenseNumber T, Count C>
-   constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSC && C > 1) {
+   constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSC and C > 1) {
       using LT = Lossless<T, LHST>;
       if constexpr (LHSC == LHSR and LHSC == 2) {
          // 2x2 matrix * row optimization                               
@@ -255,7 +255,7 @@ namespace Langulus::Math
             me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2]
          };
       }
-      else if constexpr (LHSC == LHSR && LHSC == 4) {
+      else if constexpr (LHSC == LHSR and LHSC == 4) {
          /* __m128 v0 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(0, 0, 0, 0));
       __m128 v1 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(1, 1, 1, 1));
       __m128 v2 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(2, 2, 2, 2));
@@ -290,7 +290,7 @@ namespace Langulus::Math
    /// Multiply by a column vector                                            
    ///   @return a row vector result                                          
    template<TARGS(RHS), CT::DenseNumber T, Count C>
-   constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSR && C > 1) {
+   constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSR and C > 1) {
       using LT = Lossless<T, RHST>;
       if constexpr (RHSC == RHSR and RHSC == 2) {
          // 2x2 column * matrix optimization                            
@@ -330,7 +330,7 @@ namespace Langulus::Math
    /// Destructive multiplication of a row vector                             
    template<TARGS(RHS), CT::DenseNumber T, Count C>
    LANGULUS(INLINED)
-   constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC && C > 1) {
+   constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC and C > 1) {
       return vec = vec * me;
    }
 
@@ -466,83 +466,15 @@ namespace Langulus::Math
       return result;
    }
 
+
    ///                                                                        
    ///   CREATION                                                             
    ///                                                                        
-   /// Perspective constructor - left-handed perspective projection matrix    
-   ///   @param fieldOfView - an angle representing the horizontal field of   
-   ///                        view                                            
-   ///   @param aspect - the aspect ratio (width/height)                      
-   ///   @param near - the distance to the near clipping plane                
-   ///   @param far - the distance to the far clipping plane                  
-   ///   @return the projection matrix                                        
-   TEMPLATE()
-   constexpr TME() TME()::PerspectiveFOV(const CT::Angle auto& fieldOfView, const T& aspect, const T& near, const T& far) {
-      static_assert(IsSquare and Rows == 4,
-         "Can't make a perspective matrix from this one");
-
-      TME() result = Null();
-      const auto fd = T {1} / ::std::tan(T {fieldOfView.GetRadians()} *T {0.5});
-      const auto id = -T {1} / (far - near);
-      result.mArray[0] = fd;
-      result.mArray[5] = fd * aspect;
-      result.mArray[10] = far * id;
-      result.mArray[11] = T {-1};
-      result.mArray[14] = far * near * id;
-      return result;
-   }
-
-   /// Perspective constructor - left-handed perspective projection matrix    
-   /// described by a region on the near clipping plane                       
-   TEMPLATE()
-   constexpr TME() TME()::PerspectiveRegion(const T& left, const T& right, const T& top, const T& bottom, const T& near, const T& far) {
-      static_assert(IsSquare and Rows == 4,
-         "Can't make a perspective matrix from this one");
-
-      TME() result = Null();
-      const auto x = T(2) * near / (right - left);
-      const auto y = T(2) * near / (top - bottom);
-
-      const auto a = (right + left) / (right - left);
-      const auto b = (top + bottom) / (top - bottom);
-      const auto c = -(far + near) / (far - near);
-      const auto d = T(-2) * far * near / (far - near);
-
-      result[0] = x;
-      result[8] = a;
-      result[5] = y;
-      result[9] = b;
-      result[10] = c;
-      result[14] = d;
-      result[11] = -1;
-      return result;
-   }
-
-   /// Orthographic constructor - LH orthographic projection matrix           
-   TEMPLATE()
-   constexpr TME() TME()::Orthographic(const T& width, const T& height, const T& near, const T& far) {
-      static_assert(IsSquare and Rows == 4,
-         "Can't make an orthogonal matrix from this one");
-      const auto range = far - near;
-      if (range == 0 or width == 0 or height == 0)
-         throw Except::DivisionByZero();
-
-      TME() result = Null();
-      result.mArray[0] = T(2) / width;
-      result.mArray[5] = T(2) / height;
-      result.mArray[10] = T(-2) / range;
-      result.mArray[12] = T(-1);
-      result.mArray[13] = T(-1);
-      result.mArray[14] = -(far + near) / range;
-      result.mArray[15] = T(1);
-      return result;
-   }
 
    /// Look at constructor - LH lookat matrix                                 
    TEMPLATE()
-   constexpr TME() TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up) {
-      static_assert(IsSquare and Rows > 2,
-         "Can't make a look-at matrix from this one");
+   constexpr TME() TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up) requires (ROWS >= 2 and COLUMNS >= 2) {
+      static_assert(IsSquare, "Can't make a look-at matrix from this one");
 
       forward = forward.Normalize();
       up = up.Normalize();
@@ -567,7 +499,9 @@ namespace Langulus::Math
 
    /// Create a rotational matrix (for 2x2 matrix, only around z)             
    TEMPLATE()
-   constexpr TME() TME()::Rotation(const CT::Angle auto& roll) noexcept requires (ROWS >= 2 && COLUMNS >= 2) {
+   constexpr TME() TME()::Rotation(
+      const CT::Angle auto& roll
+   ) noexcept requires (ROWS >= 2 && COLUMNS >= 2) {
       auto cosR = Math::Cos(roll);
       auto sinR = Math::Sin(roll);
 
@@ -582,7 +516,10 @@ namespace Langulus::Math
    /// Create a rotational matrix based on axis and angle                     
    /// Builds a 3D rotation matrix created from normalized axis and an angle  
    TEMPLATE()
-   constexpr TME() TME()::RotationAxis(const TVector<T, 3>& axis, const CT::Angle auto& a) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
+   constexpr TME() TME()::RotationAxis(
+      const TVector<T, 3>& axis,
+      const CT::Angle auto& a
+   ) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
       const T c = Math::Cos(a);
       const T s = Math::Sin(a);
 
@@ -606,8 +543,38 @@ namespace Langulus::Math
    /// Rotational constructor in euler angles (for 3x3 matrix or above)       
    /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
-   template<CT::Angle PITCH, CT::Angle YAW, CT::Angle ROLL>
-   constexpr TME() TME()::Rotation(const PITCH& pitch, const YAW& yaw, const ROLL& roll) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
+   constexpr TME() TME()::Rotation(
+      const CT::Angle auto& pitch,
+      const CT::Angle auto& yaw
+   ) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
+      const T tmp_ch = Math::Cos(yaw);
+      const T tmp_sh = Math::Sin(yaw);
+      const T tmp_cp = Math::Cos(pitch);
+      const T tmp_sp = Math::Sin(pitch);
+      constexpr T tmp_cb {1};
+      constexpr T tmp_sb {0};
+
+      TME() r;
+      r[0][0] = tmp_ch * tmp_cb + tmp_sh * tmp_sp * tmp_sb;
+      r[0][1] = tmp_sb * tmp_cp;
+      r[0][2] = -tmp_sh * tmp_cb + tmp_ch * tmp_sp * tmp_sb;
+      r[1][0] = -tmp_ch * tmp_sb + tmp_sh * tmp_sp * tmp_cb;
+      r[1][1] = tmp_cb * tmp_cp;
+      r[1][2] = tmp_sb * tmp_sh + tmp_ch * tmp_sp * tmp_cb;
+      r[2][0] = tmp_sh * tmp_cp;
+      r[2][1] = -tmp_sp;
+      r[2][2] = tmp_ch * tmp_cp;
+      return r;
+   }
+   
+   /// Rotational constructor in euler angles (for 3x3 matrix or above)       
+   /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
+   TEMPLATE()
+   constexpr TME() TME()::Rotation(
+      const CT::Angle auto& pitch,
+      const CT::Angle auto& yaw,
+      const CT::Angle auto& roll
+   ) noexcept requires (ROWS >= 3 && COLUMNS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
       const T tmp_cp = Math::Cos(pitch);
@@ -938,6 +905,85 @@ namespace Langulus::Math
    }
 
 } // namespace Langulus::Math
+
+
+namespace Langulus::A
+{
+
+   /// Perspective constructor - left-handed perspective projection matrix    
+   ///   @param fieldOfView - an angle representing the horizontal field of   
+   ///                        view                                            
+   ///   @param aspect - the aspect ratio (width/height)                      
+   ///   @param near - the distance to the near clipping plane                
+   ///   @param far - the distance to the far clipping plane                  
+   ///   @return the projection matrix                                        
+   template<CT::DenseNumber T>
+   constexpr Math::TMatrix<T, 4> A::Matrix::PerspectiveFOV(
+      const CT::Angle auto& fieldOfView,
+      const T& aspect,
+      const T& near, const T& far
+   ) {
+      auto result = Math::TMatrix<T, 4>::Null();
+      const auto fd = T {1} / ::std::tan(T {fieldOfView.GetRadians()} *T {0.5});
+      const auto id = -T {1} / (far - near);
+
+      result.mArray[0] = fd;
+      result.mArray[5] = fd * aspect;
+      result.mArray[10] = far * id;
+      result.mArray[11] = T {-1};
+      result.mArray[14] = far * near * id;
+      return result;
+   }
+
+   /// Perspective constructor - left-handed perspective projection matrix    
+   /// described by a region on the near clipping plane                       
+   template<CT::DenseNumber T>
+   constexpr Math::TMatrix<T, 4> A::Matrix::PerspectiveRegion(
+      const T& left, const T& right,
+      const T& top,  const T& bottom,
+      const T& near, const T& far
+   ) {
+      auto result = Math::TMatrix<T, 4>::Null();
+      const auto x = T {2} * near / (right - left);
+      const auto y = T {2} * near / (top - bottom);
+
+      const auto a = (right + left) / (right - left);
+      const auto b = (top + bottom) / (top - bottom);
+      const auto c = -(far + near) / (far - near);
+      const auto d = T {-2} * far * near / (far - near);
+
+      result[0] = x;
+      result[8] = a;
+      result[5] = y;
+      result[9] = b;
+      result[10] = c;
+      result[14] = d;
+      result[11] = -1;
+      return result;
+   }
+
+   /// Orthographic constructor - LH orthographic projection matrix           
+   template<CT::DenseNumber T>
+   constexpr Math::TMatrix<T, 4> A::Matrix::Orthographic(
+      const T& width, const T& height,
+      const T& near,  const T& far
+   ) {
+      const auto range = far - near;
+      if (range == 0 or width == 0 or height == 0)
+         throw Except::DivisionByZero();
+
+      auto result = Math::TMatrix<T, 4>::Null();
+      result.mArray[0] = T {2} / width;
+      result.mArray[5] = T {2} / height;
+      result.mArray[10] = T {-2} / range;
+      result.mArray[12] = T {-1};
+      result.mArray[13] = T {-1};
+      result.mArray[14] = -(far + near) / range;
+      result.mArray[15] = T {1};
+      return result;
+   }
+
+} // namespace Langulus::A
 
 #undef TARGS
 #undef TMAT

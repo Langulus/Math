@@ -16,6 +16,7 @@ namespace Langulus
 {
    namespace Math
    {
+
       template<CT::DenseNumber T>
       struct TQuaternion;
 
@@ -47,6 +48,11 @@ namespace Langulus
 
    } // namespace Langulus::Math
 
+   #define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
+   #define TMAT(a) TMatrix<a##T, a##C, a##R>
+   #define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+   #define TME() TMatrix<T, COLUMNS, ROWS>
+
    namespace A
    {
 
@@ -54,7 +60,23 @@ namespace Langulus
       /// matrix                                                              
       struct Matrix {
          LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) ::Langulus::Math::Matrix;
+         LANGULUS(CONCRETE) Math::Matrix;
+
+         template<CT::Vector V>
+         NOD() static constexpr Math::TMatrix<TypeOf<V>, V::MemberCount + 1>
+         From(const Math::TQuaternion<TypeOf<V>>&, const V& = 0, const V& = 1) noexcept;
+
+         template<CT::DenseNumber T>
+         NOD() static constexpr Math::TMatrix<T, 4>
+         PerspectiveFOV(const CT::Angle auto&, const T&, const T&, const T&);
+
+         template<CT::DenseNumber T>
+         NOD() static constexpr Math::TMatrix<T, 4>
+         PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&);
+
+         template<CT::DenseNumber T>
+         NOD() static constexpr Math::TMatrix<T, 4>
+         Orthographic(const T&, const T&, const T&, const T&);
       };
 
       /// Used as an imposed base for any type that can be interpretable as a 
@@ -99,11 +121,6 @@ namespace Langulus
       };
 
    } // namespace Langulus::A
-
-   #define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
-   #define TMAT(a) TMatrix<a##T, a##C, a##R>
-   #define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
-   #define TME() TMatrix<T, COLUMNS, ROWS>
 
    /// Custom name generator at compile-time for matrices                     
    TEMPLATE()
@@ -184,21 +201,37 @@ namespace Langulus
 
          NOD() constexpr decltype(auto) Adapt(const CT::DenseNumber auto&) const noexcept;
 
-         NOD() static constexpr TMatrix PerspectiveFOV(const CT::Angle auto&, const T&, const T&, const T&);
-         NOD() static constexpr TMatrix PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&);
-         NOD() static constexpr TMatrix Orthographic(const T&, const T&, const T&, const T&);
-         NOD() static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>);
-         NOD() static constexpr TMatrix Rotation(const CT::Angle auto&) noexcept requires (ROWS >= 2 and COLUMNS >= 2);
-         NOD() static constexpr TMatrix RotationAxis(const TVector<T, 3>&, const CT::Angle auto&) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
-         template<CT::Angle PITCH, CT::Angle YAW, CT::Angle ROLL = Radians>
-         NOD() static constexpr TMatrix Rotation(const PITCH&, const YAW&, const ROLL& = Radians {0}) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
+         NOD() static constexpr TMatrix LookAt(
+            TVector<T, 3>,
+            TVector<T, 3>
+         ) requires (ROWS >= 2 and COLUMNS >= 2);
+
+         NOD() static constexpr TMatrix Rotation(
+            const CT::Angle auto&
+         ) noexcept requires (ROWS >= 2 and COLUMNS >= 2);
+
+         NOD() static constexpr TMatrix RotationAxis(
+            const TVector<T, 3>&,
+            const CT::Angle auto&
+         ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
+
+         NOD() static constexpr TMatrix Rotation(
+            const CT::Angle auto& pitch,
+            const CT::Angle auto& yaw
+         ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
+
+         NOD() static constexpr TMatrix Rotation(
+            const CT::Angle auto& pitch,
+            const CT::Angle auto& yaw,
+            const CT::Angle auto& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :(
+         ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
+
          NOD() static constexpr TMatrix Translation(const TVector<T, 4>&) noexcept;
          NOD() static constexpr TMatrix Scalar(const T&) noexcept;
          template<Count SIZE>
          NOD() static constexpr TMatrix Scalar(const TVector<T, SIZE>&) noexcept;
          NOD() static constexpr TMatrix Identity() noexcept;
          NOD() static constexpr TMatrix Null() noexcept;
-
 
          ///                                                                  
          ///   Access                                                         
@@ -216,7 +249,7 @@ namespace Langulus
          NOD() constexpr TVector<T, 3> GetScale() const noexcept;
 
          NOD() constexpr const TVector<T, ROWS-1>& GetPosition() const noexcept requires (ROWS > 2 and COLUMNS > 2);
-         constexpr TMatrix& SetPosition(const TVector<T, ROWS - 1>&) noexcept requires (ROWS > 2 and COLUMNS > 2);
+         constexpr TMatrix& SetPosition(const TVector<T, ROWS-1>&) noexcept requires (ROWS > 2 and COLUMNS > 2);
 
          NOD() constexpr bool IsIdentity() const noexcept;
          NOD() constexpr bool IsNull() const noexcept;

@@ -18,42 +18,33 @@
 namespace Langulus::Math
 {
 
-   /// Construct from fundamental number                                      
+   /// Construct from any number-convertible thing                            
    ///   @param a - value to set                                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TNumber(const T& a) noexcept
-      : mValue {a} {}
-
-   /// Construct from wrapper number                                          
-   ///   @param a - value to set                                              
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TNumber(const W& a) noexcept requires (!CT::Same<T, W>)
-      : mValue {a.mValue} {}
-
-   /// Converting constructor                                                 
-   ///   @tparam N - type of number to convert from                           
-   ///   @param a - value to set                                              
-   TEMPLATE()
-   template<class N>
-   LANGULUS(INLINED)
-   constexpr TME()::TNumber(const N& a) noexcept requires CT::Convertible<N, T>
-      : mValue {static_cast<T>(a)} {}
-
-   /// Copy from fundamental number                                           
-   ///   @param a - value to set                                              
-   ///   @return a reference to this number                                   
-   TEMPLATE() LANGULUS(INLINED)
-   TME()& TME()::operator = (const T& a) noexcept {
-      mValue = a;
-      return *this;
+   constexpr TME()::TNumber(const CT::DenseNumber auto& a) noexcept {
+      using ALT = Deref<decltype(a)>;
+      if constexpr (CT::Same<T, ALT>)
+         mValue = a;
+      else if constexpr (CT::Same<W, ALT>)
+         mValue = a.mValue;
+      else if constexpr (CT::Convertible<ALT, T>)
+         mValue = static_cast<T>(a);
+      else LANGULUS_ERROR("Bad number construction");
    }
 
-   /// Copy from wrapper number                                               
+   /// Assign any number-convertible thing                                    
    ///   @param a - value to set                                              
    ///   @return a reference to this number                                   
    TEMPLATE() LANGULUS(INLINED)
-   TME()& TME()::operator = (const W& a) noexcept requires (!CT::Same<T, W>) {
-      mValue = a.mValue;
+   TME()& TME()::operator = (const CT::DenseNumber auto& a) noexcept {
+      using ALT = Deref<decltype(a)>;
+      if constexpr (CT::Same<T, ALT>)
+         mValue = a;
+      else if constexpr (CT::Same<W, ALT>)
+         mValue = a.mValue;
+      else if constexpr (CT::Convertible<ALT, T>)
+         mValue = static_cast<T>(a);
+      else LANGULUS_ERROR("Bad number assignment");
       return *this;
    }
 

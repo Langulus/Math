@@ -41,7 +41,10 @@ namespace Langulus::Math
       LANGULUS_BASES(
          Conditional<CT::Real<T>
             , A::Real
-            , Conditional<CT::Signed<T>, A::SignedInteger, A::UnsignedInteger>
+            , Conditional<CT::Signed<T>
+               , A::SignedInteger
+               , A::UnsignedInteger
+            >
          >
       );
       LANGULUS_CONVERSIONS(Flow::Code);
@@ -54,16 +57,11 @@ namespace Langulus::Math
       constexpr TNumber() noexcept = default;
       constexpr TNumber(const TNumber&) noexcept = default;
       constexpr TNumber(TNumber&&) noexcept = default;
-
-      constexpr TNumber(const T&) noexcept;
-      constexpr TNumber(const WRAPPER&) noexcept requires (!CT::Same<T, WRAPPER>);
-      template<class N>
-      constexpr TNumber(const N&) noexcept requires CT::Convertible<N, T>;
+      constexpr TNumber(const CT::DenseNumber auto&) noexcept;
 
       TNumber& operator = (const TNumber&) noexcept = default;
       TNumber& operator = (TNumber&&) noexcept = default;
-      TNumber& operator = (const T&) noexcept;
-      TNumber& operator = (const WRAPPER&) noexcept requires (!CT::Same<T, WRAPPER>);
+      TNumber& operator = (const CT::DenseNumber auto&) noexcept;
 
       /// All conversions are explicit only, to preserve type                 
       constexpr explicit operator const T& () const noexcept;

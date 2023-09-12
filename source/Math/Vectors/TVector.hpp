@@ -21,6 +21,9 @@ namespace Langulus::Math
    template<CT::DenseNumber T, Count C, int DEFAULT = 0>
    struct TVector;
 
+   template<CT::DenseNumber T, Count C, int DEFAULT = 0>
+   using TVec = TVector<T, C, DEFAULT>;
+
    using Vec1     = TVector<Real, 1>;
    using Vec1f    = TVector<Float, 1>;
    using Vec1d    = TVector<Double, 1>;

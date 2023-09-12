@@ -19,30 +19,33 @@ namespace Langulus
       namespace Inner
       {
 
+         /// Concept for an angle                                             
          template<class T>
-         concept Angle = DenseNumber<T> && requires {
+         concept Angle = DenseNumber<T> and requires {
             {Decay<T>::Radians} -> Bool;
          };
 
+         /// Concept for angle in degrees                                     
          template<class T>
-         concept Degrees = Angle<T> && !Decay<T>::Radians;
+         concept Degrees = Angle<T> and not Decay<T>::Radians;
 
+         /// Concept for angle in radians                                     
          template<class T>
-         concept Radians = Angle<T> && Decay<T>::Radians;
+         concept Radians = Angle<T> and Decay<T>::Radians;
 
       } // namespace Langulus::CT::Inner
 
       /// Concept for distinguishing angles of any kind                       
       template<class... T>
-      concept Angle = (Inner::Angle<T> && ...);
+      concept Angle = (Inner::Angle<T> and ...);
 
       /// Concept for distinguishing degrees                                  
       template<class... T>
-      concept Degrees = (Inner::Degrees<T> && ...);
+      concept Degrees = (Inner::Degrees<T> and ...);
 
       /// Concept for distinguishing radians                                  
       template<class... T>
-      concept Radians = (Inner::Radians<T> && ...);
+      concept Radians = (Inner::Radians<T> and ...);
 
    } // namespace Langulus::CT
 
@@ -206,7 +209,6 @@ namespace Langulus
          using T::T;
          using T::mValue;
 
-         /// Convert from any angle to text                                   
          NOD() explicit operator Flow::Code() const;
       };
 

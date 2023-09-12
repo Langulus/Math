@@ -17,21 +17,25 @@ namespace Langulus::Math
    ///   Type used for representing angles in degrees                         
    ///                                                                        
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetRadians() const noexcept {
       return DegToRad(mValue);
    }
 
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetDegrees() const noexcept {
       return mValue;
    }
 
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    Lossless<Real, T> TDegrees<T>::Cos() const noexcept {
       return Math::Cos(DegToRad(mValue));
    }
 
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    Lossless<Real, T> TDegrees<T>::Sin() const noexcept {
       return Math::Sin(DegToRad(mValue));
    }
@@ -41,27 +45,32 @@ namespace Langulus::Math
    ///   Type used for representing angles in radians                         
    ///                                                                        
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    constexpr T TRadians<T>::GetRadians() const noexcept {
       return mValue;
    }
 
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    constexpr T TRadians<T>::GetDegrees() const noexcept {
       return RadToDeg(mValue);
    }
 
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    Lossless<Real, T> TRadians<T>::Cos() const noexcept {
       return Math::Cos(mValue);
    }
 
    template<CT::DenseNumber T>
+   LANGULUS(INLINED)
    Lossless<Real, T> TRadians<T>::Sin() const noexcept {
       return Math::Sin(mValue);
    }
 
    /// Convert from any angle to text                                         
    template<CT::Angle T, CT::Dimension D>
+   LANGULUS(INLINED)
    TAngle<T, D>::operator Flow::Code() const {
       Flow::Code result;
       result += NameOf<TAngle>();
@@ -73,7 +82,11 @@ namespace Langulus::Math
 
    /// Add two similar angles                                                 
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() constexpr TAngle<LHST, D> operator + (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+   NOD() LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator + (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
       if constexpr (CT::Same<LHST, RHST>)
          return lhs.mValue + rhs.mValue;
       else if constexpr (LHST::Radians)
@@ -84,7 +97,11 @@ namespace Langulus::Math
 
    /// Subtract two similar angles                                            
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() constexpr TAngle<LHST, D> operator - (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+   NOD() LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator - (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
       if constexpr (CT::Same<LHST, RHST>)
          return lhs.mValue - rhs.mValue;
       else if constexpr (LHST::Radians)
@@ -95,7 +112,11 @@ namespace Langulus::Math
 
    /// Multiply two similar angles                                            
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() constexpr TAngle<LHST, D> operator * (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+   NOD() LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator * (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
       if constexpr (CT::Same<LHST, RHST>)
          return lhs.mValue * rhs.mValue;
       else if constexpr (LHST::Radians)
@@ -106,7 +127,11 @@ namespace Langulus::Math
       
    /// Divide two similar angles                                              
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() constexpr TAngle<LHST, D> operator / (const TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) {
+   NOD() LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator / (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) {
       if constexpr (CT::Same<LHST, RHST>)
          return lhs.mValue / rhs.mValue;
       else if constexpr (LHST::Radians)
@@ -117,28 +142,44 @@ namespace Langulus::Math
 
    /// Destructively add two similar angles                                   
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   constexpr TAngle<LHST, D>& operator += (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+   LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator += (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
       lhs = lhs + rhs;
       return lhs;
    }
       
    /// Destructively subtract two similar angles                              
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   constexpr TAngle<LHST, D>& operator -= (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+   LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator -= (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
       lhs = lhs - rhs;
       return lhs;
    }
       
    /// Destructively multiply two similar angles                              
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   constexpr TAngle<LHST, D>& operator *= (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) noexcept {
+   LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator *= (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
       lhs = lhs * rhs;
       return lhs;
    }
 
    /// Destructively divide two similar angles                                
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   constexpr TAngle<LHST, D>& operator /= (TAngle<LHST, D>& lhs, const TAngle<RHST, D>& rhs) {
+   LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator /= (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) {
       lhs = lhs / rhs;
       return lhs;
    }
