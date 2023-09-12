@@ -67,7 +67,7 @@ namespace Langulus::Verbs
       return ((
          common.CastsTo<T, true>() && ArithmeticVerb::Vector<T>(
             context, common, verb,
-            [](const T* lhs, const T* rhs) -> T {
+            [](const T*, const T*) -> T {
                TODO();
             }
          )
@@ -86,7 +86,7 @@ namespace Langulus::Verbs
       return ((
          common.CastsTo<T, true>() && ArithmeticVerb::Vector<T>(
             context, common, verb,
-            [](T* lhs, const T* rhs) {
+            [](T*, const T*) {
                TODO();
             }
          )
