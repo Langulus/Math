@@ -7,7 +7,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include <Math/Common.hpp>
+#include <Math/Config.hpp>
 #include <Flow/Resolvable.hpp>
 
 using namespace ::Langulus;

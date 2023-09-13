@@ -7,8 +7,8 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #include "Main.hpp"
-#include <Math/Vectors.hpp>
-#include <Math/Colors.hpp>
+#include <Math/Vector.hpp>
+#include <Math/Color.hpp>
 #include <catch2/catch.hpp>
 
 LANGULUS_EXCEPTION_HANDLER

@@ -31,7 +31,7 @@ add_library(LangulusMath ${LANGULUS_LIBRARY_TYPE}
 )
 
 target_include_directories(LangulusMath
-    PUBLIC      source
+    PUBLIC      include
                 $<TARGET_PROPERTY:LangulusLogger,INTERFACE_INCLUDE_DIRECTORIES>
                 $<TARGET_PROPERTY:LangulusRTTI,INTERFACE_INCLUDE_DIRECTORIES>
                 $<$<BOOL:${LANGULUS_FEATURE_MANAGED_MEMORY}>:$<TARGET_PROPERTY:LangulusFractalloc,INTERFACE_INCLUDE_DIRECTORIES>>

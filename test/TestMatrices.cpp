@@ -7,8 +7,9 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #include "Main.hpp"
-#include <Math/Matrices.hpp>
+#include <Math/Matrix.hpp>
 #include <catch2/catch.hpp>
+
 
 TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 	using T = TestType;

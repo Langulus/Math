@@ -7,12 +7,10 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #include "Main.hpp"
-#include <Math/Vectors.hpp>
+#include <Math/Config.hpp>
+#include <Math/Vector.hpp>
 #include <Flow/Verbs/Create.hpp>
 #include <Flow/Verbs/Select.hpp>
-#include <Math/Verbs/Add.hpp>
-#include <Math/Verbs/Exponent.hpp>
-#include <Math/Verbs/Multiply.hpp>
 #include <catch2/catch.hpp>
 
 LANGULUS_EXCEPTION_HANDLER

@@ -7,8 +7,9 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #include "Main.hpp"
-#include <Math/Vectors.hpp>
+#include <Math/Vector.hpp>
 #include <catch2/catch.hpp>
+
 
 TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]", 
 	Vec2u8, Vec2u16, Vec2u32, Vec2u64, 
@@ -34,15 +35,15 @@ TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]",
 TEMPLATE_TEST_CASE("Padding and alignment checks", "[sizes]", ALL_TYPES) {
 	using T = TestType;
 
-	REQUIRE(sizeof(TVector<T, 1>) == sizeof(T) * 1);
-	REQUIRE(sizeof(TVector<T, 2>) == sizeof(T) * 2);
-	REQUIRE(sizeof(TVector<T, 3>) == sizeof(T) * 3);
-	REQUIRE(sizeof(TVector<T, 4>) == sizeof(T) * 4);
+	REQUIRE(sizeof(TVec<T, 1>) == sizeof(T) * 1);
+	REQUIRE(sizeof(TVec<T, 2>) == sizeof(T) * 2);
+	REQUIRE(sizeof(TVec<T, 3>) == sizeof(T) * 3);
+	REQUIRE(sizeof(TVec<T, 4>) == sizeof(T) * 4);
 
-	REQUIRE(sizeof(TVector<T, 1>[12]) == sizeof(TVector<T, 4>[3]));
-	REQUIRE(sizeof(TVector<T, 1>[12]) == sizeof(TVector<T, 3>[4]));
-	REQUIRE(sizeof(TVector<T, 1>[12]) == sizeof(TVector<T, 2>[6]));
-	REQUIRE(sizeof(TVector<T, 2>[12]) == sizeof(TVector<T, 3>[8]));
-	REQUIRE(sizeof(TVector<T, 2>[12]) == sizeof(TVector<T, 4>[6]));
-	REQUIRE(sizeof(TVector<T, 3>[ 8]) == sizeof(TVector<T, 4>[6]));
+	REQUIRE(sizeof(TVec<T, 1>[12]) == sizeof(TVec<T, 4>[3]));
+	REQUIRE(sizeof(TVec<T, 1>[12]) == sizeof(TVec<T, 3>[4]));
+	REQUIRE(sizeof(TVec<T, 1>[12]) == sizeof(TVec<T, 2>[6]));
+	REQUIRE(sizeof(TVec<T, 2>[12]) == sizeof(TVec<T, 3>[8]));
+	REQUIRE(sizeof(TVec<T, 2>[12]) == sizeof(TVec<T, 4>[6]));
+	REQUIRE(sizeof(TVec<T, 3>[ 8]) == sizeof(TVec<T, 4>[6]));
 }

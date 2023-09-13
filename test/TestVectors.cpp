@@ -7,8 +7,9 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #include "Main.hpp"
-#include <Math/Vectors.hpp>
+#include <Math/Vector.hpp>
 #include <catch2/catch.hpp>
+
 
 TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 	GIVEN("An uninitialized vector") {

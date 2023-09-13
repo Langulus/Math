@@ -7,8 +7,9 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #include "Main.hpp"
-#include <Math/Quaternions.hpp>
+#include <Math/Quaternion.hpp>
 #include <catch2/catch.hpp>
+
 
 TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 	GIVEN("An uninitialized quaternion") {
@@ -25,7 +26,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		}
 
 		WHEN("Creating a quaternion from an axis and angle") {
-			x = TQuaternion<T>::FromAxis(Cardinal::Up<T>, Degrees(45));
+			x = TQuaternion<T>::FromAxis(Axes::Up<T>, Degrees(45));
 
 			THEN("The result should be correct") {
 				REQUIRE(x[0] == 0);
@@ -36,7 +37,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		}
 
 		WHEN("Creating a quaternion from an axis and angle, and then normalizing it") {
-			x = TQuaternion<T>::FromAxis(Cardinal::Up<T>, Degrees(45));
+			x = TQuaternion<T>::FromAxis(Axes::Up<T>, Degrees(45));
 			x = x.Normalize();
 
 			THEN("The result should be correct") {
@@ -48,7 +49,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		}
 
 		WHEN("Creating a quaternion from an axis and angle, and then converting it to a 3x3 rotation matrix") {
-			x = TQuaternion<T>::FromAxis(Cardinal::Up<T>, Degrees(45));
+			x = TQuaternion<T>::FromAxis(Axes::Up<T>, Degrees(45));
 			auto as_mat = static_cast<TMatrix<T, 3, 3>>(x);
 
 			THEN("The result should be correct") {
@@ -68,8 +69,8 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 	GIVEN("Two quaternions and a resulting quaternion") {
 		using T = TestType;
 		TQuaternion<T> x, y, r;
-		x = TQuaternion<T>::FromAxis(Cardinal::Up<T>, Degrees(45));
-		y = TQuaternion<T>::FromAxis(Cardinal::Right<T>, Degrees(45));
+		x = TQuaternion<T>::FromAxis(Axes::Up<T>, Degrees(45));
+		y = TQuaternion<T>::FromAxis(Axes::Right<T>, Degrees(45));
 
 		REQUIRE(y[0] == Approx(0.3826834324));
 		REQUIRE(y[1] == 0);
@@ -104,7 +105,7 @@ TEMPLATE_TEST_CASE("Quaternions", "[quat]", REAL_TYPES) {
 		TQuaternion<T> orientation;
 		TVector<T, 3> point;
 
-		orientation = TQuaternion<T>::FromAxis(Cardinal::Up<T>, Degrees(45));
+		orientation = TQuaternion<T>::FromAxis(Axes::Up<T>, Degrees(45));
 		point = {0, 0, 50};
 
 		WHEN("Doing a quaternion * point multiplication") {
