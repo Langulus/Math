@@ -171,6 +171,11 @@ namespace Langulus
             T
          );
 
+         /// Construct a normal from a vector                                 
+         ///   @param other - the vector to normalize                         
+         constexpr TSampler(const T& other)
+            : T {other} {}
+
          /// Convert from any sampler to text                                 
          NOD() explicit operator Flow::Code() const {
             return T::template Serialize<TSampler>();

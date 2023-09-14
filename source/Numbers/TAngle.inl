@@ -75,7 +75,7 @@ namespace Langulus::Math
       Flow::Code result;
       result += NameOf<TAngle>();
       result += Flow::Code::OpenScope;
-      result += Text {mValue};
+      result += Anyness::Text {mValue};
       result += Flow::Code::CloseScope;
       return result;
    }

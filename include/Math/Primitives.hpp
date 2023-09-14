@@ -7,18 +7,19 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../../source/Primitives/TBox.hpp"
-#include "../../source/Primitives/TCone.hpp"
-#include "../../source/Primitives/TCylinder.hpp"
-#include "../../source/Primitives/TFrustum.hpp"
-#include "../../source/Primitives/TLine.hpp"
-#include "../../source/Primitives/TPlane.hpp"
+#include "../../source/Primitives/TBox.inl"
+#include "../../source/Primitives/TCone.inl"
+#include "../../source/Primitives/TCylinder.inl"
+#include "../../source/Primitives/TFrustum.inl"
+#include "../../source/Primitives/TLine.inl"
+#include "../../source/Primitives/TPlane.inl"
 #include "../../source/Primitives/TPoint.hpp"
 #include "../../source/Primitives/TPolygon.hpp"
 #include "../../source/Primitives/TRay.hpp"
 #include "../../source/Primitives/TSphere.hpp"
 #include "../../source/Primitives/TTriangle.hpp"
 #include "../../source/Primitives/TTorus.hpp"
+
 
 namespace Langulus::Math
 {

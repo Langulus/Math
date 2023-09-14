@@ -8,8 +8,10 @@
 ///                                                                           
 #pragma once
 #include "TFrustum.hpp"
+#include "TPlane.inl"
 
 #define TEMPLATE() template<CT::Vector T>
+
 
 namespace Langulus::Math
 {

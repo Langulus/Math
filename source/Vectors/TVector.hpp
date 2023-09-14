@@ -441,77 +441,77 @@ namespace Langulus::Math
    ///                                                                        
    /// Returns an inverted vector                                             
    template<TARGS(RHS)>
-   NOD() auto operator - (const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator - (const TVEC(RHS)&) noexcept;
 
    /// Returns the sum of two vectors                                         
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator + (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator + (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator + (const TVEC(LHS)&, const N&) noexcept;
+   NOD() constexpr auto operator + (const TVEC(LHS)&, const N&) noexcept;
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator + (const N&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator + (const N&, const TVEC(RHS)&) noexcept;
 
    /// Returns the difference of two vectors                                  
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator - (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator - (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator - (const TVEC(LHS)&, const N&) noexcept;
+   NOD() constexpr auto operator - (const TVEC(LHS)&, const N&) noexcept;
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator - (const N&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator - (const N&, const TVEC(RHS)&) noexcept;
 
    /// Returns the product of two vectors                                     
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator * (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator * (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator * (const TVEC(LHS)&, const N&) noexcept;
+   NOD() constexpr auto operator * (const TVEC(LHS)&, const N&) noexcept;
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator * (const N&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator * (const N&, const TVEC(RHS)&) noexcept;
 
    /// Returns the division of two vectors                                    
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator / (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr auto operator / (const TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator / (const TVEC(LHS)&, const N&);
+   NOD() constexpr auto operator / (const TVEC(LHS)&, const N&);
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator / (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator / (const N&, const TVEC(RHS)&);
 
    /// Returns the left-shift of two integer vectors                          
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator << (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
+   NOD() constexpr auto operator << (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
 
    template<TARGS(LHS), CT::Integer N>
-   NOD() auto operator << (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
+   NOD() constexpr auto operator << (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
 
    template<TARGS(RHS), CT::Integer N>
-   NOD() auto operator << (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
+   NOD() constexpr auto operator << (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
 
    /// Returns the right-shift of two integer vectors                         
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator >> (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
+   NOD() constexpr auto operator >> (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
 
    template<TARGS(LHS), CT::Integer N>
-   NOD() auto operator >> (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
+   NOD() constexpr auto operator >> (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
 
    template<TARGS(RHS), CT::Integer N>
-   NOD() auto operator >> (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
+   NOD() constexpr auto operator >> (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
 
    /// Returns the xor of two integer vectors                                 
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator ^ (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
+   NOD() constexpr auto operator ^ (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
 
    template<TARGS(LHS), CT::Integer N>
-   NOD() auto operator ^ (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
+   NOD() constexpr auto operator ^ (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
 
    template<TARGS(RHS), CT::Integer N>
-   NOD() auto operator ^ (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
+   NOD() constexpr auto operator ^ (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
 
 
    ///                                                                        
@@ -519,31 +519,31 @@ namespace Langulus::Math
    ///                                                                        
    /// Add                                                                    
    template<TARGS(LHS), TARGS(RHS)>
-   auto& operator += (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
+   constexpr auto& operator += (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber N>
-   auto& operator += (TVEC(LHS)&, const N&) noexcept;
+   constexpr auto& operator += (TVEC(LHS)&, const N&) noexcept;
 
    /// Subtract                                                               
    template<TARGS(LHS), TARGS(RHS)>
-   auto& operator -= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
+   constexpr auto& operator -= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber N>
-   auto& operator -= (TVEC(LHS)&, const N&) noexcept;
+   constexpr auto& operator -= (TVEC(LHS)&, const N&) noexcept;
 
    /// Multiply                                                               
    template<TARGS(LHS), TARGS(RHS)>
-   auto& operator *= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
+   constexpr auto& operator *= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
 
    template<TARGS(LHS), CT::DenseNumber N>
-   auto& operator *= (TVEC(LHS)&, const N&) noexcept;
+   constexpr auto& operator *= (TVEC(LHS)&, const N&) noexcept;
 
    /// Divide                                                                 
    template<TARGS(LHS), TARGS(RHS)>
-   auto& operator /= (TVEC(LHS)&, const TVEC(RHS)&);
+   constexpr auto& operator /= (TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   auto& operator /= (TVEC(LHS)&, const N&);
+   constexpr auto& operator /= (TVEC(LHS)&, const N&);
 
 
    ///                                                                        
@@ -551,53 +551,53 @@ namespace Langulus::Math
    ///                                                                        
    /// Smaller                                                                
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator < (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr auto operator < (const TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator < (const TVEC(LHS)&, const N&);
+   NOD() constexpr auto operator < (const TVEC(LHS)&, const N&);
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator < (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator < (const N&, const TVEC(RHS)&);
 
    /// Bigger                                                                 
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator > (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr auto operator > (const TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator > (const TVEC(LHS)&, const N&);
+   NOD() constexpr auto operator > (const TVEC(LHS)&, const N&);
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator > (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator > (const N&, const TVEC(RHS)&);
 
    /// Bigger or equal                                                        
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator >= (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr auto operator >= (const TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator >= (const TVEC(LHS)&, const N&);
+   NOD() constexpr auto operator >= (const TVEC(LHS)&, const N&);
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator >= (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator >= (const N&, const TVEC(RHS)&);
 
    /// Smaller or equal                                                       
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() auto operator <= (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr auto operator <= (const TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() auto operator <= (const TVEC(LHS)&, const N&);
+   NOD() constexpr auto operator <= (const TVEC(LHS)&, const N&);
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() auto operator <= (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator <= (const N&, const TVEC(RHS)&);
 
    /// Equal                                                                  
    template<TARGS(LHS), TARGS(RHS)>
-   NOD() bool operator == (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr bool operator == (const TVEC(LHS)&, const TVEC(RHS)&);
 
    template<TARGS(LHS), CT::DenseNumber N>
-   NOD() bool operator == (const TVEC(LHS)&, const N&);
+   NOD() constexpr bool operator == (const TVEC(LHS)&, const N&);
 
    template<TARGS(RHS), CT::DenseNumber N>
-   NOD() bool operator == (const N&, const TVEC(RHS)&);
+   NOD() constexpr bool operator == (const N&, const TVEC(RHS)&);
 
 } // namespace Langulus::Math
 
