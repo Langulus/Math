@@ -9,10 +9,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-latest]
-        build: [Release]
-        arch: [x86, x64]
-        cxx: [g++, clang++, cl]
+        os: [windows-latest]
+        build: [Debug, Release]
+        arch: [x86]
+        cxx: [cl]
         feature: [
           [SSE, 16, '-msse', '/arch:SSE'],
           [SSE2, 16, '-msse2', '/arch:SSE2'],

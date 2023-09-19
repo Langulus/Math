@@ -228,11 +228,8 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 
 		WHEN("Multiplying the matrices") {
 			r2 = x2 * y2;
-			Logger::Info("r2 = x2 * y2 done");
 			r3 = x3 * y3;
-			Logger::Info("r3 = x3 * y3 done");
 			r4 = x4 * y4;
-			Logger::Info("r4 = x4 * y4 done");
 
 			THEN("The result should be correct") {
 				REQUIRE(r2[0][0] == Approx(0).margin(0.001));
