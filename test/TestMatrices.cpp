@@ -227,6 +227,12 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 		}
 
 		WHEN("Multiplying the matrices") {
+		#if LANGULUS_SIMD(128BIT)
+			Logger::Info("LANGULUS_SIMD(BIT)");
+		#endif
+		#if LANGULUS_SIMD(256BIT)
+			Logger::Info("LANGULUS_SIMD(256BIT)");
+		#endif
 			r4 = x4 * y4;
 			Logger::Info("r4 = x4 * y4 done");
 			r3 = x3 * y3;
