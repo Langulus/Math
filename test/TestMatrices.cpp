@@ -234,11 +234,11 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 			Logger::Info("LANGULUS_SIMD(256BIT)");
 		#endif
 			r4 = x4 * y4;
-			Logger::Info("r4 = x4 * y4 done");
+			Logger::Info("Multiplying the matrices r4 = x4 * y4 done");
 			r3 = x3 * y3;
-			Logger::Info("r3 = x3 * y3 done");
+			Logger::Info("Multiplying the matrices r3 = x3 * y3 done");
 			r2 = x2 * y2;
-			Logger::Info("r2 = x2 * y2 done");
+			Logger::Info("Multiplying the matrices r2 = x2 * y2 done");
 
 			THEN("The result should be correct") {
 				REQUIRE(r2[0][0] == Approx(0).margin(0.001));
@@ -277,8 +277,11 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 
 		WHEN("Multiplying the matrices in reverse order") {
 			r2 = y2 * x2;
+			Logger::Info("Multiplying the matrices r2 = x2 * y2 done");
 			r3 = y3 * x3;
+			Logger::Info("Multiplying the matrices r3 = x3 * y3 done");
 			r4 = y4 * x4;
+			Logger::Info("Multiplying the matrices r4 = x4 * y4 done");
 
 			THEN("The result should be correct") {
 				REQUIRE(r3[0][0] == Approx(0.1464469));
