@@ -6,6 +6,7 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
+#define LANGULUS_SIMD_VERBOSE
 #include "Main.hpp"
 #include <Math/Matrix.hpp>
 #include <catch2/catch.hpp>
