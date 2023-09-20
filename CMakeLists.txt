@@ -5,6 +5,9 @@ project(LangulusMath
     HOMEPAGE_URL    https://langulus.com
 )
 
+# For logging every SIMD function that occurs                               
+add_compile_definitions(LANGULUS_SIMD_VERBOSE)
+
 # Check if this project is built as standalone, or a part of something else 
 if(PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
     include(LangulusUtilities.cmake)
