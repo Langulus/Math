@@ -12,18 +12,22 @@
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
 
+#define TARGS(a) CT::Dense a##T, Count a##S, int a##D
+#define TVEC(a) TVector<a##T, a##S, a##D>
+#define TEMPLATE() template<CT::Dense T, Count S, int DEFAULT>
+#define TME() TVector<T, S, DEFAULT>
 
 namespace Langulus::Math
 {
 
-   template<CT::DenseNumber T, CT::Dimension D>
+   template<CT::Dense T, CT::Dimension D>
    struct TVectorComponent;
 
-   template<CT::DenseNumber T, Count C, int DEFAULT = 0>
+   template<CT::Dense T, Count S, int DEFAULT = 0>
    struct TVector;
 
-   template<CT::DenseNumber T, Count C, int DEFAULT = 0>
-   using TVec = TVector<T, C, DEFAULT>;
+   template<CT::Dense T, Count S, int DEFAULT = 0>
+   using TVec = TME();
 
    using Vec1     = TVector<Real, 1>;
    using Vec1f    = TVector<Float, 1>;
@@ -31,7 +35,7 @@ namespace Langulus::Math
    using Vec1i    = TVector<signed, 1>;
    using Vec1u    = TVector<unsigned, 1>;
    using Vec1i8   = TVector<::std::int8_t, 1>;
-   using Vec1u8   = TVector<uint8, 1>;
+   using Vec1u8   = TVector<::std::uint8_t, 1>;
    using Vec1i16  = TVector<::std::int16_t, 1>;
    using Vec1u16  = TVector<::std::uint16_t, 1>;
    using Vec1i32  = TVector<::std::int32_t, 1>;
@@ -45,7 +49,7 @@ namespace Langulus::Math
    using Vec2i    = TVector<signed, 2>;
    using Vec2u    = TVector<unsigned, 2>;
    using Vec2i8   = TVector<::std::int8_t, 2>;
-   using Vec2u8   = TVector<uint8, 2>;
+   using Vec2u8   = TVector<::std::uint8_t, 2>;
    using Vec2i16  = TVector<::std::int16_t, 2>;
    using Vec2u16  = TVector<::std::uint16_t, 2>;
    using Vec2i32  = TVector<::std::int32_t, 2>;
@@ -59,7 +63,7 @@ namespace Langulus::Math
    using Vec3i    = TVector<signed, 3>;
    using Vec3u    = TVector<unsigned, 3>;
    using Vec3i8   = TVector<::std::int8_t, 3>;
-   using Vec3u8   = TVector<uint8, 3>;
+   using Vec3u8   = TVector<::std::uint8_t, 3>;
    using Vec3i16  = TVector<::std::int16_t, 3>;
    using Vec3u16  = TVector<::std::uint16_t, 3>;
    using Vec3i32  = TVector<::std::int32_t, 3>;
@@ -73,7 +77,7 @@ namespace Langulus::Math
    using Vec4i    = TVector<signed, 4>;
    using Vec4u    = TVector<unsigned, 4>;
    using Vec4i8   = TVector<::std::int8_t, 4>;
-   using Vec4u8   = TVector<uint8, 4>;
+   using Vec4u8   = TVector<::std::uint8_t, 4>;
    using Vec4i16  = TVector<::std::int16_t, 4>;
    using Vec4u16  = TVector<::std::uint16_t, 4>;
    using Vec4i32  = TVector<::std::int32_t, 4>;
@@ -119,7 +123,7 @@ namespace Langulus::A
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// vector of the same type                                                
-   template<CT::DenseNumber T>
+   template<CT::Dense T>
    struct VectorOfType : Vector {
       LANGULUS(CONCRETE) Math::TVector<T, 4>;
       LANGULUS(TYPED) T;
@@ -128,14 +132,15 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
-#define TARGS(a) CT::DenseNumber a##T, Count a##S, int a##D
-#define TVEC(a) TVector<a##T, a##S, a##D>
-#define TEMPLATE() template<CT::DenseNumber T, Count S, int DEFAULT>
-#define TME() TVector<T, S, DEFAULT>
-
-
 namespace Langulus
 {
+   namespace CT
+   {
+      /// Anything derived from A::Vector                                     
+      template<class... T>
+      concept VectorBased = (DerivedFrom<T, A::Vector> and ...);
+   }
+
    /// Custom name generator at compile-time for vectors                      
    TEMPLATE()
    constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
@@ -180,15 +185,17 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    TEMPLATE()
-   struct TVector {
+   struct TVector : A::Vector {
       static_assert(S >= 1, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
       static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
+      using ArrayType = T[S];
 
       T mArray[S];
 
    public:
       LANGULUS(NAME) CustomNameOf<TVector>::Generate();
+      LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
       LANGULUS(TYPED) T;
@@ -362,9 +369,8 @@ namespace Langulus::Math
       template<TARGS(ALT)>
       NOD() constexpr auto Step(const TVEC(ALT)&) const noexcept;
 
-      NOD() constexpr auto Pow(const T&) const noexcept;
-      template<TARGS(ALT)>
-      NOD() constexpr auto Pow(const TVEC(ALT)&) const noexcept;
+      template<class ALT>
+      NOD() constexpr TME() Pow(const ALT&) const noexcept;
 
       auto& Sort() noexcept;
 

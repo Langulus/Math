@@ -210,7 +210,7 @@ namespace Langulus::Math
          return result;
       }
       else if constexpr (CT::Real<B, E>)
-         return ::std::pow(BuiltinCast(base), BuiltinCast(exponent));
+         return ::std::pow(FundamentalCast(base), FundamentalCast(exponent));
       else
          LANGULUS_ERROR("T must either have Pow(exponent) method, or be a number");
    }

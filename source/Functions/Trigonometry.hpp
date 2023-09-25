@@ -113,9 +113,9 @@ namespace Langulus::Math
       if constexpr (CT::HasCos<T>)
          return a.Cos();
       else if constexpr (CT::Real<T>)
-         return ::std::cos(BuiltinCast(a));
+         return ::std::cos(FundamentalCast(a));
       else
-         return ::std::cos(static_cast<Real>(BuiltinCast(a)));
+         return ::std::cos(static_cast<Real>(FundamentalCast(a)));
    }
 
    /// Calculate sine                                                         
@@ -126,9 +126,9 @@ namespace Langulus::Math
       if constexpr (CT::HasSin<T>)
          return a.Sin();
       else if constexpr (CT::Real<T>)
-         return ::std::sin(BuiltinCast(a));
+         return ::std::sin(FundamentalCast(a));
       else
-         return ::std::sin(static_cast<Real>(BuiltinCast(a)));
+         return ::std::sin(static_cast<Real>(FundamentalCast(a)));
    }
 
    /// Returns the arc tangent of x                                           

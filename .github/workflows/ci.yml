@@ -10,10 +10,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-        build: [Debug, Release]
-        arch: [x86]
-        cxx: [cl]
+        build: [Release]
+        arch: [x86, x64]
+        cxx: [g++, clang++, cl]
         feature: [
+          [SSE, 16, '-msse', '/arch:SSE'],
+          [SSE2, 16, '-msse2', '/arch:SSE2'],
+          [SSE3, 16, '-msse3', '/arch:SSE3'],
+          [SSSE3, 16, '-mssse3', '/arch:SSSE3'],
+          [SSE4.1, 16, '-msse4.1', '/arch:SSE4.1'],
+          [SSE4.2, 16, '-msse4.2', '/arch:SSE4.2'],
           [AVX, 32, '-mavx', '/arch:AVX'],
           [AVX2, 32, '-mavx2', '/arch:AVX2'],
           [AVX512, 64, '-mavx512f', '/arch:AVX512']

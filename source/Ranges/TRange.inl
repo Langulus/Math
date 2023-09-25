@@ -9,7 +9,7 @@
 #pragma once
 #include "TRange.hpp"
 
-#define TEMPLATE() template<CT::ScalarOrVector T>
+#define TEMPLATE() template<class T>
 #define TME() TRange<T>
 
 
@@ -155,45 +155,49 @@ namespace Langulus::Math
    ///                                                                        
 
    /// Returns an inverted range                                              
-   template<CT::ScalarOrVector T>
+   template<class T>
    LANGULUS(INLINED)
    constexpr TRange<T> operator - (const TRange<T>& me) noexcept {
       return {-me.mMin, -me.mMax};
    }
 
    /// Returns the sum of two ranges                                          
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto operator + (const TRange<T1>& me, const TRange<T2>& other) noexcept {
       return TRange<decltype(Fake<T1>() + Fake<T2>())> {
-         me.mMin + other.mMin, me.mMax + other.mMax
+         me.mMin + other.mMin,
+         me.mMax + other.mMax
       };
    }
 
    /// Returns the difference of two ranges                                   
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto operator - (const TRange<T1>& me, const TRange<T2>& other) noexcept {
       return TRange<decltype(Fake<T1>() - Fake<T2>())> {
-         me.mMin - other.mMin, me.mMax - other.mMax
+         me.mMin - other.mMin,
+         me.mMax - other.mMax
       };
    }
 
    /// Returns the product of two ranges                                      
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto operator * (const TRange<T1>& me, const TRange<T2>& other) noexcept {
       return TRange<decltype(Fake<T1>() * Fake<T2>())> {
-         me.mMin * other.mMin, me.mMax * other.mMax
+         me.mMin * other.mMin,
+         me.mMax * other.mMax
       };
    }
 
    /// Returns the division of two ranges                                     
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto operator / (const TRange<T1>& me, const TRange<T2>& other) {
       return TRange<decltype(Fake<T1>() / Fake<T2>())> {
-         me.mMin / other.mMin, me.mMax / other.mMax
+         me.mMin / other.mMin,
+         me.mMax / other.mMax
       };
    }
 
@@ -203,7 +207,7 @@ namespace Langulus::Math
    ///                                                                        
 
    /// Add                                                                    
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto& operator += (TRange<T1>& me, const TRange<T2>& other) noexcept {
       me.mMin += other.mMin;
@@ -212,7 +216,7 @@ namespace Langulus::Math
    }
 
    /// Subtract                                                               
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto& operator -= (TRange<T1>& me, const TRange<T2>& other) noexcept {
       me.mMin -= other.mMin;
@@ -221,7 +225,7 @@ namespace Langulus::Math
    }
 
    /// Multiply                                                               
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto& operator *= (TRange<T1>& me, const TRange<T2>& other) noexcept {
       me.mMin *= other.mMin;
@@ -230,7 +234,7 @@ namespace Langulus::Math
    }
 
    /// Divide                                                                 
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    LANGULUS(INLINED)
    auto& operator /= (TRange<T1>& me, const TRange<T2>& other) {
       me.mMin /= other.mMin;
