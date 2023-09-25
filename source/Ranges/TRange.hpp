@@ -13,23 +13,23 @@
 namespace Langulus::Math
 {
 
-   template<CT::ScalarOrVector>
+   template<class>
    struct TRange;
 
-   using Range1f = TRange<Vec1f>;
-   using Range1d = TRange<Vec1d>;
-
-   using Range2f = TRange<Vec2f>;
-   using Range2d = TRange<Vec2d>;
-   using Range3f = TRange<Vec3f>;
-   using Range3d = TRange<Vec3d>;
-   using Range4f = TRange<Vec4f>;
-   using Range4d = TRange<Vec4d>;
-
-   using Range1  = TRange<Vec1>;
-   using Range2  = TRange<Vec2>;
-   using Range3  = TRange<Vec3>;
-   using Range4  = TRange<Vec4>;
+   using Range1f   = TRange<Vec1f>;
+   using Range1d   = TRange<Vec1d>;
+                   
+   using Range2f   = TRange<Vec2f>;
+   using Range2d   = TRange<Vec2d>;
+   using Range3f   = TRange<Vec3f>;
+   using Range3d   = TRange<Vec3d>;
+   using Range4f   = TRange<Vec4f>;
+   using Range4d   = TRange<Vec4d>;
+                   
+   using Range1    = TRange<Vec1>;
+   using Range2    = TRange<Vec2>;
+   using Range3    = TRange<Vec3>;
+   using Range4    = TRange<Vec4>;
 
    using Range1u8  = TRange<Vec1u8>;
    using Range1u16 = TRange<Vec1u16>;
@@ -106,14 +106,14 @@ namespace Langulus::Math
    ///   Templated range                                                      
    ///                                                                        
    #pragma pack(push, 1)
-   template<CT::ScalarOrVector T>
+   template<class T>
    struct TRange {
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr Count MemberCount = CountOf<T>;
 
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(
-         A::RangeOfSize<MemberCount>, 
+         A::RangeOfSize<CountOf<T>>,
          A::RangeOfType<TypeOf<T>>
       );
 
@@ -163,23 +163,23 @@ namespace Langulus::Math
    ///   Operations                                                           
    ///                                                                        
    /// Returns an inverted range                                              
-   template<CT::ScalarOrVector T>
+   template<class T>
    NOD() constexpr TRange<T> operator - (const TRange<T>&) noexcept;
 
    /// Returns the sum of two ranges                                          
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    NOD() auto operator + (const TRange<T1>&, const TRange<T2>&) noexcept;
 
    /// Returns the difference of two ranges                                   
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    NOD() auto operator - (const TRange<T1>&, const TRange<T2>&) noexcept;
 
    /// Returns the product of two ranges                                      
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    NOD() auto operator * (const TRange<T1>&, const TRange<T2>&) noexcept;
 
    /// Returns the division of two ranges                                     
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    NOD() auto operator / (const TRange<T1>&, const TRange<T2>&);
 
 
@@ -187,19 +187,19 @@ namespace Langulus::Math
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    auto& operator += (TRange<T1>&, const TRange<T2>&) noexcept;
 
    /// Subtract                                                               
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    auto& operator -= (TRange<T1>&, const TRange<T2>&) noexcept;
 
    /// Multiply                                                               
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    auto& operator *= (TRange<T1>&, const TRange<T2>&) noexcept;
 
    /// Divide                                                                 
-   template<CT::ScalarOrVector T1, CT::ScalarOrVector T2>
+   template<class T1, class T2>
    auto& operator /= (TRange<T1>&, const TRange<T2>&);
 
 } // namespace Langulus::Math

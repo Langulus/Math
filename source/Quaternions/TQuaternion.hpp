@@ -21,11 +21,11 @@ namespace Langulus::Math
 
    using Quaternionf = TQuaternion<Float>;
    using Quaterniond = TQuaternion<Double>;
-   using Quaternion = TQuaternion<Real>;
+   using Quaternion  = TQuaternion<Real>;
 
    using Quatf = Quaternionf;
    using Quatd = Quaterniond;
-   using Quat = Quaternion;
+   using Quat  = Quaternion;
 
 } // namespace Langulus::Math
 
@@ -102,39 +102,39 @@ namespace Langulus::Math
 
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() TQuat<Lossless<T1, T2>> operator * (const TQuat<T1>&, const TQuat<T2>&) noexcept;
+   NOD() constexpr TQuat<Lossless<T1, T2>> operator * (const TQuat<T1>&, const TQuat<T2>&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
-   NOD() TVec<Lossless<T1, T2>, C> operator * (const TQuat<T1>&, const TVec<T2, C>&) noexcept requires(C >= 2);
+   NOD() constexpr TVec<Lossless<T1, T2>, C> operator * (const TQuat<T1>&, const TVec<T2, C>&) noexcept requires (C >= 2);
 
    template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
-   NOD() TVec<Lossless<T1, T2>, C> operator * (const TVec<T1, C>&, const TQuat<T2>&) noexcept requires(C >= 2);
+   NOD() constexpr TVec<Lossless<T1, T2>, C> operator * (const TVec<T1, C>&, const TQuat<T2>&) noexcept requires (C >= 2);
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   void operator *= (TQuat<T1>&, const TQuat<T2>&) noexcept;
+   constexpr void operator *= (TQuat<T1>&, const TQuat<T2>&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator + (const TQuat<T1>&, const T2&) noexcept;
+   NOD() constexpr auto operator + (const TQuat<T1>&, const T2&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator + (const T1&, const TQuat<T2>&) noexcept;
+   NOD() constexpr auto operator + (const T1&, const TQuat<T2>&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator - (const TQuat<T1>&, const T2&) noexcept;
+   NOD() constexpr auto operator - (const TQuat<T1>&, const T2&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator - (const T1&, const TQuat<T2>&) noexcept;
+   NOD() constexpr auto operator - (const T1&, const TQuat<T2>&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator * (const TQuat<T1>&, const T2&) noexcept;
+   NOD() constexpr auto operator * (const TQuat<T1>&, const T2&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator * (const T1&, const TQuat<T2>&) noexcept;
+   NOD() constexpr auto operator * (const T1&, const TQuat<T2>&) noexcept;
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator / (const TQuat<T1>&, const T2&);
+   NOD() constexpr auto operator / (const TQuat<T1>&, const T2&);
 
    template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() auto operator / (const T1&, const TQuat<T2>&);
+   NOD() constexpr auto operator / (const T1&, const TQuat<T2>&);
 
 } // namespace Langulus::Math

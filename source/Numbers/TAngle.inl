@@ -8,6 +8,7 @@
 ///                                                                           
 #pragma once
 #include "TAngle.hpp"
+#include "TNumber.inl"
 
 
 namespace Langulus::Math
@@ -16,6 +17,25 @@ namespace Langulus::Math
    ///                                                                        
    ///   Type used for representing angles in degrees                         
    ///                                                                        
+   template<CT::DenseNumber T>
+   template<CT::DenseNumber N>
+   LANGULUS(INLINED)
+   constexpr TDegrees<T>::TDegrees(const TDegrees<N>& r) noexcept
+      : Base {r} {}
+
+   template<CT::DenseNumber T>
+   template<CT::DenseNumber N>
+   LANGULUS(INLINED)
+   constexpr TDegrees<T>::TDegrees(const TRadians<N>& r) noexcept
+      : Base {r.GetDegrees()} {}
+
+   /// Construct from any number-convertible thing                            
+   ///   @param a - value to set                                              
+   template<CT::DenseNumber T>
+   LANGULUS(INLINED)
+   constexpr TDegrees<T>::TDegrees(const CT::DenseNumber auto& a) noexcept
+      : Base {a} {}
+
    template<CT::DenseNumber T>
    LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetRadians() const noexcept {
@@ -44,6 +64,25 @@ namespace Langulus::Math
    ///                                                                        
    ///   Type used for representing angles in radians                         
    ///                                                                        
+   template<CT::DenseNumber T>
+   template<CT::DenseNumber N>
+   LANGULUS(INLINED)
+   constexpr TRadians<T>::TRadians(const TRadians<N>& r) noexcept
+      : Base {r} {}
+
+   template<CT::DenseNumber T>
+   template<CT::DenseNumber N>
+   LANGULUS(INLINED)
+   constexpr TRadians<T>::TRadians(const TDegrees<N>& r) noexcept
+      : Base {r.GetRadians()} {}
+
+   /// Construct from any number-convertible thing                            
+   ///   @param a - value to set                                              
+   template<CT::DenseNumber T>
+   LANGULUS(INLINED)
+   constexpr TRadians<T>::TRadians(const CT::DenseNumber auto& a) noexcept
+      : Base {a} {}
+
    template<CT::DenseNumber T>
    LANGULUS(INLINED)
    constexpr T TRadians<T>::GetRadians() const noexcept {

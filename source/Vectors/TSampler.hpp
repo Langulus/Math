@@ -14,7 +14,7 @@ namespace Langulus
    namespace Math
    {
    
-      template<CT::ScalarOrVector T>
+      template<CT::VectorBased T>
       struct TSampler;
 
       using Sampler1    = TSampler<TVector<Real, 1>>;
@@ -121,7 +121,7 @@ namespace Langulus
    } // namespace Langulus::A
 
    /// Custom name generator at compile-time for samplers                     
-   template<CT::ScalarOrVector T>
+   template<CT::VectorBased T>
    constexpr auto CustomName(Of<Math::TSampler<T>>&&) noexcept {
       using CLASS = Math::TSampler<T>;
       constexpr auto MemberCount = CLASS::MemberCount;
@@ -156,7 +156,7 @@ namespace Langulus
       ///   A templated sampler                                               
       /// It's just a vector, specialized for accessing textures/volumes      
       ///                                                                     
-      template<CT::ScalarOrVector T>
+      template<CT::VectorBased T>
       struct TSampler : T {
          using PointType = T;
          using T::MemberCount;

@@ -15,6 +15,7 @@
 #define TEMPLATE() template<CT::Dense T, CT::Dense W>
 #define TME() TNumber<T, W>
 
+
 namespace Langulus::Math
 {
 

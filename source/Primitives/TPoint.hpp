@@ -15,7 +15,7 @@ namespace Langulus
    namespace Math
    {
 
-      template<CT::ScalarOrVector>
+      template<CT::VectorBased>
       struct TPoint;
 
       using Point1 = TPoint<Vec1>;
@@ -43,12 +43,12 @@ namespace Langulus
 
       /// Concept for distinguishing point primitives                         
       template<class... T>
-      concept Point = CT::ScalarOrVector<T...> || ((DerivedFrom<T, A::Point>) && ...);
+      concept Point = CT::Vector<T...> or ((DerivedFrom<T, A::Point>) and ...);
 
    } // namespace Langulus::CT
    
    /// Custom name generator at compile-time for points                       
-   template<CT::ScalarOrVector T>
+   template<class T>
    constexpr auto CustomName(Of<Math::TPoint<T>>&&) noexcept {
       using CLASS = Math::TPoint<T>;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
@@ -82,7 +82,7 @@ namespace Langulus
       ///   A concrete point                                                  
       ///                                                                     
       #pragma pack(push, 1)
-      template<CT::ScalarOrVector T>
+      template<CT::VectorBased T>
       struct TPoint : T {
          LANGULUS(NAME) CustomNameOf<TPoint>::Generate();
          LANGULUS(TYPED) TypeOf<T>;

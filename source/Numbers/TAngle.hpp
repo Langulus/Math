@@ -50,15 +50,33 @@ namespace Langulus
    namespace Math
    {
 
+      template<CT::DenseNumber T>
+      struct TDegrees;
+
+      template<CT::DenseNumber T>
+      struct TRadians;
+
+
       ///                                                                     
       ///   Type used for representing angles in degrees                      
       ///                                                                     
       template<CT::DenseNumber T>
       struct TDegrees : TNumber<T, TDegrees<T>> {
          using Base = TNumber<T, TDegrees<T>>;
-         using Base::Base;
          using Base::mValue;
          static constexpr bool Radians = false;
+
+         constexpr TDegrees() noexcept = default;
+         constexpr TDegrees(const TDegrees&) noexcept = default;
+         constexpr TDegrees(TDegrees&&) noexcept = default;
+
+         template<CT::DenseNumber N>
+         constexpr TDegrees(const TDegrees<N>&) noexcept;
+
+         template<CT::DenseNumber N>
+         constexpr TDegrees(const TRadians<N>&) noexcept;
+
+         constexpr TDegrees(const CT::DenseNumber auto&) noexcept;
 
          NOD() constexpr T GetRadians() const noexcept;
          NOD() constexpr T GetDegrees() const noexcept;
@@ -73,9 +91,20 @@ namespace Langulus
       template<CT::DenseNumber T>
       struct TRadians : TNumber<T, TRadians<T>> {
          using Base = TNumber<T, TRadians<T>>;
-         using Base::Base;
          using Base::mValue;
          static constexpr bool Radians = true;
+
+         constexpr TRadians() noexcept = default;
+         constexpr TRadians(const TRadians&) noexcept = default;
+         constexpr TRadians(TRadians&&) noexcept = default;
+
+         template<CT::DenseNumber N>
+         constexpr TRadians(const TRadians<N>&) noexcept;
+
+         template<CT::DenseNumber N>
+         constexpr TRadians(const TDegrees<N>&) noexcept;
+
+         constexpr TRadians(const CT::DenseNumber auto&) noexcept;
 
          NOD() constexpr T GetRadians() const noexcept;
          NOD() constexpr T GetDegrees() const noexcept;
@@ -123,8 +152,8 @@ namespace Langulus
       using Pitch = TPitch<Radians>;
       using Roll = TRoll<Radians>;
 
-      constexpr Degrees operator""_deg(long double n) noexcept { return n; }
-      constexpr Degrees operator""_deg(unsigned long long n) noexcept { return n; }
+      constexpr Degrees operator""_deg(long double n) noexcept { return {n}; }
+      constexpr Degrees operator""_deg(unsigned long long n) noexcept { return {n}; }
       constexpr Radians operator""_rad(long double n) noexcept { return {n}; }
       constexpr Radians operator""_rad(unsigned long long n) noexcept { return {n}; }
 
