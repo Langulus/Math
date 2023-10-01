@@ -8,7 +8,7 @@
 ///                                                                           
 #pragma once
 #include "../Matrices/TMatrix.hpp"
-#include "../Numbers/TAngle.hpp"
+
 
 namespace Langulus::Math
 {
@@ -50,6 +50,29 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
+namespace Langulus
+{
+
+   /// Custom name generator at compile-time for vectors                      
+   template<CT::DenseNumber T>
+   constexpr auto CustomName(Of<Math::TQuaternion<T>>&&) noexcept {
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TQuaternion<T>>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      // Write prefix                                                   
+      for (auto i : "Quat")
+         name[offset++] = i;
+
+      // Write suffix                                                   
+      --offset;
+      for (auto i : SuffixOf<T>())
+         name[offset++] = i;
+
+      return name;
+   }
+}
+
 namespace Langulus::Math
 {
 
@@ -61,7 +84,14 @@ namespace Langulus::Math
       using Base = TVector<T, 4>;
       using Base3 = TVector<T, 3>;
 
+      LANGULUS(NAME) CustomNameOf<TQuaternion>::Generate();
+      LANGULUS(NULLIFIABLE) false;
       LANGULUS_BASES(Base, A::QuaternionOfType<T>);
+
+      // Make TQuaternion match the CT::QuaternionBased concept         
+      static constexpr bool CTTI_QuaternionTrait = true;
+      // Override the inherited trait                                   
+      static constexpr bool CTTI_VectorTrait = false;
 
       using Base::Base;
       using Base::mArray;
@@ -101,40 +131,31 @@ namespace Langulus::Math
    };
 
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr TQuat<Lossless<T1, T2>> operator * (const TQuat<T1>&, const TQuat<T2>&) noexcept;
+   /// Generate a lossless quaternion type from provided LHS and RHS types    
+   ///   @tparam LHS - left hand side, can be scalar/array/vector             
+   ///   @tparam RHS - right hand side, can be scalar/array/vector            
+   template<class LHS, class RHS>
+   using LosslessQuaternion = TQuaternion<Lossless<TypeOf<LHS>, TypeOf<RHS>>>;
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
-   NOD() constexpr TVec<Lossless<T1, T2>, C> operator * (const TQuat<T1>&, const TVec<T2, C>&) noexcept requires (C >= 2);
+   ///                                                                        
+   ///   Operators that involve quaternions                                   
+   ///                                                                        
+   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
-   NOD() constexpr TVec<Lossless<T1, T2>, C> operator * (const TVec<T1, C>&, const TQuat<T2>&) noexcept requires (C >= 2);
+   constexpr void operator *= (CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   constexpr void operator *= (TQuat<T1>&, const TQuat<T2>&) noexcept;
+   NOD() constexpr auto operator + (const CT::QuaternionBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::DenseScalar auto&, const CT::QuaternionBased auto&) noexcept;
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator + (const TQuat<T1>&, const T2&) noexcept;
+   NOD() constexpr auto operator - (const CT::QuaternionBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::DenseScalar auto&, const CT::QuaternionBased auto&) noexcept;
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator + (const T1&, const TQuat<T2>&) noexcept;
+   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::DenseScalar auto&, const CT::QuaternionBased auto&) noexcept;
 
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator - (const TQuat<T1>&, const T2&) noexcept;
-
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator - (const T1&, const TQuat<T2>&) noexcept;
-
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator * (const TQuat<T1>&, const T2&) noexcept;
-
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator * (const T1&, const TQuat<T2>&) noexcept;
-
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator / (const TQuat<T1>&, const T2&);
-
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   NOD() constexpr auto operator / (const T1&, const TQuat<T2>&);
+   NOD() constexpr auto operator / (const CT::QuaternionBased auto&, const CT::DenseScalar auto&);
+   NOD() constexpr auto operator / (const CT::DenseScalar auto&, const CT::QuaternionBased auto&);
 
 } // namespace Langulus::Math

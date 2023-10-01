@@ -24,7 +24,9 @@ namespace Langulus::Math
       : Base {0, 0, 0, 1} {
       static_assert(CT::Vector<QUAT()>,
          "Quaternions should match CT::Vector");
-      static_assert(CT::VectorBased<QUAT()>,
+      static_assert(CT::QuaternionBased<QUAT()>,
+         "Quaternions shouldn't match CT::VectorBased");
+      static_assert(not CT::VectorBased<QUAT()>,
          "Quaternions should match CT::VectorBased");
       static_assert(sizeof(QUAT()) == sizeof(Base),
          "Quaternions should match Base size");
@@ -269,17 +271,28 @@ namespace Langulus::Math
       return r;
    }
 
+
+   ///                                                                        
+   ///   Operators that involve quaternions                                   
+   ///                                                                        
+
    /// Quaterion-quaternion product                                           
    ///   @param lhs - the left operand                                        
    ///   @param rhs - the right operand                                       
    ///   @return the product of the two provided quaternions                  
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
-   constexpr TQuat<Lossless<T1, T2>> operator * (const TQuat<T1>& lhs, const TQuat<T2>& rhs) noexcept {
-      return {
-         lhs.mArray[0] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[0] + lhs.mArray[1] * rhs.mArray[2] - lhs.mArray[2] * rhs.mArray[1],
-         lhs.mArray[1] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[1] + lhs.mArray[2] * rhs.mArray[0] - lhs.mArray[0] * rhs.mArray[2],
-         lhs.mArray[2] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[2] + lhs.mArray[0] * rhs.mArray[1] - lhs.mArray[1] * rhs.mArray[0],
-         lhs.mArray[3] * rhs.mArray[3] - lhs.mArray[0] * rhs.mArray[0] - lhs.mArray[1] * rhs.mArray[1] - lhs.mArray[2] * rhs.mArray[2]
+   constexpr auto operator * (
+      const CT::QuaternionBased auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) noexcept {
+      return LosslessQuaternion<decltype(lhs), decltype(rhs)> {
+         lhs.mArray[0] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[0]
+       + lhs.mArray[1] * rhs.mArray[2] - lhs.mArray[2] * rhs.mArray[1],
+         lhs.mArray[1] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[1]
+       + lhs.mArray[2] * rhs.mArray[0] - lhs.mArray[0] * rhs.mArray[2],
+         lhs.mArray[2] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[2]
+       + lhs.mArray[0] * rhs.mArray[1] - lhs.mArray[1] * rhs.mArray[0],
+         lhs.mArray[3] * rhs.mArray[3] - lhs.mArray[0] * rhs.mArray[0]
+       - lhs.mArray[1] * rhs.mArray[1] - lhs.mArray[2] * rhs.mArray[2]
       };
    }
 
@@ -287,115 +300,115 @@ namespace Langulus::Math
    ///   @param lhs - left hand side quaternion                               
    ///   @param rhs - right hand side vector of at least 2 components         
    ///   @return a lossless product of the two                                
-   template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
    LANGULUS(INLINED)
-   constexpr TVec<Lossless<T1, T2>, C> operator * (
-      const TQuat<T1>& lhs,
-      const TVec<T2, C>& rhs
-   ) noexcept requires(C >= 2) {
-      using LT = Lossless<T1, T2>;
-      const TQuaternion<LT> vecQuat {TVector<T2, 3>(rhs), 0};
-      return (lhs.Conjugate() * vecQuat) * lhs;
+   constexpr auto operator * (
+      const CT::QuaternionBased auto& lhs,
+      const CT::VectorBased     auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      const Q vecQuat {typename Q::Base3 {rhs}, 0};
+      return typename Q::Base3 {(lhs.Conjugate() * vecQuat) * lhs};
    }
 
    /// Vector * Quaterion                                                     
    ///   @param lhs - left hand side vector of at least 2 components          
    ///   @param rhs - right hand side quaternion                              
    ///   @return a lossless product of the two                                
-   template<CT::DenseNumber T1, CT::DenseNumber T2, Count C>
    LANGULUS(INLINED)
-   constexpr TVec<Lossless<T1, T2>, C> operator * (
-      const TVec<T1, C>& lhs,
-      const TQuat<T2>& rhs
-   ) noexcept requires(C >= 2) {
+   constexpr auto operator * (
+      const CT::VectorBased     auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) noexcept {
       return rhs.Conjugate() * lhs;
    }
 
    /// Quaterion *= Quaternion                                                
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr void operator *= (TQuat<T1>& lhs, const TQuat<T2>& rhs) noexcept {
+   constexpr void operator *= (
+            CT::QuaternionBased auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) noexcept {
       lhs = lhs * rhs;
    }
 
    /// Quaternion + Scalar                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator + (const TQuat<T1>& lhs, const T2& rhs) noexcept {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Add(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator + (
+      const CT::QuaternionBased auto& lhs,
+      const CT::DenseScalar     auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Add(lhs, rhs)};
    }
 
    /// Scalar + Quaternion                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator + (const T1& lhs, const TQuat<T2>& rhs) noexcept {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Add(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator + (
+      const CT::DenseScalar     auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Add(lhs, rhs)};
    }
 
    /// Quaternion - Scalar                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator - (const TQuat<T1>& lhs, const T2& rhs) noexcept {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Subtract(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator - (
+      const CT::QuaternionBased auto& lhs,
+      const CT::DenseScalar     auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Scalar - Quaternion                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator - (const T1& lhs, const TQuat<T2>& rhs) noexcept {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Subtract(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator - (
+      const CT::DenseScalar     auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Quaternion * Scalar                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator * (const TQuat<T1>& lhs, const T2& rhs) noexcept {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Multiply(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator * (
+      const CT::QuaternionBased auto& lhs,
+      const CT::DenseScalar     auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Scalar * Quaternion                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator * (const T1& lhs, const TQuat<T2>& rhs) noexcept {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Multiply(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator * (
+      const CT::DenseScalar     auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) noexcept {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Quaternion / Scalar                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator / (const TQuat<T1>& lhs, const T2& rhs) {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Divide(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator / (
+      const CT::QuaternionBased auto& lhs,
+      const CT::DenseScalar     auto& rhs
+   ) {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Divide(lhs, rhs)};
    }
 
    /// Scalar / Quaternion                                                    
-   template<CT::DenseNumber T1, CT::DenseNumber T2>
    LANGULUS(INLINED)
-   constexpr auto operator / (const T1& lhs, const TQuat<T2>& rhs) {
-      using Ret = TQuat<Lossless<T1, T2>>;
-      typename Ret::ArrayType a;
-      SIMD::Divide(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator / (
+      const CT::DenseScalar     auto& lhs,
+      const CT::QuaternionBased auto& rhs
+   ) {
+      using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
+      return Q {SIMD::Divide(lhs, rhs)};
    }
 
 } // namespace Langulus::Math

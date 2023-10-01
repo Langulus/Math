@@ -11,11 +11,13 @@
 #include "../Functions/Arithmetics.hpp"
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
+#include <SIMD/SIMD.hpp>
 
 #define TARGS(a) CT::Dense a##T, Count a##S, int a##D
 #define TVEC(a) TVector<a##T, a##S, a##D>
 #define TEMPLATE() template<CT::Dense T, Count S, int DEFAULT>
 #define TME() TVector<T, S, DEFAULT>
+
 
 namespace Langulus::Math
 {
@@ -136,9 +138,13 @@ namespace Langulus
 {
    namespace CT
    {
-      /// Anything derived from A::Vector                                     
+      /// Anything that has the quaternion trait                              
       template<class... T>
-      concept VectorBased = (DerivedFrom<T, A::Vector> and ...);
+      concept QuaternionBased = ((Decay<T>::CTTI_QuaternionTrait) and ...);
+
+      /// Anything that has the vector trait                                  
+      template<class... T>
+      concept VectorBased = ((Decay<T>::CTTI_VectorTrait) and ...);
    }
 
    /// Custom name generator at compile-time for vectors                      
@@ -185,7 +191,7 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    TEMPLATE()
-   struct TVector : A::Vector {
+   struct TVector {
       static_assert(S >= 1, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
       static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
@@ -206,15 +212,39 @@ namespace Langulus::Math
       );
       LANGULUS_CONVERSIONS(Flow::Code);
 
+      // Make TQuaternion match the CT::VectorBased concept             
+      static constexpr bool CTTI_VectorTrait = true;
+
    public:
       constexpr TVector() noexcept;
-      template<TARGS(ALT)>
-      constexpr TVector(const TVEC(ALT)&) noexcept;
+      constexpr TVector(const TVector&) noexcept = default;
+      constexpr TVector(TVector&&) noexcept = default;
+
+      constexpr TVector(const CT::Semantic auto&) noexcept;
+      constexpr TVector(const CT::NotSemantic auto&) noexcept;
+
       template<class T1, class T2, class... TAIL>
       constexpr TVector(const T1&, const T2&, const TAIL&...) noexcept;
-      constexpr TVector(const CT::Number auto&) noexcept;
       template<CT::DenseNumber N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
+
+   #if LANGULUS_SIMD(128BIT)
+      TVector(const simde__m128&)  noexcept;
+      TVector(const simde__m128d&) noexcept;
+      TVector(const simde__m128i&) noexcept;
+   #endif
+
+   #if LANGULUS_SIMD(256BIT)
+      TVector(const simde__m256&)  noexcept;
+      TVector(const simde__m256d&) noexcept;
+      TVector(const simde__m256i&) noexcept;
+   #endif
+
+   #if LANGULUS_SIMD(512BIT)
+      TVector(const simde__m512&)  noexcept;
+      TVector(const simde__m512d&) noexcept;
+      TVector(const simde__m512i&) noexcept;
+   #endif
 
       TVector(const Anyness::Neat&);
 
@@ -313,10 +343,10 @@ namespace Langulus::Math
       ///                                                                     
       ///   Compare                                                           
       ///                                                                     
-      constexpr auto& operator = (const CT::DenseNumber auto&) noexcept;
-
-      template<TARGS(ALT)>
-      constexpr auto& operator = (const TVEC(ALT)&) noexcept;
+      constexpr TVector& operator = (const TVector&) noexcept = default;
+      constexpr TVector& operator = (TVector&&) noexcept = default;
+      constexpr TVector& operator = (const CT::Vector auto&) noexcept;
+      constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
 
       template<CT::DenseNumber N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
@@ -442,168 +472,117 @@ namespace Langulus::Math
    } // namespace Inner
 
 
+   /// Generate a lossless vector type from provided LHS and RHS types        
+   ///   @tparam LHS - left hand side, can be scalar/array/vector             
+   ///   @tparam RHS - right hand side, can be scalar/array/vector            
+   template<class LHS, class RHS>
+   using LosslessVector = TVector<
+         Lossless<TypeOf<LHS>, TypeOf<RHS>>,
+         OverlapCounts<LHS, RHS>()
+      >;
+
    ///                                                                        
    ///   Operations                                                           
    ///                                                                        
    /// Returns an inverted vector                                             
-   template<TARGS(RHS)>
-   NOD() constexpr auto operator - (const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&) noexcept;
 
    /// Returns the sum of two vectors                                         
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator + (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator + (const TVEC(LHS)&, const N&) noexcept;
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator + (const N&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Returns the difference of two vectors                                  
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator - (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator - (const TVEC(LHS)&, const N&) noexcept;
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator - (const N&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Returns the product of two vectors                                     
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator * (const TVEC(LHS)&, const TVEC(RHS)&) noexcept;
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator * (const TVEC(LHS)&, const N&) noexcept;
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator * (const N&, const TVEC(RHS)&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Returns the division of two vectors                                    
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator / (const TVEC(LHS)&, const TVEC(RHS)&);
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator / (const TVEC(LHS)&, const N&);
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator / (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::VectorBased auto&);
+   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::DenseScalar auto&);
+   NOD() constexpr auto operator / (const CT::DenseScalar auto&, const CT::VectorBased auto&);
 
    /// Returns the left-shift of two integer vectors                          
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator << (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
-
-   template<TARGS(LHS), CT::Integer N>
-   NOD() constexpr auto operator << (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
-
-   template<TARGS(RHS), CT::Integer N>
-   NOD() constexpr auto operator << (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
+   template<CT::VectorBased LHS, CT::VectorBased RHS>
+   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
 
    /// Returns the right-shift of two integer vectors                         
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator >> (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
-
-   template<TARGS(LHS), CT::Integer N>
-   NOD() constexpr auto operator >> (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
-
-   template<TARGS(RHS), CT::Integer N>
-   NOD() constexpr auto operator >> (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
+   template<CT::VectorBased LHS, CT::VectorBased RHS>
+   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
 
    /// Returns the xor of two integer vectors                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator ^ (const TVEC(LHS)&, const TVEC(RHS)&) noexcept requires CT::Integer<LHST, RHST>;
-
-   template<TARGS(LHS), CT::Integer N>
-   NOD() constexpr auto operator ^ (const TVEC(LHS)&, const N&) noexcept requires CT::Integer<LHST>;
-
-   template<TARGS(RHS), CT::Integer N>
-   NOD() constexpr auto operator ^ (const N&, const TVEC(RHS)&) noexcept requires CT::Integer<RHST>;
+   template<CT::VectorBased LHS, CT::VectorBased RHS>
+   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
 
 
    ///                                                                        
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator += (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator += (TVEC(LHS)&, const N&) noexcept;
+   constexpr auto& operator += (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator += (CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
 
    /// Subtract                                                               
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator -= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator -= (TVEC(LHS)&, const N&) noexcept;
+   constexpr auto& operator -= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator -= (CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
 
    /// Multiply                                                               
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator *= (TVEC(LHS)&, const TVEC(RHS)&) noexcept;
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator *= (TVEC(LHS)&, const N&) noexcept;
+   constexpr auto& operator *= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator *= (CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
 
    /// Divide                                                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator /= (TVEC(LHS)&, const TVEC(RHS)&);
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator /= (TVEC(LHS)&, const N&);
+   constexpr auto& operator /= (CT::VectorBased auto&, const CT::VectorBased auto&);
+   constexpr auto& operator /= (CT::VectorBased auto&, const CT::DenseScalar auto&);
 
 
    ///                                                                        
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator < (const TVEC(LHS)&, const TVEC(RHS)&);
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator < (const TVEC(LHS)&, const N&);
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator < (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Bigger                                                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator > (const TVEC(LHS)&, const TVEC(RHS)&);
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator > (const TVEC(LHS)&, const N&);
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator > (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Bigger or equal                                                        
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator >= (const TVEC(LHS)&, const TVEC(RHS)&);
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator >= (const TVEC(LHS)&, const N&);
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator >= (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Smaller or equal                                                       
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator <= (const TVEC(LHS)&, const TVEC(RHS)&);
-
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator <= (const TVEC(LHS)&, const N&);
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator <= (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
    /// Equal                                                                  
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr bool operator == (const TVEC(LHS)&, const TVEC(RHS)&);
+   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr bool operator == (const TVEC(LHS)&, const N&);
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr bool operator == (const N&, const TVEC(RHS)&);
+   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
 } // namespace Langulus::Math
 
