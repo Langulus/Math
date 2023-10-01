@@ -9,7 +9,6 @@
 #pragma once
 #include "TVector.hpp"
 #include "../Numbers/TNumber.inl"
-#include <SIMD/SIMD.hpp>
 #include <type_traits>
 
 #define TARGS(a) CT::Dense a##T, Count a##S, int a##D
@@ -24,77 +23,42 @@ namespace Langulus::Math
    /// Default vector constructor initialized all components to DefaultMember 
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
+      if constexpr (S > 1) {
+         static_assert(CT::Vector<TME()>,
+            "Vectors should match CT::Vector, if their size is ;arger than 1");
+      }
+      else {
+         static_assert(CT::Scalar<TME()>,
+            "Vectors should match CT::Scalar, if their size is 1");
+      }
+
+      static_assert(not CT::QuaternionBased<TME()>,
+         "Vectors shouldn't match CT::QuaternionBased");
+      static_assert(CT::VectorBased<TME()>,
+         "Vectors should match CT::VectorBased");
+      static_assert(sizeof(TME()) == sizeof(T) * S,
+         "Vectors should match T*4 size");
+      static_assert(CountOf<TME()> == S,
+         "Vectors size should correspond to CountOf");
+      static_assert(CT::Exact<TypeOf<TME()>, T>,
+         "Vectors should have type");
+
       for (auto& v : mArray)
          v = DefaultMember;
    }
 
-   /// Copy (and convert) from same/bigger vectors of same/different types    
-   /// Also acts as a copy-constructor                                        
-   ///   @param a - vector to copy                                            
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
-   constexpr TME()::TVector(const TVEC(ALT)& a) noexcept {
-      if constexpr (S == 1) {
-         // No loop, just use first element                             
-         *mArray = Adapt(*a.mArray);
-      }
-      else if constexpr (ALTS == 1) {
-         // Prepare the scalar and set all elements to it               
-         const auto scalar = Adapt(a[0]);
-         for (auto& v : mArray)
-            v = scalar;
-      }
-      else {
-         // Convert element-by-element                                  
-         const ALTT* source = a.mArray;
-         T* start = mArray;
-         auto end = mArray + Math::Min(S, ALTS);
-
-         // Copy the available components                               
-         while (start != end)
-            *(start++) = Adapt(*(source++));
-
-         if constexpr (ALTS < S) {
-            // And fill the rest with the default value                 
-            end = mArray + S;
-            while (start != end)
-               *(start++) = DefaultMember;
-         }
-      }
-   }
-
-   /// Construct from number(s)                                               
-   ///   @param x - if scalar value - spread across the vector                
-   ///              if array - use it to fill element by element              
-   ///              if pointer - use it to fill element by element            
+   /// Semantic construction (with conversion) from any scalar/array/vector   
+   /// Always clones the data                                                 
+   ///   @param a - scalar/array/vector to clone                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Number auto& a) noexcept {
-      using N = Deref<decltype(a)>;
+   constexpr TME()::TVector(const CT::Semantic auto& a) noexcept
+      : TVector {*a} {}
 
-      if constexpr (CT::Dense<N>) {
-         if constexpr (S == 1)
-            *mArray = Adapt(a);
-         else {
-            const auto scalar = Adapt(a);
-            for (auto& v : mArray)
-               v = scalar;
-         }
-      }
-      else if constexpr (CT::Array<N>) {
-         static_assert(ExtentOf<N> >= S,
-            "This vector is too powerful for your array");
-
-         const Deext<N>* source = a;
-         for (auto& v : mArray)
-            v = Adapt(*(source++));
-      }
-      else if constexpr (CT::Sparse<N>) {
-         N source = a;
-         for (auto& v : mArray)
-            v = Adapt(*(source++));
-      }
-      else LANGULUS_ERROR("Bad constructor by numbers");
+   /// Construction (with conversion) from any scalar/array/vector            
+   ///   @param a - scalar/array/vector to clone                              
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TVector(const CT::NotSemantic auto& a) noexcept {
+      SIMD::Convert<DEFAULT>(a, mArray);
    }
 
    /// Manual construction via a variadic head-tail                           
@@ -142,6 +106,57 @@ namespace Langulus::Math
       mArray[D::Index] = Adapt(a.mValue);
    }
    
+   #if LANGULUS_SIMD(128BIT)
+      TEMPLATE()
+      TME()::TVector(const simde__m128& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+
+      TEMPLATE()
+      TME()::TVector(const simde__m128d& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+
+      TEMPLATE()
+      TME()::TVector(const simde__m128i& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+   #endif
+
+   #if LANGULUS_SIMD(256BIT)
+      TEMPLATE()
+      TME()::TVector(const simde__m256& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+
+      TEMPLATE()
+      TME()::TVector(const simde__m256d& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+
+      TEMPLATE()
+      TME()::TVector(const simde__m256i& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+   #endif
+
+   #if LANGULUS_SIMD(512BIT)
+      TEMPLATE()
+      TME()::TVector(const simde__m512& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+
+      TEMPLATE()
+      TME()::TVector(const simde__m512d& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+
+      TEMPLATE()
+      TME()::TVector(const simde__m512i& r) noexcept {
+         SIMD::Store(r, mArray);
+      }
+   #endif
+
    /// Construct from a descriptor                                            
    ///   @param desc - the descriptor to scan                                 
    TEMPLATE()
@@ -384,7 +399,7 @@ namespace Langulus::Math
    ///   @param scalar - the scalar value                                     
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto& TME()::operator = (const CT::DenseNumber auto& scalar) noexcept {
+   constexpr TME()& TME()::operator = (const CT::Scalar auto& scalar) noexcept {
       new (this) TVector {scalar};
       return *this;
    }
@@ -392,10 +407,8 @@ namespace Langulus::Math
    /// Copy vector                                                            
    ///   @param vec - the vector to copy                                      
    ///   @return a reference to this vector                                   
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
-   constexpr auto& TME()::operator = (const TVEC(ALT)& vec) noexcept {
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::operator = (const CT::Vector auto& vec) noexcept {
       new (this) TVector {vec};
       return *this;
    }
@@ -827,11 +840,6 @@ namespace Langulus::Math
       return reinterpret_cast<const TVector<T, ALTS>&>(*this);
    }
 
-#define DEFINE_RETURN_TYPE() \
-   using Ret = TVector< \
-      Lossless<TypeOf<decltype(lhs)>, TypeOf<decltype(rhs)>>, \
-      SIMD::Inner::OverlapCounts<decltype(lhs), decltype(rhs)>() \
-   >;
 
    ///                                                                        
    ///   Operations                                                           
@@ -842,291 +850,235 @@ namespace Langulus::Math
    ///                                                                        
 
    /// Returns an inverted vector                                             
-   template<TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator - (const TVEC(RHS)& me) noexcept {
-      return me * Decay<RHST> {-1};
+   constexpr auto operator - (const CT::VectorBased auto& rhs) noexcept {
+      return rhs * Decay<TypeOf<decltype(rhs)>> {-1};
    }
 
    /// Returns the sum of any two vectors                                     
    /// Only the intersecting elements are added and returned:                 
    ///   v[4] + v[2] = v[2]                                                   
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator + (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Add(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Vector + Scalar                                                        
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator + (const TVEC(LHS)& lhs, const N& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Add(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Scalar + Vector                                                        
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator + (const N& lhs, const TVEC(RHS)& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Add(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator + (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Returns the difference of two vectors                                  
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator - (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Subtract(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Vector - Scalar                                                        
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator - (const TVEC(LHS)& lhs, const N& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Subtract(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Scalar - Vector                                                        
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator - (const N& lhs, const TVEC(RHS)& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Subtract(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator - (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Returns the product of two vectors                                     
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator * (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Multiply(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Vector * Scalar                                                        
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator * (const TVEC(LHS)& lhs, const N& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Multiply(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Scalar * Vector                                                        
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator * (const N& lhs, const TVEC(RHS)& rhs) noexcept {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Multiply(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator * (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Returns the division of two vectors                                    
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator / (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Divide(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Divide(lhs, rhs)};
    }
 
    /// Vector / Scalar                                                        
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator / (const TVEC(LHS)& lhs, const N& rhs) {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Divide(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Divide(lhs, rhs)};
    }
 
    /// Scalar / Vector                                                        
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator / (const N& lhs, const TVEC(RHS)& rhs) {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::Divide(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator / (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Divide(lhs, rhs)};
    }
 
-   /// Returns the left-shift of two integer vectors                          
-   template<TARGS(LHS), TARGS(RHS)>
+   /// Vector << Vector                                                       
+   template<CT::VectorBased LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
-   constexpr auto operator << (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept requires CT::Integer<LHST, RHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::ShiftLeft(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator << (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::ShiftLeft(lhs, rhs)};
    }
 
    /// Vector << Scalar                                                       
-   template<TARGS(LHS), CT::Integer N>
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
    LANGULUS(INLINED)
-   constexpr auto operator << (const TVEC(LHS)& lhs, const N& rhs) noexcept requires CT::Integer<LHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::ShiftLeft(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator << (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::ShiftLeft(lhs, rhs)};
    }
 
    /// Scalar << Vector                                                       
-   template<TARGS(RHS), CT::Integer N>
+   template<CT::DenseScalar LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
-   constexpr auto operator << (const N& lhs, const TVEC(RHS)& rhs) noexcept requires CT::Integer<RHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::ShiftLeft(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator << (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::ShiftLeft(lhs, rhs)};
    }
-
-   /// Returns the right-shift of two integer vectors                         
-   template<TARGS(LHS), TARGS(RHS)>
+   
+   /// Vector >> Vector                                                       
+   template<CT::VectorBased LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
-   constexpr auto operator >> (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept requires CT::Integer<LHST, RHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::ShiftRight(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::ShiftRight(lhs, rhs)};
    }
 
    /// Vector >> Scalar                                                       
-   template<TARGS(LHS), CT::Integer N>
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
    LANGULUS(INLINED)
-   constexpr auto operator >> (const TVEC(LHS)& lhs, const N& rhs) noexcept requires CT::Integer<LHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::ShiftRight(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::ShiftRight(lhs, rhs)};
    }
 
    /// Scalar >> Vector                                                       
-   template<TARGS(RHS), CT::Integer N>
+   template<CT::DenseScalar LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
-   constexpr auto operator >> (const N& lhs, const TVEC(RHS)& rhs) noexcept requires CT::Integer<RHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::ShiftRight(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::ShiftRight(lhs, rhs)};
+   }
+   
+   /// Vector xor Vector                                                      
+   template<CT::VectorBased LHS, CT::VectorBased RHS>
+   LANGULUS(INLINED)
+   constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::XOr(lhs, rhs)};
    }
 
-   /// Returns the xor of two integer vectors                                 
-   template<TARGS(LHS), TARGS(RHS)>
+   /// Vector xor Scalar                                                      
+   template<CT::VectorBased LHS, CT::DenseScalar RHS>
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept requires CT::Integer<LHST, RHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::XOr(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::XOr(lhs, rhs)};
    }
 
-   /// Vector ^ Scalar                                                        
-   template<TARGS(LHS), CT::Integer N>
+   /// Scalar xor Vector                                                      
+   template<CT::DenseScalar LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const TVEC(LHS)& lhs, const N& rhs) noexcept requires CT::Integer<LHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::XOr(lhs, rhs, a);
-      return Ret {a};
+   constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
+   noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
+      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::XOr(lhs, rhs)};
    }
 
-   /// Scalar ^ Vector                                                        
-   template<TARGS(RHS), CT::Integer N>
-   LANGULUS(INLINED)
-   constexpr auto operator ^ (const N& lhs, const TVEC(RHS)& rhs) noexcept requires CT::Integer<RHST> {
-      DEFINE_RETURN_TYPE();
-      typename Ret::ArrayType a;
-      SIMD::XOr(lhs, rhs, a);
-      return Ret {a};
-   }
-
-#undef DEFINE_RETURN_TYPE
 
    ///                                                                        
    ///   Mutators                                                             
    ///                                                                        
    /// Add vectors                                                            
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto& operator += (TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept {
+   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       SIMD::Add(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Add vector and a scalar                                                
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto& operator += (TVEC(LHS)& lhs, const N& rhs) noexcept {
+   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       SIMD::Add(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Subtract vectors                                                       
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto& operator -= (TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept {
+   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       SIMD::Subtract(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Subtract vector and a scalar                                           
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto& operator -= (TVEC(LHS)& lhs, const N& rhs) noexcept {
+   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       SIMD::Subtract(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Multiply vectors                                                       
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto& operator *= (TVEC(LHS)& lhs, const TVEC(RHS)& rhs) noexcept {
+   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       SIMD::Multiply(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Multiply vector by a scalar                                            
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto& operator *= (TVEC(LHS)& lhs, const N& rhs) noexcept {
+   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       SIMD::Multiply(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Divide dense vectors                                                   
    /// This function will throw on division by zero                           
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto& operator /= (TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) {
       SIMD::Divide(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Divide dense vector and a scalar                                       
    /// This function will throw on division by zero                           
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto& operator /= (TVEC(LHS)& lhs, const N& rhs) {
+   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) {
       SIMD::Divide(lhs, rhs, lhs);
       return lhs;
    }
@@ -1135,101 +1087,96 @@ namespace Langulus::Math
    ///                                                                        
    ///   Compare                                                              
    ///                                                                        
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator < (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator < (const TVEC(LHS)& lhs, const N& rhs) {
+   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator < (const N& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator < (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator <= (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator <= (const TVEC(LHS)& lhs, const N& rhs) {
+   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator <= (const N& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator <= (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator > (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator > (const TVEC(LHS)& lhs, const N& rhs) {
+   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator > (const N& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator > (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr auto operator >= (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator >= (const TVEC(LHS)& lhs, const N& rhs) {
+   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr auto operator >= (const N& lhs, const TVEC(RHS)& rhs) {
+   constexpr auto operator >= (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
-   template<TARGS(LHS), TARGS(RHS)>
    LANGULUS(INLINED)
-   constexpr bool operator == (const TVEC(LHS)& lhs, const TVEC(RHS)& rhs) {
-      bool result = false;
-      SIMD::Equals(lhs, rhs, result);
-      return result;
+   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      return SIMD::Equals(lhs, rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr bool operator == (const TVEC(LHS)& lhs, const N& rhs) {
-      bool result = false;
-      SIMD::Equals(lhs, rhs, result);
-      return result;
+   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+      return SIMD::Equals(lhs, rhs);
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
    LANGULUS(INLINED)
-   constexpr bool operator == (const N& lhs, const TVEC(RHS)& rhs) {
-      bool result = false;
-      SIMD::Equals(lhs, rhs, result);
-      return result;
+   constexpr auto operator == (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      return SIMD::Equals(lhs, rhs);
    }
+
+   LANGULUS(INLINED)
+   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      return not (lhs == rhs);
+   }
+
+   LANGULUS(INLINED)
+   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+      return not (lhs == rhs);
+   }
+
+   LANGULUS(INLINED)
+   constexpr auto operator != (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      return not (lhs == rhs);
+   }
+
 
    ///                                                                        
    ///   Iteration                                                            
