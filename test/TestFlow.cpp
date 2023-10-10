@@ -11,6 +11,7 @@
 #include <Math/Vector.hpp>
 #include <Flow/Verbs/Create.hpp>
 #include <Flow/Verbs/Select.hpp>
+#include <Flow/Verbs/Conjunct.hpp>
 #include <catch2/catch.hpp>
 
 LANGULUS_EXCEPTION_HANDLER

@@ -9,6 +9,7 @@
 #pragma once
 #include "Vectors/TVector.hpp"
 
+
 namespace Langulus::Math
 {
 
@@ -68,7 +69,11 @@ namespace Langulus::Math
    /// derivatives. Can capsulate anything, as long as it is arithmetic.      
    ///                                                                        
    template<class T, Count S>
-   class TGradient {
+   class TGradient : A::Gradient {
+   protected:
+      T mBuffer[S] {};
+      Offset mIndex {};
+
    public:
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
@@ -78,146 +83,36 @@ namespace Langulus::Math
       static constexpr Count StateCount = S;
       static_assert(S > 1, "Can't have a gradient with less than two states");
 
-   protected:
-      T mBuffer[S] {};
-      Offset mIndex {};
+      constexpr TGradient() noexcept = default;
+      constexpr TGradient(const T&) noexcept;
 
-   public:
-      TGradient() = default;
-
-      /// Manual construction                                                 
-      ///   @param initial - the initial value                                
-      TGradient(const T& initial) {
-         for (auto& i : mBuffer)
-            i = initial;
-      }
-
-      /// Manual construction via a variadic head-tail                        
-      ///   @param arguments... - list of states                              
       template<CT::NotSemantic... A>
-      constexpr TGradient(A&&... arguments) noexcept
-         : mBuffer {Forward<A>(arguments)...} { }
+      constexpr TGradient(A&&...) noexcept;
 
-      /// Access values in order of relevance (current value is at 0)         
-      ///   @param index - the index                                          
-      ///   @return a constant reference to the value                         
-      NOD() auto& operator [](const Offset& index) const {
-         if (mIndex - index < S)
-            return mBuffer[mIndex - index];
-         return mBuffer[S - index];
-      }
+      NOD() constexpr auto& operator [](const Offset&) const noexcept;
+      NOD() constexpr auto& operator [](const Offset&) noexcept;
 
-      /// Access values in order of relevance (current value is at 0)         
-      ///   @param index - the index                                          
-      ///   @return a reference to the value                                  
-      NOD() auto& operator [](const Offset& index) {
-         if (mIndex - index < S)
-            return mBuffer[mIndex - index];
-         return mBuffer[S - index];
-      }
+      NOD() constexpr bool operator == (const TGradient&) const noexcept;
 
-      /// Compare two gradients                                               
-      ///   @param other - the gradient to compare against                    
-      ///   @return true if both gradients are the same                       
-      NOD() bool operator == (const TGradient& other) const {
-         for (Offset i = 0; i < S; ++i) {
-            if (mBuffer[i] != other.mBuffer[i])
-               return false;
-         }
+      constexpr T& Revert() noexcept;
+      constexpr T& Update() noexcept;
 
-         return true;
-      }
+      NOD() constexpr const T& Current() const noexcept;
+      NOD() constexpr T& Current() noexcept;
 
-      /// Revert                                                              
-      ///   @attention if size is too short you'll lose state                 
-      T& Revert() noexcept {
-         --mIndex;
-         if (mIndex >= S)
-            mIndex = S - 1;
+      NOD() constexpr const T& Previous() const noexcept;
+      NOD() constexpr T& Previous() noexcept;
 
-         Current() = Previous();
-         return Current();
-      }
+      NOD() constexpr T Delta() const;
+      NOD() constexpr T Project(const T&) const;
 
-      /// Progression                                                         
-      T& Update() noexcept {
-         // Move marker                                                 
-         ++mIndex;
-         if (mIndex >= S)
-            mIndex = 0;
+      constexpr void Reset(const T&) noexcept;
 
-         // Initially, current value always equals previous             
-         // You can modify it as many times you want before calling     
-         // update again.                                               
-         Current() = Previous();
-         return Current();
-      }
+      NOD() constexpr T Sum() const noexcept;
 
-      /// Get the current value                                               
-      NOD() const T& Current() const noexcept {
-         return mBuffer[mIndex];
-      }
+      void Integrate(Flow::Verb&);
 
-      NOD() T& Current() noexcept {
-         return mBuffer[mIndex];
-      }
-
-      /// Get the previous value                                              
-      NOD() const T& Previous() const noexcept {
-         return mIndex >= 1 ? mBuffer[mIndex - 1] : mBuffer[S - 1];
-      }
-
-      NOD() T& Previous() noexcept {
-         return mIndex >= 1 ? mBuffer[mIndex - 1] : mBuffer[S - 1];
-      }
-
-      /// Get the last difference                                             
-      ///   @return the difference between the last two states                
-      NOD() T Delta() const {
-         return Current() - Previous();
-      }
-
-      /// Get a projection in the future                                      
-      NOD() T Project(const T& steps) const {
-         return Current() + Delta() * steps;
-      }
-
-      /// Reset                                                               
-      void Reset(const T& value) noexcept {
-         for (auto& i : mBuffer)
-            i = value;
-         mIndex = 0;
-      }
-
-      /// Sum                                                                 
-      NOD() T Sum() const noexcept {
-         T sum = {};
-         for (auto& i : mBuffer)
-            sum += i;
-         return sum;
-      }
-
-      /// Integrate/differentiate                                             
-      void Integrate(Flow::Verb& verb) {
-         if (verb.GetMass() > 0)
-            verb << Sum();
-         else if (verb.GetMass() < 0)
-            verb << Delta();
-      }
-
-      /// Convert to text                                                     
-      NOD() explicit operator Flow::Code() const {
-         Flow::Code result;
-         result += NameOf<TGradient>();
-         result += Flow::Code::OpenScope;
-         for (Offset i = 0; i < S; ++i) {
-            result += Text {(*this)[i]};
-            if (i < S - 1)
-               result += ", ";
-         }
-         result += Flow::Code::CloseScope;
-         return result;
-      }
+      NOD() explicit operator Flow::Code() const;
    };
 
 } // namespace Langulus::Math
