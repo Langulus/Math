@@ -260,23 +260,23 @@ namespace Langulus::Math
    }
 
    /// Round and return an integer                                            
-   template<CT::Dense T>
+   /*template<CT::Dense T>
    NOD() LANGULUS(INLINED)
    constexpr decltype(auto) Roundi(const T& a) noexcept {
       if constexpr (CT::HasRound<T>)
          return static_cast<int>(a.Round());
       else if constexpr (CT::Integer<T>)
          return a;
-      else if constexpr (CT::Real<T> && sizeof(T) == 8 && sizeof(Float) == 4) {
+      else if constexpr (CT::Real<T> and sizeof(T) == 8 and sizeof(Float) == 4) {
          const auto aa = a + T {6755399441055744.0};
          return int {reinterpret_cast<const int&>(aa)};
       }
-      else if constexpr (CT::Real<T> && sizeof(T) == 4 && sizeof(Double) == 8) {
+      else if constexpr (CT::Real<T> and sizeof(T) == 4 and sizeof(Double) == 8) {
          const auto aa = static_cast<Double>(a) + Double {6755399441055744.0};
          return int {reinterpret_cast<const int&>(aa)};
       }
       else LANGULUS_ERROR("T must either have Round() method, or be a number");
-   }
+   }*/
 
    /// Floor                                                                  
    template<CT::Dense T>
