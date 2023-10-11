@@ -85,9 +85,7 @@ namespace Langulus::Math
 
       constexpr TGradient() noexcept = default;
       constexpr TGradient(const T&) noexcept;
-
-      template<CT::NotSemantic... A>
-      constexpr TGradient(A&&...) noexcept;
+      constexpr TGradient(CT::NotSemantic auto&&...) noexcept;
 
       NOD() constexpr auto& operator [](const Offset&) const noexcept;
       NOD() constexpr auto& operator [](const Offset&) noexcept;
