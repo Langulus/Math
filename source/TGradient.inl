@@ -27,11 +27,9 @@ namespace Langulus::Math
 
    /// Manual construction via a variadic head-tail                           
    ///   @param arguments... - list of states                                 
-   TEMPLATE()
-   template<CT::NotSemantic... A>
-   LANGULUS(INLINED)
-   constexpr TME()::TGradient(A&&... arguments) noexcept
-      : mBuffer {Forward<A>(arguments)...} { }
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TGradient(CT::NotSemantic auto&&... arguments) noexcept
+      : mBuffer {::std::move(arguments)...} { }
 
    /// Access values in order of relevance (current value is at 0)            
    ///   @param index - the index                                             
@@ -147,7 +145,7 @@ namespace Langulus::Math
 
    /// Integrate/differentiate                                                
    TEMPLATE()
-   inline void TME()::Integrate(Flow::Verb& verb) {
+   void TME()::Integrate(Flow::Verb& verb) {
       if (verb.GetMass() > 0)
          verb << Sum();
       else if (verb.GetMass() < 0)
@@ -156,7 +154,7 @@ namespace Langulus::Math
 
    /// Convert to text                                                        
    TEMPLATE()
-   inline TME()::operator Flow::Code() const {
+   TME()::operator Flow::Code() const {
       Flow::Code result;
       result += NameOf<TGradient>();
       result += Flow::Code::OpenScope;
