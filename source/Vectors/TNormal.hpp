@@ -174,8 +174,9 @@ namespace Langulus
             : T {other.Normalize()} {}
 
          /// Descriptor constructor                                           
-         ///   @param d - the descriptor                                      
-         TNormal(const Anyness::Neat& d) : T {d} {
+         ///   @param describe - the descriptor                               
+         TNormal(Describe&& describe)
+            : T {::std::forward<Describe>(describe)} {
             const auto l = T::Length();
             if (l == T {})
                LANGULUS_THROW(Arithmetic, "Degenerate normal");

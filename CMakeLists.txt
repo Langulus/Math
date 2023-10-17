@@ -10,15 +10,15 @@ if(PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
     include(LangulusUtilities.cmake)
 
     # Add Langulus::Core/Logger/RTTI/SIMD/Fractalloc/Anyness/Flow libraries 
-    fetch_langulus_module(Core)
-    fetch_langulus_module(Logger)
-    fetch_langulus_module(RTTI)
+	fetch_langulus_module(Core    GIT_TAG aa10e0428766faa58d4782e06ec9b10fa7d65818)
+	fetch_langulus_module(Logger  GIT_TAG 3314fbe3bf5611a5bd9ee649f2a6ba5c43f6b4c4)
+	fetch_langulus_module(RTTI    GIT_TAG f8cde45800a6d9b59a6cff872c96e27828608f2d)
     if(LANGULUS_FEATURE_MANAGED_MEMORY)
-        fetch_langulus_module(Fractalloc)
+        fetch_langulus_module(Fractalloc GIT_TAG 8ff8e85a09f35a406a6578e383b0a727a622f691)
     endif()
-    fetch_langulus_module(SIMD)
-    fetch_langulus_module(Anyness)
-    fetch_langulus_module(Flow)
+	fetch_langulus_module(SIMD    GIT_TAG 57e150d)
+	fetch_langulus_module(Anyness GIT_TAG 0a720010e71267b3155eac90a55a6c66e18e83ef)
+    fetch_langulus_module(Flow	  GIT_TAG 9d26094148f7f07fc7f4cde696b09213f98af945)
 endif()
 
 # Build and install Math library                                            
