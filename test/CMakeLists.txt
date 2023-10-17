@@ -1,14 +1,10 @@
-add_executable(LangulusMathTest
-    Main.cpp
-    TestFlow.cpp
-    TestConstructors.cpp
-    TestRTTI.cpp
-    TestFunctions.cpp
-    TestMatrices.cpp
-    TestQuaternions.cpp
-    TestTypeCorrectness.cpp
-    TestVectors.cpp
+file(GLOB_RECURSE
+	LANGULUS_MATH_TEST_SOURCES 
+	LIST_DIRECTORIES FALSE CONFIGURE_DEPENDS
+	*.cpp *.hpp
 )
+
+add_executable(LangulusMathTest ${LANGULUS_MATH_TEST_SOURCES})
 
 target_link_libraries(LangulusMathTest
     PRIVATE     LangulusMath

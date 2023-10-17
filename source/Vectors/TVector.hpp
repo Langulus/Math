@@ -246,7 +246,7 @@ namespace Langulus::Math
       TVector(const simde__m512i&) noexcept;
    #endif
 
-      TVector(const Anyness::Neat&);
+      TVector(Describe&&);
 
       template<class TOKEN>
       Flow::Code Serialize() const;

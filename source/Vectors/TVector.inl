@@ -158,17 +158,17 @@ namespace Langulus::Math
    #endif
 
    /// Construct from a descriptor                                            
-   ///   @param desc - the descriptor to scan                                 
+   ///   @param describe - the descriptor to scan                             
    TEMPLATE()
-   TME()::TVector(const Anyness::Neat& desc) {
-      LANGULUS_ASSUME(UserAssumes, desc,
+   TME()::TVector(Describe&& describe) {
+      LANGULUS_ASSUME(UserAssumes, *describe,
          "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    
-      auto initialized = desc.ExtractData(mArray);
+      auto initialized = describe->ExtractData(mArray);
       if (not initialized) {
          // Attempt converting anything to T                            
-         initialized = desc.ExtractDataAs(mArray);
+         initialized = describe->ExtractDataAs(mArray);
       }
 
       switch (initialized) {
@@ -178,11 +178,8 @@ namespace Langulus::Math
          // empty, the default constructor would've been explicitly     
          // called, instead of this one. This way we can differentiate  
          // whether or not a vector object was successfully initialized.
-         Logger::Error(
-            "Bad TVector constructor, nothing was initialized: ",
-            static_cast<const Anyness::Any&>(desc));
-         LANGULUS_THROW(Construct,
-            "Bad TVector descriptor");
+         LANGULUS_OOPS(Construct, "Bad TVector descriptor", 
+            ", nothing was initialized: ", *describe);
       case 1:
          // Only one provided element is handled as scalar constructor  
          // Copy first element in array to the rest                     
