@@ -20,12 +20,12 @@
 namespace Langulus::Math
 {
 
-   /// Default vector constructor initialized all components to DefaultMember 
+   /// Default vector constructor - initialize components to DefaultMember    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
       if constexpr (S > 1) {
          static_assert(CT::Vector<TME()>,
-            "Vectors should match CT::Vector, if their size is ;arger than 1");
+            "Vectors should match CT::Vector, if their size is larger than 1");
       }
       else {
          static_assert(CT::Scalar<TME()>,
@@ -47,17 +47,17 @@ namespace Langulus::Math
          v = DefaultMember;
    }
 
-   /// Semantic construction (with conversion) from any scalar/array/vector   
-   /// Always clones the data                                                 
-   ///   @param a - scalar/array/vector to clone                              
+   /// Construct from any vector (with conversion)                            
+   ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Semantic auto& a) noexcept
-      : TVector {*a} {}
+   constexpr TME()::TVector(const CT::Vector auto& a) noexcept {
+      SIMD::Convert<DEFAULT>(a, mArray);
+   }
 
-   /// Construction (with conversion) from any scalar/array/vector            
-   ///   @param a - scalar/array/vector to clone                              
+   /// Construct from any scalar (with conversion)                            
+   ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::NotSemantic auto& a) noexcept {
+   constexpr TME()::TVector(const CT::Scalar auto& a) noexcept {
       SIMD::Convert<DEFAULT>(a, mArray);
    }
 
@@ -906,7 +906,9 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
-      return Ret {SIMD::Multiply(lhs, rhs)};
+      typename Ret::ArrayType uninitialized;
+      SIMD::Multiply(lhs, rhs, uninitialized);
+      return Ret {uninitialized};
    }
 
    /// Scalar * Vector                                                        
@@ -1247,7 +1249,7 @@ namespace Langulus::Axes
    template<CT::DenseNumber T = Real>
    constexpr auto Forward = Z<T>;
 
-   /// Canonical backward vector, pointing towards user, in negative Z        
+   /// Canonical backward vector, towards the human device, in negative Z     
    template<CT::DenseNumber T = Real>
    constexpr auto Backward = -Z<T>;
 
