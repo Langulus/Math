@@ -216,12 +216,14 @@ namespace Langulus::Math
       static constexpr bool CTTI_VectorTrait = true;
 
    public:
+      ///                                                                     
+      ///   Construction                                                      
+      ///                                                                     
       constexpr TVector() noexcept;
       constexpr TVector(const TVector&) noexcept = default;
       constexpr TVector(TVector&&) noexcept = default;
-
-      constexpr TVector(const CT::Semantic auto&) noexcept;
-      constexpr TVector(const CT::NotSemantic auto&) noexcept;
+      constexpr TVector(const CT::Vector auto&) noexcept;
+      constexpr TVector(const CT::Scalar auto&) noexcept;
 
       template<class T1, class T2, class... TAIL>
       constexpr TVector(const T1&, const T2&, const TAIL&...) noexcept;
@@ -248,13 +250,26 @@ namespace Langulus::Math
 
       TVector(Describe&&);
 
+      ///                                                                     
+      ///   Assignment                                                        
+      ///                                                                     
+      constexpr TVector& operator = (const TVector&) noexcept = default;
+      constexpr TVector& operator = (TVector&&) noexcept = default;
+      constexpr TVector& operator = (const CT::Vector auto&) noexcept;
+      constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
+
+      template<CT::DenseNumber N, CT::Dimension D>
+      constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
+
+      ///                                                                     
+      ///   Interpretation                                                    
+      ///                                                                     
       template<class TOKEN>
       Flow::Code Serialize() const;
 
       NOD() explicit operator Flow::Code() const;
 
       NOD() constexpr decltype(auto) Adapt(const CT::DenseNumber auto&) const noexcept;
-
 
       ///                                                                     
       ///   Access                                                            
@@ -339,18 +354,6 @@ namespace Langulus::Math
       template<Count = Math::Min(S, 3u)>
       NOD() constexpr auto Volume() const noexcept;
 
-
-      ///                                                                     
-      ///   Compare                                                           
-      ///                                                                     
-      constexpr TVector& operator = (const TVector&) noexcept = default;
-      constexpr TVector& operator = (TVector&&) noexcept = default;
-      constexpr TVector& operator = (const CT::Vector auto&) noexcept;
-      constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
-
-      template<CT::DenseNumber N, CT::Dimension D>
-      constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
-
       template<TARGS(ALT)>
       NOD() constexpr T Dot(const TVEC(ALT)&) const noexcept;
 
@@ -404,7 +407,7 @@ namespace Langulus::Math
 
       auto& Sort() noexcept;
 
-      NOD() constexpr operator T& () noexcept requires (S == 1);
+      NOD() constexpr operator       T& ()       noexcept requires (S == 1);
       NOD() constexpr operator const T& () const noexcept requires (S == 1);
 
       template<CT::DenseNumber N>
