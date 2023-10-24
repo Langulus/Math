@@ -18,7 +18,7 @@ if(PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
     endif()
 	fetch_langulus_module(SIMD    GIT_TAG 57e150d)
 	fetch_langulus_module(Anyness GIT_TAG 8698f411a993857eb9a6db88f97d4c4bfffc89ca)
-    fetch_langulus_module(Flow	  GIT_TAG 469cb14b44bdf9698d368031315f104153d9dff0)
+    fetch_langulus_module(Flow	  GIT_TAG 2cdccd33a5ed9fb88c073271ab8872be2e12a0c5)
 endif()
 
 # Build and install Math library                                            
