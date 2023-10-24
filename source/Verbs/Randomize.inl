@@ -70,6 +70,7 @@ namespace Langulus::Verbs
             context, common, verb,
             [](const T*, const T*) -> T {
                TODO();
+               return {};
             }
          )) or ...);
    }
@@ -88,6 +89,7 @@ namespace Langulus::Verbs
             context, common, verb,
             [](T*, const T*) {
                TODO();
+               return {};
             }
          )) or ...);
    }

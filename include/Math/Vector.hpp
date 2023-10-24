@@ -25,7 +25,8 @@ namespace Langulus::Math
       };
    } // namespace Langulus::Math::Inner
 
-   /// Register all vector types                                              
+   /// Register all commonly used vector types, so they can be instantiated   
+   /// from a flow                                                            
    inline void RegisterVectors() {
       using AllTypes = TTypeList<
          uint8, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t,
