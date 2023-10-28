@@ -500,7 +500,7 @@ namespace Langulus::Math
    NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
    NOD() constexpr auto operator - (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
 
-   /// Returns the product of two vectors                                     
+   /// Returns the Hadamard product of two vectors                            
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
    NOD() constexpr auto operator * (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;

@@ -895,7 +895,7 @@ namespace Langulus::Math
       return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
-   /// Returns the product of two vectors                                     
+   /// Returns the Hadamard product of two vectors                            
    LANGULUS(INLINED)
    constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
