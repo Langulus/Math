@@ -174,7 +174,7 @@ namespace Langulus::Math
    /// Serialize the color to flow code                                       
    TEMPLATE()
    TColor<T>::operator Flow::Code() const {
-      if constexpr (CT::SameAsOneOf<TypeOf<T>, uint8, ::std::uint8_t>) {
+      if constexpr (CT::Same<TypeOf<T>, ::std::uint8_t>) {
          // Write as hex, if standard unsigned 8 bit color component    
          Flow::Code result;
          result += NameOf<TColor>();

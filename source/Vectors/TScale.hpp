@@ -9,6 +9,7 @@
 #pragma once
 #include "TVector.hpp"
 
+
 namespace Langulus
 {
    namespace Math
@@ -22,7 +23,7 @@ namespace Langulus
       using Scale1i     = TScale<TVector<signed, 1, 1>>;
       using Scale1u     = TScale<TVector<unsigned, 1, 1>>;
       using Scale1i8    = TScale<TVector<::std::int8_t, 1, 1>>;
-      using Scale1u8    = TScale<TVector<uint8, 1, 1>>;
+      using Scale1u8    = TScale<TVector<::std::uint8_t, 1, 1>>;
       using Scale1i16   = TScale<TVector<::std::int16_t, 1, 1>>;
       using Scale1u16   = TScale<TVector<::std::uint16_t, 1, 1>>;
       using Scale1i32   = TScale<TVector<::std::int32_t, 1, 1>>;
@@ -36,7 +37,7 @@ namespace Langulus
       using Scale2i     = TScale<TVector<signed, 2, 1>>;
       using Scale2u     = TScale<TVector<unsigned, 2, 1>>;
       using Scale2i8    = TScale<TVector<::std::int8_t, 2, 1>>;
-      using Scale2u8    = TScale<TVector<uint8, 2, 1>>;
+      using Scale2u8    = TScale<TVector<::std::uint8_t, 2, 1>>;
       using Scale2i16   = TScale<TVector<::std::int16_t, 2, 1>>;
       using Scale2u16   = TScale<TVector<::std::uint16_t, 2, 1>>;
       using Scale2i32   = TScale<TVector<::std::int32_t, 2, 1>>;
@@ -50,7 +51,7 @@ namespace Langulus
       using Scale3i     = TScale<TVector<signed, 3, 1>>;
       using Scale3u     = TScale<TVector<unsigned, 3, 1>>;
       using Scale3i8    = TScale<TVector<::std::int8_t, 3, 1>>;
-      using Scale3u8    = TScale<TVector<uint8, 3, 1>>;
+      using Scale3u8    = TScale<TVector<::std::uint8_t, 3, 1>>;
       using Scale3i16   = TScale<TVector<::std::int16_t, 3, 1>>;
       using Scale3u16   = TScale<TVector<::std::uint16_t, 3, 1>>;
       using Scale3i32   = TScale<TVector<::std::int32_t, 3, 1>>;
@@ -64,7 +65,7 @@ namespace Langulus
       using Scale4i     = TScale<TVector<signed, 4, 1>>;
       using Scale4u     = TScale<TVector<unsigned, 4, 1>>;
       using Scale4i8    = TScale<TVector<::std::int8_t, 4, 1>>;
-      using Scale4u8    = TScale<TVector<uint8, 4, 1>>;
+      using Scale4u8    = TScale<TVector<::std::uint8_t, 4, 1>>;
       using Scale4i16   = TScale<TVector<::std::int16_t, 4, 1>>;
       using Scale4u16   = TScale<TVector<::std::uint16_t, 4, 1>>;
       using Scale4i32   = TScale<TVector<::std::int32_t, 4, 1>>;

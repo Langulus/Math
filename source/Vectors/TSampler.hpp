@@ -9,6 +9,7 @@
 #pragma once
 #include "TVector.hpp"
 
+
 namespace Langulus
 {
    namespace Math
@@ -23,7 +24,7 @@ namespace Langulus
       using Sampler1i   = TSampler<TVector<signed, 1>>;
       using Sampler1u   = TSampler<TVector<unsigned, 1>>;
       using Sampler1i8  = TSampler<TVector<::std::int8_t, 1>>;
-      using Sampler1u8  = TSampler<TVector<uint8, 1>>;
+      using Sampler1u8  = TSampler<TVector<::std::uint8_t, 1>>;
       using Sampler1i16 = TSampler<TVector<::std::int16_t, 1>>;
       using Sampler1u16 = TSampler<TVector<::std::uint16_t, 1>>;
       using Sampler1i32 = TSampler<TVector<::std::int32_t, 1>>;
@@ -37,7 +38,7 @@ namespace Langulus
       using Sampler2i   = TSampler<TVector<signed, 2>>;
       using Sampler2u   = TSampler<TVector<unsigned, 2>>;
       using Sampler2i8  = TSampler<TVector<::std::int8_t, 2>>;
-      using Sampler2u8  = TSampler<TVector<uint8, 2>>;
+      using Sampler2u8  = TSampler<TVector<::std::uint8_t, 2>>;
       using Sampler2i16 = TSampler<TVector<::std::int16_t, 2>>;
       using Sampler2u16 = TSampler<TVector<::std::uint16_t, 2>>;
       using Sampler2i32 = TSampler<TVector<::std::int32_t, 2>>;
@@ -51,7 +52,7 @@ namespace Langulus
       using Sampler3i   = TSampler<TVector<signed, 3>>;
       using Sampler3u   = TSampler<TVector<unsigned, 3>>;
       using Sampler3i8  = TSampler<TVector<::std::int8_t, 3>>;
-      using Sampler3u8  = TSampler<TVector<uint8, 3>>;
+      using Sampler3u8  = TSampler<TVector<::std::uint8_t, 3>>;
       using Sampler3i16 = TSampler<TVector<::std::int16_t, 3>>;
       using Sampler3u16 = TSampler<TVector<::std::uint16_t, 3>>;
       using Sampler3i32 = TSampler<TVector<::std::int32_t, 3>>;
@@ -65,7 +66,7 @@ namespace Langulus
       using Sampler4i   = TSampler<TVector<signed, 4>>;
       using Sampler4u   = TSampler<TVector<unsigned, 4>>;
       using Sampler4i8  = TSampler<TVector<::std::int8_t, 4>>;
-      using Sampler4u8  = TSampler<TVector<uint8, 4>>;
+      using Sampler4u8  = TSampler<TVector<::std::uint8_t, 4>>;
       using Sampler4i16 = TSampler<TVector<::std::int16_t, 4>>;
       using Sampler4u16 = TSampler<TVector<::std::uint16_t, 4>>;
       using Sampler4i32 = TSampler<TVector<::std::int32_t, 4>>;

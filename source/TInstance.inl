@@ -12,6 +12,7 @@
 #define TEMPLATE() template<CT::Vector T>
 #define TME() TInstance<T>
 
+
 namespace Langulus::Math
 {
 
