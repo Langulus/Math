@@ -17,6 +17,7 @@
 
 #define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
+
 namespace Langulus::Math
 {
 

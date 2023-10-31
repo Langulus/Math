@@ -9,6 +9,7 @@
 #pragma once
 #include "TVector.hpp"
 
+
 namespace Langulus
 {
    namespace Math
@@ -23,7 +24,7 @@ namespace Langulus
       using Normal2i     = TNormal<TVector<signed, 2>>;
       using Normal2u     = TNormal<TVector<unsigned, 2>>;
       using Normal2i8    = TNormal<TVector<::std::int8_t, 2>>;
-      using Normal2u8    = TNormal<TVector<uint8, 2>>;
+      using Normal2u8    = TNormal<TVector<::std::uint8_t, 2>>;
       using Normal2i16   = TNormal<TVector<::std::int16_t, 2>>;
       using Normal2u16   = TNormal<TVector<::std::uint16_t, 2>>;
       using Normal2i32   = TNormal<TVector<::std::int32_t, 2>>;
@@ -37,7 +38,7 @@ namespace Langulus
       using Normal3i     = TNormal<TVector<signed, 3>>;
       using Normal3u     = TNormal<TVector<unsigned, 3>>;
       using Normal3i8    = TNormal<TVector<::std::int8_t, 3>>;
-      using Normal3u8    = TNormal<TVector<uint8, 3>>;
+      using Normal3u8    = TNormal<TVector<::std::uint8_t, 3>>;
       using Normal3i16   = TNormal<TVector<::std::int16_t, 3>>;
       using Normal3u16   = TNormal<TVector<::std::uint16_t, 3>>;
       using Normal3i32   = TNormal<TVector<::std::int32_t, 3>>;
@@ -51,7 +52,7 @@ namespace Langulus
       using Normal4i     = TNormal<TVector<signed, 4>>;
       using Normal4u     = TNormal<TVector<unsigned, 4>>;
       using Normal4i8    = TNormal<TVector<::std::int8_t, 4>>;
-      using Normal4u8    = TNormal<TVector<uint8, 4>>;
+      using Normal4u8    = TNormal<TVector<::std::uint8_t, 4>>;
       using Normal4i16   = TNormal<TVector<::std::int16_t, 4>>;
       using Normal4u16   = TNormal<TVector<::std::uint16_t, 4>>;
       using Normal4i32   = TNormal<TVector<::std::int32_t, 4>>;

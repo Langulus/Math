@@ -10,6 +10,7 @@
 #include "Level.hpp"
 #include "../Functions/Arithmetics.hpp"
 
+
 namespace Langulus::Math
 {
 

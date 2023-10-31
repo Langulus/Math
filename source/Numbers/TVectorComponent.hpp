@@ -9,6 +9,7 @@
 #pragma once
 #include "../Vectors/TVector.hpp"
 
+
 namespace Langulus::Math
 {
 

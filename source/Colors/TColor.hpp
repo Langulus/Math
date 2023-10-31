@@ -30,10 +30,10 @@ namespace Langulus
       using RGBAf = RGBA128;
       using RGBf = RGB96;
 
-      using Red8 = TColorComponent<uint8, Traits::R>;
-      using Green8 = TColorComponent<uint8, Traits::G>;
-      using Blue8 = TColorComponent<uint8, Traits::B>;
-      using Alpha8 = TColorComponent<uint8, Traits::A>;
+      using Red8 = TColorComponent<::std::uint8_t, Traits::R>;
+      using Green8 = TColorComponent<::std::uint8_t, Traits::G>;
+      using Blue8 = TColorComponent<::std::uint8_t, Traits::B>;
+      using Alpha8 = TColorComponent<::std::uint8_t, Traits::A>;
 
       using Red32 = TColorComponent<Float, Traits::R>;
       using Green32 = TColorComponent<Float, Traits::G>;
@@ -65,7 +65,7 @@ namespace Langulus
       /// color of the same size                                              
       template<Count S>
       struct ColorOfSize : Color {
-         LANGULUS(CONCRETE) Math::TColor<Math::TVector<Math::uint8, S>>;
+         LANGULUS(CONCRETE) Math::TColor<Math::TVector<::std::uint8_t, S>>;
          LANGULUS_BASES(Color);
          static constexpr Count MemberCount {S};
          static_assert(S > 0, "Color size must be greater than zero");
@@ -108,15 +108,13 @@ namespace Langulus
 
       // Write suffix                                                   
       --offset;
-      if constexpr (!CT::SameAsOneOf<TypeOf<T>, Math::uint8, ::std::uint8_t>) {
+      if constexpr (not CT::Same<TypeOf<T>, ::std::uint8_t>) {
          if constexpr (CT::Same<TypeOf<T>, float>)
             name[offset++] = 'f';
          else if constexpr (CT::Same<TypeOf<T>, double>)
             name[offset++] = 'd';
-         else {
-            for (auto i : SuffixOf<TypeOf<T>>())
-               name[offset++] = i;
-         }
+         else for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
       }
       return name;
    }
@@ -134,7 +132,7 @@ namespace Langulus
          using T::T;
          using T::mArray;
 
-         static_assert(MemberCount > 1 && MemberCount < 5,
+         static_assert(MemberCount > 1 and MemberCount < 5,
             "Invalid number of channels");
 
       public:

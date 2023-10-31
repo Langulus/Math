@@ -11,6 +11,7 @@
 
 LANGULUS_DEFINE_TRAIT(MapMode, "Mapping mode");
 
+
 namespace Langulus::Math
 {
 

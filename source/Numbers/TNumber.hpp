@@ -9,6 +9,7 @@
 #pragma once
 #include "../Common.hpp"
 
+
 namespace Langulus::Math
 {
 
@@ -77,9 +78,6 @@ namespace Langulus::Math
       NOD() TNumber operator ++ (int) noexcept;
       NOD() TNumber operator -- (int) noexcept;
    };
-
-   /// A type-safe unsigned 8-bit integer, that won't get mistaken for a char 
-   using uint8 = TNumber<::std::uint8_t>;
 
 
    ///                                                                        

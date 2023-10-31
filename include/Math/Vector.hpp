@@ -14,6 +14,7 @@ namespace Langulus::Math
 {
    namespace Inner
    {
+
       /// Combines S and T... to form a vector type                           
       ///   @tparam S - size of the vector                                    
       template<Count S>
@@ -23,14 +24,16 @@ namespace Langulus::Math
             (((void) MetaOf<TVector<T, S>>()), ...);
          }
       };
+
    } // namespace Langulus::Math::Inner
+
 
    /// Register all commonly used vector types, so they can be instantiated   
    /// from a flow                                                            
    inline void RegisterVectors() {
       using AllTypes = TTypeList<
-         uint8, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t,
-         ::std::int8_t, ::std::int16_t, ::std::int32_t, ::std::int64_t,
+         ::std::uint8_t, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t,
+         ::std::int8_t,  ::std::int16_t,  ::std::int32_t,  ::std::int64_t,
          Float, Double
       >;
 
