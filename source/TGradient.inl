@@ -9,6 +9,7 @@
 #pragma once
 #include "TGradient.hpp"
 #include "Vectors/TVector.inl"
+#include <Flow/Code.hpp>
 
 #define TEMPLATE() template<class T, Count S>
 #define TME() TGradient<T, S>
@@ -159,7 +160,7 @@ namespace Langulus::Math
       result += NameOf<TGradient>();
       result += Flow::Code::OpenScope;
       for (Offset i = 0; i < S; ++i) {
-         result += Text {(*this)[i]};
+         result += Anyness::Text {(*this)[i]};
          if (i < S - 1)
             result += ", ";
       }

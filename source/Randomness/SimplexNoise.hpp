@@ -20,9 +20,9 @@ namespace Langulus::Math
    ///   @tparam T - real number type to use for computation                  
    template<Count DOUT, Count DIN, CT::Real T = Real>
    struct TSimplex {
-      static_assert(DIN >= 1 && DIN <= 4,
+      static_assert(DIN >= 1 and DIN <= 4,
          "Simplex noise functions work only for inputs of 1-4 components");
-      static_assert(DOUT >= 1 && DOUT <= 4,
+      static_assert(DOUT >= 1 and DOUT <= 4,
          "Simplex noise functions work only for outputs of 1-4 components");
 
       // Vector type                                                    
@@ -34,7 +34,9 @@ namespace Langulus::Math
       /// Perform the noise function, or get an equivalent shader code        
       ///   @tparam GET_GLSL - true to get shader code equivalent to function 
       template<bool GET_GLSL = false>
-      NOD() static auto Hash(V p = {}) noexcept(!GET_GLSL) {
+      NOD() static auto Hash(V p = {}) noexcept(not GET_GLSL) {
+         (void)p;
+
          if constexpr (DIN == 1) {
             if constexpr (DOUT == 1) {
                ///  1 out, 1 in...                                            
