@@ -78,6 +78,9 @@ namespace Langulus
 
          constexpr TDegrees(const CT::DenseNumber auto&) noexcept;
 
+         TDegrees& operator = (const TDegrees&) noexcept = default;
+         TDegrees& operator = (TDegrees&&) noexcept = default;
+
          NOD() constexpr T GetRadians() const noexcept;
          NOD() constexpr T GetDegrees() const noexcept;
 
@@ -105,6 +108,9 @@ namespace Langulus
          constexpr TRadians(const TDegrees<N>&) noexcept;
 
          constexpr TRadians(const CT::DenseNumber auto&) noexcept;
+
+         TRadians& operator = (const TRadians&) noexcept = default;
+         TRadians& operator = (TRadians&&) noexcept = default;
 
          NOD() constexpr T GetRadians() const noexcept;
          NOD() constexpr T GetDegrees() const noexcept;

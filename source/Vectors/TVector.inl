@@ -555,9 +555,8 @@ namespace Langulus::Math
    /// Get scalar maximum of each element                                     
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Max(const T& limit) const noexcept {
-      T result[S];
-      SIMD::Store(SIMD::Max(mArray, limit), result);
-      return result;
+      using Ret = LosslessVector<TME(), T>;
+      return Ret {SIMD::Max(*this, limit)};
    }
 
    /// Get maximum of each element                                            
@@ -565,9 +564,8 @@ namespace Langulus::Math
    template<TARGS(ALT)>
    LANGULUS(INLINED)
    constexpr auto TME()::Max(const TVEC(ALT)& limits) const noexcept {
-      T result[Math::Min(S, ALTS)];
-      SIMD::Store(SIMD::Max(mArray, limits.mArray), result);
-      return result;
+      using Ret = LosslessVector<TME(), TVEC(ALT)>;
+      return Ret {SIMD::Max(*this, limits)};
    }
 
    /// Get smallest possible vector of the type                               
@@ -582,9 +580,8 @@ namespace Langulus::Math
    /// Get scalar minimum of each element                                     
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Min(const T& limit) const noexcept {
-      T result[S];
-      SIMD::Store(SIMD::Min(mArray, limit), result);
-      return result;
+      using Ret = LosslessVector<TME(), T>;
+      return Ret {SIMD::Min(*this, limit)};
    }
 
    /// Get minimum of each element                                            
@@ -592,9 +589,8 @@ namespace Langulus::Math
    template<TARGS(ALT)>
    LANGULUS(INLINED)
    constexpr auto TME()::Min(const TVEC(ALT)& limits) const noexcept {
-      T result[Min(S, ALTS)];
-      SIMD::Store(SIMD::Min(mArray, limits.mArray), result);
-      return result;
+      using Ret = LosslessVector<TME(), TVEC(ALT)>;
+      return Ret {SIMD::Min(*this, limits)};
    }
    
    /// Horizontal max                                                         
@@ -906,9 +902,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
-      typename Ret::ArrayType uninitialized;
-      SIMD::Multiply(lhs, rhs, uninitialized);
-      return Ret {uninitialized};
+      return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Scalar * Vector                                                        
