@@ -10,10 +10,11 @@
 #include "Numbers/Level.hpp"
 #include "Numbers/TAngle.hpp"
 #include "Ranges/TRange.hpp"
-#include "Vectors.hpp"
+#include "Vectors/TVector.hpp"
+#include "Vectors/TNormal.hpp"
+#include "Vectors/TForce.hpp"
 #include "Quaternions/TQuaternion.hpp"
-#include "Primitives.hpp"
-#include "Randomness.hpp"
+#include "Randomness/MersenneTwister.hpp"
 
 #define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
@@ -22,18 +23,17 @@ namespace Langulus::Math
 {
 
    ///                                                                        
-   ///   SPATIAL INSTANCE                                                     
+   ///   Instance                                                             
    ///                                                                        
    /// Provides higher level functionality for rotation, translation,         
-   /// scaling, and primitive collisions.                                     
+   /// scaling, and primitive collisions. Can be 2D or 3D, depending on T     
    ///                                                                        
    template<CT::Vector T>
    class TInstance {
    public:
       using ScalarType = TypeOf<T>;
       using PointType = T;
-      using T::MemberCount;
-      using MatrixType = TMatrix<ScalarType, MemberCount + 1, MemberCount + 1>;
+      using MatrixType = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
       using RangeType = TRange<T>;
       using QuatType = TQuaternion<ScalarType>;
       using SizeType = TScale<T>;
