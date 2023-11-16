@@ -152,13 +152,13 @@ namespace Langulus::Math
    ///                                                                     |  
    ///           ^ +Y                                                      |  
    ///           |                                                         |  
-   ///    /------+------\+   (.5, .5) mOffsets from origin                 |  
+   ///    ,------+------, +   (.5, .5) mOffsets from origin                |  
    ///   /               \                                                 |  
    ///  |                 |                                                |  
    ///  |        +        |--> +X                                          |  
-   ///  |     origin      |                                                |  
+   ///  |      origin     |                                                |  
    ///   \               /                                                 |  
-   ///    \-------------/   <- mRadius from origin of rounded parts        |  
+   ///    '-------------'   <- mRadius from origin of rounded parts        |  
    ///                                                                     |  
    template<CT::Vector T>
    struct TBoxRounded : TBox<T> {
