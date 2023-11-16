@@ -9,12 +9,14 @@
 #pragma once
 #include "../Vectors/TVector.hpp"
 
+#define TEMPLATE() template<CT::Dense T>
+#define TME() TRange<T>
+
 
 namespace Langulus::Math
 {
 
-   template<class>
-   struct TRange;
+   TEMPLATE() struct TRange;
 
    using Range1f   = TRange<Vec1f>;
    using Range1d   = TRange<Vec1d>;
@@ -90,7 +92,7 @@ namespace Langulus::A
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// range of the same type                                                 
-   template<CT::DenseNumber T>
+   template<CT::Dense T>
    struct RangeOfType : Range {
       LANGULUS(CONCRETE) Math::TRange<Math::TVector<T, 4>>;
       LANGULUS(TYPED) T;
@@ -99,6 +101,45 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
+namespace Langulus
+{
+   namespace CT
+   {
+      /// Anything that has the range trait                                   
+      template<class... T>
+      concept RangeBased = ((Decay<T>::CTTI_RangeTrait) and ...);
+   }
+
+   /// Custom name generator at compile-time for ranges                       
+   TEMPLATE()
+   constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      constexpr auto S = Math::TME()::MemberCount;
+      if constexpr (S > 4) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Range")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + S;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<Math::TME()>>())
+         name[offset++] = i;
+
+      return name;
+   }
+}
+
 namespace Langulus::Math
 {
 
@@ -106,19 +147,32 @@ namespace Langulus::Math
    ///   Templated range                                                      
    ///                                                                        
    #pragma pack(push, 1)
-   template<class T>
+   TEMPLATE()
    struct TRange {
       using PointType = T;
+      using MemberType = TypeOf<T>;
       static constexpr Count MemberCount = CountOf<T>;
 
-      LANGULUS(TYPED) TypeOf<T>;
+      union {
+         struct {
+            PointType mMin;
+            PointType mMax;
+         } mBounds {};
+
+         // Useful representation for directly feeding to SIMD          
+         MemberType mArray[MemberCount * 2];
+      };
+
+   public:
+      LANGULUS(NAME)  CustomNameOf<TRange>::Generate();
+      LANGULUS(TYPED) MemberType;
       LANGULUS_BASES(
-         A::RangeOfSize<CountOf<T>>,
-         A::RangeOfType<TypeOf<T>>
+         A::RangeOfSize<MemberCount>,
+         A::RangeOfType<MemberType>
       );
 
-      PointType mMin;
-      PointType mMax;
+      // Make TRange match the CT::RangeBased concept                   
+      static constexpr bool CTTI_RangeTrait = true;
 
    public:
       constexpr TRange() noexcept = default;
@@ -139,12 +193,6 @@ namespace Langulus::Math
       template<class N>
       constexpr TRange& ConstrainBy(const N&) noexcept;
 
-      NOD() constexpr bool operator == (const TRange&) const noexcept;
-      NOD() constexpr bool operator >= (const TRange&) const noexcept;
-      NOD() constexpr bool operator <= (const TRange&) const noexcept;
-      NOD() constexpr bool operator <  (const TRange&) const noexcept;
-      NOD() constexpr bool operator >  (const TRange&) const noexcept;
-
       NOD() PointType Length() const noexcept;
       NOD() PointType Center() const noexcept;
       NOD() constexpr bool IsDegenerate() const noexcept;
@@ -159,47 +207,106 @@ namespace Langulus::Math
    #pragma pack(pop)
 
 
+   /// Generate a lossless range type from provided LHS and RHS types         
+   ///   @tparam LHS - left hand side, can be scalar/array/vector/range       
+   ///   @tparam RHS - right hand side, can be scalar/array/vector/range      
+   template<class LHS, class RHS>
+   using LosslessRange = TRange<LosslessVector<
+      typename LHS::PointType, typename RHS::PointType>>;
+
+
    ///                                                                        
    ///   Operations                                                           
    ///                                                                        
    /// Returns an inverted range                                              
-   template<class T>
-   NOD() constexpr TRange<T> operator - (const TRange<T>&) noexcept;
+   NOD() constexpr auto operator - (const CT::RangeBased auto&) noexcept;
 
    /// Returns the sum of two ranges                                          
-   template<class T1, class T2>
-   NOD() auto operator + (const TRange<T1>&, const TRange<T2>&) noexcept;
+   NOD() constexpr auto operator + (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Returns the difference of two ranges                                   
-   template<class T1, class T2>
-   NOD() auto operator - (const TRange<T1>&, const TRange<T2>&) noexcept;
+   NOD() constexpr auto operator - (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Returns the product of two ranges                                      
-   template<class T1, class T2>
-   NOD() auto operator * (const TRange<T1>&, const TRange<T2>&) noexcept;
+   NOD() constexpr auto operator * (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Returns the division of two ranges                                     
-   template<class T1, class T2>
-   NOD() auto operator / (const TRange<T1>&, const TRange<T2>&);
+   NOD() constexpr auto operator / (const CT::RangeBased  auto&, const CT::RangeBased  auto&);
+   NOD() constexpr auto operator / (const CT::RangeBased  auto&, const CT::DenseScalar auto&);
+   NOD() constexpr auto operator / (const CT::DenseScalar auto&, const CT::RangeBased  auto&);
+   NOD() constexpr auto operator / (const CT::RangeBased  auto&, const CT::VectorBased auto&);
+   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::RangeBased  auto&);
 
 
    ///                                                                        
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<class T1, class T2>
-   auto& operator += (TRange<T1>&, const TRange<T2>&) noexcept;
+   constexpr auto& operator += (CT::RangeBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto& operator += (CT::RangeBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator += (CT::RangeBased auto&, const CT::DenseScalar auto&) noexcept;
 
    /// Subtract                                                               
-   template<class T1, class T2>
-   auto& operator -= (TRange<T1>&, const TRange<T2>&) noexcept;
+   constexpr auto& operator -= (CT::RangeBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto& operator -= (CT::RangeBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator -= (CT::RangeBased auto&, const CT::DenseScalar auto&) noexcept;
 
    /// Multiply                                                               
-   template<class T1, class T2>
-   auto& operator *= (TRange<T1>&, const TRange<T2>&) noexcept;
+   constexpr auto& operator *= (CT::RangeBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto& operator *= (CT::RangeBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator *= (CT::RangeBased auto&, const CT::DenseScalar auto&) noexcept;
 
    /// Divide                                                                 
-   template<class T1, class T2>
-   auto& operator /= (TRange<T1>&, const TRange<T2>&);
+   constexpr auto& operator /= (CT::RangeBased auto&, const CT::RangeBased  auto&);
+   constexpr auto& operator /= (CT::RangeBased auto&, const CT::VectorBased auto&);
+   constexpr auto& operator /= (CT::RangeBased auto&, const CT::DenseScalar auto&);
+
+
+   ///                                                                        
+   ///   Comparing                                                            
+   ///                                                                        
+   /// Smaller                                                                
+   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+
+   /// Bigger                                                                 
+   NOD() constexpr auto operator >  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+
+   /// Bigger or equal                                                        
+   NOD() constexpr auto operator >= (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+
+   /// Smaller or equal                                                       
+   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+
+   /// Equal                                                                  
+   NOD() constexpr auto operator == (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
+
+   NOD() constexpr auto operator != (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::RangeBased  auto&, const CT::DenseScalar auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::DenseScalar auto&, const CT::RangeBased  auto&) noexcept;
 
 } // namespace Langulus::Math
+
+#undef TEMPLATE
+#undef TME

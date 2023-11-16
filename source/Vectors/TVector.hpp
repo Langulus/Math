@@ -134,47 +134,47 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
-namespace Langulus
-{
-   namespace CT
+   namespace Langulus
    {
-      /// Anything that has the quaternion trait                              
-      template<class... T>
-      concept QuaternionBased = ((Decay<T>::CTTI_QuaternionTrait) and ...);
+      namespace CT
+      {
+         /// Anything that has the quaternion trait                              
+         template<class... T>
+         concept QuaternionBased = ((Decay<T>::CTTI_QuaternionTrait) and ...);
 
-      /// Anything that has the vector trait                                  
-      template<class... T>
-      concept VectorBased = ((Decay<T>::CTTI_VectorTrait) and ...);
-   }
-
-   /// Custom name generator at compile-time for vectors                      
-   TEMPLATE()
-   constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (S > 4) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
+         /// Anything that has the vector trait                                  
+         template<class... T>
+         concept VectorBased = ((Decay<T>::CTTI_VectorTrait) and ...);
       }
 
-      // Write prefix                                                   
-      for (auto i : "Vec")
-         name[offset++] = i;
+      /// Custom name generator at compile-time for vectors                      
+      TEMPLATE()
+      constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
 
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + S;
+         if constexpr (S > 4) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
 
-      // Write suffix                                                   
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
+         // Write prefix                                                   
+         for (auto i : "Vec")
+            name[offset++] = i;
 
-      return name;
+         // Write size                                                     
+         --offset;
+         name[offset++] = '0' + S;
+
+         // Write suffix                                                   
+         for (auto i : SuffixOf<T>())
+            name[offset++] = i;
+
+         return name;
+      }
    }
-}
 
 namespace Langulus::Math
 {
@@ -483,6 +483,7 @@ namespace Langulus::Math
          Lossless<TypeOf<LHS>, TypeOf<RHS>>,
          OverlapCounts<LHS, RHS>()
       >;
+
 
    ///                                                                        
    ///   Operations                                                           
