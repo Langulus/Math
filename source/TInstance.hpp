@@ -15,6 +15,7 @@
 #include "Vectors/TForce.hpp"
 #include "Quaternions/TQuaternion.hpp"
 #include "Randomness/MersenneTwister.hpp"
+#include "Verbs/Move.hpp"
 
 #define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
 
@@ -25,10 +26,10 @@ namespace Langulus::Math
    ///                                                                        
    ///   Instance                                                             
    ///                                                                        
-   /// Provides higher level functionality for rotation, translation,         
+   /// Provides higher order functionality for rotation, translation,         
    /// scaling, and primitive collisions. Can be 2D or 3D, depending on T     
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::VectorBased T>
    class TInstance {
    public:
       using ScalarType = TypeOf<T>;
@@ -36,9 +37,11 @@ namespace Langulus::Math
       using MatrixType = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
       using RangeType = TRange<T>;
       using QuatType = TQuaternion<ScalarType>;
-      using SizeType = TScale<T>;
+      using SizeType = TScale<TVector<ScalarType, T::MemberCount, 1>>;
 
    public:
+      LANGULUS_VERBS(Verbs::Move);
+
       TInstance() noexcept = default;
 
       NOD() RangeType GetRange(Level) const;
@@ -74,7 +77,7 @@ namespace Langulus::Math
 
       NOD() PointType RandomPosition(RNG&, const RangeType&) const;
 
-      void Move(Verb&);
+      void Move(Flow::Verb&);
 
       template<CT::Angle A, CT::Dimension D>
       void Rotate(ScalarType, const TAngle<A, D>&, bool relative = false);
@@ -93,11 +96,11 @@ namespace Langulus::Math
 
       void ChangeLevel(ScalarType, const Level&, bool relative = false);
 
-      bool operator == (const TInstance&) const noexcept;
+      bool operator == (const TInstance&) const noexcept = default;
 
    public:
       // Optional parent for inheriting transformations                 
-      Ptr<TInstance<T>> mParent;
+      Anyness::Ptr<TInstance<T>> mParent;
 
       // Position in space                                              
       PointType mPosition;

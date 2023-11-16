@@ -16,7 +16,7 @@ namespace Langulus
    namespace Math
    {
 
-      template<CT::ScalarOrVector T>
+      template<CT::VectorBased T>
       struct TForce;
 
       using Force1    = TForce<TVector<Real, 1>>;
@@ -25,7 +25,7 @@ namespace Langulus
       using Force1i   = TForce<TVector<signed, 1>>;
       using Force1u   = TForce<TVector<unsigned, 1>>;
       using Force1i8  = TForce<TVector<::std::int8_t, 1>>;
-      using Force1u8  = TForce<TVector<uint8, 1>>;
+      using Force1u8  = TForce<TVector<::std::uint8_t, 1>>;
       using Force1i16 = TForce<TVector<::std::int16_t, 1>>;
       using Force1u16 = TForce<TVector<::std::uint16_t, 1>>;
       using Force1i32 = TForce<TVector<::std::int32_t, 1>>;
@@ -39,7 +39,7 @@ namespace Langulus
       using Force2i   = TForce<TVector<signed, 2>>;
       using Force2u   = TForce<TVector<unsigned, 2>>;
       using Force2i8  = TForce<TVector<::std::int8_t, 2>>;
-      using Force2u8  = TForce<TVector<uint8, 2>>;
+      using Force2u8  = TForce<TVector<::std::uint8_t, 2>>;
       using Force2i16 = TForce<TVector<::std::int16_t, 2>>;
       using Force2u16 = TForce<TVector<::std::uint16_t, 2>>;
       using Force2i32 = TForce<TVector<::std::int32_t, 2>>;
@@ -53,7 +53,7 @@ namespace Langulus
       using Force3i   = TForce<TVector<signed, 3>>;
       using Force3u   = TForce<TVector<unsigned, 3>>;
       using Force3i8  = TForce<TVector<::std::int8_t, 3>>;
-      using Force3u8  = TForce<TVector<uint8, 3>>;
+      using Force3u8  = TForce<TVector<::std::uint8_t, 3>>;
       using Force3i16 = TForce<TVector<::std::int16_t, 3>>;
       using Force3u16 = TForce<TVector<::std::uint16_t, 3>>;
       using Force3i32 = TForce<TVector<::std::int32_t, 3>>;
@@ -67,7 +67,7 @@ namespace Langulus
       using Force4i   = TForce<TVector<signed, 4>>;
       using Force4u   = TForce<TVector<unsigned, 4>>;
       using Force4i8  = TForce<TVector<::std::int8_t, 4>>;
-      using Force4u8  = TForce<TVector<uint8, 4>>;
+      using Force4u8  = TForce<TVector<::std::uint8_t, 4>>;
       using Force4i16 = TForce<TVector<::std::int16_t, 4>>;
       using Force4u16 = TForce<TVector<::std::uint16_t, 4>>;
       using Force4i32 = TForce<TVector<::std::int32_t, 4>>;
@@ -123,7 +123,7 @@ namespace Langulus
    } // namespace Langulus::A
 
    /// Custom name generator at compile-time for forces                       
-   template<CT::ScalarOrVector T>
+   template<CT::VectorBased T>
    constexpr auto CustomName(Of<Math::TForce<T>>&&) noexcept {
       using CLASS = Math::TForce<T>;
       constexpr auto MemberCount = CLASS::MemberCount;
@@ -157,7 +157,7 @@ namespace Langulus
       ///                                                                     
       ///   Templated force                                                   
       ///                                                                     
-      template<CT::ScalarOrVector T>
+      template<CT::VectorBased T>
       struct TForce : T {
          using PointType = T;
          using T::T;
@@ -199,5 +199,4 @@ namespace Langulus
       };
 
    } // namespace Langulus::Math
-
 } // namespace Langulus

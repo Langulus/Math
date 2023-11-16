@@ -9,7 +9,7 @@
 #pragma once 
 #include "TInstance.hpp"
 
-#define TEMPLATE() template<CT::Vector T>
+#define TEMPLATE() template<CT::VectorBased T>
 #define TME() TInstance<T>
 
 
@@ -103,21 +103,21 @@ namespace Langulus::Math
    ///   @return the oriented right vector                                    
    TEMPLATE()
    typename TME()::PointType TME()::GetRight() const noexcept {
-      return GetAim() * Cardinal::Right<ScalarType>;
+      return GetAim() * Axes::Right<ScalarType>;
    }
 
    /// Get the up normal of the instance                                      
    ///   @return the oriented up vector                                       
    TEMPLATE()
    typename TME()::PointType TME()::GetUp() const noexcept {
-      return GetAim() * Cardinal::Up<ScalarType>;
+      return GetAim() * Axes::Up<ScalarType>;
    }
 
    /// Get the forward normal of the instance                                 
    ///   @return the oriented forward vector                                  
    TEMPLATE()
    typename TME()::PointType TME()::GetForward() const noexcept {
-      return GetAim() * Cardinal::Forward<ScalarType>;
+      return GetAim() * Axes::Forward<ScalarType>;
    }
 
    /// Get scale, relative to a given octave                                  
@@ -176,7 +176,7 @@ namespace Langulus::Math
       auto scale = GetScale() * factor;
       if (scale.IsDegenerate())
          scale = 1;
-      return pcCompose<PointType>(GetAim(), translate, scale);
+      return A::Matrix::From<PointType>(GetAim(), translate, scale);
    }
 
    /// Get model transformation                                               
@@ -186,7 +186,7 @@ namespace Langulus::Math
       auto scale = GetScale();
       if (scale.IsDegenerate())
          scale = 1;
-      return pcCompose<PointType>(GetAim(), GetPosition(), scale);
+      return A::Matrix::From<PointType>(GetAim(), GetPosition(), scale);
    }
 
    /// Get view transformation, relative to a given level                     
@@ -194,14 +194,14 @@ namespace Langulus::Math
    ///   @return the view matrix                                              
    TEMPLATE()
    typename TME()::MatrixType TME()::GetViewTransform(Level level) const {
-      return pcCompose<PointType>(GetAim(), GetPosition(level));
+      return A::Matrix::From<PointType>(GetAim(), GetPosition(level));
    }
 
    /// Get view transformation                                                
    ///   @return the view matrix                                              
    TEMPLATE()
    typename TME()::MatrixType TME()::GetViewTransform() const {
-      return pcCompose<PointType>(GetAim(), GetPosition());
+      return A::Matrix::From<PointType>(GetAim(), GetPosition());
    }
 
    /// Constrain to another instance                                          
@@ -272,7 +272,7 @@ namespace Langulus::Math
          rng.Get<ScalarType>(),
          rng.Get<ScalarType>(),
          rng.Get<ScalarType>()
-      } *ScalarType {2} - ScalarType {1};
+      } * ScalarType {2} - ScalarType {1};
 
       auto newpos = rnewpos * (outerscale - innerscale);
       newpos[0] += innerscale[0] * Math::Sign(newpos[0]);
@@ -360,9 +360,12 @@ namespace Langulus::Math
    /// Execute a move/rotate/scale verb                                       
    ///   @param verb - movement verb                                          
    TEMPLATE()
-   void TME()::Move(Verb& verb) {
+   void TME()::Move(Flow::Verb& verb) {
       const auto sign = Sign(verb.GetMass());
       bool relative = false;
+
+      using Anyness::Block;
+      using Anyness::Trait;
 
       verb.ForEachDeep([&](const Block& part) {
          // Read relativity first                                       
@@ -433,7 +436,7 @@ namespace Langulus::Math
          if (done > 0)
             return;
 
-         if constexpr (MemberCount > 2) {
+         if constexpr (T::MemberCount > 2) {
             // Yaw and pitch are allowed only above 2D                  
             done = part.ForEach(
                [&](const Yawd& angle) {
@@ -504,31 +507,6 @@ namespace Langulus::Math
          mUseLevelChange += octave * Level {sign};
       else
          mUseLevelChange = octave * Level {sign};
-   }
-
-   /// Compare two instances                                                  
-   ///   @param other - the other instance to compare                         
-   ///   @return true if instances match                                      
-   TEMPLATE()
-   bool TME()::operator == (const TInstance& other) const noexcept {
-      return mParent == other.mParent
-         && mPosition == other.mPosition
-         && mSimVelocity == other.mSimVelocity
-         && mUseVelocity == other.mUseVelocity
-         && mVelocity == other.mVelocity
-         && mAcceleration == other.mAcceleration
-         && mAim == other.mAim
-         && mScale == other.mScale
-         && mSimBoundness == other.mSimBoundness
-         && mUseBoundness == other.mUseBoundness
-         && mSolid == other.mSolid
-         && mPickable == other.mPickable
-         && mSigned == other.mSigned
-         && mBilateral == other.mBilateral
-         && mStatic == other.mStatic
-         && mSimLevelChange == other.mSimLevelChange
-         && mUseLevelChange == other.mUseLevelChange
-         && mLevel == other.mLevel;
    }
 
 } // namespace Langulus::Math
