@@ -160,7 +160,6 @@ namespace Langulus
       struct TScale : T {
          using T::MemberCount;
          using T::T;
-         using T::mArray;
 
          LANGULUS(NAME) CustomNameOf<TScale>::Generate();
          LANGULUS(TYPED) TypeOf<T>;

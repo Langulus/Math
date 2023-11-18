@@ -13,13 +13,13 @@
 namespace Langulus::Math
 {
 
-   template<class T, Count S = 2>
+   template<CT::Dense T, Count S = 2>
    class TGradient;
 
-   template<class T, Count S = 2>
+   template<CT::Dense T, Count S = 2>
    using TGrad = TGradient<T, S>;
 
-   template<class T>
+   template<CT::Dense T>
    using TGrad2 = TGradient<T, 2>;
 
    using Grad2v1 = TGrad2<Vec1>;
@@ -68,7 +68,8 @@ namespace Langulus::Math
    /// Useful for capsulating continuous properties and getting their         
    /// derivatives. Can capsulate anything, as long as it is arithmetic.      
    ///                                                                        
-   template<class T, Count S>
+#pragma pack(push, 1)
+   template<CT::Dense T, Count S>
    class TGradient : A::Gradient {
    protected:
       T mBuffer[S] {};
@@ -83,9 +84,13 @@ namespace Langulus::Math
       static constexpr Count StateCount = S;
       static_assert(S > 1, "Can't have a gradient with less than two states");
 
+      // Make any gradient qualify as CT::GradientBased                 
+      static constexpr bool CTTI_GradientTrait = true;
+
       constexpr TGradient() noexcept = default;
       constexpr TGradient(const T&) noexcept;
-      constexpr TGradient(CT::NotSemantic auto&&...) noexcept;
+      template<class T1, class T2, class... TAIL>
+      constexpr TGradient(const T1&, const T2&, const TAIL&...) noexcept;
 
       NOD() constexpr auto& operator [](const Offset&) const noexcept;
       NOD() constexpr auto& operator [](const Offset&) noexcept;
@@ -112,5 +117,6 @@ namespace Langulus::Math
 
       NOD() explicit operator Flow::Code() const;
    };
+#pragma pack(pop)
 
 } // namespace Langulus::Math

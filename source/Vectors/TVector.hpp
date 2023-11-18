@@ -13,22 +13,22 @@
 #include "../Dimensions.hpp"
 #include <SIMD/SIMD.hpp>
 
-#define TARGS(a) CT::Dense a##T, Count a##S, int a##D
+#define TARGS(a) CT::ScalarBased a##T, Count a##S, int a##D
 #define TVEC(a) TVector<a##T, a##S, a##D>
-#define TEMPLATE() template<CT::Dense T, Count S, int DEFAULT>
+#define TEMPLATE() template<CT::ScalarBased T, Count S, int DEFAULT>
 #define TME() TVector<T, S, DEFAULT>
 
 
 namespace Langulus::Math
 {
 
-   template<CT::Dense T, CT::Dimension D>
+   template<CT::ScalarBased T, CT::Dimension D>
    struct TVectorComponent;
 
-   template<CT::Dense T, Count S, int DEFAULT = 0>
+   template<CT::ScalarBased T, Count S, int DEFAULT = 0>
    struct TVector;
 
-   template<CT::Dense T, Count S, int DEFAULT = 0>
+   template<CT::ScalarBased T, Count S, int DEFAULT = 0>
    using TVec = TME();
 
    using Vec1     = TVector<Real, 1>;
@@ -103,81 +103,197 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
-namespace Langulus::A
+namespace Langulus
 {
-
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// vector                                                                 
-   struct Vector {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Vec4;
-   };
-
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// vector of the same size                                                
-   template<Count S>
-   struct VectorOfSize : Vector {
-      LANGULUS(CONCRETE) Math::TVector<::Langulus::Real, S>;
-      LANGULUS_BASES(Vector);
-      static constexpr Count MemberCount {S};
-      static_assert(S > 0, "Vector size must be greater than zero");
-   };
-
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// vector of the same type                                                
-   template<CT::Dense T>
-   struct VectorOfType : Vector {
-      LANGULUS(CONCRETE) Math::TVector<T, 4>;
-      LANGULUS(TYPED) T;
-      LANGULUS_BASES(Vector);
-   };
-
-} // namespace Langulus::A
-
-   namespace Langulus
+   namespace A
    {
-      namespace CT
-      {
-         /// Anything that has the quaternion trait                              
-         template<class... T>
-         concept QuaternionBased = ((Decay<T>::CTTI_QuaternionTrait) and ...);
 
-         /// Anything that has the vector trait                                  
-         template<class... T>
-         concept VectorBased = ((Decay<T>::CTTI_VectorTrait) and ...);
-      }
+      /// Used as an imposed base for any type that can be interpretable as a 
+      /// vector                                                              
+      struct Vector {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) Math::Vec4;
+      };
 
-      /// Custom name generator at compile-time for vectors                      
-      TEMPLATE()
-      constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
-         ::std::array<char, defaultClassName.size() + 1> name {};
-         ::std::size_t offset {};
+      /// Used as an imposed base for any type that can be interpretable as a 
+      /// vector of the same size                                             
+      template<Count S>
+      struct VectorOfSize : Vector {
+         LANGULUS(CONCRETE) Math::TVector<::Langulus::Real, S>;
+         LANGULUS_BASES(Vector);
+         static constexpr Count MemberCount {S};
+         static_assert(S > 0, "Vector size must be greater than zero");
+      };
 
-         if constexpr (S > 4) {
-            for (auto i : defaultClassName)
-               name[offset++] = i;
-            return name;
-         }
+      /// Used as an imposed base for any type that can be interpretable as a 
+      /// vector of the same type                                             
+      template<CT::ScalarBased T>
+      struct VectorOfType : Vector {
+         LANGULUS(CONCRETE) Math::TVector<T, 4>;
+         LANGULUS(TYPED) T;
+         LANGULUS_BASES(Vector);
+      };
 
-         // Write prefix                                                   
-         for (auto i : "Vec")
+   } // namespace Langulus::A
+
+
+   /// Custom name generator at compile-time for vectors                      
+   TEMPLATE()
+   constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (S > 4) {
+         for (auto i : defaultClassName)
             name[offset++] = i;
-
-         // Write size                                                     
-         --offset;
-         name[offset++] = '0' + S;
-
-         // Write suffix                                                   
-         for (auto i : SuffixOf<T>())
-            name[offset++] = i;
-
          return name;
       }
+
+      // Write prefix                                                   
+      for (auto i : "Vec")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + S;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<T>())
+         name[offset++] = i;
+
+      return name;
    }
+
+} // namespace Langulus
 
 namespace Langulus::Math
 {
+
+   #pragma pack(push, 1)
+   template<Count S, CT::ScalarBased T>
+   struct TVectorBase;
+
+   template<CT::ScalarBased T>
+   struct TVectorBase<1, T> {
+      union {
+         union { T x, first, r, red, u; };
+         T all[1] {};
+      };
+
+      // Declare the rest as functions, so that they don't take up space
+      // This is necessary to work around the dependent names in TVector
+      // This will also error out, when missing (), but if you happen to
+      // call them by accident, you will get a proper compile error     
+      void y()       { LANGULUS_ERROR("1D vector doesn't have 'y' component"); }
+      void second()  { LANGULUS_ERROR("1D vector doesn't have 'second' component"); }
+      void g()       { LANGULUS_ERROR("1D vector doesn't have 'g' component"); }
+      void green()   { LANGULUS_ERROR("1D vector doesn't have 'green' component"); }
+      void v()       { LANGULUS_ERROR("1D vector doesn't have 'v' component"); }
+
+      void z()       { LANGULUS_ERROR("1D vector doesn't have 'z' component"); }
+      void third()   { LANGULUS_ERROR("1D vector doesn't have 'third' component"); }
+      void b()       { LANGULUS_ERROR("1D vector doesn't have 'b' component"); }
+      void blue()    { LANGULUS_ERROR("1D vector doesn't have 'blue' component"); }
+      void s()       { LANGULUS_ERROR("1D vector doesn't have 's' component"); }
+
+      void w()       { LANGULUS_ERROR("1D vector doesn't have 'w' component"); }
+      void fourth()  { LANGULUS_ERROR("1D vector doesn't have 'fourth' component"); }
+      void a()       { LANGULUS_ERROR("1D vector doesn't have 'a' component"); }
+      void alpha()   { LANGULUS_ERROR("1D vector doesn't have 'alpha' component"); }
+      void t()       { LANGULUS_ERROR("1D vector doesn't have 't' component"); }
+
+      void tail()    { LANGULUS_ERROR("1D vector doesn't have a tail"); }
+   };
+
+   template<CT::ScalarBased T>
+   struct TVectorBase<2, T> {
+      union {
+         struct {
+            union { T x, first,  r, red,   u; };
+            union { T y, second, g, green, v; };
+         };
+         T all[2] {};
+      };
+
+      // Declare the rest as functions, so that they don't take up space
+      // This is necessary to work around the dependent names in TVector
+      // This will also error out, when missing (), but if you happen to
+      // call them by accident, you will get a proper compile error     
+      void z()       { LANGULUS_ERROR("2D vector doesn't have 'z' component"); }
+      void third()   { LANGULUS_ERROR("2D vector doesn't have 'third' component"); }
+      void b()       { LANGULUS_ERROR("2D vector doesn't have 'b' component"); }
+      void blue()    { LANGULUS_ERROR("2D vector doesn't have 'blue' component"); }
+      void s()       { LANGULUS_ERROR("2D vector doesn't have 's' component"); }
+
+      void w()       { LANGULUS_ERROR("2D vector doesn't have 'w' component"); }
+      void fourth()  { LANGULUS_ERROR("2D vector doesn't have 'fourth' component"); }
+      void a()       { LANGULUS_ERROR("2D vector doesn't have 'a' component"); }
+      void alpha()   { LANGULUS_ERROR("2D vector doesn't have 'alpha' component"); }
+      void t()       { LANGULUS_ERROR("2D vector doesn't have 't' component"); }
+
+      void tail()    { LANGULUS_ERROR("2D vector doesn't have a tail"); }
+   };
+
+   template<CT::ScalarBased T>
+   struct TVectorBase<3, T> {
+      union {
+         struct {
+            union { T x, first,  r, red,   u; };
+            union { T y, second, g, green, v; };
+            union { T z, third,  b, blue,  s; };
+         };
+         T all[3] {};
+      };
+
+      // Declare the rest as functions, so that they don't take up space
+      // This is necessary to work around the dependent names in TVector
+      // This will also error out, when missing (), but if you happen to
+      // call them by accident, you will get a proper compile error     
+      void w()       { LANGULUS_ERROR("3D vector doesn't have 'w' component"); }
+      void fourth()  { LANGULUS_ERROR("3D vector doesn't have 'fourth' component"); }
+      void a()       { LANGULUS_ERROR("3D vector doesn't have 'a' component"); }
+      void alpha()   { LANGULUS_ERROR("3D vector doesn't have 'alpha' component"); }
+      void t()       { LANGULUS_ERROR("3D vector doesn't have 't' component"); }
+
+      void tail()    { LANGULUS_ERROR("3D vector doesn't have a tail"); }
+   };
+
+   template<CT::ScalarBased T>
+   struct TVectorBase<4, T> {
+      union {
+         struct {
+            union { T x, first,  r, red,   u; };
+            union { T y, second, g, green, v; };
+            union { T z, third,  b, blue,  s; };
+            union { T w, fourth, a, alpha, t; };
+         };
+         T all[4] {};
+      };
+
+      void tail()    { LANGULUS_ERROR("4D vector doesn't have a tail"); }
+   };
+
+   template<Count S, CT::ScalarBased T>
+   struct TVectorBase {
+      static_assert(S > 4, 
+         "Smaller S should've been defined in specializations, "
+         "something's wrong with your compiler");
+
+      union {
+         struct {
+            union { T x, first,  r, red,   u; };
+            union { T y, second, g, green, v; };
+            union { T z, third,  b, blue,  s; };
+            union { T w, fourth, a, alpha, t; };
+
+            // The remaining elements, that don't have custom names     
+            T tail[S - 4];
+         };
+         T all[S] {};
+      };
+   };
+
 
    ///                                                                        
    ///   Templated vector                                                     
@@ -189,15 +305,12 @@ namespace Langulus::Math
    /// being a pointer (a so called proxy vector), in order to implement      
    /// swizzling. Proxy vectors eventually decay into conventional vectors.   
    ///                                                                        
-   #pragma pack(push, 1)
    TEMPLATE()
-   struct TVector {
+   struct TVector : TVectorBase<S, T> {
       static_assert(S >= 1, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
       static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
       using ArrayType = T[S];
-
-      T mArray[S];
 
    public:
       LANGULUS(NAME) CustomNameOf<TVector>::Generate();
@@ -212,7 +325,7 @@ namespace Langulus::Math
       );
       LANGULUS_CONVERSIONS(Flow::Code);
 
-      // Make TQuaternion match the CT::VectorBased concept             
+      // Make TVector match the CT::VectorBased concept                 
       static constexpr bool CTTI_VectorTrait = true;
 
    public:
@@ -227,7 +340,7 @@ namespace Langulus::Math
 
       template<class T1, class T2, class... TAIL>
       constexpr TVector(const T1&, const T2&, const TAIL&...) noexcept;
-      template<CT::DenseNumber N, CT::Dimension D>
+      template<CT::ScalarBased N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
    #if LANGULUS_SIMD(128BIT)
@@ -258,7 +371,7 @@ namespace Langulus::Math
       constexpr TVector& operator = (const CT::Vector auto&) noexcept;
       constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
 
-      template<CT::DenseNumber N, CT::Dimension D>
+      template<CT::ScalarBased N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
       ///                                                                     
@@ -269,28 +382,58 @@ namespace Langulus::Math
 
       NOD() explicit operator Flow::Code() const;
 
-      NOD() constexpr decltype(auto) Adapt(const CT::DenseNumber auto&) const noexcept;
+      NOD() constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) const noexcept;
 
       ///                                                                     
       ///   Access                                                            
       ///                                                                     
+      using TVectorBase<S, T>::x;
+      using TVectorBase<S, T>::first;
+      using TVectorBase<S, T>::r;
+      using TVectorBase<S, T>::red;
+      using TVectorBase<S, T>::u;
+
+      using TVectorBase<S, T>::y;
+      using TVectorBase<S, T>::second;
+      using TVectorBase<S, T>::g;
+      using TVectorBase<S, T>::green;
+      using TVectorBase<S, T>::v;
+
+      using TVectorBase<S, T>::z;
+      using TVectorBase<S, T>::third;
+      using TVectorBase<S, T>::b;
+      using TVectorBase<S, T>::blue;
+      using TVectorBase<S, T>::s;
+
+      using TVectorBase<S, T>::w;
+      using TVectorBase<S, T>::fourth;
+      using TVectorBase<S, T>::a;
+      using TVectorBase<S, T>::alpha;
+      using TVectorBase<S, T>::t;
+
+      using TVectorBase<S, T>::all;
+
+      LANGULUS(INLINED)
+      constexpr const T* GetRaw() const noexcept { return all; }
+      LANGULUS(INLINED)
+      constexpr       T* GetRaw()       noexcept { return all; }
+
       NOD() constexpr const T& Get(Offset) const noexcept;
+      NOD() constexpr       T& Get(Offset)       noexcept;
 
       template<Offset I>
       NOD() constexpr const T& GetIdx() const noexcept;
 
-      NOD() constexpr T& operator [] (Offset) noexcept;
+      NOD() constexpr       T& operator [] (Offset)       noexcept;
       NOD() constexpr const T& operator [] (Offset) const noexcept;
 
-      NOD() constexpr const T* GetRaw() const noexcept;
-      NOD() constexpr T* GetRaw() noexcept;
       NOD() constexpr Count GetCount() const noexcept;
       NOD() constexpr T LengthSquared() const noexcept;
       NOD() constexpr T Length() const noexcept;
       NOD() constexpr bool IsDegenerate() const noexcept;
 
       template<Offset HEAD, Offset... TAIL>
-      NOD() decltype(auto) Swz() noexcept;
+      NOD()           decltype(auto) Swz()       noexcept;
       template<Offset HEAD, Offset... TAIL>
       NOD() constexpr decltype(auto) Swz() const noexcept;
 
@@ -305,12 +448,6 @@ namespace Langulus::Math
          NOD() decltype(auto) name() const noexcept requires (SwzRequirements<__VA_ARGS__>) { \
             return Swz<__VA_ARGS__>(); \
          }
-
-      /// 1D Swizzlers                                                        
-      LANGULUS_TVECTOR_SWIZZLER(x, 0U)
-      LANGULUS_TVECTOR_SWIZZLER(y, 1U)
-      LANGULUS_TVECTOR_SWIZZLER(z, 2U)
-      LANGULUS_TVECTOR_SWIZZLER(w, 3U)
 
       /// 2D Swizzlers                                                        
       #define LANGULUS_TVECTOR_SWIZZLER2(name, ...) \
@@ -410,7 +547,7 @@ namespace Langulus::Math
       NOD() constexpr operator       T& ()       noexcept requires (S == 1);
       NOD() constexpr operator const T& () const noexcept requires (S == 1);
 
-      template<CT::DenseNumber N>
+      template<CT::ScalarBased N>
       NOD() explicit constexpr operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>);
 
       template<Count ALTS>
@@ -421,9 +558,9 @@ namespace Langulus::Math
       ///                                                                     
       ///   Iteration                                                         
       ///                                                                     
-      NOD() constexpr T* begin() noexcept;
-      NOD() constexpr T* end() noexcept;
-      NOD() constexpr T* last() noexcept;
+      NOD() constexpr       T* begin() noexcept;
+      NOD() constexpr       T* end() noexcept;
+      NOD() constexpr       T* last() noexcept;
       NOD() constexpr const T* begin() const noexcept;
       NOD() constexpr const T* end() const noexcept;
       NOD() constexpr const T* last() const noexcept;
@@ -444,7 +581,6 @@ namespace Langulus::Math
       LANGULUS(UNINSERTABLE) true;
       private:
          using Base = TVector<VT, sizeof...(I), VD>;
-         using Base::mArray;
 
          TVEC(V)& mSource;
 
@@ -452,9 +588,9 @@ namespace Langulus::Math
          /// Commit the changes                                               
          void Commit() noexcept {
             constexpr Offset sequence [] {I...};
-            auto from = mArray;
+            auto from = GetRaw();
             for (auto& to : sequence)
-               mSource.mArray[to] = *(++from);
+               mSource.GetRaw()[to] = *(++from);
          }
 
       public:
@@ -469,6 +605,7 @@ namespace Langulus::Math
             Commit();
          }
 
+         using Base::GetRaw;
          using Base::operator =;
       };
 
@@ -479,10 +616,7 @@ namespace Langulus::Math
    ///   @tparam LHS - left hand side, can be scalar/array/vector             
    ///   @tparam RHS - right hand side, can be scalar/array/vector            
    template<class LHS, class RHS>
-   using LosslessVector = TVector<
-         Lossless<TypeOf<LHS>, TypeOf<RHS>>,
-         OverlapCounts<LHS, RHS>()
-      >;
+   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, OverlapCounts<LHS, RHS>()>;
 
 
    ///                                                                        
@@ -493,46 +627,46 @@ namespace Langulus::Math
 
    /// Returns the sum of two vectors                                         
    NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Returns the difference of two vectors                                  
    NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Returns the Hadamard product of two vectors                            
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Returns the division of two vectors                                    
    NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::VectorBased auto&);
-   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::DenseScalar auto&);
-   NOD() constexpr auto operator / (const CT::DenseScalar auto&, const CT::VectorBased auto&);
+   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::ScalarBased auto&);
+   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::VectorBased auto&);
 
    /// Returns the left-shift of two integer vectors                          
    template<CT::VectorBased LHS, CT::VectorBased RHS>
    NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
 
    /// Returns the right-shift of two integer vectors                         
    template<CT::VectorBased LHS, CT::VectorBased RHS>
    NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
 
    /// Returns the xor of two integer vectors                                 
    template<CT::VectorBased LHS, CT::VectorBased RHS>
    NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
 
 
@@ -541,19 +675,19 @@ namespace Langulus::Math
    ///                                                                        
    /// Add                                                                    
    constexpr auto& operator += (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto& operator += (CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   constexpr auto& operator += (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Subtract                                                               
    constexpr auto& operator -= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto& operator -= (CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   constexpr auto& operator -= (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Multiply                                                               
    constexpr auto& operator *= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto& operator *= (CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
+   constexpr auto& operator *= (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Divide                                                                 
    constexpr auto& operator /= (CT::VectorBased auto&, const CT::VectorBased auto&);
-   constexpr auto& operator /= (CT::VectorBased auto&, const CT::DenseScalar auto&);
+   constexpr auto& operator /= (CT::VectorBased auto&, const CT::ScalarBased auto&);
 
 
    ///                                                                        
@@ -561,32 +695,32 @@ namespace Langulus::Math
    ///                                                                        
    /// Smaller                                                                
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Bigger                                                                 
    NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Bigger or equal                                                        
    NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Smaller or equal                                                       
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    /// Equal                                                                  
    NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
    NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::DenseScalar auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
 } // namespace Langulus::Math
 

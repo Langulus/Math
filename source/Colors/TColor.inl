@@ -9,7 +9,7 @@
 #pragma once
 #include "TColor.hpp"
 
-#define TEMPLATE() template<CT::Vector T>
+#define TEMPLATE() template<CT::VectorBased T>
 
 
 namespace Langulus::Math
@@ -23,141 +23,141 @@ namespace Langulus::Math
 
       if constexpr (MemberCount == 4) {
          if constexpr (IsReal)
-            mArray[3] = 1;
+            alpha = 1;
          else
-            mArray[3] = 255;
+            alpha = 255;
       }
 
       switch (from) {
       case Logger::DarkBlue:
       case Logger::DarkBlueBgr:
          if constexpr (IsReal)
-            mArray[2] = 0.5;
+            blue = 0.5;
          else
-            mArray[2] = 128;
+            blue = 128;
          break;
       case Logger::Blue:
       case Logger::BlueBgr:
          if constexpr (IsReal)
-            mArray[2] = 1.0;
+            blue = 1.0;
          else
-            mArray[2] = 255;
+            blue = 255;
          break;
       case Logger::DarkGreen:
       case Logger::DarkGreenBgr:
          if constexpr (IsReal)
-            mArray[1] = 0.5;
+            green = 0.5;
          else
-            mArray[1] = 128;
+            green = 128;
          break;
       case Logger::DarkCyan:
       case Logger::DarkCyanBgr:
          if constexpr (IsReal) {
-            mArray[0] = mArray[1] = 0.33333;
-            mArray[2] = 0.5;
+            red = green = 0.33333;
+            blue = 0.5;
          }
          else {
-            mArray[0] = mArray[1] = 85;
-            mArray[2] = 128;
+            red = green = 85;
+            blue = 128;
          }
          break;
       case Logger::Cyan:
       case Logger::CyanBgr:
          if constexpr (IsReal) {
-            mArray[0] = mArray[1] = 0.5;
-            mArray[2] = 1.0;
+            red = green = 0.5;
+            blue = 1.0;
          }
          else {
-            mArray[0] = mArray[1] = 128;
-            mArray[2] = 255;
+            red = green = 128;
+            blue = 255;
          }
          break;
       case Logger::Green:
       case Logger::GreenBgr:
          if constexpr (IsReal)
-            mArray[1] = 1.0;
+            green = 1.0;
          else
-            mArray[1] = 255;
+            green = 255;
          break;
       case Logger::DarkRed:
       case Logger::DarkRedBgr:
          if constexpr (IsReal)
-            mArray[0] = 0.5;
+            red = 0.5;
          else
-            mArray[0] = 128;
+            red = 128;
          break;
       case Logger::DarkPurple:
       case Logger::DarkPurpleBgr:
          if constexpr (IsReal)
-            mArray[0] = mArray[2] = 0.5;
+            red = blue = 0.5;
          else
-            mArray[0] = mArray[2] = 128;
+            red = blue = 128;
          break;
       case Logger::Purple:
       case Logger::PurpleBgr:
          if constexpr (IsReal)
-            mArray[0] = mArray[2] = 1.0;
+            red = blue = 1.0;
          else
-            mArray[0] = mArray[2] = 255;
+            red = blue = 255;
          break;
       case Logger::DarkYellow:
       case Logger::DarkYellowBgr:
          if constexpr (IsReal) {
-            mArray[0] = 0.5;
-            mArray[1] = 0.333333;
+            red = 0.5;
+            green = 0.333333;
          }
          else {
-            mArray[0] = 128;
-            mArray[1] = 85;
+            red = 128;
+            green = 85;
          }
          break;
       case Logger::DarkGray:
       case Logger::DarkGrayBgr:
          if constexpr (IsReal)
-            mArray[0] = mArray[1] = mArray[2] = 0.33333;
+            red = green = blue = 0.33333;
          else
-            mArray[0] = mArray[1] = mArray[2] = 85;
+            red = green = blue = 85;
          break;
       case Logger::Yellow:
       case Logger::YellowBgr:
          if constexpr (IsReal) {
-            mArray[0] = 1.0;
-            mArray[1] = 0.5;
+            red = 1.0;
+            green = 0.5;
          }
          else {
-            mArray[0] = 255;
-            mArray[1] = 128;
+            red = 255;
+            green = 128;
          }
          break;
       case Logger::Red:
       case Logger::RedBgr:
          if constexpr (IsReal)
-            mArray[0] = 1.0;
+            red = 1.0;
          else
-            mArray[0] = 255;
+            red = 255;
          break;
       case Logger::White:
       case Logger::WhiteBgr:
          if constexpr (IsReal)
-            mArray[0] = mArray[1] = mArray[2] = 1.0;
+            red = green = blue = 1.0;
          else
-            mArray[0] = mArray[1] = mArray[2] = 255;
+            red = green = blue = 255;
          break;
       case Logger::Gray:
       case Logger::GrayBgr:
          if constexpr (IsReal)
-            mArray[0] = mArray[1] = mArray[2] = 0.5;
+            red = green = blue = 0.5;
          else
-            mArray[0] = mArray[1] = mArray[2] = 128;
+            red = green = blue = 128;
          break;
       case Logger::Black:
       case Logger::BlackBgr:
       case Logger::NoForeground:
       case Logger::NoBackground:
          if constexpr (IsReal)
-            mArray[0] = mArray[1] = mArray[2] = 0.0;
+            red = green = blue = 0.0;
          else
-            mArray[0] = mArray[1] = mArray[2] = 0;
+            red = green = blue = 0;
          break;
       }
    }
@@ -167,7 +167,7 @@ namespace Langulus::Math
    template<CT::DenseNumber ALTT, CT::Dimension D>
    constexpr TColor<T>& TColor<T>::operator = (const TColorComponent<ALTT, D>& com) noexcept {
       static_assert(D::Index < MemberCount, "Index out of bounds");
-      mArray[D::Index] = Adapt(com.mValue);
+      Get(D::Index) = Adapt(com.mValue);
       return *this;
    }
 
@@ -179,8 +179,8 @@ namespace Langulus::Math
          Flow::Code result;
          result += NameOf<TColor>();
          result += Flow::Code::OpenScope;
-         auto bytes = reinterpret_cast<const Byte*>(mArray);
-         const auto bytesEnd = bytes + sizeof(mArray);
+         auto bytes = reinterpret_cast<const Byte*>(GetRaw());
+         const auto bytesEnd = bytes + sizeof(TColor);
          while (bytes != bytesEnd)
             Flow::Serial::ToHex(*(bytes++), result);
          result += Flow::Code::CloseScope;
@@ -219,20 +219,14 @@ namespace Langulus::Math
       constexpr bool IsReal = CT::Real<TypeOf<T>>;
       constexpr TypeOf<T> d3 {3};
       if constexpr (IsReal) {
-         const auto red = static_cast<::std::uint8_t>(
-            Clamp01(mArray[0]) * d3);
-         const auto green = static_cast<::std::uint8_t>(
-            Clamp01(mArray[1]) * d3);
-         const auto blue = static_cast<::std::uint8_t>(
-            Clamp01(mArray[2]) * d3);
-         return ColorMap[red][green][blue];
+         const auto rr = static_cast<::std::uint8_t>(Clamp01(r) * d3);
+         const auto gg = static_cast<::std::uint8_t>(Clamp01(g) * d3);
+         const auto bb = static_cast<::std::uint8_t>(Clamp01(b) * d3);
+         return ColorMap[rr][gg][bb];
       }
       else {
          constexpr auto third = ::std::numeric_limits<TypeOf<T>>::max() / d3;
-         return ColorMap
-            [mArray[0] / third]
-            [mArray[1] / third]
-            [mArray[2] / third];
+         return ColorMap[r / third][g / third][b / third];
       }
    }
 

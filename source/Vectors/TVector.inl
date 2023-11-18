@@ -11,9 +11,9 @@
 #include "../Numbers/TNumber.inl"
 #include <type_traits>
 
-#define TARGS(a) CT::Dense a##T, Count a##S, int a##D
+#define TARGS(a) CT::ScalarBased a##T, Count a##S, int a##D
 #define TVEC(a) TVector<a##T, a##S, a##D>
-#define TEMPLATE() template<CT::Dense T, Count S, int DEFAULT>
+#define TEMPLATE() template<CT::ScalarBased T, Count S, int DEFAULT>
 #define TME() TVector<T, S, DEFAULT>
 
 
@@ -43,22 +43,22 @@ namespace Langulus::Math
       static_assert(CT::Exact<TypeOf<TME()>, T>,
          "Vectors should have type");
 
-      for (auto& v : mArray)
-         v = DefaultMember;
+      for (auto& e : all)
+         e = DefaultMember;
    }
 
    /// Construct from any vector (with conversion)                            
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Vector auto& a) noexcept {
-      SIMD::Convert<DEFAULT>(a, mArray);
+   constexpr TME()::TVector(const CT::Vector auto& source) noexcept {
+      SIMD::Convert<DEFAULT>(source, all);
    }
 
    /// Construct from any scalar (with conversion)                            
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Scalar auto& a) noexcept {
-      SIMD::Convert<DEFAULT>(a, mArray);
+   constexpr TME()::TVector(const CT::Scalar auto& source) noexcept {
+      SIMD::Convert<DEFAULT>(source, all);
    }
 
    /// Manual construction via a variadic head-tail                           
@@ -73,24 +73,24 @@ namespace Langulus::Math
          if constexpr (T1::MemberCount < MemberCount) {
             // ... but that vector is smaller than this one             
             for (auto i = 0u; i < T1::MemberCount; ++i)
-               mArray[i] = Adapt(t1[i]);
+               all[i] = Adapt(t1[i]);
 
             // Form the tail as a new vector and copy the rest          
             const TVector<T, MemberCount - T1::MemberCount> theRest {t2, tail...};
             for (auto i = T1::MemberCount; i < MemberCount; ++i)
-               mArray[i] = theRest.mArray[i - T1::MemberCount];
+               all[i] = theRest.all[i - T1::MemberCount];
          }
          else LANGULUS_ERROR("More elements provided than required");
       }
       else {
          // First element is a scalar, so copy it...                    
-         mArray[0] = Adapt(t1);
+         all[0] = Adapt(t1);
 
          if constexpr (MemberCount - 1 > 0) {
             // Form the tail as a new vector and copy the rest          
             const TVector<T, MemberCount - 1> theRest {t2, tail...};
             for (auto i = 1u; i < MemberCount; ++i)
-               mArray[i] = theRest.mArray[i - 1];
+               all[i] = theRest.all[i - 1];
          }
       }
    }
@@ -98,64 +98,64 @@ namespace Langulus::Math
    /// Construct from a vector component                                      
    ///   @param a - component to set                                          
    TEMPLATE()
-   template<CT::DenseNumber N, CT::Dimension D>
+   template<CT::ScalarBased N, CT::Dimension D>
    LANGULUS(INLINED)
-   constexpr TME()::TVector(const TVectorComponent<N, D>& a) noexcept
+   constexpr TME()::TVector(const TVectorComponent<N, D>& source) noexcept
       : TVector {} {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
-      mArray[D::Index] = Adapt(a.mValue);
+      all[D::Index] = Adapt(source.mValue);
    }
    
-   #if LANGULUS_SIMD(128BIT)
-      TEMPLATE()
-      TME()::TVector(const simde__m128& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
+#if LANGULUS_SIMD(128BIT)
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m128& source) noexcept {
+      SIMD::Store(source, all);
+   }
 
-      TEMPLATE()
-      TME()::TVector(const simde__m128d& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m128d& source) noexcept {
+      SIMD::Store(source, all);
+   }
 
-      TEMPLATE()
-      TME()::TVector(const simde__m128i& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
-   #endif
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m128i& source) noexcept {
+      SIMD::Store(source, all);
+   }
+#endif
 
-   #if LANGULUS_SIMD(256BIT)
-      TEMPLATE()
-      TME()::TVector(const simde__m256& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
+#if LANGULUS_SIMD(256BIT)
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m256& source) noexcept {
+      SIMD::Store(source, all);
+   }
 
-      TEMPLATE()
-      TME()::TVector(const simde__m256d& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m256d& source) noexcept {
+      SIMD::Store(source, all);
+   }
 
-      TEMPLATE()
-      TME()::TVector(const simde__m256i& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
-   #endif
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m256i& source) noexcept {
+      SIMD::Store(source, all);
+   }
+#endif
 
-   #if LANGULUS_SIMD(512BIT)
-      TEMPLATE()
-      TME()::TVector(const simde__m512& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
+#if LANGULUS_SIMD(512BIT)
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m512& source) noexcept {
+      SIMD::Store(source, all);
+   }
 
-      TEMPLATE()
-      TME()::TVector(const simde__m512d& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m512d& source) noexcept {
+      SIMD::Store(source, all);
+   }
 
-      TEMPLATE()
-      TME()::TVector(const simde__m512i& r) noexcept {
-         SIMD::Store(r, mArray);
-      }
-   #endif
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TVector(const simde__m512i& source) noexcept {
+      SIMD::Store(source, all);
+   }
+#endif
 
    /// Construct from a descriptor                                            
    ///   @param describe - the descriptor to scan                             
@@ -165,10 +165,10 @@ namespace Langulus::Math
          "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    
-      auto initialized = describe->ExtractData(mArray);
+      auto initialized = describe->ExtractData(all);
       if (not initialized) {
          // Attempt converting anything to T                            
-         initialized = describe->ExtractDataAs(mArray);
+         initialized = describe->ExtractDataAs(all);
       }
 
       switch (initialized) {
@@ -184,12 +184,12 @@ namespace Langulus::Math
          // Only one provided element is handled as scalar constructor  
          // Copy first element in array to the rest                     
          for (; initialized < S; ++initialized)
-            mArray[initialized] = mArray[0];
+            all[initialized] = all[0];
          break;
       default:
          // Initialize unavailable elements to the vector's default     
          for (; initialized < S; ++initialized)
-            mArray[initialized] = static_cast<T>(DEFAULT);
+            all[initialized] = static_cast<T>(DEFAULT);
          break;
       }
    }
@@ -205,7 +205,7 @@ namespace Langulus::Math
          result += Flow::Code::OpenScope;
       }
 
-      auto data = Anyness::Block::From(mArray, S);
+      auto data = Anyness::Block::From(GetRaw(), S);
       result += Flow::Serialize<Flow::Code>(data);
 
       if constexpr (S > 1 or not CT::Same<TME(), TOKEN>)
@@ -224,7 +224,7 @@ namespace Langulus::Math
    ///   @param x - the component to adapt                                    
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const CT::DenseNumber auto& x) const noexcept {
+   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) const noexcept {
       using N = Deref<decltype(x)>;
       static_assert(CT::Convertible<N, T>, "Incompatible number");
 
@@ -244,8 +244,12 @@ namespace Langulus::Math
    ///   @return a reference to the component                                 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T& TME()::Get(const Offset i) const noexcept {
-      //LANGULUS_ASSUME(UserAssumes, i < S, "Index is out of limits");
-      return mArray[i];
+      return all[i];
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr T& TME()::Get(const Offset i) noexcept {
+      return all[i];
    }
 
    /// Get the value of a specific component index (with static check)        
@@ -255,7 +259,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr const T& TME()::GetIdx() const noexcept {
       static_assert(I < S, "Index is out of limits");
-      return Get(I);
+      return all[I];
    }
 
    /// Get Nth vector element (mutable)                                       
@@ -264,7 +268,7 @@ namespace Langulus::Math
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
    constexpr T& TME()::operator [] (const Offset a) noexcept {
-      return const_cast<T&>(Get(a));
+      return all[a];
    }
 
    /// Get Nth vector element                                                 
@@ -273,21 +277,7 @@ namespace Langulus::Math
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T& TME()::operator [] (const Offset a) const noexcept {
-      return Get(a);
-   }
-
-   /// Get the raw array                                                      
-   ///   @return a pointer to the first component inside this vector          
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr const T* TME()::GetRaw() const noexcept {
-      return mArray;
-   }
-
-   /// Get the raw array (mutable)                                            
-   ///   @return a pointer to the first component inside this vector          
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr T* TME()::GetRaw() noexcept {
-      return mArray;
+      return all[a];
    }
 
    /// Get the number of components                                           
@@ -301,8 +291,8 @@ namespace Langulus::Math
    ///   @return the length of the vector, before the Sqrt operation          
    TEMPLATE() LANGULUS(INLINED)
    constexpr T TME()::LengthSquared() const noexcept {
-      auto start = mArray;
-      const auto end = mArray + S;
+      auto start = all;
+      const auto end = start + S;
       T accum = Math::Sq(*(start++));
       while (start != end)
          accum += Math::Sq(*(start++));
@@ -320,8 +310,8 @@ namespace Langulus::Math
    ///   @return true if vector is degenerate                                 
    TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::IsDegenerate() const noexcept {
-      auto start = mArray;
-      const auto end = mArray + S;
+      auto start = all;
+      const auto end = start + S;
       while (start != end) {
          if (*(start++) == T {})
             return true;
@@ -337,7 +327,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    decltype(auto) TME()::Swz() noexcept {
       if constexpr (sizeof...(TAIL) == 0)
-         return mArray[HEAD];
+         return all[HEAD];
       else
          return Inner::TProxyVector<T, S, HEAD, TAIL...> {*this};
    }
@@ -349,9 +339,9 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr decltype(auto) TME()::Swz() const noexcept {
       if constexpr (sizeof...(TAIL) == 0)
-         return mArray[HEAD];
+         return all[HEAD];
       else
-         return TVector<T, sizeof...(TAIL) + 1> {mArray[HEAD], mArray[TAIL]...};
+         return TVector<T, sizeof...(TAIL) + 1> {all[HEAD], all[TAIL]...};
    }
 
    /// Cast the vector to another number type, with the ability to normalize  
@@ -362,16 +352,16 @@ namespace Langulus::Math
    template<class AS, bool NORMALIZE>
    LANGULUS(INLINED)
    constexpr TVector<AS, S> TME()::AsCast() const noexcept {
-      auto converted = SIMD::Convert<0, Decay<AS>>(mArray);
+      auto converted = SIMD::Convert<0, Decay<AS>>(all);
       if constexpr (NORMALIZE) {
          // Normalize all elements by the old numeric limits            
          constexpr AS factor = AS {1} / AS {::std::numeric_limits<T>::max()};
          converted = SIMD::Inner::Multiply(converted, SIMD::Set(factor));
       }
 
-      TVector<AS, S> result;
-      SIMD::Store(converted, result.mArray);
-      return result;
+      AS result[S];
+      SIMD::Store(converted, result);
+      return {result};
    }
 
    /// Multiply all components together                                       
@@ -385,8 +375,8 @@ namespace Langulus::Math
       static_assert(ALTS <= S, "Rank out of limits");
 
       T product {1};
-      auto start = mArray;
-      const auto end = mArray + ALTS;
+      auto start = all;
+      const auto end = start + ALTS;
       while (start != end)
          product *= *(start++);
       return product;
@@ -414,11 +404,11 @@ namespace Langulus::Math
    ///   @param com - the component to overwrite                              
    ///   @return a reference to this vector                                   
    TEMPLATE()
-   template<CT::DenseNumber N, CT::Dimension D>
+   template<CT::ScalarBased N, CT::Dimension D>
    LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& com) noexcept {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
-      mArray[D::Index] = Adapt(com.mValue);
+      all[D::Index] = Adapt(com.mValue);
       return *this;
    }
 
@@ -429,9 +419,9 @@ namespace Langulus::Math
    template<TARGS(ALT)>
    LANGULUS(INLINED)
    constexpr T TME()::Dot(const TVEC(ALT)& other) const noexcept {
-      auto source = other.mArray;
-      auto start = mArray;
-      const auto end = mArray + Min(S, ALTS);
+      auto source = other.all;
+      auto start = all;
+      const auto end = start + Math::Min(S, ALTS);
       T accum = *(start++) * *(source++);
       while (start != end)
          accum += *(start++) * *(source++);
@@ -444,11 +434,12 @@ namespace Langulus::Math
    TEMPLATE()
    template<TARGS(ALT)>
    LANGULUS(INLINED)
-   constexpr TVector<T, 3> TME()::Cross(const TVEC(ALT)& rhs) const noexcept requires (S >= 3 && ALTS >= 3) {
+   constexpr TVector<T, 3> TME()::Cross(const TVEC(ALT)& rhs) const noexcept
+   requires (S >= 3 and ALTS >= 3) {
       return {
-         mArray[1] * rhs[2] - mArray[2] * rhs[1],
-         mArray[2] * rhs[0] - mArray[0] * rhs[2],
-         mArray[0] * rhs[1] - mArray[1] * rhs[0]
+         y * rhs.z - z * rhs.y,
+         z * rhs.x - x * rhs.z,
+         x * rhs.y - y * rhs.x
       };
    }
 
@@ -471,12 +462,12 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto TME()::Clamp(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
       TVector result {*this};
-      auto minp = min.mArray;
-      auto maxp = max.mArray;
-      auto start = result.mArray;
-      const auto end = result.mArray + Min(S, MINS, MAXS);
+      auto minp = min.all;
+      auto maxp = max.all;
+      auto start = result.all;
+      const auto end = start + Math::Min(S, MINS, MAXS);
       while (start != end) {
-         *start = Clamp(*start, *(minp++), *(maxp++));
+         *start = Math::Clamp(*start, *(minp++), *(maxp++));
          ++start;
       }
       return result;
@@ -491,12 +482,12 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto TME()::ClampRev(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
       TVector result {*this};
-      auto minp = min.mArray;
-      auto maxp = max.mArray;
-      auto start = result.mArray;
-      const auto end = result.mArray + Min(S, MINS, MAXS);
+      auto minp = min.all;
+      auto maxp = max.all;
+      auto start = result.all;
+      const auto end = start + Math::Min(S, MINS, MAXS);
       while (start != end) {
-         *start = ClampRev(*start, *(minp++), *(maxp++));
+         *start = Math::ClampRev(*start, *(minp++), *(maxp++));
          ++start;
       }
       return result;
@@ -507,7 +498,7 @@ namespace Langulus::Math
    constexpr auto TME()::Round() const noexcept {
       if constexpr (CT::Real<T>) {
          T result[S];
-         SIMD::Store(SIMD::Round(mArray), result);
+         SIMD::Store(SIMD::Round(all), result);
          return result;
       }
       else return *this;
@@ -518,7 +509,7 @@ namespace Langulus::Math
    constexpr auto TME()::Floor() const noexcept {
       if constexpr (CT::Real<T>) {
          T result[S];
-         SIMD::Store(SIMD::Floor(mArray), result);
+         SIMD::Store(SIMD::Floor(all), result);
          return result;
       }
       else return *this;
@@ -529,7 +520,7 @@ namespace Langulus::Math
    constexpr auto TME()::Ceil() const noexcept {
       if constexpr (CT::Real<T>) {
          T result[S];
-         SIMD::Store(SIMD::Ceil(mArray), result);
+         SIMD::Store(SIMD::Ceil(all), result);
          return result;
       }
       else return *this;
@@ -540,7 +531,7 @@ namespace Langulus::Math
    constexpr auto TME()::Abs() const noexcept {
       if constexpr (CT::Signed<T>) {
          T result[S];
-         SIMD::Store(SIMD::Abs(mArray), result);
+         SIMD::Store(SIMD::Abs(all), result);
          return result;
       }
       else return *this;
@@ -597,8 +588,8 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::HMax() const noexcept {
       // Related: https://stackoverflow.com/questions/22256525/         
-      auto start = mArray;
-      const auto end = mArray + S;
+      auto start = all;
+      const auto end = start + S;
       T t = *(start++);
       while (start != end)
          t = Math::Max(*(start++), t);
@@ -609,8 +600,8 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::HMin() const noexcept {
       // Related: https://stackoverflow.com/questions/22256525/         
-      auto start = mArray;
-      const auto end = mArray + S;
+      auto start = all;
+      const auto end = start + S;
       T t = *(start++);
       while (start != end)
          t = Math::Min(*(start++), t);
@@ -621,8 +612,8 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::HSum() const noexcept {
       // Related: https://stackoverflow.com/questions/6996764/          
-      auto start = mArray;
-      const auto end = mArray + S;
+      auto start = all;
+      const auto end = start + S;
       T t = *(start++);
       while (start != end)
          t += *(start++);
@@ -633,8 +624,8 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::HMul() const noexcept {
       T product {1};
-      for (auto& v : mArray)
-         product *= v;
+      for (auto& i : all)
+         product *= i;
       return product;
    }
 
@@ -643,8 +634,8 @@ namespace Langulus::Math
    constexpr auto TME()::Sign() const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Sign(v);
+      for (auto& i : all)
+         *(it++) = Math::Sign(i);
       return result;
    }
 
@@ -653,8 +644,8 @@ namespace Langulus::Math
    constexpr auto TME()::Mod(const T& period) const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Mod(v, period);
+      for (auto& i : all)
+         *(it++) = Math::Mod(i, period);
       return result;
    }
 
@@ -664,10 +655,10 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto TME()::Mod(const TVEC(ALT)& period) const noexcept {
       T result[Min(S, ALTS)];
-      const T* lhs = mArray;
-      const T* rhs = period.mArray;
-      for (auto& v : result)
-         v = Math::Mod(*(lhs++), *(rhs++));
+      const T* lhs = all;
+      const T* rhs = period.all;
+      for (auto& i : result)
+         i = Math::Mod(*(lhs++), *(rhs++));
       return result;
    }
 
@@ -676,8 +667,8 @@ namespace Langulus::Math
    constexpr auto TME()::Step(const T& edge) const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Step(edge, v);
+      for (auto& i : result)
+         *(it++) = Math::Step(edge, i);
       return result;
    }
 
@@ -687,10 +678,10 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto TME()::Step(const TVEC(ALT)& edge) const noexcept {
       T result[Min(S, ALTS)];
-      const T* lhs = mArray;
-      const T* rhs = edge.mArray;
-      for (auto& v : result)
-         v = Math::Step(*(rhs++), *(lhs++));
+      const T* lhs = all;
+      const T* rhs = edge.all;
+      for (auto& i : result)
+         i = Math::Step(*(rhs++), *(lhs++));
       return result;
    }
 
@@ -699,7 +690,7 @@ namespace Langulus::Math
    template<class ALT>
    LANGULUS(INLINED)
    constexpr TME() TME()::Pow(const ALT& exponents) const noexcept {
-      return SIMD::Power(mArray, exponents);
+      return SIMD::Power(all, exponents);
    }
 
    /// Fraction                                                               
@@ -707,8 +698,8 @@ namespace Langulus::Math
    constexpr auto TME()::Frac() const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Frac(v);
+      for (auto& i : all)
+         *(it++) = Math::Frac(i);
       return result;
    }
 
@@ -717,8 +708,8 @@ namespace Langulus::Math
    constexpr auto TME()::Sqrt() const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Sqrt(v);
+      for (auto& i : all)
+         *(it++) = Math::Sqrt(i);
       return result;
    }
 
@@ -727,8 +718,8 @@ namespace Langulus::Math
    constexpr auto TME()::Exp() const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Exp(v);
+      for (auto& i : all)
+         *(it++) = Math::Exp(i);
       return result;
    }
 
@@ -737,8 +728,8 @@ namespace Langulus::Math
    constexpr auto TME()::Sin() const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Sin(v);
+      for (auto& i : all)
+         *(it++) = Math::Sin(i);
       return result;
    }
 
@@ -747,8 +738,8 @@ namespace Langulus::Math
    constexpr auto TME()::Cos() const noexcept {
       T result[S];
       T* it = result;
-      for (auto& v : mArray)
-         *(it++) = Math::Cos(v);
+      for (auto& i : all)
+         *(it++) = Math::Cos(i);
       return result;
    }
 
@@ -758,19 +749,15 @@ namespace Langulus::Math
       const auto compare = [](const void* p1, const void* p2) noexcept {
          auto g1 = static_cast<const T*>(p1);
          auto g2 = static_cast<const T*>(p2);
-         if constexpr (CT::Sparse<T>) {
-            if (**g1 < **g2)        return -1;
-            else if (**g1 > **g2)   return  1;
-            else                    return  0;
-         }
-         else {
-            if (*g1 < *g2)          return -1;
-            else if (*g1 > *g2)     return  1;
-            else                    return  0;
-         }
+         if (*g1 < *g2)
+            return -1;
+         else if (*g1 > *g2)
+            return  1;
+         else
+            return  0;
       };
 
-      qsort(mArray, S, sizeof(T), compare);
+      qsort(all, S, sizeof(T), compare);
       return *this;
    }
 
@@ -782,10 +769,10 @@ namespace Langulus::Math
          const auto halfScale = absScale / T {2};
          T result[S];
          T* it = result;
-         for (auto& v : mArray) {
-            *(it++) = v > halfScale
-               ? v - absScale : v < -halfScale
-                  ? v + absScale : v;
+         for (auto& i : all) {
+            *(it++) = i > halfScale
+               ? i - absScale : i < -halfScale
+                  ? i + absScale : i;
          }
 
          return result;
@@ -793,8 +780,8 @@ namespace Langulus::Math
       else {
          T result[S];
          T* it = result;
-         for (auto& v : mArray)
-            *(it++) = v > scalar ? v - scalar : v;
+         for (auto& i : all)
+            *(it++) = i > scalar ? i - scalar : i;
          return result;
       }
    }
@@ -802,21 +789,21 @@ namespace Langulus::Math
    /// Implicitly convert to a number if size is 1                            
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::operator const T& () const noexcept requires (S == 1) {
-      return (*this)[0];
+      return all[0];
    }
 
    /// Implicitly convert to a number if size is 1 (mutable)                  
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::operator T& () noexcept requires (S == 1) {
-      return (*this)[0];
+      return all[0];
    }
 
    /// Explicit cast to a compatible number of different type                 
    TEMPLATE()
-   template<CT::DenseNumber N>
+   template<CT::ScalarBased N>
    LANGULUS(INLINED)
    constexpr TME()::operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>) {
-      return static_cast<N>(*mArray);
+      return static_cast<N>(all[0]);
    }
    
    TEMPLATE()
@@ -859,13 +846,13 @@ namespace Langulus::Math
 
    /// Vector + Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Scalar + Vector                                                        
-   constexpr auto operator + (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs, rhs)};
    }
@@ -879,14 +866,14 @@ namespace Langulus::Math
 
    /// Vector - Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Scalar - Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs, rhs)};
    }
@@ -900,14 +887,14 @@ namespace Langulus::Math
 
    /// Vector * Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Scalar * Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs, rhs)};
    }
@@ -921,14 +908,14 @@ namespace Langulus::Math
 
    /// Vector / Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) {
+   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs, rhs)};
    }
 
    /// Scalar / Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto operator / (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs, rhs)};
    }
@@ -943,7 +930,7 @@ namespace Langulus::Math
    }
 
    /// Vector << Scalar                                                       
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    LANGULUS(INLINED)
    constexpr auto operator << (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
@@ -952,7 +939,7 @@ namespace Langulus::Math
    }
 
    /// Scalar << Vector                                                       
-   template<CT::DenseScalar LHS, CT::VectorBased RHS>
+   template<CT::ScalarBased LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
    constexpr auto operator << (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
@@ -970,7 +957,7 @@ namespace Langulus::Math
    }
 
    /// Vector >> Scalar                                                       
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    LANGULUS(INLINED)
    constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
@@ -979,7 +966,7 @@ namespace Langulus::Math
    }
 
    /// Scalar >> Vector                                                       
-   template<CT::DenseScalar LHS, CT::VectorBased RHS>
+   template<CT::ScalarBased LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
    constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
@@ -997,7 +984,7 @@ namespace Langulus::Math
    }
 
    /// Vector xor Scalar                                                      
-   template<CT::VectorBased LHS, CT::DenseScalar RHS>
+   template<CT::VectorBased LHS, CT::ScalarBased RHS>
    LANGULUS(INLINED)
    constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
@@ -1006,7 +993,7 @@ namespace Langulus::Math
    }
 
    /// Scalar xor Vector                                                      
-   template<CT::DenseScalar LHS, CT::VectorBased RHS>
+   template<CT::ScalarBased LHS, CT::VectorBased RHS>
    LANGULUS(INLINED)
    constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
@@ -1027,7 +1014,7 @@ namespace Langulus::Math
 
    /// Add vector and a scalar                                                
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       SIMD::Add(lhs, rhs, lhs);
       return lhs;
    }
@@ -1041,7 +1028,7 @@ namespace Langulus::Math
 
    /// Subtract vector and a scalar                                           
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       SIMD::Subtract(lhs, rhs, lhs);
       return lhs;
    }
@@ -1055,7 +1042,7 @@ namespace Langulus::Math
 
    /// Multiply vector by a scalar                                            
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       SIMD::Multiply(lhs, rhs, lhs);
       return lhs;
    }
@@ -1071,7 +1058,7 @@ namespace Langulus::Math
    /// Divide dense vector and a scalar                                       
    /// This function will throw on division by zero                           
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) {
+   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) {
       SIMD::Divide(lhs, rhs, lhs);
       return lhs;
    }
@@ -1086,12 +1073,12 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator < (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
@@ -1101,12 +1088,12 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
@@ -1116,12 +1103,12 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator > (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
@@ -1131,12 +1118,12 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
@@ -1146,12 +1133,12 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       return SIMD::Equals(lhs, rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return SIMD::Equals(lhs, rhs);
    }
 
@@ -1161,12 +1148,12 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
+   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::DenseScalar auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
@@ -1176,32 +1163,32 @@ namespace Langulus::Math
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::begin() noexcept {
-      return mArray;
+      return GetRaw();
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::end() noexcept {
-      return mArray + S;
+      return GetRaw() + S;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::last() noexcept {
-      return mArray + S - 1;
+      return GetRaw() + S - 1;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::begin() const noexcept {
-      return mArray;
+      return GetRaw();
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::end() const noexcept {
-      return mArray + S;
+      return GetRaw() + S;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::last() const noexcept {
-      return mArray + S - 1;
+      return GetRaw() + S - 1;
    }
 
 } // namespace Langulus::Math
@@ -1263,4 +1250,4 @@ namespace Langulus::Axes
    template<CT::DenseNumber T = Real>
    constexpr auto Left = -X<T>;
 
-} // Langulus::Cardinal
+} // Langulus::Axes

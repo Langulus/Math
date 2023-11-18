@@ -162,7 +162,6 @@ namespace Langulus
          using PointType = T;
          using T::MemberCount;
          using T::T;
-         using T::mArray;
 
          LANGULUS(NAME) CustomNameOf<TSampler>::Generate();
          LANGULUS(TYPED) TypeOf<T>;

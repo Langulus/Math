@@ -161,7 +161,6 @@ namespace Langulus
       struct TForce : T {
          using PointType = T;
          using T::T;
-         using T::mArray;
          using T::MemberCount;
 
          LANGULUS(NAME) CustomNameOf<TForce>::Generate();

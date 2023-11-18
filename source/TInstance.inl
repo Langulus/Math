@@ -8,6 +8,8 @@
 ///                                                                           
 #pragma once 
 #include "TInstance.hpp"
+#include "Ranges/TRange.inl"
+#include "Quaternions/TQuaternion.inl"
 
 #define TEMPLATE() template<CT::VectorBased T>
 #define TME() TInstance<T>
@@ -23,9 +25,9 @@ namespace Langulus::Math
    TEMPLATE()
    typename TME()::RangeType TME()::GetRange(Level level) const {
       const auto halfSize = GetScale() * ScalarType {.5};
-      const auto factor = Pow(Level::Unit, mLevel - level);
+      const auto factor   = Pow(Level::Unit, mLevel - level);
       const auto position = GetPosition();
-      return RangeType {position - halfSize, position + halfSize} * factor;
+      return (RangeType {-halfSize, halfSize} + position) * factor;
    }
 
    /// Get the range of the instance (aka AABB) from a ref octave             
@@ -48,22 +50,24 @@ namespace Langulus::Math
       const auto orientation_matrix = static_cast<MatrixType>(mAim);
       const PointType base[4] = {
          orientation_matrix * (aabb.mMax - center),
-         orientation_matrix * (PointType(aabb.mMax[0], aabb.mMax[1], aabb.mMin[2]) - center),
-         orientation_matrix * (PointType(aabb.mMax[0], aabb.mMin[1], aabb.mMax[2]) - center),
-         orientation_matrix * (PointType(aabb.mMax[0], aabb.mMin[1], aabb.mMin[2]) - center)
+         orientation_matrix * (PointType(aabb.mMax.x, aabb.mMax.y, aabb.mMin.z) - center),
+         orientation_matrix * (PointType(aabb.mMax.x, aabb.mMin.y, aabb.mMax.z) - center),
+         orientation_matrix * (PointType(aabb.mMax.x, aabb.mMin.y, aabb.mMin.z) - center)
       };
 
       // Use the rotated base to reconstruct the rest of the points     
       // They're simply mirrored relative to the center                 
       const PointType points[8] = {
-         base[0] + center, base[1] + center, base[2] + center, base[3] + center,
-         center - base[0], center - base[1], center - base[2], center - base[3]
+         base[0] + center,  base[1] + center,  base[2] + center,  base[3] + center,
+        -base[0] + center, -base[1] + center, -base[2] + center, -base[3] + center
       };
 
       // Then recalculate min/max values of the new AABB                
       return {
-         Min(points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7]),
-         Max(points[0], points[1], points[2], points[3], points[4], points[5], points[6], points[7])
+         Min(points[0], points[1], points[2], points[3], 
+             points[4], points[5], points[6], points[7]),
+         Max(points[0], points[1], points[2], points[3], 
+             points[4], points[5], points[6], points[7])
       };
    }
 

@@ -11,7 +11,7 @@
 #include "../Vectors/TVector.inl"
 #include "../Matrices/TMatrix.inl"
 
-#define TEMPLATE() template<CT::DenseNumber T>
+#define TEMPLATE() template<CT::ScalarBased T>
 #define QUAT() TQuaternion<T>
 
 
@@ -49,9 +49,9 @@ namespace Langulus::Math
    constexpr QUAT()::TQuaternion(const TMatrix<T, 2, 2>& matrix) noexcept {   
       const auto trace = T {1} + matrix[0] + matrix[3];
       const auto S = Math::Sqrt(trace) * T {2};
-      mArray[0] = mArray[1] = T {0};
-      mArray[2] = (matrix[2] - matrix[1]) / S;
-      mArray[3] = T {.25} *S;
+      x = y = T {0};
+      z = (matrix[2] - matrix[1]) / S;
+      w = T {.25} *S;
    }
 
    /// Constructor from 3x3 matrix                                            
@@ -85,29 +85,29 @@ namespace Langulus::Math
       }
 
       const T biggestVal = Math::Sqrt(fourBiggestSquaredMinus1 + T {1}) * T {0.5};
-      mArray[biggestIndex] = biggestVal;
+      all[biggestIndex] = biggestVal;
 
       const T mult = T {0.25} / biggestVal;
       switch (biggestIndex) {
       case 0:
-         mArray[3] = (m[1][2] - m[2][1]) * mult;
-         mArray[1] = (m[0][1] + m[1][0]) * mult;
-         mArray[2] = (m[2][0] + m[0][2]) * mult;
+         w = (m[1][2] - m[2][1]) * mult;
+         y = (m[0][1] + m[1][0]) * mult;
+         z = (m[2][0] + m[0][2]) * mult;
          break;
       case 1:
-         mArray[3] = (m[2][0] - m[0][2]) * mult;
-         mArray[0] = (m[0][1] + m[1][0]) * mult;
-         mArray[2] = (m[1][2] + m[2][1]) * mult;
+         w = (m[2][0] - m[0][2]) * mult;
+         x = (m[0][1] + m[1][0]) * mult;
+         z = (m[1][2] + m[2][1]) * mult;
          break;
       case 2:
-         mArray[3] = (m[0][1] - m[1][0]) * mult;
-         mArray[0] = (m[2][0] + m[0][2]) * mult;
-         mArray[1] = (m[1][2] + m[2][1]) * mult;
+         w = (m[0][1] - m[1][0]) * mult;
+         x = (m[2][0] + m[0][2]) * mult;
+         y = (m[1][2] + m[2][1]) * mult;
          break;
       case 3:
-         mArray[2] = (m[1][2] - m[2][1]) * mult;
-         mArray[1] = (m[2][0] - m[0][2]) * mult;
-         mArray[0] = (m[0][1] - m[1][0]) * mult;
+         z = (m[1][2] - m[2][1]) * mult;
+         y = (m[2][0] - m[0][2]) * mult;
+         x = (m[0][1] - m[1][0]) * mult;
          break;
       default:
          // Never really happens, just silence warnings                 
@@ -241,34 +241,34 @@ namespace Langulus::Math
 
    /// Convert to a matrix                                                    
    TEMPLATE()
-   template<CT::DenseNumber K, Count COLUMNS, Count ROWS>
+   template<CT::ScalarBased K, Count COLUMNS, Count ROWS>
    constexpr QUAT()::operator TMatrix<K, COLUMNS, ROWS>()
    const noexcept requires (COLUMNS >= 3 and ROWS >= 3) {
-      const K qxx = mArray[0] * mArray[0];
-      const K qyy = mArray[1] * mArray[1];
-      const K qzz = mArray[2] * mArray[2];
-      const K qxz = mArray[0] * mArray[2];
-      const K qxy = mArray[0] * mArray[1];
-      const K qyz = mArray[1] * mArray[2];
-      const K qwx = mArray[3] * mArray[0];
-      const K qwy = mArray[3] * mArray[1];
-      const K qwz = mArray[3] * mArray[2];
+      const K qxx = x * x;
+      const K qyy = y * y;
+      const K qzz = z * z;
+      const K qxz = x * z;
+      const K qxy = x * y;
+      const K qyz = y * z;
+      const K qwx = w * x;
+      const K qwy = w * y;
+      const K qwz = w * z;
 
       constexpr K one {1};
       constexpr K two {2};
-      TMatrix<K, COLUMNS, ROWS> r;
-      r[0][0] = one - two * (qyy + qzz);
-      r[0][1] =       two * (qxy + qwz);
-      r[0][2] =       two * (qxz - qwy);
+      TMatrix<K, COLUMNS, ROWS> result;
+      result[0].x = one - two * (qyy + qzz);
+      result[0].y =       two * (qxy + qwz);
+      result[0].z =       two * (qxz - qwy);
 
-      r[1][0] =       two * (qxy - qwz);
-      r[1][1] = one - two * (qxx + qzz);
-      r[1][2] =       two * (qyz + qwx);
+      result[1].x =       two * (qxy - qwz);
+      result[1].y = one - two * (qxx + qzz);
+      result[1].z =       two * (qyz + qwx);
 
-      r[2][0] =       two * (qxz + qwy);
-      r[2][1] =       two * (qyz - qwx);
-      r[2][2] = one - two * (qxx + qyy);
-      return r;
+      result[2].x =       two * (qxz + qwy);
+      result[2].y =       two * (qyz - qwx);
+      result[2].z = one - two * (qxx + qyy);
+      return result;
    }
 
 
@@ -285,14 +285,14 @@ namespace Langulus::Math
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       return LosslessQuaternion<decltype(lhs), decltype(rhs)> {
-         lhs.mArray[0] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[0]
-       + lhs.mArray[1] * rhs.mArray[2] - lhs.mArray[2] * rhs.mArray[1],
-         lhs.mArray[1] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[1]
-       + lhs.mArray[2] * rhs.mArray[0] - lhs.mArray[0] * rhs.mArray[2],
-         lhs.mArray[2] * rhs.mArray[3] + lhs.mArray[3] * rhs.mArray[2]
-       + lhs.mArray[0] * rhs.mArray[1] - lhs.mArray[1] * rhs.mArray[0],
-         lhs.mArray[3] * rhs.mArray[3] - lhs.mArray[0] * rhs.mArray[0]
-       - lhs.mArray[1] * rhs.mArray[1] - lhs.mArray[2] * rhs.mArray[2]
+         lhs.x * rhs.w + lhs.w * rhs.x
+       + lhs.y * rhs.z - lhs.z * rhs.y,
+         lhs.y * rhs.w + lhs.w * rhs.y
+       + lhs.z * rhs.x - lhs.x * rhs.z,
+         lhs.z * rhs.w + lhs.w * rhs.z
+       + lhs.x * rhs.y - lhs.y * rhs.x,
+         lhs.w * rhs.w - lhs.x * rhs.x
+       - lhs.y * rhs.y - lhs.z * rhs.z
       };
    }
 
@@ -335,7 +335,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       const CT::QuaternionBased auto& lhs,
-      const CT::DenseScalar     auto& rhs
+      const CT::ScalarBased     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Add(lhs, rhs)};
@@ -344,7 +344,7 @@ namespace Langulus::Math
    /// Scalar + Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::DenseScalar     auto& lhs,
+      const CT::ScalarBased     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -355,7 +355,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       const CT::QuaternionBased auto& lhs,
-      const CT::DenseScalar     auto& rhs
+      const CT::ScalarBased     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Subtract(lhs, rhs)};
@@ -364,7 +364,7 @@ namespace Langulus::Math
    /// Scalar - Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::DenseScalar     auto& lhs,
+      const CT::ScalarBased     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -375,7 +375,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       const CT::QuaternionBased auto& lhs,
-      const CT::DenseScalar     auto& rhs
+      const CT::ScalarBased     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Multiply(lhs, rhs)};
@@ -384,7 +384,7 @@ namespace Langulus::Math
    /// Scalar * Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::DenseScalar     auto& lhs,
+      const CT::ScalarBased     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -395,7 +395,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator / (
       const CT::QuaternionBased auto& lhs,
-      const CT::DenseScalar     auto& rhs
+      const CT::ScalarBased     auto& rhs
    ) {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Divide(lhs, rhs)};
@@ -404,7 +404,7 @@ namespace Langulus::Math
    /// Scalar / Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator / (
-      const CT::DenseScalar     auto& lhs,
+      const CT::ScalarBased     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -422,36 +422,36 @@ namespace Langulus::A
    ///   @param p - the position vector                                       
    ///   @param s - the scale vector                                          
    ///   @return the composed matrix                                          
-   template<CT::Vector T>
+   template<CT::VectorBased T>
    NOD() constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
    Matrix::From(const Math::TQuaternion<TypeOf<T>>& q, const T& p, const T& s) noexcept {
       using K = TypeOf<T>;
-      TMatrix<K, T::MemberCount + 1> result;
-      auto& x = q[0];
-      auto& y = q[1];
-      auto& z = q[2];
-      auto& w = q[3];
-
-      auto x2 = x + x, y2 = y + y, z2 = z + z;
-      auto xx = x * x2, xy = x * y2, xz = x * z2;
-      auto yy = y * y2, yz = y * z2, zz = z * z2;
-      auto wx = w * x2, wy = w * y2, wz = w * z2;
-      auto& sx = s[0];
-      auto& sy = s[1];
-      auto& sz = s[2];
+      Math::TMatrix<K, T::MemberCount + 1> result;
+      auto x2 = q.x + q.x;
+      auto y2 = q.y + q.y;
+      auto z2 = q.z + q.z;
+      auto xx = q.x * x2;
+      auto xy = q.x * y2;
+      auto xz = q.x * z2;
+      auto yy = q.y * y2;
+      auto yz = q.y * z2;
+      auto zz = q.z * z2;
+      auto wx = q.w * x2;
+      auto wy = q.w * y2;
+      auto wz = q.w * z2;
 
       constexpr K one {1};
-      result.mColumns[0][0] = (one - (yy + zz)) * sx;
-      result.mColumns[1][0] = (xy + wz) * sx;
-      result.mColumns[2][0] = (xz - wy) * sx;
-
-      result.mColumns[0][1] = (xy - wz) * sy;
-      result.mColumns[1][1] = (one - (xx + zz)) * sy;
-      result.mColumns[2][1] = (yz + wx) * sy;
-
-      result.mColumns[0][2] = (xz + wy) * sz;
-      result.mColumns[1][2] = (yz - wx) * sz;
-      result.mColumns[2][2] = (one - (xx + yy)) * sz;
+      result[0].x = (one - (yy + zz)) * s.x;
+      result[1].x =        (xy + wz)  * s.x;
+      result[2].x =        (xz - wy)  * s.x;
+                                         
+      result[0].y =        (xy - wz)  * s.y;
+      result[1].y = (one - (xx + zz)) * s.y;
+      result[2].y =        (yz + wx)  * s.y;
+                                         
+      result[0].z =        (xz + wy)  * s.z;
+      result[1].z =        (yz - wx)  * s.z;
+      result[2].z = (one - (xx + yy)) * s.z;
 
       result.SetPosition(p);
       return result;

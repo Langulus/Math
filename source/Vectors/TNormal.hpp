@@ -154,7 +154,6 @@ namespace Langulus
          using PointType = T;
          using T::MemberCount;
          using T::T;
-         using T::mArray;
 
          static_assert(MemberCount > 1,
             "Normal size must be greater than one");

@@ -105,5 +105,41 @@ namespace Langulus::Verbs
 } // namespace Langulus::Verbs
 
 
+namespace Langulus::CT
+{
+
+   /// Anything that has the quaternion trait                                 
+   template<class... T>
+   concept QuaternionBased = ((Decay<T>::CTTI_QuaternionTrait) and ...);
+
+   /// Anything that has the vector trait                                     
+   template<class... T>
+   concept VectorBased = ((Decay<T>::CTTI_VectorTrait) and ...);
+
+   /// Anything that has the range trait                                      
+   template<class... T>
+   concept RangeBased = ((Decay<T>::CTTI_RangeTrait) and ...);
+
+   /// Anything that has the matrix trait                                     
+   template<class... T>
+   concept MatrixBased = ((Decay<T>::CTTI_MatrixTrait) and ...);
+
+   /// Anything that has the gradient trait                                   
+   template<class... T>
+   concept GradientBased = ((Decay<T>::CTTI_GradientTrait) and ...);
+
+   /// Anything that doesn't have any of the above traits                     
+   ///   @attention keep this one up to date, if adding new math traits       
+   template<class... T>
+   concept ScalarBased = DenseScalar<T...> and not (
+            QuaternionBased<T...>
+         or VectorBased<T...>
+         or RangeBased<T...>
+         or MatrixBased<T...>
+         or GradientBased<T...>
+      );
+
+} // namespace Langulus::CT
+
 /// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1

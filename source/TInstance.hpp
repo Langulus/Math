@@ -7,7 +7,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "Numbers/Level.hpp"
+#include "Numbers/Level.inl"
 #include "Numbers/TAngle.hpp"
 #include "Ranges/TRange.hpp"
 #include "Vectors/TVector.hpp"
