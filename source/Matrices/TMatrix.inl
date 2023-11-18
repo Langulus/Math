@@ -11,9 +11,9 @@
 #include "../Vectors/TVector.inl"
 #include "../Numbers/TAngle.inl"
 
-#define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
+#define TARGS(a) CT::ScalarBased a##T, Count a##C, Count a##R
 #define TMAT(a) TMatrix<a##T, a##C, a##R>
-#define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+#define TEMPLATE() template<CT::ScalarBased T, Count COLUMNS, Count ROWS>
 #define TME() TMatrix<T, COLUMNS, ROWS>
 
 
@@ -121,7 +121,7 @@ namespace Langulus::Math
    ///   @param x - the component to adapt                                    
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const CT::DenseNumber auto& x) const noexcept {
+   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) const noexcept {
       using N = Deref<decltype(x)>;
       static_assert(CT::Convertible<N, T>, "Incompatible number");
 
@@ -240,7 +240,7 @@ namespace Langulus::Math
 
    /// Multiply by a row vector                                               
    ///   @return a column vector result                                       
-   template<TARGS(LHS), CT::DenseNumber T, Count C>
+   template<TARGS(LHS), CT::ScalarBased T, Count C>
    constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSC and C > 1) {
       using LT = Lossless<T, LHST>;
       if constexpr (LHSC == LHSR and LHSC == 2) {
@@ -292,7 +292,7 @@ namespace Langulus::Math
 
    /// Multiply by a column vector                                            
    ///   @return a row vector result                                          
-   template<TARGS(RHS), CT::DenseNumber T, Count C>
+   template<TARGS(RHS), CT::ScalarBased T, Count C>
    constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSR and C > 1) {
       using LT = Lossless<T, RHST>;
       if constexpr (RHSC == RHSR and RHSC == 2) {
@@ -331,7 +331,7 @@ namespace Langulus::Math
    }
 
    /// Destructive multiplication of a row vector                             
-   template<TARGS(RHS), CT::DenseNumber T, Count C>
+   template<TARGS(RHS), CT::ScalarBased T, Count C>
    LANGULUS(INLINED)
    constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC and C > 1) {
       return vec = vec * me;
@@ -920,7 +920,7 @@ namespace Langulus::A
    ///   @param near - the distance to the near clipping plane                
    ///   @param far - the distance to the far clipping plane                  
    ///   @return the projection matrix                                        
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    constexpr Math::TMatrix<T, 4> A::Matrix::PerspectiveFOV(
       const CT::Angle auto& fieldOfView,
       const T& aspect,
@@ -940,7 +940,7 @@ namespace Langulus::A
 
    /// Perspective constructor - left-handed perspective projection matrix    
    /// described by a region on the near clipping plane                       
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    constexpr Math::TMatrix<T, 4> A::Matrix::PerspectiveRegion(
       const T& left, const T& right,
       const T& top,  const T& bottom,
@@ -966,7 +966,7 @@ namespace Langulus::A
    }
 
    /// Orthographic constructor - LH orthographic projection matrix           
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    constexpr Math::TMatrix<T, 4> A::Matrix::Orthographic(
       const T& width, const T& height,
       const T& near,  const T& far

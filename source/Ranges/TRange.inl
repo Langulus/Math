@@ -8,6 +8,7 @@
 ///                                                                           
 #pragma once
 #include "TRange.hpp"
+#include "../Vectors/TVector.inl"
 
 #define TEMPLATE() template<CT::Dense T>
 #define TME() TRange<T>
@@ -16,20 +17,29 @@
 namespace Langulus::Math
 {
 
+   /// Default constructor                                                    
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TRange() noexcept
+      : mMin {}
+      , mMax {} {}
+
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const TRange& a) noexcept
-      : mBounds {a.mMin, a.mMax} {}
+      : mMin {a.mMin}
+      , mMax {a.mMax} {}
 
    /// Scalar construction (min == max)                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& minmax) noexcept
-      : mBounds {minmax, minmax} {}
+      : mMin {minmax}
+      , mMax {minmax} {}
 
    /// Manual construction from min & max                                     
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept
-      : mBounds {min, max} {}
+      : mMin {min}
+      , mMax {max} {}
 
    /// From dense data                                                        
    TEMPLATE() LANGULUS(INLINED)
@@ -40,6 +50,57 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType* const* a) noexcept
       : TRange {*a[0], *a[1]} {}
+   
+#if LANGULUS_SIMD(128BIT)
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m128& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m128d& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m128i& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+#endif
+
+#if LANGULUS_SIMD(256BIT)
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m256& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m256d& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m256i& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+#endif
+
+#if LANGULUS_SIMD(512BIT)
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m512& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m512d& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::TRange(const simde__m512i& source) noexcept {
+      SIMD::Store(source, mArray);
+   }
+#endif
 
    /// Convert any range to text                                              
    TEMPLATE() LANGULUS(INLINED)
@@ -47,71 +108,77 @@ namespace Langulus::Math
       Flow::Code result;
       result += NameOf<TRange>();
       result += Flow::Code::OpenScope;
-         result += mBounds.mMin.operator Flow::Code();
+         result += mMin.operator Flow::Code();
          result += ", ";
-         result += mBounds.mMax.operator Flow::Code();
+         result += mMax.operator Flow::Code();
       result += Flow::Code::CloseScope;
       return result;
    }
 
-   TEMPLATE()
-   template<class N>
-   LANGULUS(INLINED)
-   constexpr TME()& TME()::Embrace(const N& other) noexcept {
-      mBounds.mMin = Min(mBounds.mMin, other);
-      mBounds.mMax = Max(mBounds.mMax, other);
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::Embrace(const auto& other) noexcept {
+      mMin = Min(mMin, other);
+      mMax = Max(mMax, other);
       return *this;
    }
 
-   TEMPLATE()
-   template<class N>
-   LANGULUS(INLINED)
-   constexpr TME()& TME()::ConstrainBy(const N& limits) noexcept {
-      mBounds.mMin = Clamp(mBounds.mMin, limits.mBounds.mMin, limits.mBounds.mMax);
-      mBounds.mMax = Clamp(mBounds.mMax, limits.mBounds.mMin, limits.mBounds.mMax);
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::ConstrainBy(const auto& limits) noexcept {
+      mMin = Clamp(mMin, limits.mMin, limits.mMax);
+      mMax = Clamp(mMax, limits.mMin, limits.mMax);
       return *this;
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   const typename TME()::PointType& TME()::GetMin() const noexcept {
+      return mMin;
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   const typename TME()::PointType& TME()::GetMax() const noexcept {
+      return mMax;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    typename TME()::PointType TME()::Length() const noexcept {
-      return mBounds.mMax - mBounds.mMin;
+      return mMax - mMin;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    typename TME()::PointType TME()::Center() const noexcept {
-      return mBounds.mMin + Length() * 0.5f;
+      return mMin + Length() * 0.5f;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::IsDegenerate() const noexcept {
-      return mBounds.mMin == mBounds.mMax;
+      return mMin == mMax;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::Inside(const PointType& a) const noexcept {
-      return a >= mBounds.mMin and a <= mBounds.mMax;
+      return a >= mMin and a <= mMax;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::IsInsideHalfClosed(const PointType& x) const noexcept {
-      return x >= mBounds.mMin and x < mBounds.mMax;
+      return x >= mMin and x < mMax;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr typename TME()::PointType TME()::ClampRev(const PointType& pos) const noexcept {
-      return pos.ClampRev(mBounds.mMin, mBounds.mMax);
+      return pos.ClampRev(mMin, mMax);
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr typename TME()::PointType TME()::Clamp(const PointType& pos) const noexcept {
-      return pos.Clamp(mBounds.mMin, mBounds.mMax);
+      return pos.Clamp(mMin, mMax);
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME() TME()::operator | (const TME()& a) const noexcept {
       return {
-         mBounds.mMin.Clamp(a.mBounds.mMin, a.mBounds.mMax),
-         mBounds.mMax.Clamp(a.mBounds.mMin, a.mBounds.mMax)
+         mMin.Clamp(a.mMin, a.mMax),
+         mMax.Clamp(a.mMin, a.mMax)
       };
    }
 
@@ -138,61 +205,132 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
-      return Ret {SIMD::Add(lhs, rhs)};
+      return Ret {SIMD::Add(lhs.mArray, rhs.mArray)};
    }
 
-   /// Vector + Scalar                                                        
+   /// Range + Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::DenseScalar auto& rhs) noexcept {
-      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
-      return Ret {SIMD::Add(lhs, rhs)};
+   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Add(lhs.mArray, rhs)};
    }
 
-   /// Scalar + Vector                                                        
-   constexpr auto operator + (const CT::DenseScalar auto& lhs, const CT::RangeBased auto& rhs) noexcept {
-      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
-      return Ret {SIMD::Add(lhs, rhs)};
-   }
-
-
-   /// Returns the sum of two ranges                                          
-   template<class T1, class T2>
+   /// Range + Vector                                                         
    LANGULUS(INLINED)
-   auto operator + (const TRange<T1>& me, const TRange<T2>& other) noexcept {
-      return TRange<decltype(Fake<T1>() + Fake<T2>())> {
-         me.mMin + other.mMin,
-         me.mMax + other.mMax
-      };
+   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs.mMin + rhs, lhs.mMax + rhs}; //TODO can be optimized further by caching rhs in a register
    }
 
-   /// Returns the difference of two ranges                                   
-   template<class T1, class T2>
-   LANGULUS(INLINED)
-   auto operator - (const TRange<T1>& me, const TRange<T2>& other) noexcept {
-      return TRange<decltype(Fake<T1>() - Fake<T2>())> {
-         me.mMin - other.mMin,
-         me.mMax - other.mMax
-      };
+   /// Scalar + Range                                                         
+   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Add(lhs, rhs.mArray)};
    }
 
-   /// Returns the product of two ranges                                      
-   template<class T1, class T2>
-   LANGULUS(INLINED)
-   auto operator * (const TRange<T1>& me, const TRange<T2>& other) noexcept {
-      return TRange<decltype(Fake<T1>() * Fake<T2>())> {
-         me.mMin * other.mMin,
-         me.mMax * other.mMax
-      };
+   /// Vector + Range                                                         
+   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs + rhs.mMin, lhs + rhs.mMax}; //TODO can be optimized further by caching lhs in a register
    }
 
-   /// Returns the division of two ranges                                     
-   template<class T1, class T2>
+   /// Returns the difference of any two ranges                               
    LANGULUS(INLINED)
-   auto operator / (const TRange<T1>& me, const TRange<T2>& other) {
-      return TRange<decltype(Fake<T1>() / Fake<T2>())> {
-         me.mMin / other.mMin,
-         me.mMax / other.mMax
-      };
+   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Subtract(lhs.mArray, rhs.mArray)};
+   }
+
+   /// Range + Scalar                                                         
+   LANGULUS(INLINED)
+   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Subtract(lhs.mArray, rhs)};
+   }
+
+   /// Range + Vector                                                         
+   LANGULUS(INLINED)
+   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs.mMin - rhs, lhs.mMax - rhs}; //TODO can be optimized further by caching rhs in a register
+   }
+
+   /// Scalar + Range                                                         
+   constexpr auto operator - (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Subtract(lhs, rhs.mArray)};
+   }
+
+   /// Vector + Range                                                         
+   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs - rhs.mMin, lhs - rhs.mMax}; //TODO can be optimized further by caching lhs in a register
+   }
+
+   /// Returns the Hadamard product of any two ranges                         
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Multiply(lhs.mArray, rhs.mArray)};
+   }
+
+   /// Range * Scalar                                                         
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Multiply(lhs.mArray, rhs)};
+   }
+
+   /// Range * Vector                                                         
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs.mMin * rhs, lhs.mMax * rhs}; //TODO can be optimized further by caching rhs in a register
+   }
+
+   /// Scalar * Range                                                         
+   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Multiply(lhs, rhs.mArray)};
+   }
+
+   /// Vector * Range                                                         
+   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs * rhs.mMin, lhs * rhs.mMax}; //TODO can be optimized further by caching lhs in a register
+   }
+
+   /// Returns the Hadamard division of any two ranges                        
+   LANGULUS(INLINED)
+   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::RangeBased auto& rhs) {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Divide(lhs.mArray, rhs.mArray)};
+   }
+
+   /// Range / Scalar                                                         
+   LANGULUS(INLINED)
+   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Divide(lhs.mArray, rhs)};
+   }
+
+   /// Range / Vector                                                         
+   LANGULUS(INLINED)
+   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs.mMin / rhs, lhs.mMax / rhs}; //TODO can be optimized further by caching rhs in a register
+   }
+
+   /// Scalar / Range                                                         
+   constexpr auto operator / (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {SIMD::Divide(lhs, rhs.mArray)};
+   }
+
+   /// Vector / Range                                                         
+   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) {
+      using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
+      return Ret {lhs / rhs.mMin, lhs / rhs.mMax}; //TODO can be optimized further by caching lhs in a register
    }
 
 

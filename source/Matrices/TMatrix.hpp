@@ -16,10 +16,10 @@ namespace Langulus
    namespace Math
    {
 
-      template<CT::DenseNumber T>
+      template<CT::ScalarBased T>
       struct TQuaternion;
 
-      template<CT::DenseNumber T, Count COLUMNS, Count ROWS = COLUMNS>
+      template<CT::ScalarBased T, Count COLUMNS, Count ROWS = COLUMNS>
       struct TMatrix;
 
       using Mat2 = TMatrix<Real, 2>;
@@ -47,9 +47,9 @@ namespace Langulus
 
    } // namespace Langulus::Math
 
-   #define TARGS(a) CT::DenseNumber a##T, Count a##C, Count a##R
+   #define TARGS(a) CT::ScalarBased a##T, Count a##C, Count a##R
    #define TMAT(a) TMatrix<a##T, a##C, a##R>
-   #define TEMPLATE() template<CT::DenseNumber T, Count COLUMNS, Count ROWS>
+   #define TEMPLATE() template<CT::ScalarBased T, Count COLUMNS, Count ROWS>
    #define TME() TMatrix<T, COLUMNS, ROWS>
 
    namespace A
@@ -61,19 +61,19 @@ namespace Langulus
          LANGULUS(ABSTRACT) true;
          LANGULUS(CONCRETE) Math::Matrix;
 
-         template<CT::Vector V>
+         template<CT::VectorBased V>
          NOD() static constexpr Math::TMatrix<TypeOf<V>, V::MemberCount + 1>
          From(const Math::TQuaternion<TypeOf<V>>&, const V& = 0, const V& = 1) noexcept;
 
-         template<CT::DenseNumber T>
+         template<CT::ScalarBased T>
          NOD() static constexpr Math::TMatrix<T, 4>
          PerspectiveFOV(const CT::Angle auto&, const T&, const T&, const T&);
 
-         template<CT::DenseNumber T>
+         template<CT::ScalarBased T>
          NOD() static constexpr Math::TMatrix<T, 4>
          PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&);
 
-         template<CT::DenseNumber T>
+         template<CT::ScalarBased T>
          NOD() static constexpr Math::TMatrix<T, 4>
          Orthographic(const T&, const T&, const T&, const T&);
       };
@@ -112,7 +112,7 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// matrix of the same type                                             
-      template<CT::DenseNumber T>
+      template<CT::ScalarBased T>
       struct MatrixOfType : Matrix {
          LANGULUS(CONCRETE) Math::TMatrix<T, 4, 4>;
          LANGULUS(TYPED) T;
@@ -175,6 +175,9 @@ namespace Langulus
          static constexpr Count MemberCount = Columns * Rows;
          static constexpr bool IsSquare = Columns == Rows;
 
+         // Make TMatrix match the CT::MatrixBased concept              
+         static constexpr bool CTTI_MatrixTrait = true;
+
          union {
             ColumnType mColumns[Columns] {};
             T mArray[MemberCount];
@@ -201,7 +204,7 @@ namespace Langulus
          template<class T1, class T2, class... TAIL>
          constexpr TMatrix(const T1&, const T2&, const TAIL&...) noexcept;
 
-         NOD() constexpr decltype(auto) Adapt(const CT::DenseNumber auto&) const noexcept;
+         NOD() constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) const noexcept;
 
          NOD() static constexpr TMatrix LookAt(
             TVector<T, 3>,
@@ -238,9 +241,9 @@ namespace Langulus
          ///                                                                  
          ///   Access                                                         
          ///                                                                  
-         NOD() constexpr ColumnType& operator [] (Offset) noexcept;
+         NOD() constexpr       ColumnType& operator [] (Offset) noexcept;
          NOD() constexpr const ColumnType& operator [] (Offset) const noexcept;
-         NOD() constexpr T* GetRaw() noexcept;
+         NOD() constexpr       T* GetRaw() noexcept;
          NOD() constexpr const T* GetRaw() const noexcept;
          NOD() RowType GetRow(Offset) const noexcept;
          NOD() const ColumnType& GetColumn(Offset) const noexcept;
@@ -328,15 +331,15 @@ namespace Langulus
       TEMPLATE()
       constexpr TME()& operator /= (TME()&, const T&) noexcept;
 
-      template<TARGS(LHS), CT::DenseNumber K, Count C>
+      template<TARGS(LHS), CT::ScalarBased K, Count C>
       NOD() constexpr TVector<K, C> operator * (const TMAT(LHS)&, const TVector<K, C>&)
       noexcept requires (C <= LHSC and C > 1);
 
-      template<TARGS(RHS), CT::DenseNumber K, Count C>
+      template<TARGS(RHS), CT::ScalarBased K, Count C>
       NOD() constexpr TVector<K, C> operator * (const TVector<K, C>&, const TMAT(RHS)&)
       noexcept requires (C <= RHSR and C > 1);
 
-      template<TARGS(RHS), CT::DenseNumber K, Count C>
+      template<TARGS(RHS), CT::ScalarBased K, Count C>
       constexpr TVector<K, C>& operator *= (TVector<K, C>&, const TMAT(RHS)&)
       noexcept requires (C <= RHSC and C > 1);
 

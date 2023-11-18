@@ -13,10 +13,10 @@
 namespace Langulus::Math
 {
 
-   template<CT::DenseNumber>
+   template<CT::ScalarBased>
    struct TQuaternion;
 
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    using TQuat = TQuaternion<T>;
 
    using Quaternionf = TQuaternion<Float>;
@@ -41,7 +41,7 @@ namespace Langulus::A
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// quaternion of the same type                                            
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    struct QuaternionOfType : Quaternion {
       LANGULUS(CONCRETE) Math::TQuaternion<T>;
       LANGULUS(TYPED) T;
@@ -54,7 +54,7 @@ namespace Langulus
 {
 
    /// Custom name generator at compile-time for vectors                      
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    constexpr auto CustomName(Of<Math::TQuaternion<T>>&&) noexcept {
       constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TQuaternion<T>>();
       ::std::array<char, defaultClassName.size() + 1> name {};
@@ -79,11 +79,23 @@ namespace Langulus::Math
    ///                                                                        
    ///   Templated quaternion                                                 
    ///                                                                        
-   template<CT::DenseNumber T>
+   template<CT::ScalarBased T>
    struct TQuaternion : TVector<T, 4> {
       using Base = TVector<T, 4>;
       using Base3 = TVector<T, 3>;
 
+      using Base::x;
+      using Base::first;
+      using Base::y;
+      using Base::second;
+      using Base::z;
+      using Base::third;
+      using Base::w;
+      using Base::fourth;
+
+      using Base::all;
+
+   public:
       LANGULUS(NAME) CustomNameOf<TQuaternion>::Generate();
       LANGULUS(NULLIFIABLE) false;
       LANGULUS_BASES(Base, A::QuaternionOfType<T>);
@@ -94,12 +106,9 @@ namespace Langulus::Math
       static constexpr bool CTTI_VectorTrait = false;
 
       using Base::Base;
-      using Base::mArray;
-
       constexpr TQuaternion() noexcept;
       constexpr TQuaternion(const Base&) noexcept;
       constexpr TQuaternion(const TMatrix<T, 2>&) noexcept;
-
       template<Count COLUMNS, Count ROWS>
       constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>&)
          noexcept requires (COLUMNS >= 3 and ROWS >= 3);
@@ -125,7 +134,7 @@ namespace Langulus::Math
 
       NOD() constexpr TQuaternion operator - () const noexcept;
 
-      template<CT::DenseNumber K = T, Count COLUMNS, Count ROWS>
+      template<CT::ScalarBased K = T, Count COLUMNS, Count ROWS>
       NOD() explicit constexpr operator TMatrix<K, COLUMNS, ROWS>()
          const noexcept requires (COLUMNS >= 3 and ROWS >= 3);
    };
@@ -146,16 +155,16 @@ namespace Langulus::Math
 
    constexpr void operator *= (CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator + (const CT::QuaternionBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::DenseScalar auto&, const CT::QuaternionBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator - (const CT::QuaternionBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::DenseScalar auto&, const CT::QuaternionBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::DenseScalar auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::DenseScalar auto&, const CT::QuaternionBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator / (const CT::QuaternionBased auto&, const CT::DenseScalar auto&);
-   NOD() constexpr auto operator / (const CT::DenseScalar auto&, const CT::QuaternionBased auto&);
+   NOD() constexpr auto operator / (const CT::QuaternionBased auto&, const CT::ScalarBased auto&);
+   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::QuaternionBased auto&);
 
 } // namespace Langulus::Math

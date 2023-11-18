@@ -11,7 +11,7 @@
 #include "Vectors/TVector.inl"
 #include <Flow/Code.hpp>
 
-#define TEMPLATE() template<class T, Count S>
+#define TEMPLATE() template<CT::Dense T, Count S>
 #define TME() TGradient<T, S>
 
 
@@ -25,12 +25,13 @@ namespace Langulus::Math
       for (auto& i : mBuffer)
          i = initial;
    }
-
+   
    /// Manual construction via a variadic head-tail                           
-   ///   @param arguments... - list of states                                 
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TGradient(CT::NotSemantic auto&&... arguments) noexcept
-      : mBuffer {::std::move(arguments)...} { }
+   TEMPLATE()
+   template<class T1, class T2, class... TAIL>
+   LANGULUS(INLINED)
+   constexpr TME()::TGradient(const T1& t1, const T2& t2, const TAIL&... tail) noexcept
+      : mBuffer {t1, t2, tail...} {}
 
    /// Access values in order of relevance (current value is at 0)            
    ///   @param index - the index                                             

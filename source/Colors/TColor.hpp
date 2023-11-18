@@ -14,7 +14,7 @@ namespace Langulus
 {
    namespace Math
    {
-      template<CT::Vector>
+      template<CT::VectorBased>
       struct TColor;
 
       template<CT::DenseNumber, CT::Dimension>
@@ -84,7 +84,7 @@ namespace Langulus
 
    
    /// Custom name generator at compile-time for colors                       
-   template<CT::Vector T>
+   template<CT::VectorBased T>
    constexpr auto CustomName(Of<Math::TColor<T>>&&) noexcept {
       constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TColor<T>>();
       ::std::array<char, defaultClassName.size() + 1> name {};
@@ -126,12 +126,20 @@ namespace Langulus
       ///   Templated color                                                   
       ///                                                                     
       #pragma pack(push, 1)
-      template<CT::Vector T>
+      template<CT::VectorBased T>
       struct TColor : T {
-         using T::MemberCount;
-         using T::T;
-         using T::mArray;
+         using T::r;
+         using T::red;
+         using T::g;
+         using T::green;
+         using T::b;
+         using T::blue;
+         using T::a;
+         using T::alpha;
 
+         using T::all;
+
+         using T::MemberCount;
          static_assert(MemberCount > 1 and MemberCount < 5,
             "Invalid number of channels");
 
@@ -143,7 +151,11 @@ namespace Langulus
             T
          );
 
+         using T::T;
          constexpr TColor(Logger::Color);
+
+         using T::Get;
+         using T::GetRaw;
 
          template<CT::DenseNumber ALTT, CT::Dimension D>
          constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;
