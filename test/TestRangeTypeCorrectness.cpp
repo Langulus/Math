@@ -23,19 +23,15 @@ TEMPLATE_TEST_CASE("Range interpretation", "[metadata]",
 	Range2f,
    Range2d
 ) {
-	GIVEN("A 2D range") {
+	GIVEN("Range interpreted as A::Number") {
 		auto meta = MetaOf<TestType>();
-		REQUIRE(meta);
 
-		WHEN("Interpreted as number") {
-			THEN("Requirements should be met") {
-				REQUIRE(		meta->template CastsTo<A::Number>( ));
-				REQUIRE(not meta->template CastsTo<A::Number>(1));
-				REQUIRE(not meta->template CastsTo<A::Number>(2));
-				REQUIRE(not meta->template CastsTo<A::Number>(3));
-				REQUIRE(    meta->template CastsTo<A::Number>(4));
-			}
-		}
+		REQUIRE(meta);
+		REQUIRE(		meta->template CastsTo<A::Number>( ));
+		REQUIRE(not meta->template CastsTo<A::Number>(1));
+		REQUIRE(not meta->template CastsTo<A::Number>(2));
+		REQUIRE(not meta->template CastsTo<A::Number>(3));
+		REQUIRE(    meta->template CastsTo<A::Number>(4));
 	}
 }
 

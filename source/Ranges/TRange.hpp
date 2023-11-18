@@ -164,7 +164,8 @@ namespace Langulus::Math
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS_BASES(
          A::RangeOfSize<MemberCount>,
-         A::RangeOfType<MemberType>
+         A::RangeOfType<MemberType>,
+         MemberType
       );
 
       // Make TRange match the CT::RangeBased concept                   
