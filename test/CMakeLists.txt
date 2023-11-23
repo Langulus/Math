@@ -15,5 +15,3 @@ add_test(
 	NAME		LangulusMathTest
 	COMMAND		LangulusMathTest
 )
-
-langulus_copy_dlls(LangulusMathTest ON LangulusMathTest)
