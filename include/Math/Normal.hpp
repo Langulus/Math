@@ -20,7 +20,7 @@ namespace Langulus::Math
       template<Count S>
       struct NormalTypeGenerator {
          template<class... T>
-         static void Register(TTypeList<T...>&&) {
+         static void Register(Types<T...>&&) {
             (((void)MetaOf<TNormal<TVector<T, S>>>()), ...);
          }
       };
@@ -28,9 +28,7 @@ namespace Langulus::Math
 
    /// Register all normal types                                              
    inline void RegisterNormals() {
-      using RealTypes = TTypeList<
-         Float, Double
-      >;
+      using RealTypes = Types<Float, Double>;
 
       Inner::NormalTypeGenerator<2>::Register(RealTypes {});
       Inner::NormalTypeGenerator<3>::Register(RealTypes {});
