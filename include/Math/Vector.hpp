@@ -20,7 +20,7 @@ namespace Langulus::Math
       template<Count S>
       struct VectorTypeGenerator {
          template<class... T>
-         static void Register(TTypeList<T...>&&) {
+         static void Register(Types<T...>&&) {
             (((void) MetaOf<TVector<T, S>>()), ...);
          }
       };
@@ -31,7 +31,7 @@ namespace Langulus::Math
    /// Register all commonly used vector types, so they can be instantiated   
    /// from a flow                                                            
    inline void RegisterVectors() {
-      using AllTypes = TTypeList<
+      using AllTypes = Types<
          ::std::uint8_t, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t,
          ::std::int8_t,  ::std::int16_t,  ::std::int32_t,  ::std::int64_t,
          Float, Double
