@@ -8,20 +8,20 @@ project(LangulusMath
 # Check if this project is built as standalone, or a part of something else 
 if(PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/lib)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
     include(LangulusUtilities.cmake)
 
     # Add Langulus::Core/Logger/RTTI/SIMD/Fractalloc/Anyness/Flow libraries 
-	fetch_langulus_module(Core    GIT_TAG 0097bd180a5c625f88db0db0514bbf93aff53c7a)
-	fetch_langulus_module(Logger  GIT_TAG b63513abb9fb3014107335949e17e41e6e8a334b)
-	fetch_langulus_module(RTTI    GIT_TAG f7c610255b819b99a6adcdefa970387490093c25)
+	fetch_langulus_module(Core    GIT_TAG c11832957380709e316ffaf737d47c4578ed8caf)
+	fetch_langulus_module(Logger  GIT_TAG e137aac46f3d682a06e8d0b1a160748fcbca21a4)
+	fetch_langulus_module(RTTI    GIT_TAG 74d1a5fd0f5f6c23fd23c7921e1ba1c5df8c94c3)
     if(LANGULUS_FEATURE_MANAGED_MEMORY)
-        fetch_langulus_module(Fractalloc GIT_TAG 17a8741cfa252b30e20257bb9d953d89278c4039)
+        fetch_langulus_module(Fractalloc GIT_TAG 9c46cbf6e10585b98f25b3d97ed35c1be7b14e45)
     endif()
-	fetch_langulus_module(SIMD    GIT_TAG 3cfb3bd47a8e0d610e0d473d74fbbde14dcea298)
-	fetch_langulus_module(Anyness GIT_TAG b0ba5561250825aaeb3a660d6e246c04166349b6)
-    fetch_langulus_module(Flow	  GIT_TAG 0b51e7af0140f13a5561d604fe827bb21c462604)
+	fetch_langulus_module(SIMD    GIT_TAG f70c0a00839c23024acc045d0ffb5eda1e3671a0)
+	fetch_langulus_module(Anyness GIT_TAG 603ec6c815c539e8e2ed0c57716573e6d6f9e722)
+    fetch_langulus_module(Flow	  GIT_TAG 1a40a10b4dd7e44c2f1d8e2e6e295867efcef194)
 endif()
 
 # Build and install Math library                                            
