@@ -720,11 +720,11 @@ namespace Langulus::Math
    constexpr TME()& TME()::SetPosition(const CT::Vector auto& position)
    noexcept requires (ROWS > 2 and COLUMNS > 2) {
       using V = Deref<decltype(position)>;
-      constexpr auto S = Math::Min(3, CountOf<V>);
+      constexpr auto S = Math::Min(3u, CountOf<V>);
       static_assert (S <= Rows and S <= Columns,
          "Position out of matrix limits");
       auto& column = mColumns[Columns - 1];
-      for (int i = 0; i < S; ++i)
+      for (unsigned i = 0; i < S; ++i)
          column[i] = position[i];
       return *this;
    }
@@ -734,8 +734,8 @@ namespace Langulus::Math
    ///   @return a row                                                        
    TEMPLATE() LANGULUS(INLINED)
    typename TME()::RowType TME()::GetRow(Offset idx) const noexcept {
-      T r[COLUMNS];
-      for (int i = 0; i < COLUMNS; ++i)
+      T r[Columns];
+      for (unsigned i = 0; i < Columns; ++i)
          r[i] = mColumns[i][idx];
       return r;
    }

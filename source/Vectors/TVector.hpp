@@ -367,7 +367,6 @@ namespace Langulus::Math
       ///   Assignment                                                        
       ///                                                                     
       constexpr TVector& operator = (const TVector&) noexcept = default;
-      constexpr TVector& operator = (TVector&&) noexcept = default;
       constexpr TVector& operator = (const CT::Vector auto&) noexcept;
       constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
 

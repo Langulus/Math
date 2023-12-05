@@ -28,7 +28,7 @@ namespace Langulus::Math
    template<CT::Vector T>
    constexpr TPlane<T>::TPlane(const TVector<TypeOf<T>, MemberCount + 1>& column) noexcept
       : mNormal {column}
-      , mOffset {column[3]} {
+      , mOffset {column[MemberCount]} {
       Normalize();
    }
 

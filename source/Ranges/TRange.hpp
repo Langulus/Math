@@ -167,6 +167,7 @@ namespace Langulus::Math
          A::RangeOfType<MemberType>,
          MemberType
       );
+      LANGULUS_CONVERSIONS(Flow::Debug, Flow::Code);
 
       // Make TRange match the CT::RangeBased concept                   
       static constexpr bool CTTI_RangeTrait = true;
@@ -197,6 +198,17 @@ namespace Langulus::Math
       TRange(const simde__m512i&) noexcept;
    #endif
 
+      ///                                                                     
+      ///   Assignment                                                        
+      ///                                                                     
+      constexpr TRange& operator = (const TRange&) noexcept = default;
+      constexpr TRange& operator = (const CT::RangeBased auto&) noexcept;
+      constexpr TRange& operator = (const CT::VectorBased auto&) noexcept;
+      constexpr TRange& operator = (const CT::ScalarBased auto&) noexcept;
+
+      template<CT::ScalarBased N, CT::Dimension D>
+      constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
+      NOD() explicit operator Flow::Debug() const;
       NOD() explicit operator Flow::Code() const;
 
       constexpr TRange& Embrace(const auto&) noexcept;

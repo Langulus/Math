@@ -102,6 +102,40 @@ namespace Langulus::Math
    }
 #endif
 
+   /// Copy range                                                             
+   ///   @param r - the range to copy                                         
+   ///   @return a reference to this range                                    
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::operator = (const CT::RangeBased auto& r) noexcept {
+      return *new (this) TRange {r};
+   }
+
+   /// Copy vector                                                            
+   ///   @param v - the vector to copy                                        
+   ///   @return a reference to this range                                    
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::operator = (const CT::VectorBased auto& v) noexcept {
+      return *new (this) TRange {v};
+   }
+  
+   /// Copy scalar                                                            
+   ///   @param s - the scalar value                                          
+   ///   @return a reference to this range                                    
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::operator = (const CT::ScalarBased auto& s) noexcept {
+      return *new (this) TRange {s};
+   }
+
+   /// Set only a specific component                                          
+   ///   @param c - the component to overwrite                                
+   ///   @return a reference to this vector                                   
+   TEMPLATE()
+   template<CT::ScalarBased N, CT::Dimension D>
+   LANGULUS(INLINED)
+   constexpr auto& TME()::operator = (const TVectorComponent<N, D>& c) noexcept {
+      return *new (this) TRange {PointType {c}};
+   }
+
    /// Convert any range to text                                              
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
@@ -113,6 +147,11 @@ namespace Langulus::Math
          result += mMax.operator Flow::Code();
       result += Flow::Code::CloseScope;
       return result;
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::operator Flow::Debug() const {
+      return operator Flow::Code();
    }
 
    TEMPLATE() LANGULUS(INLINED)
