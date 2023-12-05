@@ -247,7 +247,6 @@ namespace Langulus
          ///   Assignment                                                     
          ///                                                                  
          constexpr TMatrix& operator = (const TMatrix&) noexcept = default;
-         constexpr TMatrix& operator = (TMatrix&&) noexcept = default;
          constexpr TMatrix& operator = (const CT::MatrixBased auto&) noexcept;
          constexpr TMatrix& operator = (const CT::VectorBased auto&) noexcept;
          constexpr TMatrix& operator = (const CT::ScalarBased auto&) noexcept;
