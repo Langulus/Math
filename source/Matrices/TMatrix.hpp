@@ -172,6 +172,7 @@ namespace Langulus
 
          static constexpr Count Columns = COLUMNS;
          static constexpr Count Rows = ROWS;
+         static constexpr Count Diagonal = Math::Min(Columns, Rows);
          static constexpr Count MemberCount = Columns * Rows;
          static constexpr bool IsSquare = Columns == Rows;
 
@@ -195,48 +196,75 @@ namespace Langulus
             A::MatrixOfType<T>, 
             T
          );
+         LANGULUS_CONVERSIONS(Flow::Debug, Flow::Code);
 
       public:
+         ///                                                                  
+         ///   Construction                                                   
+         ///                                                                  
          constexpr TMatrix() noexcept;
-         template<TARGS(ALT)>
-         constexpr TMatrix(const TMAT(ALT)&) noexcept;
-         constexpr TMatrix(const CT::Number auto&) noexcept;
+         constexpr TMatrix(const TMatrix&) noexcept = default;
+         constexpr TMatrix(const CT::MatrixBased auto&) noexcept;
+         constexpr TMatrix(const CT::VectorBased auto&) noexcept;
+         constexpr TMatrix(const CT::ScalarBased auto&) noexcept;
          template<class T1, class T2, class... TAIL>
          constexpr TMatrix(const T1&, const T2&, const TAIL&...) noexcept;
 
-         NOD() constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) const noexcept;
+         TMatrix(Describe&&);
 
          NOD() static constexpr TMatrix LookAt(
             TVector<T, 3>,
             TVector<T, 3>
          ) requires (ROWS >= 2 and COLUMNS >= 2);
 
-         NOD() static constexpr TMatrix Rotation(
+         NOD() static constexpr TMatrix Rotate(
             const CT::Angle auto&
          ) noexcept requires (ROWS >= 2 and COLUMNS >= 2);
 
-         NOD() static constexpr TMatrix RotationAxis(
+         NOD() static constexpr TMatrix RotateAxis(
             const TVector<T, 3>&,
             const CT::Angle auto&
          ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
 
-         NOD() static constexpr TMatrix Rotation(
+         NOD() static constexpr TMatrix Rotate(
             const CT::Angle auto& pitch,
             const CT::Angle auto& yaw
          ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
 
-         NOD() static constexpr TMatrix Rotation(
+         NOD() static constexpr TMatrix Rotate(
             const CT::Angle auto& pitch,
             const CT::Angle auto& yaw,
             const CT::Angle auto& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :(
          ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
 
-         NOD() static constexpr TMatrix Translation(const TVector<T, 4>&) noexcept;
-         NOD() static constexpr TMatrix Scalar(const T&) noexcept;
-         template<Count SIZE>
-         NOD() static constexpr TMatrix Scalar(const TVector<T, SIZE>&) noexcept;
+         NOD() static constexpr TMatrix Translate(const CT::VectorBased auto&) noexcept;
+         NOD() static constexpr TMatrix Scale(const CT::ScalarBased auto&) noexcept;
+         NOD() static constexpr TMatrix Scale(const CT::VectorBased auto&) noexcept;
          NOD() static constexpr TMatrix Identity() noexcept;
          NOD() static constexpr TMatrix Null() noexcept;
+
+         ///                                                                  
+         ///   Assignment                                                     
+         ///                                                                  
+         constexpr TMatrix& operator = (const TMatrix&) noexcept = default;
+         constexpr TMatrix& operator = (TMatrix&&) noexcept = default;
+         constexpr TMatrix& operator = (const CT::MatrixBased auto&) noexcept;
+         constexpr TMatrix& operator = (const CT::VectorBased auto&) noexcept;
+         constexpr TMatrix& operator = (const CT::ScalarBased auto&) noexcept;
+
+         template<CT::ScalarBased N, CT::Dimension D>
+         constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
+
+         ///                                                                     
+         ///   Interpretation                                                    
+         ///                                                                     
+         template<class TOKEN>
+         Flow::Code Serialize() const;
+
+         NOD() explicit operator Flow::Debug() const;
+         NOD() explicit operator Flow::Code() const;
+
+         NOD() static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;
 
          ///                                                                  
          ///   Access                                                         
@@ -256,17 +284,11 @@ namespace Langulus
          NOD() constexpr const TVector<T, ROWS-1>& GetPosition()
          const noexcept requires (ROWS > 2 and COLUMNS > 2);
 
-         constexpr TMatrix& SetPosition(const TVector<T, ROWS-1>&)
+         constexpr TMatrix& SetPosition(const CT::Vector auto&)
          noexcept requires (ROWS > 2 and COLUMNS > 2);
 
          NOD() constexpr bool IsIdentity() const noexcept;
          NOD() constexpr bool IsNull() const noexcept;
-
-
-         ///                                                                  
-         ///   Conversion                                                     
-         ///                                                                  
-         NOD() explicit operator Flow::Code() const;
 
          NOD() constexpr T Determinant() const noexcept;
          NOD() constexpr TMatrix Transpose() const noexcept;

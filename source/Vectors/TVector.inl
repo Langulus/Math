@@ -62,35 +62,42 @@ namespace Langulus::Math
    }
 
    /// Manual construction via a variadic head-tail                           
-   /// Any of the elements can be another vector, as long all vectors'        
-   /// element counts and scalars sum up to this vector type's size           
+   /// Excessive elements are ignored, while missing elements are defaulted   
    TEMPLATE()
    template<class T1, class T2, class... TAIL>
    LANGULUS(INLINED)
    constexpr TME()::TVector(const T1& t1, const T2& t2, const TAIL&... tail) noexcept {
+      constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
       if constexpr (CT::Vector<T1>) {
-         // First element is a vector...                                
-         if constexpr (T1::MemberCount < MemberCount) {
-            // ... but that vector is smaller than this one             
-            for (auto i = 0u; i < T1::MemberCount; ++i)
-               all[i] = Adapt(t1[i]);
-
-            // Form the tail as a new vector and copy the rest          
-            const TVector<T, MemberCount - T1::MemberCount> theRest {t2, tail...};
-            for (auto i = T1::MemberCount; i < MemberCount; ++i)
-               all[i] = theRest.all[i - T1::MemberCount];
-         }
-         else LANGULUS_ERROR("More elements provided than required");
+         // First element is vector/array, copy its elements            
+         for (Offset i = 0; i < C1; ++i)
+            all[i] = Adapt(t1[i]);
       }
       else {
-         // First element is a scalar, so copy it...                    
+         // First element is a scalar, copy it                          
          all[0] = Adapt(t1);
+      }
 
-         if constexpr (MemberCount - 1 > 0) {
-            // Form the tail as a new vector and copy the rest          
-            const TVector<T, MemberCount - 1> theRest {t2, tail...};
-            for (auto i = 1u; i < MemberCount; ++i)
-               all[i] = theRest.all[i - 1];
+      constexpr auto C2 = Math::Min(CountOf<T2>, MemberCount - C1);
+      if constexpr (C2) {
+         if constexpr (CT::Vector<T2>) {
+            // Second element is vector/array, copy its elements        
+            for (Offset i = C1; i < C1 + C2; ++i)
+               all[i] = Adapt(t2[i - C1]);
+         }
+         else {
+            // Second element is a scalar, copy it                      
+            all[C1] = Adapt(t2);
+         }
+
+         // Combine all the rest of the arguments in a vector           
+         if constexpr (sizeof...(TAIL)) {
+            constexpr auto C3 = Math::Min(CountOf<TAIL...>, MemberCount - (C1 + C2));
+            if constexpr (C3) {
+               const TVector<T, C3> theRest {tail...};
+               for (Offset i = C1 + C2; i < MemberCount; ++i)
+                  all[i] = theRest[i - (C1 + C2)];
+            }
          }
       }
    }
@@ -214,7 +221,13 @@ namespace Langulus::Math
       return Abandon(result);
    }
 
-   /// Convert from any vector to text                                        
+   /// Stringify vector for debugging                                         
+   TEMPLATE() LANGULUS(INLINED)
+   TME()::operator Flow::Debug() const {
+      return Serialize<TME()>();
+   }
+
+   /// Serialize vector as code                                               
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       return Serialize<TME()>();
@@ -224,7 +237,7 @@ namespace Langulus::Math
    ///   @param x - the component to adapt                                    
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) const noexcept {
+   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) noexcept {
       using N = Deref<decltype(x)>;
       static_assert(CT::Convertible<N, T>, "Incompatible number");
 

@@ -323,7 +323,7 @@ namespace Langulus::Math
          A::VectorOfType<T>,
          T
       );
-      LANGULUS_CONVERSIONS(Flow::Code);
+      LANGULUS_CONVERSIONS(Flow::Debug, Flow::Code);
 
       // Make TVector match the CT::VectorBased concept                 
       static constexpr bool CTTI_VectorTrait = true;
@@ -380,9 +380,10 @@ namespace Langulus::Math
       template<class TOKEN>
       Flow::Code Serialize() const;
 
+      NOD() explicit operator Flow::Debug() const;
       NOD() explicit operator Flow::Code() const;
 
-      NOD() constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) const noexcept;
+      NOD() static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;
 
       ///                                                                     
       ///   Access                                                            
