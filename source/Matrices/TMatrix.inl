@@ -558,12 +558,22 @@ namespace Langulus::Math
       __m128 a2 = _mm_add_ps(a0, a1);
       return typename mat<4, 4, T, Q>::col_type(a2);*/
          // 4x4 matrix * row optimization                               
-         return {
-            me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2] + me.mColumns[3][0] * vec[3],
-            me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2] + me.mColumns[3][1] * vec[3],
-            me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[3][2] * vec[3],
-            me.mColumns[0][3] * vec[0] + me.mColumns[1][3] * vec[1] + me.mColumns[2][3] * vec[2] + me.mColumns[3][3] * vec[3]
-         };
+         if constexpr (C > 3) {
+            return {
+               me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2] + me.mColumns[3][0] * vec[3],
+               me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2] + me.mColumns[3][1] * vec[3],
+               me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[3][2] * vec[3],
+               me.mColumns[0][3] * vec[0] + me.mColumns[1][3] * vec[1] + me.mColumns[2][3] * vec[2] + me.mColumns[3][3] * vec[3]
+            };
+         }
+         else {
+            return {
+               me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2] + me.mColumns[3][0],
+               me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2] + me.mColumns[3][1],
+               me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[3][2],
+               me.mColumns[0][3] * vec[0] + me.mColumns[1][3] * vec[1] + me.mColumns[2][3] * vec[2] + me.mColumns[3][3]
+            };
+         }
       }
       else {
          // Generic matrix * row                                        
@@ -598,12 +608,22 @@ namespace Langulus::Math
       }
       else if constexpr (RHSC == RHSR and RHSC == 4) {
          // 4x4 column * matrix optimization                            
-         return {
-            me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3] * vec[3],
-            me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2] + me.mColumns[1][3] * vec[3],
-            me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[2][3] * vec[3],
-            me.mColumns[3][0] * vec[0] + me.mColumns[3][1] * vec[1] + me.mColumns[3][2] * vec[2] + me.mColumns[3][3] * vec[3]
-         };
+         if constexpr (C > 3) {
+            return {
+               me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3] * vec[3],
+               me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2] + me.mColumns[1][3] * vec[3],
+               me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[2][3] * vec[3],
+               me.mColumns[3][0] * vec[0] + me.mColumns[3][1] * vec[1] + me.mColumns[3][2] * vec[2] + me.mColumns[3][3] * vec[3]
+            };
+         }
+         else {
+            return {
+               me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3],
+               me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2] + me.mColumns[1][3],
+               me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[2][3],
+               me.mColumns[3][0] * vec[0] + me.mColumns[3][1] * vec[1] + me.mColumns[3][2] * vec[2] + me.mColumns[3][3]
+            };
+         }
       }
       else {
          // Generic column * matrix                                     
