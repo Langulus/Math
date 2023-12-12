@@ -509,45 +509,37 @@ namespace Langulus::Math
    /// Round each element of the vector                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Round() const noexcept {
-      if constexpr (CT::Real<T>) {
-         T result[S];
-         SIMD::Store(SIMD::Round(all), result);
-         return result;
-      }
-      else return *this;
+      if constexpr (CT::Real<T>)
+         return TME() {SIMD::Round(*this)};
+      else
+         return *this;
    }
 
    /// Round down each vector component                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Floor() const noexcept {
-      if constexpr (CT::Real<T>) {
-         T result[S];
-         SIMD::Store(SIMD::Floor(all), result);
-         return result;
-      }
-      else return *this;
+      if constexpr (CT::Real<T>)
+         return TME() {SIMD::Floor(*this)};
+      else
+         return *this;
    }
 
    /// Round up each vector component                                         
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Ceil() const noexcept {
-      if constexpr (CT::Real<T>) {
-         T result[S];
-         SIMD::Store(SIMD::Ceil(all), result);
-         return result;
-      }
-      else return *this;
+      if constexpr (CT::Real<T>)
+         return TME() {SIMD::Ceil(*this)};
+      else
+         return *this;
    }
 
    /// Invert negative components of vector                                   
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Abs() const noexcept {
-      if constexpr (CT::Signed<T>) {
-         T result[S];
-         SIMD::Store(SIMD::Abs(all), result);
-         return result;
-      }
-      else return *this;
+      if constexpr (CT::Signed<T>)
+         return TME() {SIMD::Abs(*this)};
+      else
+         return *this;
    }
 
    /// Get biggest possible vector of the type                                
