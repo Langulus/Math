@@ -238,7 +238,7 @@ SCENARIO("Parsing scripts", "[code]") {
    GIVEN("The script: (? + Fraction(number??)) or (? Conjunct!8 ??)") {
       const Code code = "(? + Fraction(number??)) or (? Conjunct!8 ??)";
       Any futrNumber {futureMissing};
-      futrNumber << MetaData::Of<A::Number>();
+      futrNumber << MetaOf<A::Number>();
 
       Verbs::Add add {Construct::From<Fraction>(futrNumber)};
       add.SetSource(pastMissing);
