@@ -65,14 +65,14 @@ namespace Langulus::Math
 
    /// Register verbs                                                         
    inline void RegisterVerbs() {
-      (void)MetaVerb::Of<Verbs::Exponent>();
-      (void)MetaVerb::Of<Verbs::Multiply>();
-      (void)MetaVerb::Of<Verbs::Modulate>();
-      (void)MetaVerb::Of<Verbs::Randomize>();
-      (void)MetaVerb::Of<Verbs::Add>();
-      (void)MetaVerb::Of<Verbs::Lerp>();
-      (void)MetaVerb::Of<Verbs::Cerp>();
-      (void)MetaVerb::Of<Verbs::Move>();
+      (void)MetaOf<Verbs::Exponent>();
+      (void)MetaOf<Verbs::Multiply>();
+      (void)MetaOf<Verbs::Modulate>();
+      (void)MetaOf<Verbs::Randomize>();
+      (void)MetaOf<Verbs::Add>();
+      (void)MetaOf<Verbs::Lerp>();
+      (void)MetaOf<Verbs::Cerp>();
+      (void)MetaOf<Verbs::Move>();
    }
 
 } // namespace Langulus::Math
