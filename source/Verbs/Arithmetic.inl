@@ -9,6 +9,7 @@
 #pragma once
 #include "Arithmetic.hpp"
 
+
 namespace Langulus::Flow
 {
 
@@ -17,16 +18,16 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT>
-   template<CT::Data T>
-   LANGULUS(INLINED)
-   bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(const Block& original, const Block& lhs, Verb& rhs, Operator<T> o) noexcept (NOEXCEPT) {
+   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
+      const Block& original, const Block& lhs, Verb& rhs, Operator<T> o
+   ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
       auto result = Block::From<T>();
-      result.AllocateFresh(result.RequestSize(lhs.GetCount()));
+      result.AllocateFresh(result.template RequestSize<TAny<T>>(lhs.GetCount()));
       result.mCount = lhs.GetCount();
       const T* ilhs = lhs.GetRawAs<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
@@ -47,10 +48,10 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT>
-   template<CT::Data T>
-   LANGULUS(INLINED)
-   bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(const Block& original, Block& lhs, Verb& rhs, OperatorMutable<T> o) noexcept (NOEXCEPT) {
+   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
+      const Block& original, Block& lhs, Verb& rhs, OperatorMutable<T> o
+   ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
@@ -73,10 +74,10 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT>
-   template<CT::Data T>
-   LANGULUS(INLINED)
-   bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(const Block& original, const Block& lhs, Verb& rhs, Operator<T> o) noexcept (NOEXCEPT) {
+   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
+      const Block& original, const Block& lhs, Verb& rhs, Operator<T> o
+   ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
@@ -103,10 +104,10 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT>
-   template<CT::Data T>
-   LANGULUS(INLINED)
-   bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(const Block& original, Block& lhs, Verb& rhs, OperatorMutable<T> o) noexcept (NOEXCEPT) {
+   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
+      const Block& original, Block& lhs, Verb& rhs, OperatorMutable<T> o
+   ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
