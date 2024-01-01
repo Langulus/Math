@@ -45,7 +45,7 @@ namespace Langulus
       template<CT::Vector T>
       struct TPolygon : TAny<T> {
          LANGULUS(DEEP) false;
-         LANGULUS(TYPED) TypeOf<T>;
+         //LANGULUS(TYPED) TypeOf<T>;
          LANGULUS_BASES(A::Polygon);
 
          using Base = TAny<T>;
