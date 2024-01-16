@@ -63,10 +63,8 @@ namespace Langulus::Math
 
    /// Manual construction via a variadic head-tail                           
    /// Excessive elements are ignored, while missing elements are defaulted   
-   TEMPLATE()
-   template<class T1, class T2, class... TAIL>
-   LANGULUS(INLINED)
-   constexpr TME()::TVector(const T1& t1, const T2& t2, const TAIL&... tail) noexcept {
+   TEMPLATE() template<class T1, class T2, class...TAIL> LANGULUS(INLINED)
+   constexpr TME()::TVector(const T1& t1, const T2& t2, const TAIL&...tail) noexcept {
       constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
       if constexpr (CT::Vector<T1>) {
          // First element is vector/array, copy its elements            
@@ -104,9 +102,7 @@ namespace Langulus::Math
 
    /// Construct from a vector component                                      
    ///   @param a - component to set                                          
-   TEMPLATE()
-   template<CT::ScalarBased N, CT::Dimension D>
-   LANGULUS(INLINED)
+   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
    constexpr TME()::TVector(const TVectorComponent<N, D>& source) noexcept
       : TVector {} {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
@@ -203,8 +199,7 @@ namespace Langulus::Math
 
    /// Write the body of the vector (reused in vector specializations)        
    ///   @return the resulting body                                           
-   TEMPLATE()
-   template<class TOKEN>
+   TEMPLATE() template<class TOKEN>
    Flow::Code TME()::Serialize() const {
       Flow::Code result;
       if constexpr (S > 1 or not CT::Same<TME(), TOKEN>) {
@@ -267,9 +262,7 @@ namespace Langulus::Math
 
    /// Get the value of a specific component index (with static check)        
    ///   @return a reference to the component                                 
-   TEMPLATE()
-   template<Offset I>
-   LANGULUS(INLINED)
+   TEMPLATE() template<Offset I> LANGULUS(INLINED)
    constexpr const T& TME()::GetIdx() const noexcept {
       static_assert(I < S, "Index is out of limits");
       return all[I];
@@ -335,9 +328,7 @@ namespace Langulus::Math
 
    /// Mutable swizzle                                                        
    ///   @returns a proxy vector with the selected components                 
-   TEMPLATE()
-   template<Offset HEAD, Offset... TAIL>
-   LANGULUS(INLINED)
+   TEMPLATE() template<Offset HEAD, Offset...TAIL> LANGULUS(INLINED)
    decltype(auto) TME()::Swz() noexcept {
       if constexpr (sizeof...(TAIL) == 0)
          return all[HEAD];
@@ -347,9 +338,7 @@ namespace Langulus::Math
 
    /// Immutable swizzle, just returns a shuffled vector                      
    ///   @returns a simple vector with the selected copied components         
-   TEMPLATE()
-   template<Offset HEAD, Offset... TAIL>
-   LANGULUS(INLINED)
+   TEMPLATE() template<Offset HEAD, Offset...TAIL> LANGULUS(INLINED)
    constexpr decltype(auto) TME()::Swz() const noexcept {
       if constexpr (sizeof...(TAIL) == 0)
          return all[HEAD];
@@ -361,9 +350,7 @@ namespace Langulus::Math
    ///   @tparam AS - the type of number to cast to                           
    ///   @tparam NORMALIZE - whether or not to normalize the result           
    ///   @return the converted vector                                         
-   TEMPLATE()
-   template<class AS, bool NORMALIZE>
-   LANGULUS(INLINED)
+   TEMPLATE() template<class AS, bool NORMALIZE> LANGULUS(INLINED)
    constexpr TVector<AS, S> TME()::AsCast() const noexcept {
       auto converted = SIMD::Convert<0, Decay<AS>>(all);
       if constexpr (NORMALIZE) {
@@ -380,9 +367,7 @@ namespace Langulus::Math
    /// Multiply all components together                                       
    ///   @tparam ALTS - number of dimensions to multiply together             
    ///   @return the product                                                  
-   TEMPLATE()
-   template<Count ALTS>
-   LANGULUS(INLINED)
+   TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
    constexpr auto TME()::Volume() const noexcept {
       static_assert(ALTS > 1, "Degenerated volume, use higher rank");
       static_assert(ALTS <= S, "Rank out of limits");
@@ -416,9 +401,7 @@ namespace Langulus::Math
    /// Set only a specific component                                          
    ///   @param com - the component to overwrite                              
    ///   @return a reference to this vector                                   
-   TEMPLATE()
-   template<CT::ScalarBased N, CT::Dimension D>
-   LANGULUS(INLINED)
+   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& com) noexcept {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
       all[D::Index] = Adapt(com.mValue);
@@ -428,9 +411,7 @@ namespace Langulus::Math
    /// Dot product                                                            
    ///   @param other - the vector to dot with                                
    ///   @return the dot product of both vectors                              
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
    constexpr T TME()::Dot(const TVEC(ALT)& other) const noexcept {
       auto source = other.all;
       auto start = all;
@@ -444,9 +425,7 @@ namespace Langulus::Math
    /// Cross product                                                          
    ///   @param rhs - the vector to cross with                                
    ///   @return the cross product of both vectors                            
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
    constexpr TVector<T, 3> TME()::Cross(const TVEC(ALT)& rhs) const noexcept
    requires (S >= 3 and ALTS >= 3) {
       return {
@@ -470,9 +449,7 @@ namespace Langulus::Math
    ///   @param min - lower limit                                             
    ///   @param max - higher limit                                            
    ///   @return the clamped equivalent of this vector                        
-   TEMPLATE()
-   template<TARGS(MIN), TARGS(MAX)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(MIN), TARGS(MAX)> LANGULUS(INLINED)
    constexpr auto TME()::Clamp(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
       TVector result {*this};
       auto minp = min.all;
@@ -490,9 +467,7 @@ namespace Langulus::Math
    ///   @param min - lower limit                                             
    ///   @param max - higher limit                                            
    ///   @return the clamped equivalent of this vector                        
-   TEMPLATE()
-   template<TARGS(MIN), TARGS(MAX)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(MIN), TARGS(MAX)> LANGULUS(INLINED)
    constexpr auto TME()::ClampRev(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
       TVector result {*this};
       auto minp = min.all;
@@ -556,9 +531,7 @@ namespace Langulus::Math
    }
 
    /// Get maximum of each element                                            
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
    constexpr auto TME()::Max(const TVEC(ALT)& limits) const noexcept {
       using Ret = LosslessVector<TME(), TVEC(ALT)>;
       return Ret {SIMD::Max(*this, limits)};
@@ -581,9 +554,7 @@ namespace Langulus::Math
    }
 
    /// Get minimum of each element                                            
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
    constexpr auto TME()::Min(const TVEC(ALT)& limits) const noexcept {
       using Ret = LosslessVector<TME(), TVEC(ALT)>;
       return Ret {SIMD::Min(*this, limits)};
@@ -655,9 +626,7 @@ namespace Langulus::Math
    }
 
    /// Modulate via a vector                                                  
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
    constexpr auto TME()::Mod(const TVEC(ALT)& period) const noexcept {
       T result[Min(S, ALTS)];
       const T* lhs = all;
@@ -678,9 +647,7 @@ namespace Langulus::Math
    }
 
    /// Step via a vector                                                      
-   TEMPLATE()
-   template<TARGS(ALT)>
-   LANGULUS(INLINED)
+   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
    constexpr auto TME()::Step(const TVEC(ALT)& edge) const noexcept {
       T result[Min(S, ALTS)];
       const T* lhs = all;
@@ -691,9 +658,7 @@ namespace Langulus::Math
    }
 
    /// Power via a vector                                                     
-   TEMPLATE()
-   template<class ALT>
-   LANGULUS(INLINED)
+   TEMPLATE() template<class ALT> LANGULUS(INLINED)
    constexpr TME() TME()::Pow(const ALT& exponents) const noexcept {
       return SIMD::Power(all, exponents);
    }
@@ -804,23 +769,17 @@ namespace Langulus::Math
    }
 
    /// Explicit cast to a compatible number of different type                 
-   TEMPLATE()
-   template<CT::ScalarBased N>
-   LANGULUS(INLINED)
+   TEMPLATE() template<CT::ScalarBased N> LANGULUS(INLINED)
    constexpr TME()::operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>) {
       return static_cast<N>(all[0]);
    }
    
-   TEMPLATE()
-   template<Count ALTS>
-   LANGULUS(INLINED)
+   TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
    TME()::operator TVector<T, ALTS>& () noexcept requires (ALTS < S) {
       return reinterpret_cast<TVector<T, ALTS>&>(*this);
    }
 
-   TEMPLATE()
-   template<Count ALTS>
-   LANGULUS(INLINED)
+   TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
    TME()::operator const TVector<T, ALTS>& () const noexcept requires (ALTS < S) {
       return reinterpret_cast<const TVector<T, ALTS>&>(*this);
    }
@@ -926,8 +885,7 @@ namespace Langulus::Math
    }
 
    /// Vector << Vector                                                       
-   template<CT::VectorBased LHS, CT::VectorBased RHS>
-   LANGULUS(INLINED)
+   template<CT::VectorBased LHS, CT::VectorBased RHS> LANGULUS(INLINED)
    constexpr auto operator << (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -935,8 +893,7 @@ namespace Langulus::Math
    }
 
    /// Vector << Scalar                                                       
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   LANGULUS(INLINED)
+   template<CT::VectorBased LHS, CT::ScalarBased RHS> LANGULUS(INLINED)
    constexpr auto operator << (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -944,8 +901,7 @@ namespace Langulus::Math
    }
 
    /// Scalar << Vector                                                       
-   template<CT::ScalarBased LHS, CT::VectorBased RHS>
-   LANGULUS(INLINED)
+   template<CT::ScalarBased LHS, CT::VectorBased RHS> LANGULUS(INLINED)
    constexpr auto operator << (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -953,8 +909,7 @@ namespace Langulus::Math
    }
    
    /// Vector >> Vector                                                       
-   template<CT::VectorBased LHS, CT::VectorBased RHS>
-   LANGULUS(INLINED)
+   template<CT::VectorBased LHS, CT::VectorBased RHS> LANGULUS(INLINED)
    constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -962,8 +917,7 @@ namespace Langulus::Math
    }
 
    /// Vector >> Scalar                                                       
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   LANGULUS(INLINED)
+   template<CT::VectorBased LHS, CT::ScalarBased RHS> LANGULUS(INLINED)
    constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -971,8 +925,7 @@ namespace Langulus::Math
    }
 
    /// Scalar >> Vector                                                       
-   template<CT::ScalarBased LHS, CT::VectorBased RHS>
-   LANGULUS(INLINED)
+   template<CT::ScalarBased LHS, CT::VectorBased RHS> LANGULUS(INLINED)
    constexpr auto operator >> (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -980,8 +933,7 @@ namespace Langulus::Math
    }
    
    /// Vector xor Vector                                                      
-   template<CT::VectorBased LHS, CT::VectorBased RHS>
-   LANGULUS(INLINED)
+   template<CT::VectorBased LHS, CT::VectorBased RHS> LANGULUS(INLINED)
    constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -989,8 +941,7 @@ namespace Langulus::Math
    }
 
    /// Vector xor Scalar                                                      
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   LANGULUS(INLINED)
+   template<CT::VectorBased LHS, CT::ScalarBased RHS> LANGULUS(INLINED)
    constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
@@ -998,8 +949,7 @@ namespace Langulus::Math
    }
 
    /// Scalar xor Vector                                                      
-   template<CT::ScalarBased LHS, CT::VectorBased RHS>
-   LANGULUS(INLINED)
+   template<CT::ScalarBased LHS, CT::VectorBased RHS> LANGULUS(INLINED)
    constexpr auto operator ^ (const LHS& lhs, const RHS& rhs)
    noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
