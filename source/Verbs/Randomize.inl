@@ -66,8 +66,7 @@ namespace Langulus::Verbs
    template<CT::Data... T>
    bool Randomize::OperateOnTypes(const Block& context, const Block& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(
-            context, common, verb,
+         and ArithmeticVerb::Vector<T>(context, common, verb,
             [](const T*, const T*) -> T {
                TODO();
                return {};
@@ -85,8 +84,7 @@ namespace Langulus::Verbs
    template<CT::Data... T>
    bool Randomize::OperateOnTypes(const Block& context, Block& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(
-            context, common, verb,
+         and ArithmeticVerb::Vector<T>(context, common, verb,
             [](T*, const T*) -> T {
                TODO();
                return {};

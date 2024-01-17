@@ -26,19 +26,17 @@ namespace Langulus::Flow
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      auto result = Block::From<T>();
-      result.AllocateFresh(result.template RequestSize<TAny<T>>(lhs.GetCount()));
-      result.mCount = lhs.GetCount();
+      TAny<T> result;
+      result.Reserve<true>(lhs.GetCount());
       const T* ilhs = lhs.GetRawAs<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
       const T* irhs = rhs.GetRawAs<T>();
-      T* ires = result.template GetRawAs<T>();
+      T* ires = result.GetRaw();
       while (ilhs != ilhsEnd)
          *(ires++) = o(ilhs++, irhs++);
 
       // Interpret back to the original and push to verb output         
       rhs << result.ReinterpretAs(original);
-      result.Free();
       return true;
    }
 
@@ -83,12 +81,11 @@ namespace Langulus::Flow
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
       TAny<T> result;
-      result.AllocateFresh(result.RequestSize(lhs.GetCount()));
-      result.mCount = lhs.GetCount();
+      result.Reserve<true>(lhs.GetCount());
       const T* ilhs = lhs.GetRawAs<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
       const T& irhs = *rhs.GetRawAs<T>();
-      T* ires = result.template GetRawAs<T>();
+      T* ires = result.GetRaw();
       while (ilhs != ilhsEnd)
          *(ires++) = o(ilhs++, &irhs);
 

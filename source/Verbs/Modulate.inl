@@ -68,9 +68,8 @@ namespace Langulus::Verbs
    ///   @return if at least one of the types matched verb                    
    template<CT::Data... T>
    bool Modulate::OperateOnTypes(const Block& context, const Block& common, Verb& verb) {
-      return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(
-            context, common, verb,
+      return ((common.template CastsTo<T, true>()
+         and ArithmeticVerb::Vector<T>(context, common, verb,
             [](const T* lhs, const T* rhs) -> T {
                return Math::Mod(*lhs, *rhs);
             }
@@ -86,9 +85,8 @@ namespace Langulus::Verbs
    ///   @return if at least one of the types matched verb                    
    template<CT::Data... T>
    bool Modulate::OperateOnTypes(const Block& context, Block& common, Verb& verb) {
-      return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(
-            context, common, verb,
+      return ((common.template CastsTo<T, true>()
+         and ArithmeticVerb::Vector<T>(context, common, verb,
             [](T* lhs, const T* rhs) {
                *lhs = Math::Mod(*lhs, *rhs);
             }
@@ -99,8 +97,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - multiply/divide verb                                   
    inline bool Modulate::ExecuteDefault(const Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
@@ -115,8 +113,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - multiply/divide verb                                   
    inline bool Modulate::ExecuteDefault(Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
