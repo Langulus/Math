@@ -77,8 +77,7 @@ namespace Langulus::Verbs
    template<CT::Data... T>
    bool Add::OperateOnTypes(const Block& context, const Block& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(
-            context, common, verb,
+         and ArithmeticVerb::Vector<T>(context, common, verb,
             verb.GetMass() < 0
                ? [](const T* lhs, const T* rhs) noexcept -> T {
                   return *lhs - *rhs;
@@ -99,8 +98,7 @@ namespace Langulus::Verbs
    template<CT::Data... T>
    bool Add::OperateOnTypes(const Block& context, Block& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(
-            context, common, verb,
+         and ArithmeticVerb::Vector<T>(context, common, verb,
             verb.GetMass() < 0
                ? [](T* lhs, const T* rhs) noexcept {
                   *lhs -= *rhs;
@@ -119,9 +117,8 @@ namespace Langulus::Verbs
    ///   @return if at least one of the types matched verb                    
    template<CT::Data... T>
    bool Add::OperateOnTypes(Block& common, Verb& verb) {
-      return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Scalar<T>(
-            common, common, verb,
+      return ((common.template CastsTo<T, true>()
+         and ArithmeticVerb::Scalar<T>(common, common, verb,
             [](T* lhs, const T*) noexcept {
                *lhs *= T {-1};
             }
@@ -132,8 +129,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - add/subtract verb                                      
    inline bool Add::ExecuteDefault(const Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
@@ -148,8 +145,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - add/subtract verb                                      
    inline bool Add::ExecuteDefault(Block& context, Verb& verb) {
-      auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
