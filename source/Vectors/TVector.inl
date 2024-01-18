@@ -203,7 +203,7 @@ namespace Langulus::Math
    Flow::Code TME()::Serialize() const {
       Flow::Code result;
       if constexpr (S > 1 or not CT::Same<TME(), TOKEN>) {
-         result += MetaOf<TOKEN>();
+         result += Flow::Code {MetaDataOf<TOKEN>()};
          result += Flow::Code::OpenScope;
       }
 
