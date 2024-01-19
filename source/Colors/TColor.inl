@@ -182,7 +182,7 @@ namespace Langulus::Math
          auto bytes = reinterpret_cast<const Byte*>(GetRaw());
          const auto bytesEnd = bytes + sizeof(TColor);
          while (bytes != bytesEnd)
-            Flow::Serial::ToHex(*(bytes++), result);
+            result += Text::Hex(*(bytes++));
          result += Flow::Code::CloseScope;
          return Abandon(result);
       }
