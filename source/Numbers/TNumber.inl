@@ -65,11 +65,12 @@ namespace Langulus::Math
    ///   @return a string                                                     
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
+      using Flow::Code;
       Code result;
       if constexpr (CT::Same<T, W>)
          result += Code {mValue};
       else {
-         result += Code {MetaDataOf<W>()};
+         result += MetaDataOf<W>();
          result += Code::OpenScope;
          result += Code {mValue};
          result += Code::CloseScope;

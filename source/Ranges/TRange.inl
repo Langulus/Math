@@ -139,18 +139,19 @@ namespace Langulus::Math
    /// Convert any range to text                                              
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
-      Flow::Code result;
+      using Flow::Code;
+      Code result;
       result += NameOf<TRange>();
-      result += Flow::Code::OpenScope;
-         result += mMin.operator Flow::Code();
+      result += Code::OpenScope;
+         result += mMin.operator Code();
          result += ", ";
-         result += mMax.operator Flow::Code();
-      result += Flow::Code::CloseScope;
+         result += mMax.operator Code();
+      result += Code::CloseScope;
       return result;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Flow::Debug() const {
+   TME()::operator Anyness::Text() const {
       return operator Flow::Code();
    }
 
