@@ -167,7 +167,7 @@ namespace Langulus::Math
          A::RangeOfType<MemberType>,
          MemberType
       );
-      LANGULUS_CONVERSIONS(Flow::Debug, Flow::Code);
+      LANGULUS_CONVERSIONS(Anyness::Text, Flow::Code);
 
       // Make TRange match the CT::RangeBased concept                   
       static constexpr bool CTTI_RangeTrait = true;
@@ -208,7 +208,7 @@ namespace Langulus::Math
 
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
-      NOD() explicit operator Flow::Debug() const;
+      NOD() explicit operator Anyness::Text() const;
       NOD() explicit operator Flow::Code() const;
 
       constexpr TRange& Embrace(const auto&) noexcept;
