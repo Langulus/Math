@@ -8,6 +8,7 @@
 ///                                                                           
 #pragma once
 #include "Arithmetic.hpp"
+#include <Anyness/TAny.hpp>
 
 
 namespace Langulus::Flow
@@ -20,20 +21,21 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
-      const Block& original, const Block& lhs, Verb& rhs, Operator<T> o
+      const Block& original, const Block& lhs, Verb& rhs, Operator<T> op
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      TAny<T> result;
-      result.Reserve<true>(lhs.GetCount());
-      const T* ilhs = lhs.GetRawAs<T>();
+      using B = TAny<T>;
+      B result;
+      result.template Reserve<true>(lhs.GetCount());
+      const T* ilhs = lhs.GetRaw<B>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
-      const T* irhs = rhs.GetRawAs<T>();
+      const T* irhs = rhs.GetRaw<B>();
       T* ires = result.GetRaw();
       while (ilhs != ilhsEnd)
-         *(ires++) = o(ilhs++, irhs++);
+         *(ires++) = op(ilhs++, irhs++);
 
       // Interpret back to the original and push to verb output         
       rhs << result.ReinterpretAs(original);

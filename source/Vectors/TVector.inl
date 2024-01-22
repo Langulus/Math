@@ -201,24 +201,25 @@ namespace Langulus::Math
    ///   @return the resulting body                                           
    TEMPLATE() template<class TOKEN>
    Flow::Code TME()::Serialize() const {
-      Flow::Code result;
-      if constexpr (S > 1 or not CT::Same<TME(), TOKEN>) {
-         result += Flow::Code {MetaDataOf<TOKEN>()};
-         result += Flow::Code::OpenScope;
+      using Flow::Code;
+      Code result;
+      constexpr bool SCOPED = S > 1 or not CT::Same<TME(), TOKEN>;
+      if constexpr (SCOPED) {
+         result += MetaDataOf<TOKEN>();
+         result += Code::OpenScope;
       }
 
       auto data = Anyness::Block::From(GetRaw(), S);
-      result += Flow::Serialize<Flow::Code>(data);
+      result += data.template Serialize<Code>();
 
-      if constexpr (S > 1 or not CT::Same<TME(), TOKEN>)
-         result += Flow::Code::CloseScope;
-
+      if constexpr (SCOPED)
+         result += Code::CloseScope;
       return Abandon(result);
    }
 
    /// Stringify vector for debugging                                         
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Flow::Debug() const {
+   TME()::operator Anyness::Text() const {
       return Serialize<TME()>();
    }
 

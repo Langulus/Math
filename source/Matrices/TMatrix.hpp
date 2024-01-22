@@ -196,7 +196,7 @@ namespace Langulus
             A::MatrixOfType<T>, 
             T
          );
-         LANGULUS_CONVERSIONS(Flow::Debug, Flow::Code);
+         LANGULUS_CONVERSIONS(Anyness::Text, Flow::Code);
 
       public:
          ///                                                                  
@@ -260,7 +260,7 @@ namespace Langulus
          template<class TOKEN>
          Flow::Code Serialize() const;
 
-         NOD() explicit operator Flow::Debug() const;
+         NOD() explicit operator Anyness::Text() const;
          NOD() explicit operator Flow::Code() const;
 
          NOD() static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;

@@ -65,14 +65,14 @@ namespace Langulus::Math
    ///   @return a string                                                     
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
-      Flow::Code result;
+      Code result;
       if constexpr (CT::Same<T, W>)
-         result += Flow::Serialize<Flow::Code>(mValue);
+         result += Code {mValue};
       else {
-         result += NameOf<W>();
-         result += Flow::Code::OpenScope;
-         result += Flow::Serialize<Flow::Code>(mValue);
-         result += Flow::Code::CloseScope;
+         result += Code {MetaDataOf<W>()};
+         result += Code::OpenScope;
+         result += Code {mValue};
+         result += Code::CloseScope;
       }
       return result;
    }
