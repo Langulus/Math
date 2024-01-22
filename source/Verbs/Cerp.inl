@@ -19,7 +19,7 @@ namespace Langulus::Verbs
 
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
-   template<CT::Dense T, CT::Data... A>
+   template<CT::Dense T, CT::Data...A>
    constexpr bool Cerp::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 1) {
          using A0 = FirstOf<A...>;
@@ -30,7 +30,7 @@ namespace Langulus::Verbs
 
    /// Get the verb functor for the given type and arguments                  
    ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::Data... A>
+   template<CT::Dense T, CT::Data...A>
    constexpr auto Cerp::Of() noexcept {
       if constexpr (CT::Constant<T>) {
          return [](const void* context, Flow::Verb& verb, A... args) {
@@ -65,7 +65,7 @@ namespace Langulus::Verbs
    ///   @param common - the base to operate on                               
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
-   template<CT::Data... T>
+   template<CT::Data...T>
    bool Cerp::OperateOnTypes(const Block& context, const Block& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
          and ArithmeticVerb::Vector<T>(
@@ -83,7 +83,7 @@ namespace Langulus::Verbs
    ///   @param common - the base to operate on                               
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
-   template<CT::Data... T>
+   template<CT::Data...T>
    bool Cerp::OperateOnTypes(const Block& context, Block& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
          and ArithmeticVerb::Vector<T>(
@@ -98,8 +98,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - multiply/divide verb                                   
    inline bool Cerp::ExecuteDefault(const Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
@@ -114,8 +114,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - multiply/divide verb                                   
    inline bool Cerp::ExecuteDefault(Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,

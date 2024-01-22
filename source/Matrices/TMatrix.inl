@@ -386,26 +386,27 @@ namespace Langulus::Math
 
    /// Write the body of the matrix                                           
    ///   @return the resulting body                                           
-   TEMPLATE()
-   template<class TOKEN>
+   TEMPLATE() template<class TOKEN>
    Flow::Code TME()::Serialize() const {
-      Flow::Code result;
-      if constexpr (not CT::Same<TME(), TOKEN>) {
-         result += MetaOf<TOKEN>();
-         result += Flow::Code::OpenScope;
+      using Flow::Code;
+      Code result;
+      constexpr bool SCOPED = not CT::Same<TME(), TOKEN>;
+      if constexpr (SCOPED) {
+         result += MetaDataOf<TOKEN>();
+         result += Code::OpenScope;
       }
 
       auto data = Anyness::Block::From(GetRaw(), MemberCount);
-      result += Flow::Serialize<Flow::Code>(data);
-      if constexpr (not CT::Same<TME(), TOKEN>)
-         result += Flow::Code::CloseScope;
+      result += data.template Serialize<Code>();
 
+      if constexpr (SCOPED)
+         result += Code::CloseScope;
       return Abandon(result);
    }
 
    /// Stringify vector for debugging                                         
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Flow::Debug() const {
+   TME()::operator Anyness::Text() const {
       return Serialize<TME()>();
    }
 

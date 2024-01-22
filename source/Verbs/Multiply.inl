@@ -132,8 +132,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - multiply/divide verb                                   
    inline bool Multiply::ExecuteDefault(const Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
@@ -148,8 +148,8 @@ namespace Langulus::Verbs
    ///   @param context - the block to execute in                             
    ///   @param verb - multiply/divide verb                                   
    inline bool Multiply::ExecuteDefault(Block& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb);
-      if (common.CastsTo<A::Number>()) {
+      const auto common = context.ReinterpretAs(verb.GetArgument());
+      if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
             Float, Double,
             int32_t, uint32_t, int64_t, uint64_t,
