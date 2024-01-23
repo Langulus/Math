@@ -114,18 +114,16 @@ namespace Langulus::Math
 
    /// Returns an inverted number (standing operator)                         
    ///   @param a - number to invert                                          
-   template<TARGS(RHS)>
-   LANGULUS(INLINED)
+   template<TARGS(RHS)> LANGULUS(INLINED)
    constexpr auto operator - (const TNUM(RHS)& a) noexcept requires CT::Signed<RHST> {
-      return TNUM(RHS) {-a.mValue};
+      return RHSW {-a.mValue};
    }
 
    /// Returns the sum of two numbers (standing operator)                     
    ///   @param lhs - left number                                             
    ///   @param rhs - right number                                            
    ///   @return the addition, picking a lossless type between the two        
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
+   template<TARGS(LHS), TARGS(RHS)> LANGULUS(INLINED)
    constexpr auto operator + (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
       if constexpr (CT::Same<Lossless<LHST, RHST>, LHST>) {
          if constexpr (CT::Same<LHST, LHSW>)
@@ -141,14 +139,12 @@ namespace Langulus::Math
       }
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
+   template<TARGS(LHS), CT::DenseNumber N> LANGULUS(INLINED)
    constexpr auto operator + (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
       return lhs.mValue + rhs;
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
+   template<TARGS(RHS), CT::DenseNumber N> LANGULUS(INLINED)
    constexpr auto operator + (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
       return lhs + rhs.mValue;
    }
