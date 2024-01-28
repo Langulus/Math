@@ -76,7 +76,7 @@ SCENARIO("Parsing scripts", "[code]") {
 
       WHEN("Parsed without optimization") {
          Any required = Construct::From<Vec2>(
-            Any::WrapAs<Verb>(
+            Any::Wrap<Verb>(
                Verbs::Select {MetaOf<Traits::X>()}
                   .SetSource(
                      Verbs::Select {MetaOf<Traits::Sampler>()}
@@ -223,7 +223,7 @@ SCENARIO("Parsing scripts", "[code]") {
       conjunct.SetSource(pastMissing);
       conjunct.SetPriority(8);
 
-      Any required = Any::WrapAs<Verb>(add, conjunct);
+      Any required = Any::Wrap<Verb>(add, conjunct);
       required.MakeOr();
 
       WHEN("Parsed") {
@@ -247,7 +247,7 @@ SCENARIO("Parsing scripts", "[code]") {
       conjunct.SetSource(pastMissing);
       conjunct.SetPriority(8);
 
-      Any required = Any::WrapAs<Verb>(add, conjunct);
+      Any required = Any::Wrap<Verb>(add, conjunct);
       required.MakeOr();
 
       WHEN("Parsed") {
