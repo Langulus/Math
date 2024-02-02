@@ -47,8 +47,8 @@ namespace Langulus
    {
 
       /// Concept for distinguishing box primitives                           
-      template<class... T>
-      concept Box = ((DerivedFrom<T, A::Box>) && ...);
+      template<class...T>
+      concept Box = (DerivedFrom<T, A::Box> and ...);
 
    } // namespace Langulus::CT
 
