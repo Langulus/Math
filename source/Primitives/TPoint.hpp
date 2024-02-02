@@ -42,8 +42,8 @@ namespace Langulus
    {
 
       /// Concept for distinguishing point primitives                         
-      template<class... T>
-      concept Point = CT::Vector<T...> or ((DerivedFrom<T, A::Point>) and ...);
+      template<class...T>
+      concept Point = CT::Vector<T...> or (DerivedFrom<T, A::Point> and ...);
 
    } // namespace Langulus::CT
    

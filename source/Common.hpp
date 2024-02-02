@@ -131,13 +131,13 @@ namespace Langulus::CT
    /// Anything that doesn't have any of the above traits                     
    ///   @attention keep this one up to date, if adding new math traits       
    template<class...T>
-   concept ScalarBased = DenseScalar<T...> and not (
-            QuaternionBased<T...>
-         or VectorBased<T...>
-         or RangeBased<T...>
-         or MatrixBased<T...>
-         or GradientBased<T...>
-      );
+   concept ScalarBased = DenseScalar<T...>
+      and not ((QuaternionBased<T>
+         or VectorBased<T>
+         or RangeBased<T>
+         or MatrixBased<T>
+         or GradientBased<T>
+      ) and ...);
 
 } // namespace Langulus::CT
 

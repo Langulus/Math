@@ -42,8 +42,8 @@ namespace Langulus
    {
 
       /// Concept for distinguishing frustum primitives                       
-      template<class... T>
-      concept Frustum = ((DerivedFrom<T, A::Frustum>) && ...);
+      template<class...T>
+      concept Frustum = (DerivedFrom<T, A::Frustum> and ...);
 
    } // namespace Langulus::CT
 

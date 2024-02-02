@@ -45,8 +45,8 @@ namespace Langulus
    {
 
       /// Concept for distinguishing sphere primitives                        
-      template<class... T>
-      concept Sphere = ((DerivedFrom<T, A::Sphere>) && ...);
+      template<class...T>
+      concept Sphere = (DerivedFrom<T, A::Sphere> and ...);
 
    } // namespace Langulus::CT
 
