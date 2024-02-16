@@ -17,17 +17,16 @@ namespace Langulus::Verbs
    /// Move verb                                                              
    /// Performs spatial movement/rotation/scaling on a physical instance      
    ///                                                                        
-   struct Move : public StaticVerb<Move> {
+   struct Move : public TVerb<Move> {
       LANGULUS(VERB) "Move";
       LANGULUS(INFO) "Performs spatial movement/scale/rotation on physical instances";
 
-      template<CT::Dense T, CT::Data... A>
+      template<CT::Dense T, CT::Data...A>
       static constexpr bool AvailableFor() noexcept;
-      template<CT::Dense T, CT::Data... A>
+      template<CT::Dense T, CT::Data...A>
       static constexpr auto Of() noexcept;
 
-      template<CT::Dense T>
-      static bool ExecuteIn(T&, Verb&);
+      static bool ExecuteIn(CT::Dense auto&, Verb&);
    };
 
 } // namespace Langulus::Verbs
