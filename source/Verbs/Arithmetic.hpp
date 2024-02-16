@@ -18,7 +18,7 @@ namespace Langulus::Flow
    /// Statically typed verb, used as CRTP for arithmetic verbs               
    ///                                                                        
    template<class VERB, bool NOEXCEPT>
-   struct ArithmeticVerb : StaticVerb<VERB> {
+   struct ArithmeticVerb : TVerb<VERB> {
       template<CT::Data T>
       using Operator = Conditional<NOEXCEPT,
          T(*)(const T*, const T*) noexcept, 
@@ -31,7 +31,7 @@ namespace Langulus::Flow
          void(*)(T*, const T*)
       >;
 
-      using StaticVerb<VERB>::StaticVerb;
+      using TVerb::TVerb;
 
       template<CT::Data T>
       static bool Vector(const Block&, const Block&, Verb&, Operator<T>) noexcept(NOEXCEPT);
