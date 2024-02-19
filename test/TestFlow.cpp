@@ -6,15 +6,12 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
-#include "Main.hpp"
 #include <Math/Config.hpp>
 #include <Math/Vector.hpp>
 #include <Flow/Verbs/Create.hpp>
 #include <Flow/Verbs/Select.hpp>
 #include <Flow/Verbs/Conjunct.hpp>
-#include <catch2/catch.hpp>
-
-LANGULUS_EXCEPTION_HANDLER
+#include "Common.hpp"
 
 
 SCENARIO("Parsing scripts", "[code]") {

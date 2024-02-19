@@ -183,7 +183,7 @@ namespace Langulus::Math
          auto bytes = reinterpret_cast<const Byte*>(GetRaw());
          const auto bytesEnd = bytes + sizeof(TColor);
          while (bytes != bytesEnd)
-            result += Text::Hex(*(bytes++));
+            result += Code::Hex(*(bytes++));
          result += Code::Operator::CloseScope;
          return Abandon(result);
       }
