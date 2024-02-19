@@ -196,7 +196,7 @@ namespace Langulus
             A::MatrixOfType<T>, 
             T
          );
-         LANGULUS_CONVERSIONS(Anyness::Text, Flow::Code);
+         LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
       public:
          ///                                                                  

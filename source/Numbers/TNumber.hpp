@@ -45,7 +45,7 @@ namespace Langulus::Math
             , Conditional<CT::Signed<T>
                , A::SignedInteger
                , A::UnsignedInteger>>);
-      LANGULUS_CONVERSIONS(Flow::Code);
+      LANGULUS_CONVERTS_TO(Flow::Code);
 
       static constexpr Count MemberCount {1};
 

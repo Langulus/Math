@@ -17,45 +17,36 @@ namespace Langulus::Math
    ///                                                                        
    ///   Type used for representing angles in degrees                         
    ///                                                                        
-   template<CT::DenseNumber T>
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
    constexpr TDegrees<T>::TDegrees(const TDegrees<N>& r) noexcept
       : Base {r} {}
 
-   template<CT::DenseNumber T>
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
    constexpr TDegrees<T>::TDegrees(const TRadians<N>& r) noexcept
       : Base {r.GetDegrees()} {}
 
    /// Construct from any number-convertible thing                            
    ///   @param a - value to set                                              
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    constexpr TDegrees<T>::TDegrees(const CT::DenseNumber auto& a) noexcept
       : Base {a} {}
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetRadians() const noexcept {
       return DegToRad(mValue);
    }
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetDegrees() const noexcept {
       return mValue;
    }
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    Lossless<Real, T> TDegrees<T>::Cos() const noexcept {
       return Math::Cos(DegToRad(mValue));
    }
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    Lossless<Real, T> TDegrees<T>::Sin() const noexcept {
       return Math::Sin(DegToRad(mValue));
    }
@@ -64,58 +55,48 @@ namespace Langulus::Math
    ///                                                                        
    ///   Type used for representing angles in radians                         
    ///                                                                        
-   template<CT::DenseNumber T>
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
    constexpr TRadians<T>::TRadians(const TRadians<N>& r) noexcept
       : Base {r} {}
 
-   template<CT::DenseNumber T>
-   template<CT::DenseNumber N>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
    constexpr TRadians<T>::TRadians(const TDegrees<N>& r) noexcept
       : Base {r.GetRadians()} {}
 
    /// Construct from any number-convertible thing                            
    ///   @param a - value to set                                              
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    constexpr TRadians<T>::TRadians(const CT::DenseNumber auto& a) noexcept
       : Base {a} {}
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    constexpr T TRadians<T>::GetRadians() const noexcept {
       return mValue;
    }
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    constexpr T TRadians<T>::GetDegrees() const noexcept {
       return RadToDeg(mValue);
    }
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    Lossless<Real, T> TRadians<T>::Cos() const noexcept {
       return Math::Cos(mValue);
    }
 
-   template<CT::DenseNumber T>
-   LANGULUS(INLINED)
+   template<CT::DenseNumber T> LANGULUS(INLINED)
    Lossless<Real, T> TRadians<T>::Sin() const noexcept {
       return Math::Sin(mValue);
    }
 
    /// Convert from any angle to text                                         
-   template<CT::Angle T, CT::Dimension D>
-   LANGULUS(INLINED)
+   template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
    TAngle<T, D>::operator Flow::Code() const {
       Flow::Code result;
       result += NameOf<TAngle>();
-      result += Flow::Code::OpenScope;
+      result += Flow::Code::Operator::OpenScope;
       result += Anyness::Text {mValue};
-      result += Flow::Code::CloseScope;
+      result += Flow::Code::Operator::CloseScope;
       return result;
    }
 
@@ -180,8 +161,7 @@ namespace Langulus::Math
    }
 
    /// Destructively add two similar angles                                   
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D>& operator += (
       TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
@@ -191,8 +171,7 @@ namespace Langulus::Math
    }
       
    /// Destructively subtract two similar angles                              
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D>& operator -= (
       TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
@@ -202,8 +181,7 @@ namespace Langulus::Math
    }
       
    /// Destructively multiply two similar angles                              
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D>& operator *= (
       TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
@@ -213,8 +191,7 @@ namespace Langulus::Math
    }
 
    /// Destructively divide two similar angles                                
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D>& operator /= (
       TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs

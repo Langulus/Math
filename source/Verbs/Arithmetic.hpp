@@ -31,7 +31,7 @@ namespace Langulus::Flow
          void(*)(T*, const T*)
       >;
 
-      using TVerb::TVerb;
+      using TVerb<VERB>::TVerb;
 
       template<CT::Data T>
       static bool Vector(const Block&, const Block&, Verb&, Operator<T>) noexcept(NOEXCEPT);

@@ -183,16 +183,17 @@ namespace Langulus
 
          /// Convert from any force to text                                   
          NOD() explicit operator Flow::Code() const {
-            Flow::Code result;
+            using Flow::Code;
+            Code result;
             result += NameOf<TForce>();
-            result += Flow::Code::OpenScope;
+            result += Code::Operator::OpenScope;
             auto& asVector = static_cast<const T&>(*this);
             for (auto& x : asVector) {
                result += x;
                result += ", ";
             }
-            result += static_cast<Flow::Code>(mLevel);
-            result += Flow::Code::CloseScope;
+            result += static_cast<Code>(mLevel);
+            result += Code::Operator::CloseScope;
             return result;
          }
       };

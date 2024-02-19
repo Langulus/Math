@@ -374,7 +374,7 @@ namespace Langulus::Math
       verb.ForEachDeep([&](const Block& part) {
          // Read relativity first                                       
          part.ForEach([&relative](const Trait& trait) {
-            if (trait.TraitIs<Traits::Relative>())
+            if (trait.IsTrait<Traits::Relative>())
                relative = trait.AsCast<bool>();
          });
 

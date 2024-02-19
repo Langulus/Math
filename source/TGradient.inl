@@ -157,15 +157,16 @@ namespace Langulus::Math
    /// Convert to text                                                        
    TEMPLATE()
    TME()::operator Flow::Code() const {
-      Flow::Code result;
+      using Flow::Code;
+      Code result;
       result += NameOf<TGradient>();
-      result += Flow::Code::OpenScope;
+      result += Code::Operator::OpenScope;
       for (Offset i = 0; i < S; ++i) {
          result += Anyness::Text {(*this)[i]};
          if (i < S - 1)
             result += ", ";
       }
-      result += Flow::Code::CloseScope;
+      result += Code::Operator::CloseScope;
       return result;
    }
 

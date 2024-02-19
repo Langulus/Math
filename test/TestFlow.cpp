@@ -16,6 +16,7 @@
 
 LANGULUS_EXCEPTION_HANDLER
 
+
 SCENARIO("Parsing scripts", "[code]") {
    Any pastMissing;
    pastMissing.MakePast();
@@ -35,9 +36,7 @@ SCENARIO("Parsing scripts", "[code]") {
 
          const auto parsed = code.Parse(false);
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
 
       WHEN("Parsed with optimization") {
@@ -45,9 +44,7 @@ SCENARIO("Parsing scripts", "[code]") {
 
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -65,9 +62,7 @@ SCENARIO("Parsing scripts", "[code]") {
 
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -100,9 +95,7 @@ SCENARIO("Parsing scripts", "[code]") {
 
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
    
@@ -117,9 +110,7 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed") {
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -134,9 +125,7 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed") {
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -155,9 +144,7 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed") {
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -172,9 +159,7 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed") {
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -194,18 +179,14 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed without optimization") {
          const auto parsed = code.Parse(false);
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
 
       WHEN("Parsed with optimization") {
          Any required2 = Real(178.5);
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required2);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required2);
-         }
+         REQUIRE(parsed == required2);
       }
    }
    
@@ -229,9 +210,7 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed") {
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 
@@ -253,9 +232,7 @@ SCENARIO("Parsing scripts", "[code]") {
       WHEN("Parsed") {
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
    }
 }

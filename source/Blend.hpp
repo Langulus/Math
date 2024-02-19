@@ -45,18 +45,7 @@ namespace Langulus::Math
    protected:
       Type mMode {Enum::None};
 
-      LANGULUS_NAMED_VALUES(Enum) {
-         {"None", Enum::None,
-            "No blending - final color is always source color"},
-         {"Threshold",  Enum::Threshold,
-            "No blending - final color becomes source color only if an alpha threshold is reached per pixel"},
-         {"Alpha",      Enum::Alpha,
-            "Final color = source color * alpha + destination color * (1 - alpha)"},
-         {"Add",        Enum::Add,
-            "Final color = source color + destination color"},
-         {"Multiply",   Enum::Multiply,
-            "Final color = source color * destination color"}
-      };
+      LANGULUS_NAMED_VALUES(None, Threshold, Alpha, Add, Multiply);
 
    public:
       constexpr BlendMode() noexcept = default;
