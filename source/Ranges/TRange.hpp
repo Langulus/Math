@@ -167,7 +167,7 @@ namespace Langulus::Math
          A::RangeOfType<MemberType>,
          MemberType
       );
-      LANGULUS_CONVERSIONS(Anyness::Text, Flow::Code);
+      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
       // Make TRange match the CT::RangeBased concept                   
       static constexpr bool CTTI_RangeTrait = true;

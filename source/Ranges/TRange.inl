@@ -142,11 +142,11 @@ namespace Langulus::Math
       using Flow::Code;
       Code result;
       result += NameOf<TRange>();
-      result += Code::OpenScope;
+      result += Code::Operator::OpenScope;
          result += mMin.operator Code();
          result += ", ";
          result += mMax.operator Code();
-      result += Code::CloseScope;
+      result += Code::Operator::CloseScope;
       return result;
    }
 

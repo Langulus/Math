@@ -176,14 +176,15 @@ namespace Langulus::Math
    TColor<T>::operator Flow::Code() const {
       if constexpr (CT::Same<TypeOf<T>, ::std::uint8_t>) {
          // Write as hex, if standard unsigned 8 bit color component    
-         Flow::Code result;
+         using Flow::Code;
+         Code result;
          result += NameOf<TColor>();
-         result += Flow::Code::OpenScope;
+         result += Code::Operator::OpenScope;
          auto bytes = reinterpret_cast<const Byte*>(GetRaw());
          const auto bytesEnd = bytes + sizeof(TColor);
          while (bytes != bytesEnd)
             result += Text::Hex(*(bytes++));
-         result += Flow::Code::CloseScope;
+         result += Code::Operator::CloseScope;
          return Abandon(result);
       }
       else return T::template Serialize<TColor>();

@@ -206,14 +206,13 @@ namespace Langulus::Math
       constexpr bool SCOPED = S > 1 or not CT::Same<TME(), TOKEN>;
       if constexpr (SCOPED) {
          result += MetaDataOf<TOKEN>();
-         result += Code::OpenScope;
+         result += Code::Operator::OpenScope;
       }
 
-      auto data = Anyness::Block::From(GetRaw(), S);
-      result += data.template Serialize<Code>();
+      Anyness::Block::From(GetRaw(), S).Serialize(result);
 
       if constexpr (SCOPED)
-         result += Code::CloseScope;
+         result += Code::Operator::CloseScope;
       return Abandon(result);
    }
 

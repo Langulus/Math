@@ -24,9 +24,7 @@ TEMPLATE_TEST_CASE("Vector static creation from code", "[vec]",
          Any required = TestType {};
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
-         THEN("The parsed contents must match the requirements") {
-            REQUIRE(parsed == required);
-         }
+         REQUIRE(parsed == required);
       }
 
       // Check for memory leaks after each cycle                        

@@ -323,7 +323,7 @@ namespace Langulus::Math
          A::VectorOfType<T>,
          T
       );
-      LANGULUS_CONVERSIONS(Anyness::Text, Flow::Code);
+      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
       // Make TVector match the CT::VectorBased concept                 
       static constexpr bool CTTI_VectorTrait = true;

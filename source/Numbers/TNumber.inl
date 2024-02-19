@@ -71,9 +71,9 @@ namespace Langulus::Math
          result += Code {mValue};
       else {
          result += MetaDataOf<W>();
-         result += Code::OpenScope;
+         result += Code::Operator::OpenScope;
          result += Code {mValue};
-         result += Code::CloseScope;
+         result += Code::Operator::CloseScope;
       }
       return result;
    }
