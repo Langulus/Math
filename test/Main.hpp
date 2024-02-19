@@ -41,10 +41,3 @@ void DumpResults(const INPUT& in, const OUTPUT& out, const REQUIRED& required) {
    Logger::Special("Required: ", required);
    Logger::Special("-------------");
 }
-
-/// See https://github.com/catchorg/Catch2/blob/devel/docs/tostring.md        
-#define LANGULUS_EXCEPTION_HANDLER \
-   CATCH_TRANSLATE_EXCEPTION(::Langulus::Exception const& ex) { \
-      const Text serialized {ex}; \
-      return ::std::string {Token {serialized}}; \
-   }

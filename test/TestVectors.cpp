@@ -6,9 +6,8 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
-#include "Main.hpp"
 #include <Math/Vector.hpp>
-#include <catch2/catch.hpp>
+#include "Common.hpp"
 
 
 TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
@@ -17,23 +16,19 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 		TVector<T, 4> x;
 
 		WHEN("Creating a default vector") {
-			THEN("The vector must be initialized to zero") {
-				REQUIRE(x[0] == 0);
-				REQUIRE(x[1] == 0);
-				REQUIRE(x[2] == 0);
-				REQUIRE(x[3] == 0);
-			}
+			REQUIRE(x[0] == 0);
+			REQUIRE(x[1] == 0);
+			REQUIRE(x[2] == 0);
+			REQUIRE(x[3] == 0);
 		}
 
 		WHEN("Creating and asigning a vector manually") {
 			x = TVector<T, 4>(0, 5, 12, 1);
 
-			THEN("The result should be correct") {
-				REQUIRE(x[0] == 0);
-				REQUIRE(x[1] == 5);
-				REQUIRE(x[2] == 12);
-				REQUIRE(x[3] == 1);
-			}
+			REQUIRE(x[0] == 0);
+			REQUIRE(x[1] == 5);
+			REQUIRE(x[2] == 12);
+			REQUIRE(x[3] == 1);
 		}
 	}
 
@@ -46,78 +41,64 @@ TEMPLATE_TEST_CASE("4D Vectors", "[vec]", SIGNED_TYPES) {
 		WHEN("Adding the vectors") {
 			r = x + y;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == 2);
-				REQUIRE(r[1] == 29);
-				REQUIRE(r[2] == 16);
-				REQUIRE(r[3] == 3);
-			}
+			REQUIRE(r[0] == 2);
+			REQUIRE(r[1] == 29);
+			REQUIRE(r[2] == 16);
+			REQUIRE(r[3] == 3);
 		}
 
 		WHEN("Adding the vectors in reverse order") {
 			r = y + x;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == 2);
-				REQUIRE(r[1] == 29);
-				REQUIRE(r[2] == 16);
-				REQUIRE(r[3] == 3);
-			}
+			REQUIRE(r[0] == 2);
+			REQUIRE(r[1] == 29);
+			REQUIRE(r[2] == 16);
+			REQUIRE(r[3] == 3);
 		}
 
 		WHEN("Subtracting the vectors") {
 			r = x - y;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == -2);
-				REQUIRE(r[1] == -19);
-				REQUIRE(r[2] == 8);
-				REQUIRE(r[3] == -1);
-			}
+			REQUIRE(r[0] == -2);
+			REQUIRE(r[1] == -19);
+			REQUIRE(r[2] == 8);
+			REQUIRE(r[3] == -1);
 		}
 
 		WHEN("Subtracting the vectors in reverse order") {
 			r = y - x;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == 2);
-				REQUIRE(r[1] == 19);
-				REQUIRE(r[2] == -8);
-				REQUIRE(r[3] == 1);
-			}
+			REQUIRE(r[0] == 2);
+			REQUIRE(r[1] == 19);
+			REQUIRE(r[2] == -8);
+			REQUIRE(r[3] == 1);
 		}
 
 		WHEN("Multiplying the vectors") {
 			r = x * y;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == 0);
-				REQUIRE(r[1] == 120);
-				REQUIRE(r[2] == 48);
-				REQUIRE(r[3] == 2);
-			}
+			REQUIRE(r[0] == 0);
+			REQUIRE(r[1] == 120);
+			REQUIRE(r[2] == 48);
+			REQUIRE(r[3] == 2);
 		}
 
 		WHEN("Multiplying the vectors in reverse order") {
 			r = y * x;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == 0);
-				REQUIRE(r[1] == 120);
-				REQUIRE(r[2] == 48);
-				REQUIRE(r[3] == 2);
-			}
+			REQUIRE(r[0] == 0);
+			REQUIRE(r[1] == 120);
+			REQUIRE(r[2] == 48);
+			REQUIRE(r[3] == 2);
 		}
 
 		WHEN("Dividing the vectors") {
 			r = x / y;
 
-			THEN("The result should be correct") {
-				REQUIRE(r[0] == 0);
-				REQUIRE(r[1] == Approx(T(5) / T(24)));
-				REQUIRE(r[2] == Approx(T(12) / T(4)));
-				REQUIRE(r[3] == Approx(T(1) / T(2)));
-			}
+			REQUIRE(r[0] == 0);
+			REQUIRE(r[1] == Approx(T(5) / T(24)));
+			REQUIRE(r[2] == Approx(T(12) / T(4)));
+			REQUIRE(r[3] == Approx(T(1) / T(2)));
 		}
 
 		/*WHEN("Dividing the vectors in reverse order") {

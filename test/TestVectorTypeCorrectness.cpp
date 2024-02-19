@@ -6,9 +6,8 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
-#include "Main.hpp"
 #include <Math/Vector.hpp>
-#include <catch2/catch.hpp>
+#include "Common.hpp"
 
 
 TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]", 
@@ -21,13 +20,11 @@ TEMPLATE_TEST_CASE("Vector interpretation", "[metadata]",
 		REQUIRE(meta);
 
 		WHEN("Interpreted as number") {
-			THEN("Requirements should be met") {
-				REQUIRE(		meta->template CastsTo<A::Number>( ));
-				REQUIRE(not meta->template CastsTo<A::Number>(1));
-				REQUIRE(		meta->template CastsTo<A::Number>(2));
-				REQUIRE(not meta->template CastsTo<A::Number>(3));
-				REQUIRE(not meta->template CastsTo<A::Number>(4));
-			}
+			REQUIRE(		meta->template CastsTo<A::Number>( ));
+			REQUIRE(not meta->template CastsTo<A::Number>(1));
+			REQUIRE(		meta->template CastsTo<A::Number>(2));
+			REQUIRE(not meta->template CastsTo<A::Number>(3));
+			REQUIRE(not meta->template CastsTo<A::Number>(4));
 		}
 	}
 }

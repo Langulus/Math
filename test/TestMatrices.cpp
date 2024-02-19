@@ -6,9 +6,8 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
-#include "Main.hpp"
 #include <Math/Matrix.hpp>
-#include <catch2/catch.hpp>
+#include "Common.hpp"
 
 
 TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
