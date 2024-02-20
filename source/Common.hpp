@@ -9,6 +9,8 @@
 #pragma once
 #include <Core/Exceptions.hpp>
 #include <Anyness/Trait.hpp>
+#include <Flow/Code.hpp>
+
 
 #if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
    #define LANGULUS_API_MATH() LANGULUS_EXPORT()
