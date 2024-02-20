@@ -68,26 +68,24 @@ SCENARIO("Parsing scripts", "[code]") {
 
       WHEN("Parsed without optimization") {
          Any required = Construct::From<Vec2>(
-            Any::Wrap<Verb>(
-               Verbs::Select {MetaOf<Traits::X>()}
-                  .SetSource(
-                     Verbs::Select {MetaOf<Traits::Sampler>()}
-                  ),
-               Verbs::Add {
-                  Any {Verbs::Add {
-                     Any {Verbs::Exponent {Real(2)}
-                        .SetSource(
-                           Verbs::Select {MetaOf<Traits::Y>()}
-                              .SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
-                        )}
-                  }.SetSource(
-                     Verbs::Multiply {Real(8.75)}
-                        .SetSource(
-                           Verbs::Select {MetaOf<Traits::Time>()}
-                        )
-                  ).SetMass(-1)}
-               }.SetMass(-1)
-            )
+            Verbs::Select {MetaOf<Traits::X>()}
+               .SetSource(
+                  Verbs::Select {MetaOf<Traits::Sampler>()}
+               ),
+            Verbs::Add {
+               Any {Verbs::Add {
+                  Any {Verbs::Exponent {Real(2)}
+                     .SetSource(
+                        Verbs::Select {MetaOf<Traits::Y>()}
+                           .SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
+                     )}
+               }.SetSource(
+                  Verbs::Multiply {Real(8.75)}
+                     .SetSource(
+                        Verbs::Select {MetaOf<Traits::Time>()}
+                     )
+               ).SetMass(-1)}
+            }.SetMass(-1)
          );
 
          const auto parsed = code.Parse();
