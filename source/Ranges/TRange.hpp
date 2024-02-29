@@ -106,7 +106,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for ranges                       
    TEMPLATE()
-   constexpr auto CustomName(Of<Math::TME()>&&) noexcept {
+   consteval auto CustomName(Of<Math::TME()>&&) noexcept {
       constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
       ::std::array<char, defaultClassName.size() + 1> name {};
       ::std::size_t offset {};

@@ -54,7 +54,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for boxes                        
    template<CT::Vector T>
-   constexpr auto CustomName(Of<Math::TBox<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TBox<T>>&&) noexcept {
       using CLASS = Math::TBox<T>;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
       ::std::array<char, defaultClassName.size() + 1> name {};
