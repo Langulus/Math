@@ -47,7 +47,7 @@ namespace Langulus::Math
                , A::UnsignedInteger>>);
       LANGULUS_CONVERTS_TO(Flow::Code);
 
-      static constexpr Count MemberCount {1};
+      static constexpr Count MemberCount = 1;
 
       T mValue {};
 

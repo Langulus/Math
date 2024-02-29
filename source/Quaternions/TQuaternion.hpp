@@ -55,7 +55,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for vectors                      
    template<CT::ScalarBased T>
-   constexpr auto CustomName(Of<Math::TQuaternion<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TQuaternion<T>>&&) noexcept {
       constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TQuaternion<T>>();
       ::std::array<char, defaultClassName.size() + 1> name {};
       ::std::size_t offset {};

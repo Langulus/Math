@@ -22,9 +22,9 @@ namespace Langulus::Verbs
       LANGULUS(INFO) "Performs spatial movement/scale/rotation on physical instances";
 
       template<CT::Dense T, CT::Data...A>
-      static constexpr bool AvailableFor() noexcept;
+      static consteval bool AvailableFor() noexcept;
       template<CT::Dense T, CT::Data...A>
-      static constexpr auto Of() noexcept;
+      static consteval auto Of() noexcept;
 
       static bool ExecuteIn(CT::Dense auto&, Verb&);
    };

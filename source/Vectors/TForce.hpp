@@ -124,7 +124,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for forces                       
    template<CT::VectorBased T>
-   constexpr auto CustomName(Of<Math::TForce<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TForce<T>>&&) noexcept {
       using CLASS = Math::TForce<T>;
       constexpr auto MemberCount = CLASS::MemberCount;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();

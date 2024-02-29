@@ -123,7 +123,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for samplers                     
    template<CT::VectorBased T>
-   constexpr auto CustomName(Of<Math::TSampler<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TSampler<T>>&&) noexcept {
       using CLASS = Math::TSampler<T>;
       constexpr auto MemberCount = CLASS::MemberCount;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();

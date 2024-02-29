@@ -31,9 +31,9 @@ namespace Langulus::Verbs
       using ArithmeticVerb::ArithmeticVerb;
 
       template<CT::Dense T, CT::Data... A>
-      static constexpr bool AvailableFor() noexcept;
+      static consteval bool AvailableFor() noexcept;
       template<CT::Dense T, CT::Data... A>
-      static constexpr auto Of() noexcept;
+      static consteval auto Of() noexcept;
 
       template<CT::Dense T>
       static bool ExecuteIn(T&, Verb&);

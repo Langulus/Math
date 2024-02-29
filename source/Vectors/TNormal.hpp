@@ -114,7 +114,7 @@ namespace Langulus
    
    /// Custom name generator at compile-time for normals                      
    template<CT::Vector T>
-   constexpr auto CustomName(Of<Math::TNormal<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TNormal<T>>&&) noexcept {
       using CLASS = Math::TNormal<T>;
       constexpr auto MemberCount = CLASS::MemberCount;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();

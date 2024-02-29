@@ -122,7 +122,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for scales                       
    template<CT::VectorBased T>
-   constexpr auto CustomName(Of<Math::TScale<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TScale<T>>&&) noexcept {
       using CLASS = Math::TScale<T>;
       constexpr auto MemberCount = CLASS::MemberCount;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
