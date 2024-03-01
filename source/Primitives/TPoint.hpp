@@ -49,7 +49,7 @@ namespace Langulus
    
    /// Custom name generator at compile-time for points                       
    template<class T>
-   constexpr auto CustomName(Of<Math::TPoint<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TPoint<T>>&&) noexcept {
       using CLASS = Math::TPoint<T>;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
       ::std::array<char, defaultClassName.size() + 1> name {};
