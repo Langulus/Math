@@ -53,7 +53,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for boxes                        
    template<CT::Vector T>
-   constexpr auto CustomName(Of<Math::TSphere<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TSphere<T>>&&) noexcept {
       using CLASS = Math::TSphere<T>;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
       ::std::array<char, defaultClassName.size() + 1> name {};
@@ -81,7 +81,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for rounded boxes                
    template<CT::Vector T>
-   constexpr auto CustomName(Of<Math::TEllipsoid<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TEllipsoid<T>>&&) noexcept {
       using CLASS = Math::TEllipsoid<T>;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
       ::std::array<char, defaultClassName.size() + 1> name {};
