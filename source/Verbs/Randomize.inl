@@ -19,7 +19,7 @@ namespace Langulus::Verbs
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
    template<CT::Dense T, CT::Data... A>
-   consteval bool Randomize::AvailableFor() noexcept {
+   constexpr bool Randomize::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 1)
          return requires (T& t, Verb& v, A... a) { t.Randomize(v, a...); };
       else
@@ -29,7 +29,7 @@ namespace Langulus::Verbs
    /// Get the verb functor for the given type and arguments                  
    ///   @return the function, or nullptr if not available                    
    template<CT::Dense T, CT::Data... A>
-   consteval auto Randomize::Of() noexcept {
+   constexpr auto Randomize::Of() noexcept {
       if constexpr (CT::Constant<T>) {
          return [](const void* context, Flow::Verb& verb, A... args) {
             auto typedContext = static_cast<const T*>(context);
