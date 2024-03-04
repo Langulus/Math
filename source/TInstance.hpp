@@ -100,7 +100,7 @@ namespace Langulus::Math
 
    public:
       // Optional parent for inheriting transformations                 
-      Anyness::Ptr<TInstance<T>> mParent;
+      Anyness::Ref<TInstance<T>> mParent;
 
       // Position in space                                              
       PointType mPosition;

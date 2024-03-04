@@ -19,7 +19,7 @@ namespace Langulus::Verbs
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
    template<CT::Dense T, CT::Data... A>
-   consteval bool Move::AvailableFor() noexcept {
+   constexpr bool Move::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 1)
          return requires (T& t, Verb& v, A... a) { t.Move(v, a...); };
       else
@@ -29,7 +29,7 @@ namespace Langulus::Verbs
    /// Get the verb functor for the given type and arguments                  
    ///   @return the function, or nullptr if not available                    
    template<CT::Dense T, CT::Data... A>
-   consteval auto Move::Of() noexcept {
+   constexpr auto Move::Of() noexcept {
       if constexpr (CT::Constant<T>) {
          return [](const void* context, Flow::Verb& verb, A... args) {
             auto typedContext = static_cast<const T*>(context);
