@@ -13,6 +13,7 @@ namespace Langulus
 {
    namespace Math
    {
+
       template<CT::Vector>
       struct TPolygon;
 
@@ -40,12 +41,12 @@ namespace Langulus
 
       ///                                                                     
       ///   A templated polygon                                               
+      ///                                                                     
       /// A list of coplanar points that form a surface with a complex edge   
       ///                                                                     
       template<CT::Vector T>
       struct TPolygon : TAny<T> {
          LANGULUS(DEEP) false;
-         //LANGULUS(TYPED) TypeOf<T>;
          LANGULUS_BASES(A::Polygon);
 
          using Base = TAny<T>;
@@ -54,11 +55,17 @@ namespace Langulus
          static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
 
          /// Calculate signed distance                                        
-         NOD() auto SignedDistance(const T&) const {
+         NOD() LANGULUS(INLINED)
+         auto SignedDistance(const T&) const {
             TODO();
+         }
+
+         /// Compare two polygon sequences                                    
+         LANGULUS(INLINED)
+         bool operator == (const TPolygon& rhs) const {
+            return Block::Compare<false, TAny<T>>(static_cast<const TAny<T>&>(rhs));
          }
       };
 
    } // namespace Langulus::Math
-
 } // namespace Langulus
