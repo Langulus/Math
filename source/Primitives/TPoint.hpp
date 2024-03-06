@@ -22,6 +22,10 @@ namespace Langulus
       using Point2 = TPoint<Vec2>;
       using Point3 = TPoint<Vec3>;
 
+      using Point1f = TPoint<Vec1f>;
+      using Point2f = TPoint<Vec2f>;
+      using Point3f = TPoint<Vec3f>;
+
       using Point = Point3;
 
    } // namespace Langulus::CT
