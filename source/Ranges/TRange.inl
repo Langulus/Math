@@ -107,7 +107,7 @@ namespace Langulus::Math
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::RangeBased auto& r) noexcept {
-      return *new (this) TRange {r};
+      return *new (this) TRange {DesemCast(r)};
    }
 
    /// Copy vector                                                            
@@ -115,7 +115,7 @@ namespace Langulus::Math
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::VectorBased auto& v) noexcept {
-      return *new (this) TRange {v};
+      return *new (this) TRange {DesemCast(v)};
    }
   
    /// Copy scalar                                                            
@@ -123,7 +123,7 @@ namespace Langulus::Math
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::ScalarBased auto& s) noexcept {
-      return *new (this) TRange {s};
+      return *new (this) TRange {DesemCast(s)};
    }
 
    /// Set only a specific component                                          

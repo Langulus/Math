@@ -34,7 +34,7 @@ namespace Langulus::Math
    ///   @param a - differently sized matrix                                  
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::MatrixBased auto& a) noexcept {
-      using M = Deref<decltype(a)>;
+      using M = Deref<Desem<decltype(a)>>;
       if constexpr (M::Columns != Columns or M::Rows != Rows) {
          if constexpr (M::Columns < Columns or M::Rows < Rows) {
             // If copied region is smaller, make sure to reset          
@@ -43,19 +43,19 @@ namespace Langulus::Math
 
          for (Offset col = 0; col < Math::Min(Columns, M::Columns); ++col) {
             for (Offset row = 0; row < Math::Min(Rows, M::Rows); ++row) {
-               mColumns[col][row] = Adapt(a.mColumns[col][row]);
+               mColumns[col][row] = Adapt(DesemCast(a).mColumns[col][row]);
             }
          }
       }
       else if constexpr (not CT::Same<TypeOf<M>, T>) {
          for (int i = 0; i < MemberCount; ++i) {
             // Convert all elements                                     
-            mArray[i] = Adapt(a.mArray[i]);
+            mArray[i] = Adapt(DesemCast(a).mArray[i]);
          }
       }
       else {
          // Direct memory copy (fastest)                                
-         CopyMemory(mArray, a.mArray);
+         CopyMemory(mArray, DesemCast(a).mArray);
       }
    }
    
@@ -63,20 +63,20 @@ namespace Langulus::Math
    ///   @param x - spread across entire matrix diagonal                      
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::ScalarBased auto& x) noexcept {
-      const T xx = Adapt(x);
+      const T xx = Adapt(DesemCast(x));
       for (Offset i = 0; i < Diagonal; ++i)
          mColumns[i][i] = xx;
    }
 
    /// Construct from vector                                                  
    ///   @param x - spread across entire matrix diagonal, if vector size is   
-   ///              equal or smaller than the number of diagonal cells        
-   ///              if vector is smaller, the remaining values default to 1   
-   ///              if vector is larger, the elements are copied sequentially 
-   ///              with any missing elements defaulting to identity          
+   ///      equal or smaller than the number of diagonal cells if vector is   
+   ///      smaller, the remaining values default to 1 if vector is larger,   
+   ///      the elements are copied sequentially with any missing elements    
+   ///      defaulting to identity                                            
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::VectorBased auto& x) noexcept {
-      using V = Deref<decltype(x)>;
+      using V = Deref<Desem<decltype(x)>>;
       constexpr auto D = Math::Min(Diagonal, CountOf<V>);
       for (Offset i = 0; i < D; ++i)
          mColumns[i][i] = Adapt(x[i]);
@@ -85,13 +85,10 @@ namespace Langulus::Math
    /// Manual initialization with variadic head-tail                          
    /// The count of elements in head and tail should sum to the matrix size   
    /// Unitialized elements will default to identity                          
-   ///   @param head - first element, scalar or vector                        
-   ///   @param tail... - any other elements, scalar or vector                
-   TEMPLATE()
-   template<class T1, class T2, class... TAIL>
-   LANGULUS(INLINED)
-   constexpr TME()::TMatrix(const T1& t1, const T2& t2, const TAIL&... tail) noexcept {
-      static_assert(not CT::MatrixBased<T1, T2, TAIL...>,
+   ///   @param t1, t2, tn.. - scalars or vector                              
+   TEMPLATE() template<class T1, class T2, class...TN> LANGULUS(INLINED)
+   constexpr TME()::TMatrix(const T1& t1, const T2& t2, const TN&...tn) noexcept {
+      static_assert(not CT::MatrixBased<T1, T2, TN...>,
          "Sequential matrices not allowed");
 
       constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
@@ -118,10 +115,10 @@ namespace Langulus::Math
          }
 
          // Combine all the rest of the arguments in a vector           
-         if constexpr (sizeof...(TAIL)) {
-            constexpr auto C3 = Math::Min(CountOf<TAIL...>, MemberCount - (C1 + C2));
+         if constexpr (sizeof...(TN)) {
+            constexpr auto C3 = Math::Min(CountOf<TN...>, MemberCount - (C1 + C2));
             if constexpr (C3) {
-               const TVector<T, C3> theRest {tail...};
+               const TVector<T, C3> theRest {tn...};
                for (Offset i = C1 + C2; i < MemberCount; ++i)
                   mArray[i] = theRest[i - (C1 + C2)];
             }
@@ -181,7 +178,8 @@ namespace Langulus::Math
    
    /// Look at constructor - LH lookat matrix                                 
    TEMPLATE()
-   constexpr TME() TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up) requires (ROWS >= 2 and COLUMNS >= 2) {
+   constexpr TME() TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up)
+   requires (ROWS >= 2 and COLUMNS >= 2) {
       static_assert(IsSquare, "Can't make a look-at matrix from this one");
 
       forward = forward.Normalize();
@@ -368,9 +366,7 @@ namespace Langulus::Math
       return *new (this) TMatrix {other};
    }
 
-   TEMPLATE()
-   template<CT::ScalarBased N, CT::Dimension D>
-   LANGULUS(INLINED)
+   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& other) noexcept {
       static_assert(D::Index < Columns and D::Index < Rows,
          "Vector component out of limits");
@@ -637,8 +633,7 @@ namespace Langulus::Math
    }
 
    /// Destructive multiplication of a row vector                             
-   template<TARGS(RHS), CT::ScalarBased T, Count C>
-   LANGULUS(INLINED)
+   template<TARGS(RHS), CT::ScalarBased T, Count C> LANGULUS(INLINED)
    constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC and C > 1) {
       return vec = vec * me;
    }
@@ -781,8 +776,7 @@ namespace Langulus::Math
    }
 
    /// Inner static function for nested determinant calculation               
-   TEMPLATE()
-   template<Count SIZE, Count NEXT_SIZE>
+   TEMPLATE() template<Count SIZE, Count NEXT_SIZE>
    constexpr T TME()::InnerDeterminant(const T(&a)[SIZE * SIZE]) noexcept {
       if constexpr (SIZE == 0)
          return T(0);
