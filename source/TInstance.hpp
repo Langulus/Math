@@ -13,6 +13,7 @@
 #include "Vectors/TVector.hpp"
 #include "Vectors/TNormal.hpp"
 #include "Vectors/TForce.hpp"
+#include "Vectors/TScale.hpp"
 #include "Quaternions/TQuaternion.hpp"
 #include "Randomness/MersenneTwister.hpp"
 #include "Verbs/Move.hpp"
