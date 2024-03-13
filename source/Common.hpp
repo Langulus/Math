@@ -117,6 +117,10 @@ namespace Langulus::CT
    /// Anything that has the vector trait                                     
    template<class...T>
    concept VectorBased = ((Decay<Desem<T>>::CTTI_VectorTrait) and ...);
+   
+   /// Anything that has the color trait                                      
+   template<class...T>
+   concept ColorBased = ((Decay<Desem<T>>::CTTI_ColorTrait) and ...);
 
    /// Anything that has the range trait                                      
    template<class...T>

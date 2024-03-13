@@ -142,8 +142,8 @@ namespace Langulus
          using T::MemberCount;
          static_assert(MemberCount > 1 and MemberCount < 5,
             "Invalid number of channels");
+         static constexpr bool CTTI_ColorTrait = true;
 
-      public:
          LANGULUS(NAME) CustomNameOf<TColor>::Generate();
          LANGULUS_BASES(
             A::ColorOfSize<MemberCount>, 
