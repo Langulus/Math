@@ -9,8 +9,8 @@
 #pragma once
 #include "../Vectors/TVector.hpp"
 
-#define TEMPLATE() template<CT::Dense T>
-#define TME() TRange<T>
+#define TEMPLATE()   template<CT::Dense T>
+#define TME()        TRange<T>
 
 
 namespace Langulus::Math
