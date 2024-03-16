@@ -20,14 +20,25 @@
 namespace Langulus::Math
 {
 
-   ///                                                                        
-   ///   CONSTRUCTION                                                         
-   ///                                                                        
    /// Default constructor (identity)                                         
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix() noexcept {
       for (Offset i = 0; i < Diagonal; ++i)
          mColumns[i][i] = T {1};
+   }
+
+   /// Copy constructor                                                       
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TMatrix(const TMatrix& other) noexcept {
+      for (Count i = 0; i < Columns; ++i)
+         mColumns[i] = other.mColumns[i];
+   }
+
+   /// Move constructor                                                       
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TMatrix(TMatrix&& other) noexcept {
+      for (Count i = 0; i < Columns; ++i)
+         mColumns[i] = ::std::move(other.mColumns[i]);
    }
 
    /// Construct from similar matrix                                          
@@ -351,6 +362,20 @@ namespace Langulus::Math
    ///                                                                        
    ///   Assignment                                                           
    ///                                                                        
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::operator = (const TMatrix& other) noexcept {
+      for (Count i = 0; i < Columns; ++i)
+         mColumns[i] = other.mColumns[i];
+      return *this;
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()& TME()::operator = (TMatrix&& other) noexcept {
+      for (Count i = 0; i < Columns; ++i)
+         mColumns[i] = ::std::move(other.mColumns[i]);
+      return *this;
+   }
+
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::MatrixBased auto& other) noexcept {
       return *new (this) TMatrix {other};
