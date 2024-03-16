@@ -145,7 +145,7 @@ namespace Langulus::Math
    struct TRange {
       using PointType = T;
       using MemberType = TypeOf<T>;
-      static constexpr Count MemberCount = CountOf<T>;
+      static constexpr Count MemberCount = CountOf<T> * 2;
 
       union {
          struct {
@@ -154,7 +154,7 @@ namespace Langulus::Math
          };
 
          // Useful representation for directly feeding to SIMD          
-         MemberType mArray[MemberCount * 2];
+         MemberType mArray[MemberCount];
       };
 
    public:
@@ -163,7 +163,7 @@ namespace Langulus::Math
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS_BASES(
-         A::RangeOfSize<MemberCount>,
+         A::RangeOfSize<(MemberCount > 1 ? MemberCount / 2 : 1)>,
          A::RangeOfType<MemberType>,
          MemberType
       );
@@ -175,10 +175,10 @@ namespace Langulus::Math
    public:
       constexpr TRange() noexcept;
       constexpr TRange(const TRange&) noexcept;
-      constexpr TRange(const PointType&) noexcept;
+      constexpr TRange(const CT::Vector auto&) noexcept;
+      constexpr TRange(const CT::Scalar auto&) noexcept;
       constexpr TRange(const PointType&, const PointType&) noexcept;
-      constexpr TRange(const PointType*) noexcept;
-      constexpr TRange(const PointType* const*) noexcept;
+      constexpr TRange(const MemberType&, const MemberType&) noexcept;
 
    #if LANGULUS_SIMD(128BIT)
       TRange(const simde__m128&)  noexcept;
@@ -197,6 +197,8 @@ namespace Langulus::Math
       TRange(const simde__m512d&) noexcept;
       TRange(const simde__m512i&) noexcept;
    #endif
+
+      TRange(Describe&&);
 
       ///                                                                     
       ///   Assignment                                                        
@@ -226,6 +228,9 @@ namespace Langulus::Math
 
       NOD() constexpr TRange  operator |  (const TRange&) const noexcept;
             constexpr TRange& operator |= (const TRange&)       noexcept;
+
+      NOD() constexpr       MemberType& operator [] (Offset)       noexcept;
+      NOD() constexpr const MemberType& operator [] (Offset) const noexcept;
    };
    #pragma pack(pop)
 

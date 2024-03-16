@@ -417,7 +417,7 @@ namespace Langulus::Math
    struct TVector : TVectorBase<S, T> {
       static_assert(S >= 1, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
-      static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
+      static constexpr T DefaultMember = static_cast<T>(DEFAULT);
       using ArrayType = T[S];
       using Base = TVectorBase<S, T>;
 
@@ -477,7 +477,7 @@ namespace Langulus::Math
       constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
 
       template<CT::ScalarBased N, CT::Dimension D>
-      constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
+      constexpr TVector& operator = (const TVectorComponent<N, D>&) noexcept;
 
       ///                                                                     
       ///   Interpretation                                                    
@@ -538,9 +538,9 @@ namespace Langulus::Math
       NOD() constexpr T Length() const noexcept;
       NOD() constexpr bool IsDegenerate() const noexcept;
 
-      template<Offset HEAD, Offset... TAIL>
+      template<Offset HEAD, Offset...TAIL>
       NOD()           decltype(auto) Swz()       noexcept;
-      template<Offset HEAD, Offset... TAIL>
+      template<Offset HEAD, Offset...TAIL>
       NOD() constexpr decltype(auto) Swz() const noexcept;
 
       template<Offset... I>
@@ -592,7 +592,7 @@ namespace Langulus::Math
       LANGULUS_TVECTOR_SWIZZLER4(w, 3U)
 
 
-      template<class AS, bool NORMALIZE = CT::Real<AS> && !CT::Real<T>>
+      template<class AS, bool NORMALIZE = CT::Real<AS> and not CT::Real<T>>
       NOD() constexpr TVector<AS, S> AsCast() const noexcept;
       template<Count = Math::Min(S, 3u)>
       NOD() constexpr auto Volume() const noexcept;
@@ -682,7 +682,8 @@ namespace Langulus::Math
       ///                                                                     
       /// Creates a shuffled representation of a source vector, and commits   
       /// any changes to it upon destruction                                  
-      template<TARGS(V), Offset... I>
+      ///                                                                     
+      template<TARGS(V), Offset...I>
       struct TProxyVector : TVector<VT, sizeof...(I), VD> {
       LANGULUS(UNINSERTABLE) true;
       private:
@@ -692,11 +693,9 @@ namespace Langulus::Math
 
       private:
          /// Commit the changes                                               
-         void Commit() noexcept {
-            constexpr Offset sequence [] {I...};
-            auto from = GetRaw();
-            for (auto& to : sequence)
-               mSource.GetRaw()[to] = *(++from);
+         template<Offset...I2>
+         constexpr void Commit(::std::integer_sequence<Offset, I2...>&&) noexcept {
+            ((mSource[I] = (*this)[I2]), ...);
          }
 
       public:
@@ -708,10 +707,9 @@ namespace Langulus::Math
             : mSource {source} {}
 
          ~TProxyVector() noexcept {
-            Commit();
+            Commit(::std::make_integer_sequence<Offset, sizeof...(I)>{});
          }
 
-         using Base::GetRaw;
          using Base::operator =;
       };
 

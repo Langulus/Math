@@ -268,7 +268,7 @@ namespace Langulus::Math
       return all[I];
    }
 
-   /// Get Nth vector element (mutable)                                       
+   /// Get Nth vector element                                                 
    ///   @attention assumes index is in vector's size limits                  
    ///   @param a - index of the element (0, 1, 2 correspond to X, Y, Z)      
    ///   @returns a reference to the component                                
@@ -277,10 +277,6 @@ namespace Langulus::Math
       return all[a];
    }
 
-   /// Get Nth vector element                                                 
-   ///   @attention assumes index is in vector's size limits                  
-   ///   @param a - index of the element (0, 1, 2 correspond to X, Y, Z)      
-   ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T& TME()::operator [] (const Offset a) const noexcept {
       return all[a];
@@ -369,7 +365,7 @@ namespace Langulus::Math
    ///   @return the product                                                  
    TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
    constexpr auto TME()::Volume() const noexcept {
-      static_assert(ALTS > 1, "Degenerated volume, use higher rank");
+      static_assert(ALTS >  1, "Degenerated volume, use higher rank");
       static_assert(ALTS <= S, "Rank out of limits");
 
       T product {1};
@@ -400,7 +396,7 @@ namespace Langulus::Math
    ///   @param com - the component to overwrite                              
    ///   @return a reference to this vector                                   
    TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
-   constexpr auto& TME()::operator = (const TVectorComponent<N, D>& com) noexcept {
+   constexpr TME()& TME()::operator = (const TVectorComponent<N, D>& com) noexcept {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
       all[D::Index] = Adapt(com.mValue);
       return *this;

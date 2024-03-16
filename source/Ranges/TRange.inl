@@ -10,8 +10,8 @@
 #include "TRange.hpp"
 #include "../Vectors/TVector.inl"
 
-#define TEMPLATE() template<CT::Dense T>
-#define TME() TRange<T>
+#define TEMPLATE()   template<CT::Dense T>
+#define TME()        TRange<T>
 
 
 namespace Langulus::Math
@@ -29,27 +29,27 @@ namespace Langulus::Math
       : mMin {a.mMin}
       , mMax {a.mMax} {}
 
-   /// Scalar construction (min == max)                                       
+   /// Construct the range sequentially, like so:                             
+   /// minX, minY, minZ..., maxX, maxY, maxZ...                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const PointType& minmax) noexcept
-      : mMin {minmax}
-      , mMax {minmax} {}
+   constexpr TME()::TRange(const CT::Vector auto& other) noexcept {
+      SIMD::Convert<T::DefaultMember>(DesemCast(other), mArray);
+   }
 
-   /// Manual construction from min & max                                     
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TRange(const CT::Scalar auto& other) noexcept {
+      SIMD::Convert<T::DefaultMember>(DesemCast(other), mArray);
+   }
+
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept
       : mMin {min}
       , mMax {max} {}
 
-   /// From dense data                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const PointType* a) noexcept
-      : TRange {a[0], a[1]} {}
-
-   /// From sparse data                                                       
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const PointType* const* a) noexcept
-      : TRange {*a[0], *a[1]} {}
+   constexpr TME()::TRange(const MemberType& min, const MemberType& max) noexcept
+      : mMin {min}
+      , mMax {max} {}
    
 #if LANGULUS_SIMD(128BIT)
    TEMPLATE() LANGULUS(INLINED)
@@ -101,6 +101,43 @@ namespace Langulus::Math
       SIMD::Store(source, mArray);
    }
 #endif
+   
+   /// Construct from a descriptor                                            
+   ///   @param describe - the descriptor to scan                             
+   TEMPLATE()
+   TME()::TRange(Describe&& describe) {
+      LANGULUS_ASSUME(UserAssumes, *describe,
+         "Empty descriptor for TRange");
+
+      // Attempt initializing without any conversion                    
+      auto initialized = describe->ExtractData(mArray);
+      if (not initialized) {
+         // Attempt converting anything to T                            
+         initialized = describe->ExtractDataAs(mArray);
+      }
+
+      switch (initialized) {
+      case 0:
+         // Nothing was initialized. This is always an error in the     
+         // context of the descriptor-constructor. If descriptor was    
+         // empty, the default constructor would've been explicitly     
+         // called, instead of this one. This way we can differentiate  
+         // whether or not a vector object was successfully initialized.
+         LANGULUS_OOPS(Construct, "Bad TRange descriptor", 
+            ", nothing was initialized: ", *describe);
+      case 1:
+         // Only one provided element is handled as scalar constructor  
+         // Copy first element in array to the rest                     
+         for (; initialized < MemberCount; ++initialized)
+            mArray[initialized] = mArray[0];
+         break;
+      default:
+         // Initialize unavailable elements to the vector's default     
+         for (; initialized < MemberCount; ++initialized)
+            mArray[initialized] = T::DefaultMember;
+         break;
+      }
+   }
 
    /// Copy range                                                             
    ///   @param r - the range to copy                                         
@@ -225,6 +262,22 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator |= (const TME()& a) noexcept {
       *this = *this | a;
+   }
+   
+   /// Get Nth range element                                                  
+   ///   @attention assumes index is in range's MemberCount limits            
+   ///   @param a - index of the element                                      
+   ///      0,   1,   2,   ... CountOf<T> + 0, CountOf<T> + 1, CountOf<T> + 2 
+   ///      minX minY minZ ... maxX            maxY            maxZ ...       
+   ///   @returns a reference to the component                                
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TypeOf<T>& TME()::operator [] (const Offset a) noexcept {
+      return mArray[a];
+   }
+
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr const TypeOf<T>& TME()::operator [] (const Offset a) const noexcept {
+      return mArray[a];
    }
 
 
