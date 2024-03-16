@@ -11,10 +11,10 @@
 #include "../Numbers/TNumber.inl"
 #include <type_traits>
 
-#define TARGS(a) CT::ScalarBased a##T, Count a##S, int a##D
-#define TVEC(a) TVector<a##T, a##S, a##D>
-#define TEMPLATE() template<CT::ScalarBased T, Count S, int DEFAULT>
-#define TME() TVector<T, S, DEFAULT>
+#define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
+#define TVEC(a)      TVector<a##T, a##S, a##D>
+#define TEMPLATE()   template<CT::ScalarBased T, Count S, int DEFAULT>
+#define TME()        TVector<T, S, DEFAULT>
 
 
 namespace Langulus::Math
@@ -46,7 +46,7 @@ namespace Langulus::Math
       for (auto& e : all)
          e = DefaultMember;
    }
-
+   
    /// Construct from any vector (with conversion)                            
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
@@ -63,8 +63,8 @@ namespace Langulus::Math
 
    /// Manual construction via a variadic head-tail                           
    /// Excessive elements are ignored, while missing elements are defaulted   
-   TEMPLATE() template<class T1, class T2, class...TAIL> LANGULUS(INLINED)
-   constexpr TME()::TVector(const T1& t1, const T2& t2, const TAIL&...tail) noexcept {
+   TEMPLATE() template<class T1, class T2, class...TN> LANGULUS(INLINED)
+   constexpr TME()::TVector(const T1& t1, const T2& t2, const TN&...tn) noexcept {
       constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
       if constexpr (CT::Vector<T1>) {
          // First element is vector/array, copy its elements            
@@ -89,10 +89,10 @@ namespace Langulus::Math
          }
 
          // Combine all the rest of the arguments in a vector           
-         if constexpr (sizeof...(TAIL)) {
-            constexpr auto C3 = Math::Min(CountOf<TAIL...>, MemberCount - (C1 + C2));
+         if constexpr (sizeof...(TN)) {
+            constexpr auto C3 = Math::Min(CountOf<TN...>, MemberCount - (C1 + C2));
             if constexpr (C3) {
-               const TVector<T, C3> theRest {tail...};
+               const TVector<T, C3> theRest {tn...};
                for (Offset i = C1 + C2; i < MemberCount; ++i)
                   all[i] = theRest[i - (C1 + C2)];
             }
@@ -385,8 +385,7 @@ namespace Langulus::Math
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::Scalar auto& scalar) noexcept {
-      new (this) TVector {scalar};
-      return *this;
+      return *new (this) TVector {scalar};
    }
 
    /// Copy vector                                                            
@@ -394,8 +393,7 @@ namespace Langulus::Math
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::Vector auto& vec) noexcept {
-      new (this) TVector {vec};
-      return *this;
+      return *new (this) TVector {vec};
    }
 
    /// Set only a specific component                                          

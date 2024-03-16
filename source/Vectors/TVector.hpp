@@ -177,7 +177,7 @@ namespace Langulus::Math
    template<CT::ScalarBased T>
    struct TVectorBase<1, T> {
       union {
-         union { T x, first, r, red, u; };
+         union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first, r, red, u; };
          T all[1] {};
       };
 
@@ -204,14 +204,34 @@ namespace Langulus::Math
       void t()       { LANGULUS_ERROR("1D vector doesn't have 't' component"); }
 
       void tail()    { LANGULUS_ERROR("1D vector doesn't have a tail"); }
+
+      LANGULUS_MEMBERS(&TVectorBase::x);
+
+      constexpr TVectorBase() noexcept = default;
+
+      constexpr TVectorBase(const TVectorBase& other) noexcept {
+         all[0] = other.all[0];
+      }
+
+      constexpr TVectorBase(TVectorBase&& other) noexcept {
+         all[0] = other.all[0];
+      }
+
+      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+         return *new (this) TVectorBase {other};
+      }
+
+      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+      }
    };
 
    template<CT::ScalarBased T>
    struct TVectorBase<2, T> {
       union {
          struct {
-            union { T x, first,  r, red,   u; };
-            union { T y, second, g, green, v; };
+            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
          };
          T all[2] {};
       };
@@ -233,15 +253,37 @@ namespace Langulus::Math
       void t()       { LANGULUS_ERROR("2D vector doesn't have 't' component"); }
 
       void tail()    { LANGULUS_ERROR("2D vector doesn't have a tail"); }
+
+      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y);
+
+      constexpr TVectorBase() noexcept = default;
+
+      constexpr TVectorBase(const TVectorBase& other) noexcept {
+         for (int i = 0; i < 2; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase(TVectorBase&& other) noexcept {
+         for (int i = 0; i < 2; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+         return *new (this) TVectorBase {other};
+      }
+
+      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+      }
    };
 
    template<CT::ScalarBased T>
    struct TVectorBase<3, T> {
       union {
          struct {
-            union { T x, first,  r, red,   u; };
-            union { T y, second, g, green, v; };
-            union { T z, third,  b, blue,  s; };
+            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<T, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
          };
          T all[3] {};
       };
@@ -257,21 +299,65 @@ namespace Langulus::Math
       void t()       { LANGULUS_ERROR("3D vector doesn't have 't' component"); }
 
       void tail()    { LANGULUS_ERROR("3D vector doesn't have a tail"); }
+
+      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z);
+
+      constexpr TVectorBase() noexcept = default;
+
+      constexpr TVectorBase(const TVectorBase& other) noexcept {
+         for (int i = 0; i < 3; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase(TVectorBase&& other) noexcept {
+         for (int i = 0; i < 3; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+         return *new (this) TVectorBase {other};
+      }
+
+      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+      }
    };
 
    template<CT::ScalarBased T>
    struct TVectorBase<4, T> {
       union {
          struct {
-            union { T x, first,  r, red,   u; };
-            union { T y, second, g, green, v; };
-            union { T z, third,  b, blue,  s; };
-            union { T w, fourth, a, alpha, t; };
+            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<T, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
+            union { RTTI::Tag<T, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
          };
          T all[4] {};
       };
 
       void tail()    { LANGULUS_ERROR("4D vector doesn't have a tail"); }
+
+      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
+
+      constexpr TVectorBase() noexcept = default;
+
+      constexpr TVectorBase(const TVectorBase& other) noexcept {
+         for (int i = 0; i < 4; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase(TVectorBase&& other) noexcept {
+         for (int i = 0; i < 4; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+         return *new (this) TVectorBase {other};
+      }
+
+      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+      }
    };
 
    template<Count S, CT::ScalarBased T>
@@ -282,16 +368,38 @@ namespace Langulus::Math
 
       union {
          struct {
-            union { T x, first,  r, red,   u; };
-            union { T y, second, g, green, v; };
-            union { T z, third,  b, blue,  s; };
-            union { T w, fourth, a, alpha, t; };
+            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<T, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
+            union { RTTI::Tag<T, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
 
             // The remaining elements, that don't have custom names     
             T tail[S - 4];
          };
          T all[S] {};
       };
+
+      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
+
+      constexpr TVectorBase() noexcept = default;
+
+      constexpr TVectorBase(const TVectorBase& other) noexcept {
+         for (int i = 0; i < S; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase(TVectorBase&& other) noexcept {
+         for (int i = 0; i < S; ++i)
+            all[i] = other.all[i];
+      }
+
+      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+         return *new (this) TVectorBase {other};
+      }
+
+      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+      }
    };
 
 
@@ -311,6 +419,7 @@ namespace Langulus::Math
       static constexpr Count MemberCount = S;
       static constexpr T DefaultMember {static_cast<T>(DEFAULT)};
       using ArrayType = T[S];
+      using Base = TVectorBase<S, T>;
 
    public:
       LANGULUS(NAME) CustomNameOf<TVector>::Generate();
@@ -321,7 +430,7 @@ namespace Langulus::Math
       LANGULUS_BASES(
          A::VectorOfSize<S>, 
          A::VectorOfType<T>,
-         T
+         Base, T
       );
       LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
@@ -333,13 +442,11 @@ namespace Langulus::Math
       ///   Construction                                                      
       ///                                                                     
       constexpr TVector() noexcept;
-      constexpr TVector(const TVector&) noexcept = default;
-      constexpr TVector(TVector&&) noexcept = default;
       constexpr TVector(const CT::Vector auto&) noexcept;
       constexpr TVector(const CT::Scalar auto&) noexcept;
 
-      template<class T1, class T2, class... TAIL>
-      constexpr TVector(const T1&, const T2&, const TAIL&...) noexcept;
+      template<class T1, class T2, class...TN>
+      constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
@@ -366,7 +473,6 @@ namespace Langulus::Math
       ///                                                                     
       ///   Assignment                                                        
       ///                                                                     
-      constexpr TVector& operator = (const TVector&) noexcept = default;
       constexpr TVector& operator = (const CT::Vector auto&) noexcept;
       constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
 

@@ -203,12 +203,13 @@ namespace Langulus
          ///   Construction                                                   
          ///                                                                  
          constexpr TMatrix() noexcept;
-         constexpr TMatrix(const TMatrix&) noexcept = default;
+         constexpr TMatrix(const TMatrix&) noexcept;
+         constexpr TMatrix(TMatrix&&) noexcept;
          constexpr TMatrix(const CT::MatrixBased auto&) noexcept;
          constexpr TMatrix(const CT::VectorBased auto&) noexcept;
          constexpr TMatrix(const CT::ScalarBased auto&) noexcept;
-         template<class T1, class T2, class... TAIL>
-         constexpr TMatrix(const T1&, const T2&, const TAIL&...) noexcept;
+         template<class T1, class T2, class...TN>
+         constexpr TMatrix(const T1&, const T2&, const TN&...) noexcept;
 
          TMatrix(Describe&&);
 
@@ -246,7 +247,8 @@ namespace Langulus
          ///                                                                  
          ///   Assignment                                                     
          ///                                                                  
-         constexpr TMatrix& operator = (const TMatrix&) noexcept = default;
+         constexpr TMatrix& operator = (const TMatrix&) noexcept;
+         constexpr TMatrix& operator = (TMatrix&&) noexcept;
          constexpr TMatrix& operator = (const CT::MatrixBased auto&) noexcept;
          constexpr TMatrix& operator = (const CT::VectorBased auto&) noexcept;
          constexpr TMatrix& operator = (const CT::ScalarBased auto&) noexcept;
