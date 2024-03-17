@@ -82,7 +82,7 @@ namespace Langulus
 
    /// Custom name generator at compile-time for rounded boxes                
    template<CT::Vector T>
-   constexpr auto CustomName(Of<Math::TBoxRounded<T>>&&) noexcept {
+   consteval auto CustomName(Of<Math::TBoxRounded<T>>&&) noexcept {
       using CLASS = Math::TBoxRounded<T>;
       constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
       ::std::array<char, defaultClassName.size() + 1> name {};
@@ -134,6 +134,7 @@ namespace Langulus::Math
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Box);
+      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
@@ -144,6 +145,9 @@ namespace Langulus::Math
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool IsHollow() const noexcept;
       NOD() auto SignedDistance(const T&) const;
+
+      NOD() explicit operator Anyness::Text() const;
+      NOD() explicit operator Flow::Code() const;
    };
 
 
@@ -163,6 +167,7 @@ namespace Langulus::Math
    template<CT::Vector T>
    struct TBoxRounded : TBox<T> {
       LANGULUS(NAME) CustomNameOf<TBoxRounded>::Generate();
+      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
       using Base = TBox<T>;
       using typename Base::PointType;
@@ -174,6 +179,9 @@ namespace Langulus::Math
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool IsHollow() const noexcept;
       NOD() auto SignedDistance(const T&) const;
+
+      NOD() explicit operator Anyness::Text() const;
+      NOD() explicit operator Flow::Code() const;
    };
 
 } // namespace Langulus::Math

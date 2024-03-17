@@ -20,7 +20,7 @@
 namespace Langulus::Math
 {
 
-   /// Default vector constructor - initialize components to DefaultMember    
+   /// Default vector constructor - initialize components to Default          
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
       if constexpr (S > 1) {
@@ -44,7 +44,7 @@ namespace Langulus::Math
          "Vectors should have type");
 
       for (auto& e : all)
-         e = DefaultMember;
+         e = Default;
    }
    
    /// Construct from any vector (with conversion)                            
@@ -192,7 +192,7 @@ namespace Langulus::Math
       default:
          // Initialize unavailable elements to the vector's default     
          for (; initialized < S; ++initialized)
-            all[initialized] = static_cast<T>(DEFAULT);
+            all[initialized] = Default;
          break;
       }
    }

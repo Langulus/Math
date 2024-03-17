@@ -28,10 +28,12 @@ namespace Langulus::Math
       using Type = uint8_t;
 
       enum Enum : Type {
+         // Let context determine the mapping                           
+         Auto = 0,
          // Map to the global position (after object transformation)    
          // This generally means any coordinates in the range of a      
          // single Math::Level                                          
-         World = 0,
+         World,
          // Map to the local position (before any transformations)      
          // This usually means in the range of [0; 1] if model was made 
          // in the AssetGeometry module, but there are exceptions.      
@@ -67,9 +69,10 @@ namespace Langulus::Math
       };
 
    protected:
-      Type mMode {Enum::World};
+      Type mMode = Enum::Auto;
 
       LANGULUS_NAMED_VALUES(
+         Auto,
          World,
          Model,
          Projector,

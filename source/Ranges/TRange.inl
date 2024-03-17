@@ -33,19 +33,22 @@ namespace Langulus::Math
    /// minX, minY, minZ..., maxX, maxY, maxZ...                               
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::Vector auto& other) noexcept {
-      SIMD::Convert<T::DefaultMember>(DesemCast(other), mArray);
+      SIMD::Convert<0>(DesemCast(other), mArray);
    }
 
+   /// Construct the range from scalar                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::Scalar auto& other) noexcept {
-      SIMD::Convert<T::DefaultMember>(DesemCast(other), mArray);
+      SIMD::Convert<0>(DesemCast(other), mArray);
    }
 
+   /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept
       : mMin {min}
       , mMax {max} {}
 
+   /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const MemberType& min, const MemberType& max) noexcept
       : mMin {min}
@@ -134,7 +137,7 @@ namespace Langulus::Math
       default:
          // Initialize unavailable elements to the vector's default     
          for (; initialized < MemberCount; ++initialized)
-            mArray[initialized] = T::DefaultMember;
+            mArray[initialized] = T::Default;
          break;
       }
    }

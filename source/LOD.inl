@@ -9,6 +9,7 @@
 #pragma once
 #include "LOD.hpp"
 #include "Matrices/TMatrix.inl"
+#include "Numbers/Level.inl"
 
 
 namespace Langulus::Math
