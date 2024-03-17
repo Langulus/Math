@@ -146,7 +146,7 @@ namespace Langulus::Math
       using PointType = T;
       using MemberType = TypeOf<T>;
       static constexpr Count MemberCount = CountOf<T> * 2;
-      static consteval auto Default() { return T::Default(); }
+      static constexpr auto Default = T::Default;
 
       union {
          struct {
@@ -236,11 +236,35 @@ namespace Langulus::Math
    #pragma pack(pop)
 
 
+   namespace Inner
+   {
+
+      template<class LHS, class RHS>
+      consteval auto LosslessRange() {
+         using L = Decay<LHS>;
+         using R = Decay<RHS>;
+         if constexpr (CT::RangeBased<L>) {
+            if constexpr (CT::RangeBased<R>)
+               return (TRange<LosslessVector<typename L::PointType, typename R::PointType>>*) nullptr;
+            else
+               return (TRange<LosslessVector<typename L::PointType, R>>*) nullptr;
+         }
+         else {
+            if constexpr (CT::RangeBased<R>)
+               return (TRange<LosslessVector<L, typename R::PointType>>*) nullptr;
+            else
+               return (TRange<LosslessVector<L, R>>*) nullptr;
+         }
+      }
+
+   } // namespace Langulus::Math::Inner
+
+
    /// Generate a lossless range type from provided LHS and RHS types         
    ///   @tparam LHS - left hand side, can be scalar/array/vector/range       
    ///   @tparam RHS - right hand side, can be scalar/array/vector/range      
    template<class LHS, class RHS>
-   using LosslessRange = TRange<LosslessVector<LHS, RHS>>;
+   using LosslessRange = Deptr<decltype(Inner::LosslessRange<LHS, RHS>())>;
 
 
    ///                                                                        
