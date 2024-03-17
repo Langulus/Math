@@ -115,7 +115,6 @@ namespace Langulus::Math
 
       // Human is the default level                                     
       static constexpr Real Default = Human;
-      static constexpr Real DefaultMember = Human;
 
       Real GetFactor(const Level&) const noexcept;
       constexpr Level GetRefPoint(const Level&) const noexcept;

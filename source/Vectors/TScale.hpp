@@ -169,7 +169,7 @@ namespace Langulus
             T
          );
 
-         static_assert(T::DefaultMember == TypeOf<T> {1},
+         static_assert(T::Default == TypeOf<T> {1},
             "Scaling type does not default to 1");
 
          /// Convert from any size to text                                    

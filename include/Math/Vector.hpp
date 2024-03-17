@@ -19,7 +19,7 @@ namespace Langulus::Math
       ///   @tparam S - size of the vector                                    
       template<Count S>
       struct VectorTypeGenerator {
-         template<class... T>
+         template<class...T>
          static void Register(Types<T...>&&) {
             (((void) MetaOf<TVector<T, S>>()), ...);
          }

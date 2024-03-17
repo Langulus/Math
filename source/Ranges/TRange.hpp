@@ -146,6 +146,7 @@ namespace Langulus::Math
       using PointType = T;
       using MemberType = TypeOf<T>;
       static constexpr Count MemberCount = CountOf<T> * 2;
+      static consteval auto Default() { return T::Default(); }
 
       union {
          struct {
@@ -160,7 +161,7 @@ namespace Langulus::Math
    public:
       LANGULUS(NAME)  CustomNameOf<TRange>::Generate();
       LANGULUS(TYPED) MemberType;
-      LANGULUS(POD) CT::POD<T>;
+      LANGULUS(POD)   CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS_BASES(
          A::RangeOfSize<(MemberCount > 1 ? MemberCount / 2 : 1)>,

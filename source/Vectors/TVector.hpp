@@ -417,11 +417,10 @@ namespace Langulus::Math
    struct TVector : TVectorBase<S, T> {
       static_assert(S >= 1, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
-      static constexpr T DefaultMember = static_cast<T>(DEFAULT);
+      static constexpr T Default = static_cast<T>(DEFAULT);
       using ArrayType = T[S];
       using Base = TVectorBase<S, T>;
 
-   public:
       LANGULUS(NAME) CustomNameOf<TVector>::Generate();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
@@ -447,6 +446,7 @@ namespace Langulus::Math
 
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
+
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
