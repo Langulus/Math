@@ -77,6 +77,91 @@ namespace Langulus
 
    } // namespace Langulus::CT
 
+   
+   /// Custom name generator at compile-time for lines                        
+   template<CT::Vector T>
+   consteval auto CustomName(Of<Math::TLine<T>>&&) noexcept {
+      using CLASS = Math::TLine<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Line")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+   
+   /// Custom name generator at compile-time for line loop                    
+   template<CT::Vector T>
+   consteval auto CustomName(Of<Math::TLineLoop<T>>&&) noexcept {
+      using CLASS = Math::TLineLoop<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "LineLoop")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+   
+   /// Custom name generator at compile-time for line loop                    
+   template<CT::Vector T>
+   consteval auto CustomName(Of<Math::TLineStrip<T>>&&) noexcept {
+      using CLASS = Math::TLineStrip<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "LineStrip")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+
 } // namespace Langulus
 
 namespace Langulus::Math
@@ -88,6 +173,7 @@ namespace Langulus::Math
    #pragma pack(push, 1)
    template<CT::Vector T>
    struct TLine : A::Line {
+      LANGULUS(NAME) CustomNameOf<TLine>::Generate();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
@@ -134,6 +220,7 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TLineLoop : A::LineLoop {
+      LANGULUS(NAME) CustomNameOf<TLineLoop>::Generate();
       LANGULUS(ABSTRACT) false;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineLoop);
@@ -154,6 +241,7 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TLineStrip : A::LineStrip {
+      LANGULUS(NAME) CustomNameOf<TLineStrip>::Generate();
       LANGULUS(ABSTRACT) false;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineStrip);
