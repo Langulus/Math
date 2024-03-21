@@ -20,9 +20,10 @@ namespace Langulus::Math
    ///                                                                        
    /// Represents different tactics for mapping two properties to each other  
    ///                                                                        
-   struct MapMode {
+   struct MapModeType {
       LANGULUS(POD) true;
       LANGULUS(NULLIFIABLE) true;
+      LANGULUS(NAME) "MapMode";
       LANGULUS(INFO) "Mapping mode";
 
       using Type = uint8_t;
@@ -89,11 +90,31 @@ namespace Langulus::Math
       );
 
    public:
-      constexpr MapMode() noexcept = default;
-      constexpr MapMode(Type value) noexcept
+      constexpr MapModeType() noexcept = default;
+      constexpr MapModeType(Type value) noexcept
          : mMode {value} {}
 
-      constexpr bool operator == (const MapMode&) const = default;
+      constexpr bool operator == (const MapModeType&) const = default;
    };
+
+   namespace MapMode
+   {
+
+      constexpr MapModeType Auto          {MapModeType::Auto         };
+      constexpr MapModeType World         {MapModeType::World        };
+      constexpr MapModeType Model         {MapModeType::Model        };
+      constexpr MapModeType Projector     {MapModeType::Projector    };
+      constexpr MapModeType Screen        {MapModeType::Screen       };
+      constexpr MapModeType Primitive     {MapModeType::Primitive    };
+      constexpr MapModeType Triplanar     {MapModeType::Triplanar    };
+      constexpr MapModeType Cube          {MapModeType::Cube         };
+      constexpr MapModeType Face          {MapModeType::Face         };
+      constexpr MapModeType Pack          {MapModeType::Pack         };
+      constexpr MapModeType AdaptivePack  {MapModeType::AdaptivePack };
+      constexpr MapModeType Contour       {MapModeType::Contour      };
+      constexpr MapModeType Unfold        {MapModeType::Unfold       };
+      constexpr MapModeType Custom        {MapModeType::Custom       };
+
+   } // namespace Langulus::Math::MapMode
 
 } // namespace Langulus::Math
