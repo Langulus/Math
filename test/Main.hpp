@@ -29,7 +29,7 @@ struct Fraction : public Flow::Resolvable {
    LANGULUS(ABSTRACT) false;
    LANGULUS(UNINSERTABLE) false;
    LANGULUS_BASES(Resolvable);
-   Fraction() : Resolvable(MetaOf<Fraction>()) {}
+   Fraction() : Resolvable {this} {}
 };
 
 /// Dump parse results and requirements                                       
