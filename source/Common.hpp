@@ -143,6 +143,7 @@ namespace Langulus::CT
          or RangeBased<T>
          or MatrixBased<T>
          or GradientBased<T>
+         or Deep<T>
       ) and ...);
 
 } // namespace Langulus::CT
