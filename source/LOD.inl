@@ -48,14 +48,15 @@ namespace Langulus::Math
       mRadius = mModelView.GetScale().HMax() * Real {0.5};
       mDistanceToSurface = mOrigin.Length() - mRadius;
       mLODIndex = 0;
+
       if (mDistanceToSurface > 0 and mRadius > 0) {
-         // View is outside the sphere                                  
+         // View is outside the sphere of influence (SOI)               
          const Real near = ::std::log10(mRadius / mDistanceToSurface);
          const Real far = ::std::log10(mDistanceToSurface / mRadius);
          mLODIndex = Math::Clamp(near - far, Real {MinIndex}, Real {MaxIndex});
       }
       else if (mDistanceToSurface < 0) {
-         // Being inside the sphere always gives the most detail        
+         // Being inside the SOI always gives the most detail           
          mLODIndex = Real {MaxIndex};
       }
    }
