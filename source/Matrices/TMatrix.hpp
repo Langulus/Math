@@ -211,7 +211,7 @@ namespace Langulus
          template<class T1, class T2, class...TN>
          constexpr TMatrix(const T1&, const T2&, const TN&...) noexcept;
 
-         TMatrix(Describe&&);
+         explicit TMatrix(Describe&&);
 
          NOD() static constexpr TMatrix LookAt(
             TVector<T, 3>,
