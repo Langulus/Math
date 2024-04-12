@@ -112,38 +112,39 @@ namespace Langulus::CT
 
    /// Anything that has the quaternion trait                                 
    template<class...T>
-   concept QuaternionBased = ((Decay<Desem<T>>::CTTI_QuaternionTrait) and ...);
+   concept QuaternionBased = ((Desem<T>::CTTI_QuaternionTrait) and ...);
 
    /// Anything that has the vector trait                                     
    template<class...T>
-   concept VectorBased = ((Decay<Desem<T>>::CTTI_VectorTrait) and ...);
+   concept VectorBased = ((Desem<T>::CTTI_VectorTrait) and ...);
    
    /// Anything that has the color trait                                      
    template<class...T>
-   concept ColorBased = ((Decay<Desem<T>>::CTTI_ColorTrait) and ...);
+   concept ColorBased = ((Desem<T>::CTTI_ColorTrait) and ...);
 
    /// Anything that has the range trait                                      
    template<class...T>
-   concept RangeBased = ((Decay<Desem<T>>::CTTI_RangeTrait) and ...);
+   concept RangeBased = ((Desem<T>::CTTI_RangeTrait) and ...);
 
    /// Anything that has the matrix trait                                     
    template<class...T>
-   concept MatrixBased = ((Decay<Desem<T>>::CTTI_MatrixTrait) and ...);
+   concept MatrixBased = ((Desem<T>::CTTI_MatrixTrait) and ...);
 
    /// Anything that has the gradient trait                                   
    template<class...T>
-   concept GradientBased = ((Decay<Desem<T>>::CTTI_GradientTrait) and ...);
+   concept GradientBased = ((Desem<T>::CTTI_GradientTrait) and ...);
 
    /// Anything that doesn't have any of the above traits                     
    ///   @attention keep this one up to date, if adding new math traits       
    template<class...T>
-   concept ScalarBased = DenseScalar<Desem<T>...>
-      and not ((QuaternionBased<T>
-         or VectorBased<T>
-         or RangeBased<T>
-         or MatrixBased<T>
-         or GradientBased<T>
-         or Deep<T>
+   concept ScalarBased = Scalar<T...> and
+     not ((QuaternionBased<T>
+        or VectorBased<T>
+        or RangeBased<T>
+        or MatrixBased<T>
+        or GradientBased<T>
+        //or Deep<T>
+        //or Same<T, Describe>
       ) and ...);
 
 } // namespace Langulus::CT

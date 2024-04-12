@@ -11,6 +11,7 @@
 #include "TPoint.hpp"
 #include "../Ranges/TRange.hpp"
 
+
 namespace Langulus
 {
    namespace Math
