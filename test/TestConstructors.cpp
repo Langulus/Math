@@ -19,7 +19,7 @@ TEMPLATE_TEST_CASE("Vector static creation from code", "[vec]",
       const Code code = Code {NameOf<TestType>()} + "()";
       
       WHEN("Parsed") {
-         Any required = TestType {};
+         Many required = TestType {};
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
          REQUIRE(parsed == required);
