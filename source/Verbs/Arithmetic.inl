@@ -8,7 +8,7 @@
 ///                                                                           
 #pragma once
 #include "Arithmetic.hpp"
-#include <Anyness/TAny.hpp>
+#include <Anyness/TMany.hpp>
 
 
 namespace Langulus::Flow
@@ -27,7 +27,7 @@ namespace Langulus::Flow
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      using B = TAny<T>;
+      using B = TMany<T>;
       B result;
       result.template Reserve<true>(lhs.GetCount());
       const T* ilhs = lhs.GetRaw<B>();
@@ -64,7 +64,7 @@ namespace Langulus::Flow
 
       // We're editing through the reinterpretation, but we must return 
       // the original                                                   
-      rhs << Any {original};
+      rhs << Many {original};
       return true;
    }
 
@@ -82,7 +82,7 @@ namespace Langulus::Flow
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      TAny<T> result;
+      TMany<T> result;
       result.Reserve<true>(lhs.GetCount());
       const T* ilhs = lhs.GetRawAs<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
@@ -119,7 +119,7 @@ namespace Langulus::Flow
 
       // We're editing through the reinterpretation, but we must return 
       // the original                                                   
-      rhs << Any {original};
+      rhs << Many {original};
       return true;
    }
 

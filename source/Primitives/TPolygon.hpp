@@ -45,11 +45,11 @@ namespace Langulus
       /// A list of coplanar points that form a surface with a complex edge   
       ///                                                                     
       template<CT::Vector T>
-      struct TPolygon : TAny<T> {
+      struct TPolygon : TMany<T> {
          LANGULUS(DEEP) false;
          LANGULUS_BASES(A::Polygon);
 
-         using Base = TAny<T>;
+         using Base = TMany<T>;
          using PointType = T;
          static constexpr auto MemberCount = T::MemberCount;
          static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
@@ -63,7 +63,7 @@ namespace Langulus
          /// Compare two polygon sequences                                    
          LANGULUS(INLINED)
          bool operator == (const TPolygon& rhs) const {
-            return Block::Compare<false, TAny<T>>(static_cast<const TAny<T>&>(rhs));
+            return Block::Compare<false, TMany<T>>(static_cast<const TMany<T>&>(rhs));
          }
       };
 

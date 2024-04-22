@@ -328,7 +328,7 @@ namespace Langulus::Math
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleStrip);
 
-      Anyness::TAny<T> mPoints;
+      Anyness::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
@@ -359,7 +359,7 @@ namespace Langulus::Math
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleFan);
 
-      Anyness::TAny<T> mPoints;
+      Anyness::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;

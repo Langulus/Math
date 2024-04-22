@@ -225,7 +225,7 @@ namespace Langulus::Math
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineLoop);
 
-      Anyness::TAny<T> mPoints;
+      Anyness::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
@@ -246,7 +246,7 @@ namespace Langulus::Math
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineStrip);
 
-      Anyness::TAny<T> mPoints;
+      Anyness::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
