@@ -8,7 +8,7 @@
 ///                                                                           
 #pragma once
 #include "Arithmetic.hpp"
-#include <Anyness/TMany.hpp>
+#include <Anyness/Many.hpp>
 
 
 namespace Langulus::Flow

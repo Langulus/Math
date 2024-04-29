@@ -34,11 +34,11 @@ namespace Langulus::Math
    class TInstance {
    public:
       using ScalarType = TypeOf<T>;
-      using PointType = T;
+      using PointType  = T;
       using MatrixType = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
-      using RangeType = TRange<T>;
-      using QuatType = TQuaternion<ScalarType>;
-      using SizeType = TScale<TVector<ScalarType, T::MemberCount, 1>>;
+      using RangeType  = TRange<T>;
+      using QuatType   = TQuaternion<ScalarType>;
+      using SizeType   = TScale<TVector<ScalarType, T::MemberCount, 1>>;
 
    public:
       LANGULUS_VERBS(Verbs::Move);
