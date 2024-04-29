@@ -21,18 +21,17 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
-      const Block& original, const Block& lhs, Verb& rhs, Operator<T> op
+      const Block<>& original, const Block<>& lhs, Verb& rhs, Operator<T> op
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      using B = TMany<T>;
-      B result;
+      TMany<T> result;
       result.template Reserve<true>(lhs.GetCount());
-      const T* ilhs = lhs.GetRaw<B>();
+      const T* ilhs = lhs.GetRaw<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
-      const T* irhs = rhs.GetRaw<B>();
+      const T* irhs = rhs.GetRaw<T>();
       T* ires = result.GetRaw();
       while (ilhs != ilhsEnd)
          *(ires++) = op(ilhs++, irhs++);
@@ -50,15 +49,15 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
-      const Block& original, Block& lhs, Verb& rhs, OperatorMutable<T> o
+      const Block<>& original, Block<>& lhs, Verb& rhs, OperatorMutable<T> o
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      T* ilhs = lhs.GetRawAs<T>();
+      T* ilhs = lhs.GetRaw<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
-      const T* irhs = rhs.GetRawAs<T>();
+      const T* irhs = rhs.GetRaw<T>();
       while (ilhs != ilhsEnd)
          o(ilhs++, irhs++);
 
@@ -76,7 +75,7 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
-      const Block& original, const Block& lhs, Verb& rhs, Operator<T> o
+      const Block<>& original, const Block<>& lhs, Verb& rhs, Operator<T> o
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
@@ -84,9 +83,9 @@ namespace Langulus::Flow
       //TODO detect underflows and overflows
       TMany<T> result;
       result.Reserve<true>(lhs.GetCount());
-      const T* ilhs = lhs.GetRawAs<T>();
+      const T* ilhs = lhs.GetRaw<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
-      const T& irhs = *rhs.GetRawAs<T>();
+      const T& irhs = *rhs.GetRaw<T>();
       T* ires = result.GetRaw();
       while (ilhs != ilhsEnd)
          *(ires++) = o(ilhs++, &irhs);
@@ -105,15 +104,15 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
-      const Block& original, Block& lhs, Verb& rhs, OperatorMutable<T> o
+      const Block<>& original, Block<>& lhs, Verb& rhs, OperatorMutable<T> o
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
       // MVulkan to incorporate compute shader for even batcher batching!!1
       //TODO detect underflows and overflows
-      T* ilhs = lhs.GetRawAs<T>();
+      T* ilhs = lhs.GetRaw<T>();
       const T* const ilhsEnd = ilhs + lhs.GetCount();
-      const T& irhs = *rhs.GetRawAs<T>();
+      const T& irhs = *rhs.GetRaw<T>();
       while (ilhs != ilhsEnd)
          o(ilhs++, &irhs);
 
