@@ -63,7 +63,7 @@ namespace Langulus
          /// Compare two polygon sequences                                    
          LANGULUS(INLINED)
          bool operator == (const TPolygon& rhs) const {
-            return Base::Compare<false>(static_cast<const Base&>(rhs));
+            return Base::operator == (static_cast<const Base&>(rhs));
          }
       };
 

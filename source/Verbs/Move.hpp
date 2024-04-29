@@ -30,3 +30,5 @@ namespace Langulus::Verbs
    };
 
 } // namespace Langulus::Verbs
+
+#include "Move.inl"
