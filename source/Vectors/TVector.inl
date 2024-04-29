@@ -209,7 +209,7 @@ namespace Langulus::Math
          result += Code::Operator::OpenScope;
       }
 
-      Anyness::Block::From(GetRaw(), S).Serialize(result);
+      Anyness::MakeBlock(GetRaw(), S).Serialize(result);
 
       if constexpr (SCOPED)
          result += Code::Operator::CloseScope;
