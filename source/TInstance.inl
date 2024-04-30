@@ -371,7 +371,7 @@ namespace Langulus::Math
       using Anyness::Block;
       using Anyness::Trait;
 
-      verb.ForEachDeep([&](const Block& part) {
+      verb.ForEachDeep([&](const Block<>& part) {
          // Read relativity first                                       
          part.ForEach([&relative](const Trait& trait) {
             if (trait.IsTrait<Traits::Relative>())
