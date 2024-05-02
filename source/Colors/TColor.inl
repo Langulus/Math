@@ -181,7 +181,7 @@ namespace Langulus::Math
          Code result;
          result += NameOf<TColor>();
          result += Code::Operator::OpenScope;
-         auto bytes = reinterpret_cast<const Byte*>(GetRaw());
+         auto bytes = reinterpret_cast<const Byte*>(all);
          const auto bytesEnd = bytes + sizeof(TColor);
          while (bytes != bytesEnd)
             result += Code::Hex(*(bytes++));

@@ -519,10 +519,10 @@ namespace Langulus::Math
 
       using TVectorBase<S, T>::all;
 
-      LANGULUS(INLINED)
+      /*LANGULUS(INLINED)
       constexpr const T* GetRaw() const noexcept { return all; }
       LANGULUS(INLINED)
-      constexpr       T* GetRaw()       noexcept { return all; }
+      constexpr       T* GetRaw()       noexcept { return all; }*/
 
       NOD() constexpr const T& Get(Offset) const noexcept;
       NOD() constexpr       T& Get(Offset)       noexcept;
