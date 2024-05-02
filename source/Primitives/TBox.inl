@@ -90,7 +90,7 @@ namespace Langulus::Math
       Code result;
       result += MetaDataOf<TME()>();
       result += Code::Operator::OpenScope;
-      Anyness::MakeBlock(mOffsets.GetRaw(), MemberCount).Serialize(result);
+      Anyness::MakeBlock(mOffsets.all).Serialize(result);
       result += ", ";
       Anyness::MakeBlock(&mRadius, 1).Serialize(result);
       result += Code::Operator::CloseScope;

@@ -155,7 +155,7 @@ namespace Langulus
          constexpr TColor(Logger::Color);
 
          using T::Get;
-         using T::GetRaw;
+         //using T::GetRaw;
 
          template<CT::DenseNumber ALTT, CT::Dimension D>
          constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;

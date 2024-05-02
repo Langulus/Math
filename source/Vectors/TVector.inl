@@ -209,7 +209,7 @@ namespace Langulus::Math
          result += Code::Operator::OpenScope;
       }
 
-      Anyness::MakeBlock(GetRaw(), S).Serialize(result);
+      Anyness::MakeBlock(all).Serialize(result);
 
       if constexpr (SCOPED)
          result += Code::Operator::CloseScope;
@@ -1112,32 +1112,32 @@ namespace Langulus::Math
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::begin() noexcept {
-      return GetRaw();
+      return all;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::end() noexcept {
-      return GetRaw() + S;
+      return all + S;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr T* TME()::last() noexcept {
-      return GetRaw() + S - 1;
+      return all + S - 1;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::begin() const noexcept {
-      return GetRaw();
+      return all;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::end() const noexcept {
-      return GetRaw() + S;
+      return all + S;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr const T* TME()::last() const noexcept {
-      return GetRaw() + S - 1;
+      return all + S - 1;
    }
 
 } // namespace Langulus::Math
