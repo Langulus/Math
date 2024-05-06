@@ -65,9 +65,8 @@ namespace Langulus
          NOD() static constexpr Math::TMatrix<TypeOf<V>, V::MemberCount + 1>
          From(const Math::TQuaternion<TypeOf<V>>&, const V& = 0, const V& = 1) noexcept;
 
-         template<CT::ScalarBased T>
-         NOD() static constexpr Math::TMatrix<T, 4>
-         PerspectiveFOV(const CT::Angle auto&, const T&, const T&, const T&);
+         NOD() static constexpr auto
+         PerspectiveFOV(const CT::Angle auto&, CT::ScalarBased auto, CT::ScalarBased auto, CT::ScalarBased auto);
 
          template<CT::ScalarBased T>
          NOD() static constexpr Math::TMatrix<T, 4>

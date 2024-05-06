@@ -20,17 +20,17 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TFrustum<T>::TFrustum() noexcept {
       const T right {0.5, 0, 0};
-      const T top {0, 0.5, 0};
+      const T top   {0, 0.5, 0};
 
-      mPlanes[Left] = TPlane<T>(right);
-      mPlanes[Right] = TPlane<T>(-right);
-      mPlanes[Top] = TPlane<T>(-top);
-      mPlanes[Bottom] = TPlane<T>(top);
+      mPlanes[Left]   = TPlane<T>( right);
+      mPlanes[Right]  = TPlane<T>(-right);
+      mPlanes[Top]    = TPlane<T>(-top);
+      mPlanes[Bottom] = TPlane<T>( top);
 
       if constexpr (MemberCount > 2) {
          const T far {0, 0, 0.5};
-         mPlanes[Near] = TPlane<T>(far);
-         mPlanes[Far] = TPlane<T>(-far);
+         mPlanes[Near] = TPlane<T>( far);
+         mPlanes[Far]  = TPlane<T>(-far);
       }
    }
 
@@ -38,19 +38,19 @@ namespace Langulus::Math
    ///   @param projectedView - projected view matrix                         
    TEMPLATE() LANGULUS(INLINED)
    TFrustum<T>::TFrustum(const MatrixType& projectedView) noexcept {
-      const auto right = projectedView.GetColumn(0);
-      const auto top = projectedView.GetColumn(1);
-      const auto eye = projectedView.GetColumn(MemberCount > 2 ? 3 : 2) * (-1);
+      const auto right = projectedView.GetRow(0);
+      const auto top   = projectedView.GetRow(1);
+      const auto eye   = projectedView.GetRow(MemberCount > 2 ? 3 : 2) * (-1);
 
-      mPlanes[Left] = TPlane<T>(eye + right);
-      mPlanes[Right] = TPlane<T>(eye - right);
-      mPlanes[Top] = TPlane<T>(eye - top);
+      mPlanes[Left]   = TPlane<T>(eye + right);
+      mPlanes[Right]  = TPlane<T>(eye - right);
+      mPlanes[Top]    = TPlane<T>(eye - top);
       mPlanes[Bottom] = TPlane<T>(eye + top);
 
       if constexpr (MemberCount > 2) {
-         const auto far = projectedView.GetColumn(2);
+         const auto far = projectedView.GetRow(2);
          mPlanes[Near] = TPlane<T>(eye + far);
-         mPlanes[Far] = TPlane<T>(eye - far);
+         mPlanes[Far]  = TPlane<T>(eye - far);
       }
    }
 
@@ -92,7 +92,7 @@ namespace Langulus::Math
    ///   @return true if box intersects the frustum                           
    TEMPLATE() LANGULUS(INLINED)
    bool TFrustum<T>::Intersects(const TRange<T>& box) const noexcept {
-      if (box.IsDegenerate() || box.Length().IsDegenerate())
+      if (box.IsDegenerate() or box.Length().IsDegenerate())
          return false;
 
       // Not quite as fast, but wastes less space                       

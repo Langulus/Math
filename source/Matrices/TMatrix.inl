@@ -1069,14 +1069,15 @@ namespace Langulus::A
    ///   @param near - the distance to the near clipping plane                
    ///   @param far - the distance to the far clipping plane                  
    ///   @return the projection matrix                                        
-   template<CT::ScalarBased T>
-   constexpr Math::TMatrix<T, 4> A::Matrix::PerspectiveFOV(
+   constexpr auto A::Matrix::PerspectiveFOV(
       const CT::Angle auto& fieldOfView,
-      const T& aspect,
-      const T& near, const T& far
+      CT::ScalarBased auto aspect,
+      CT::ScalarBased auto near,
+      CT::ScalarBased auto far
    ) {
+      using T = Lossless<decltype(aspect), decltype(near), decltype(far)>;
       auto result = Math::TMatrix<T, 4>::Null();
-      const auto fd = T {1} / ::std::tan(T {fieldOfView.GetRadians()} *T {0.5});
+      const auto fd =  T {1} / ::std::tan(T {fieldOfView.GetRadians()} * T {0.5});
       const auto id = -T {1} / (far - near);
 
       result.mArray[0] = fd;
@@ -1104,10 +1105,10 @@ namespace Langulus::A
       const auto c = -(far + near) / (far - near);
       const auto d = T {-2} * far * near / (far - near);
 
-      result[0] = x;
-      result[8] = a;
-      result[5] = y;
-      result[9] = b;
+      result[ 0] = x;
+      result[ 8] = a;
+      result[ 5] = y;
+      result[ 9] = b;
       result[10] = c;
       result[14] = d;
       result[11] = -1;
@@ -1128,9 +1129,9 @@ namespace Langulus::A
       result.mArray[ 0] = T { 2} / width;
       result.mArray[ 5] = T { 2} / height;
       result.mArray[10] = T {-2} / range;
-      result.mArray[12] = T {-1};
-      result.mArray[13] = T {-1};
-      result.mArray[14] = -(far + near) / range;
+      result.mArray[12] = T {-1} / width;
+      result.mArray[13] = T {-1} / height;
+      result.mArray[14] = T { 1} / range;
       result.mArray[15] = T { 1};
       return result;
    }

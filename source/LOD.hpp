@@ -21,11 +21,26 @@ namespace Langulus::Math
    ///                                                                        
    ///   Level of detail state                                                
    ///                                                                        
-   /// A helper structure that is used to fetch the correct LOD index. LOD    
+   ///   A helper structure that is used to fetch the correct LOD index. LOD  
    /// index is a geometry/texture, that is designed to represent a zoomed-in 
    /// or a zoomed-out region of another geometry/texture. These regions can  
    /// be generated on the fly, or may reuse existing geometry/texture.       
    ///                                                                        
+   ///   LOD is determined by the real distance between camera's near plane,  
+   /// and the object's surface:                                              
+   ///                                                                        
+   ///                  | LOD 0 is the point of view, where the object        
+   ///                  | perfectly fits the screen                           
+   ///                  |                                                     
+   ///     near plane   |           ___                        |              
+   ///         v        v          /   \                       |              
+   ///      O> | <------x------->  | x <--- object center      |  far camera  
+   ///    camera     distance      \___/                       |  plane       
+   ///                             ^                           |              
+   /// <- LOD up to +6             |                                          
+   ///    (furthest)             object surface LOD-6 (closest)               
+   ///    object appears         object goes outside the screen               
+   ///    as a dot                                                            
    struct LOD {
       Level mLevel;
       Mat4 mView;

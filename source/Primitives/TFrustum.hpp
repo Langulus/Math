@@ -64,8 +64,9 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Frustum);
 
       static constexpr Count MemberCount = T::MemberCount;
-      using PointType = T;
-      using MatrixType = TMatrix<TypeOf<T>, MemberCount + 1>;
+      using PointType  = T;
+      using ScalarType = TypeOf<PointType>;
+      using MatrixType = TMatrix<ScalarType, MemberCount + 1>;
       static_assert(MemberCount > 1, "Can't have one-dimensional frustum");
 
       TPlane<T> mPlanes[MemberCount * 2];
