@@ -324,22 +324,22 @@ namespace Langulus::Math
 
    /// Mutable swizzle                                                        
    ///   @returns a proxy vector with the selected components                 
-   TEMPLATE() template<Offset HEAD, Offset...TAIL> LANGULUS(INLINED)
+   TEMPLATE() template<Offset E1, Offset...EN> LANGULUS(INLINED)
    decltype(auto) TME()::Swz() noexcept {
-      if constexpr (sizeof...(TAIL) == 0)
-         return all[HEAD];
+      if constexpr (sizeof...(EN) == 0)
+         return (all[E1]);
       else
-         return Inner::TProxyVector<T, S, HEAD, TAIL...> {*this};
+         return Inner::TProxyVector<T, S, DEFAULT, E1, EN...> {*this};
    }
 
    /// Immutable swizzle, just returns a shuffled vector                      
    ///   @returns a simple vector with the selected copied components         
-   TEMPLATE() template<Offset HEAD, Offset...TAIL> LANGULUS(INLINED)
+   TEMPLATE() template<Offset E1, Offset...EN> LANGULUS(INLINED)
    constexpr decltype(auto) TME()::Swz() const noexcept {
-      if constexpr (sizeof...(TAIL) == 0)
-         return all[HEAD];
+      if constexpr (sizeof...(EN) == 0)
+         return (all[E1]);
       else
-         return TVector<T, sizeof...(TAIL) + 1> {all[HEAD], all[TAIL]...};
+         return TVector<T, sizeof...(EN) + 1, DEFAULT> {all[E1], all[EN]...};
    }
 
    /// Cast the vector to another number type, with the ability to normalize  
