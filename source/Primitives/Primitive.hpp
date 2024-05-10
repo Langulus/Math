@@ -11,6 +11,7 @@
 
 LANGULUS_DEFINE_TRAIT(Topology, "Topology type");
 
+
 namespace Langulus
 {
    namespace A
