@@ -107,11 +107,11 @@ namespace Langulus::Math
       PointType mPosition;
 
       // Velocity incurred by simulation                                
-      PointType mSimVelocity;
+      Adaptive<PointType> mSimVelocity;
       // Velocity incurred by user interaction                          
-      PointType mUseVelocity;
+      Adaptive<PointType> mUseVelocity;
       // Total velocity                                                 
-      PointType mVelocity;
+      Adaptive<PointType> mVelocity;
 
       // Acceleration                                                   
       PointType mAcceleration;

@@ -427,7 +427,10 @@ namespace Langulus::Math
                // All points of a physical object move to/from center   
                VERBOSE_TINSTANCE("Applying a size: " << size
                   << (relative ? " (relatively)" : ""));
-               Move(sign, size, relative);
+               if (relative)
+                  SetScale<true >(size * sign);
+               else
+                  SetScale<false>(size * sign);
                verb.Done();
             }
          );
@@ -503,9 +506,9 @@ namespace Langulus::Math
    TEMPLATE()
    void TME()::ChangeLevel(ScalarType sign, const Level& octave, bool relative) {
       if (relative)
-         mUseLevelChange += octave * Level {sign};
+         mUseLevelChange += octave * sign;
       else
-         mUseLevelChange = octave * Level {sign};
+         mUseLevelChange  = octave * sign;
    }
 
 } // namespace Langulus::Math

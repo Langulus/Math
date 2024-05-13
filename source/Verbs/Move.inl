@@ -20,10 +20,15 @@ namespace Langulus::Verbs
    ///   @return true if verb is available                                    
    template<CT::Dense T, CT::Data... A>
    constexpr bool Move::AvailableFor() noexcept {
-      if constexpr (sizeof...(A) == 1)
+      if constexpr (sizeof...(A) == 0)
+         return requires (T& t, Verb& v) { t.Move(v); };
+      else
+         return requires (T& t, Verb& v, A...a) { t.Move(v, a...); };
+
+      /*if constexpr (sizeof...(A) == 1)
          return requires (T& t, Verb& v, A... a) { t.Move(v, a...); };
       else
-         return false;
+         return false;*/
    }
 
    /// Get the verb functor for the given type and arguments                  

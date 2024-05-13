@@ -7,8 +7,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TVector.hpp"
-#include "../Numbers/Level.hpp"
+#include "../Adaptive.hpp"
 
 
 namespace Langulus
@@ -17,7 +16,7 @@ namespace Langulus
    {
 
       template<CT::VectorBased T>
-      struct TForce;
+      using TForce    = Adaptive<T>;
 
       using Force1    = TForce<TVector<Real, 1>>;
       using Force1f   = TForce<TVector<Float, 1>>;
@@ -88,116 +87,6 @@ namespace Langulus
       using Forceu32  = Force3u32;
       using Forcei64  = Force3i64;
       using Forceu64  = Force3u64;
-
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// force                                                               
-      struct Force {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Force;
-      };
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// force of the same size                                              
-      template<Count S>
-      struct ForceOfSize : Force {
-         LANGULUS(CONCRETE) Math::TForce<Math::TVector<Langulus::Real, S>>;
-         LANGULUS_BASES(Force);
-         static constexpr Count MemberCount {S};
-         static_assert(S > 0, "Force size must be greater than zero");
-      };
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// force of the same type                                              
-      template<CT::Number T>
-      struct ForceOfType : Force {
-         LANGULUS(CONCRETE) Math::TForce<Math::TVector<T, 3>>;
-         LANGULUS(TYPED) T;
-         LANGULUS_BASES(Force);
-      };
-
-   } // namespace Langulus::A
-
-   /// Custom name generator at compile-time for forces                       
-   template<CT::VectorBased T>
-   consteval auto CustomName(Of<Math::TForce<T>>&&) noexcept {
-      using CLASS = Math::TForce<T>;
-      constexpr auto MemberCount = CLASS::MemberCount;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (MemberCount > 4) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Force")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-
-   namespace Math
-   {
-
-      ///                                                                     
-      ///   Templated force                                                   
-      ///                                                                     
-      template<CT::VectorBased T>
-      struct TForce : T {
-         using PointType = T;
-         using T::T;
-         using T::MemberCount;
-         static constexpr bool CTTI_VectorTrait = false;
-
-         LANGULUS(NAME)  CustomNameOf<TForce>::Generate();
-         LANGULUS(TYPED) TypeOf<T>;
-         LANGULUS_BASES(
-            A::ForceOfSize<MemberCount>,
-            A::ForceOfType<TypeOf<T>>,
-            T
-         );
-
-         // The level in which the force operates                       
-         Level mLevel {};
-
-         /// Construct force from vector and level                            
-         ///   @param force - the direction times magnitude of the force      
-         ///   @param level - the level in which the force acts               
-         constexpr TForce(const T& force, Level level = {}) noexcept
-            : T {force}
-            , mLevel {level} {}
-
-         /// Convert from any force to text                                   
-         NOD() explicit operator Flow::Code() const {
-            using Flow::Code;
-            Code result;
-            result += NameOf<TForce>();
-            result += Code::Operator::OpenScope;
-            auto& asVector = static_cast<const T&>(*this);
-            for (auto& x : asVector) {
-               result += x;
-               result += ", ";
-            }
-            result += static_cast<Code>(mLevel);
-            result += Code::Operator::CloseScope;
-            return result;
-         }
-      };
 
    } // namespace Langulus::Math
 } // namespace Langulus

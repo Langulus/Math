@@ -352,12 +352,9 @@ namespace Langulus::Math
       if constexpr (NORMALIZE) {
          // Normalize all elements by the old numeric limits            
          constexpr AS factor = AS {1} / AS {::std::numeric_limits<T>::max()};
-         converted = SIMD::Inner::Multiply(converted, SIMD::Set(factor));
+         SIMD::Multiply(converted, SIMD::Set(factor), converted);
       }
-
-      AS result[S];
-      SIMD::Store(converted, result);
-      return {result};
+      return converted;
    }
 
    /// Multiply all components together                                       
