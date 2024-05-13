@@ -17,36 +17,36 @@ namespace Langulus::Math
    ///                                                                        
    ///   Type used for representing angles in degrees                         
    ///                                                                        
-   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
+   template<CT::Number T> template<CT::Number N> LANGULUS(INLINED)
    constexpr TDegrees<T>::TDegrees(const TDegrees<N>& r) noexcept
       : Base {r} {}
 
-   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
+   template<CT::Number T> template<CT::Number N> LANGULUS(INLINED)
    constexpr TDegrees<T>::TDegrees(const TRadians<N>& r) noexcept
       : Base {r.GetDegrees()} {}
 
    /// Construct from any number-convertible thing                            
    ///   @param a - value to set                                              
-   template<CT::DenseNumber T> LANGULUS(INLINED)
-   constexpr TDegrees<T>::TDegrees(const CT::DenseNumber auto& a) noexcept
+   template<CT::Number T> LANGULUS(INLINED)
+   constexpr TDegrees<T>::TDegrees(const CT::Number auto& a) noexcept
       : Base {a} {}
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetRadians() const noexcept {
       return DegToRad(mValue);
    }
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    constexpr T TDegrees<T>::GetDegrees() const noexcept {
       return mValue;
    }
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    Lossless<Real, T> TDegrees<T>::Cos() const noexcept {
       return Math::Cos(DegToRad(mValue));
    }
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    Lossless<Real, T> TDegrees<T>::Sin() const noexcept {
       return Math::Sin(DegToRad(mValue));
    }
@@ -55,44 +55,67 @@ namespace Langulus::Math
    ///                                                                        
    ///   Type used for representing angles in radians                         
    ///                                                                        
-   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
+   template<CT::Number T> template<CT::Number N> LANGULUS(INLINED)
    constexpr TRadians<T>::TRadians(const TRadians<N>& r) noexcept
       : Base {r} {}
 
-   template<CT::DenseNumber T> template<CT::DenseNumber N> LANGULUS(INLINED)
+   template<CT::Number T> template<CT::Number N> LANGULUS(INLINED)
    constexpr TRadians<T>::TRadians(const TDegrees<N>& r) noexcept
       : Base {r.GetRadians()} {}
 
    /// Construct from any number-convertible thing                            
    ///   @param a - value to set                                              
-   template<CT::DenseNumber T> LANGULUS(INLINED)
-   constexpr TRadians<T>::TRadians(const CT::DenseNumber auto& a) noexcept
+   template<CT::Number T> LANGULUS(INLINED)
+   constexpr TRadians<T>::TRadians(const CT::Number auto& a) noexcept
       : Base {a} {}
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    constexpr T TRadians<T>::GetRadians() const noexcept {
       return mValue;
    }
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    constexpr T TRadians<T>::GetDegrees() const noexcept {
       return RadToDeg(mValue);
    }
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    Lossless<Real, T> TRadians<T>::Cos() const noexcept {
       return Math::Cos(mValue);
    }
 
-   template<CT::DenseNumber T> LANGULUS(INLINED)
+   template<CT::Number T> LANGULUS(INLINED)
    Lossless<Real, T> TRadians<T>::Sin() const noexcept {
       return Math::Sin(mValue);
    }
 
+   
+   /// Construct from a descriptor                                            
+   ///   @param describe - the descriptor to scan                             
+   template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
+   TAngle<T, D>::TAngle(Describe&& describe) {
+      LANGULUS_ASSUME(UserAssumes, *describe,
+         "Empty descriptor for TAngle");
+
+      // Attempt initializing without any conversion                    
+      if (not describe->ExtractData(mValue)) {
+         // Attempt converting anything to T                            
+         if (not describe->ExtractDataAs(mValue)) {
+            // Nothing was initialized. This is always an error in the  
+            // context of the descriptor-constructor. If descriptor was 
+            // empty, the default constructor would've been explicitly  
+            // called, instead of this one. This way we can find out    
+            // whether or not an angle instance was initialized or not. 
+            LANGULUS_OOPS(Construct, "Bad TAngle descriptor",
+               ", nothing was initialized: ", *describe);
+         }
+      }
+   }
+
    /// Convert from any angle to text                                         
    template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
-   TAngle<T, D>::operator Flow::Code() const {
-      Flow::Code result;
+   TAngle<T, D>::operator Anyness::Text() const {
+      Anyness::Text result;
       result += NameOf<TAngle>();
       result += Flow::Code::Operator::OpenScope;
       result += Anyness::Text {mValue};

@@ -17,7 +17,7 @@ namespace Langulus
       template<CT::VectorBased>
       struct TColor;
 
-      template<CT::DenseNumber, CT::Dimension>
+      template<CT::Number, CT::Dimension>
       struct TColorComponent;
 
       using RGB24 = TColor<Vec3u8>;
@@ -73,7 +73,7 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// color of the same type                                              
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct ColorOfType : Color {
          LANGULUS(CONCRETE) Math::TColor<Math::TVector<T, 4>>;
          LANGULUS_BASES(Color);
@@ -156,10 +156,9 @@ namespace Langulus
          constexpr TColor(Logger::Color);
 
          using T::Get;
-         //using T::GetRaw;
 
          using T::operator =;
-         template<CT::DenseNumber ALTT, CT::Dimension D>
+         template<CT::Number ALTT, CT::Dimension D>
          constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;
 
          operator Flow::Code() const;

@@ -105,7 +105,7 @@ namespace Langulus
       /// force of the same size                                              
       template<Count S>
       struct ForceOfSize : Force {
-         LANGULUS(CONCRETE) Math::TForce<Math::TVector<Real, S>>;
+         LANGULUS(CONCRETE) Math::TForce<Math::TVector<Langulus::Real, S>>;
          LANGULUS_BASES(Force);
          static constexpr Count MemberCount {S};
          static_assert(S > 0, "Force size must be greater than zero");
@@ -113,7 +113,7 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// force of the same type                                              
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct ForceOfType : Force {
          LANGULUS(CONCRETE) Math::TForce<Math::TVector<T, 3>>;
          LANGULUS(TYPED) T;
@@ -162,8 +162,9 @@ namespace Langulus
          using PointType = T;
          using T::T;
          using T::MemberCount;
+         static constexpr bool CTTI_VectorTrait = false;
 
-         LANGULUS(NAME) CustomNameOf<TForce>::Generate();
+         LANGULUS(NAME)  CustomNameOf<TForce>::Generate();
          LANGULUS(TYPED) TypeOf<T>;
          LANGULUS_BASES(
             A::ForceOfSize<MemberCount>,

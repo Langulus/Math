@@ -14,53 +14,37 @@ namespace Langulus
 {
    namespace CT
    {
-      namespace Inner
-      {
 
-         /// Concept for an angle                                             
-         template<class T>
-         concept Angle = DenseNumber<T> and requires {
+      /// Concept for an angle                                                
+      template<class...T>
+      concept Angle = Number<T...> and (requires {
             {Decay<T>::Radians} -> Bool;
-         };
+         } and ...);
 
-         /// Concept for angle in degrees                                     
-         template<class T>
-         concept Degrees = Angle<T> and not Decay<T>::Radians;
+      /// Concept for angle in degrees                                        
+      template<class...T>
+      concept Degrees = Angle<T...> and ((not Decay<T>::Radians) and ...);
 
-         /// Concept for angle in radians                                     
-         template<class T>
-         concept Radians = Angle<T> and Decay<T>::Radians;
-
-      } // namespace Langulus::CT::Inner
-
-      /// Concept for distinguishing angles of any kind                       
-      template<class... T>
-      concept Angle = (Inner::Angle<T> and ...);
-
-      /// Concept for distinguishing degrees                                  
-      template<class... T>
-      concept Degrees = (Inner::Degrees<T> and ...);
-
-      /// Concept for distinguishing radians                                  
-      template<class... T>
-      concept Radians = (Inner::Radians<T> and ...);
+      /// Concept for angle in radians                                        
+      template<class...T>
+      concept Radians = Angle<T...> and (Decay<T>::Radians and ...);
 
    } // namespace Langulus::CT
 
    namespace Math
    {
 
-      template<CT::DenseNumber T>
+      template<CT::Number>
       struct TDegrees;
 
-      template<CT::DenseNumber T>
+      template<CT::Number>
       struct TRadians;
 
 
       ///                                                                     
       ///   Type used for representing angles in degrees                      
       ///                                                                     
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct TDegrees : TNumber<T, TDegrees<T>> {
          using Base = TNumber<T, TDegrees<T>>;
          using Base::mValue;
@@ -70,13 +54,13 @@ namespace Langulus
          constexpr TDegrees(const TDegrees&) noexcept = default;
          constexpr TDegrees(TDegrees&&) noexcept = default;
 
-         template<CT::DenseNumber N>
+         template<CT::Number N>
          constexpr TDegrees(const TDegrees<N>&) noexcept;
 
-         template<CT::DenseNumber N>
+         template<CT::Number N>
          constexpr TDegrees(const TRadians<N>&) noexcept;
 
-         constexpr TDegrees(const CT::DenseNumber auto&) noexcept;
+         constexpr TDegrees(const CT::Number auto&) noexcept;
 
          TDegrees& operator = (const TDegrees&) noexcept = default;
          TDegrees& operator = (TDegrees&&) noexcept = default;
@@ -86,12 +70,14 @@ namespace Langulus
 
          NOD() Lossless<Real, T> Cos() const noexcept;
          NOD() Lossless<Real, T> Sin() const noexcept;
+
+         using Base::operator bool;
       };
 
       ///                                                                     
       ///   Type used for representing angles in radians                      
       ///                                                                     
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct TRadians : TNumber<T, TRadians<T>> {
          using Base = TNumber<T, TRadians<T>>;
          using Base::mValue;
@@ -101,13 +87,13 @@ namespace Langulus
          constexpr TRadians(const TRadians&) noexcept = default;
          constexpr TRadians(TRadians&&) noexcept = default;
 
-         template<CT::DenseNumber N>
+         template<CT::Number N>
          constexpr TRadians(const TRadians<N>&) noexcept;
 
-         template<CT::DenseNumber N>
+         template<CT::Number N>
          constexpr TRadians(const TDegrees<N>&) noexcept;
 
-         constexpr TRadians(const CT::DenseNumber auto&) noexcept;
+         constexpr TRadians(const CT::Number auto&) noexcept;
 
          TRadians& operator = (const TRadians&) noexcept = default;
          TRadians& operator = (TRadians&&) noexcept = default;
@@ -117,6 +103,8 @@ namespace Langulus
 
          NOD() Lossless<Real, T> Cos() const noexcept;
          NOD() Lossless<Real, T> Sin() const noexcept;
+
+         using Base::operator bool;
       };
 
       using Degrees = TDegrees<Real>;
@@ -126,37 +114,37 @@ namespace Langulus
       struct TAngle;
 
       template<CT::Angle T>
-      using TYaw = TAngle<T, Traits::Y>;
+      using TYaw    = TAngle<T, Traits::Y>;
       template<CT::Angle T>
-      using TPitch = TAngle<T, Traits::X>;
+      using TPitch  = TAngle<T, Traits::X>;
       template<CT::Angle T>
-      using TRoll = TAngle<T, Traits::Z>;
+      using TRoll   = TAngle<T, Traits::Z>;
 
-      using Yawdf = TYaw<TDegrees<Float>>;
-      using Yawdd = TYaw<TDegrees<Double>>;
-      using Yawrf = TYaw<TRadians<Float>>;
-      using Yawrd = TYaw<TRadians<Double>>;
+      using Yawdf   = TYaw<TDegrees<Float>>;
+      using Yawdd   = TYaw<TDegrees<Double>>;
+      using Yawrf   = TYaw<TRadians<Float>>;
+      using Yawrd   = TYaw<TRadians<Double>>;
 
       using Pitchdf = TPitch<TDegrees<Float>>;
       using Pitchdd = TPitch<TDegrees<Double>>;
       using Pitchrf = TPitch<TRadians<Float>>;
       using Pitchrd = TPitch<TRadians<Double>>;
 
-      using Rolldf = TRoll<TDegrees<Float>>;
-      using Rolldd = TRoll<TDegrees<Double>>;
-      using Rollrf = TRoll<TRadians<Float>>;
-      using Rollrd = TRoll<TRadians<Double>>;
-
-      using Yawd = TYaw<Degrees>;
-      using Yawr = TYaw<Radians>;
-      using Pitchd = TPitch<Degrees>;
-      using Pitchr = TPitch<Radians>;
-      using Rolld = TRoll<Degrees>;
-      using Rollr = TRoll<Radians>;
-
-      using Yaw = TYaw<Radians>;
-      using Pitch = TPitch<Radians>;
-      using Roll = TRoll<Radians>;
+      using Rolldf  = TRoll<TDegrees<Float>>;
+      using Rolldd  = TRoll<TDegrees<Double>>;
+      using Rollrf  = TRoll<TRadians<Float>>;
+      using Rollrd  = TRoll<TRadians<Double>>;
+                    
+      using Yawd    = TYaw<Degrees>;
+      using Yawr    = TYaw<Radians>;
+      using Pitchd  = TPitch<Degrees>;
+      using Pitchr  = TPitch<Radians>;
+      using Rolld   = TRoll<Degrees>;
+      using Rollr   = TRoll<Radians>;
+                    
+      using Yaw     = TYaw<Radians>;
+      using Pitch   = TPitch<Radians>;
+      using Roll    = TRoll<Radians>;
 
       constexpr Degrees operator""_deg(long double n) noexcept { return {n}; }
       constexpr Degrees operator""_deg(unsigned long long n) noexcept { return {n}; }
@@ -237,12 +225,16 @@ namespace Langulus
       struct TAngle : T {
          LANGULUS(NAME) CustomNameOf<TAngle>::Generate();
          LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
-
+         LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
          using Dimension = D;
-         using T::T;
+
          using T::mValue;
 
-         NOD() explicit operator Flow::Code() const;
+         using T::T;
+         using T::operator =;
+         TAngle(Describe&&);
+
+         NOD() explicit operator Anyness::Text() const;
       };
 
    } // namespace Langulus::Math

@@ -10,6 +10,7 @@
 #include "../Common.hpp"
 #include <random>
 
+
 namespace Langulus::Math
 {
 
@@ -26,7 +27,7 @@ namespace Langulus::Math
       /// Real types provide random numbers in the range [-1:1]               
       ///   @tparam T - type of the number                                    
       ///   @return the newly generated number                                
-      template<CT::DenseNumber T> 
+      template<CT::Number T> 
       T Get() noexcept {
          if constexpr (CT::Integer<T>) {
             ::std::uniform_int_distribution<T> dist(
@@ -54,7 +55,7 @@ namespace Langulus::Math
       ///   @param min - the lower end of the range                           
       ///   @param max - the higher end of the range                          
       ///   @return the newly generated number                                
-      template<CT::DenseNumber T, bool MIN_INCLUSIVE = true, bool MAX_INCLUSIVE = true>
+      template<CT::Number T, bool MIN_INCLUSIVE = true, bool MAX_INCLUSIVE = true>
       T Get(const T& min, const T& max) noexcept {
          LANGULUS_ASSUME(UserAssumes, min < max,
             "Lower limit is not below higher limit");

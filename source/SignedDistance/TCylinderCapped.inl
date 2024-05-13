@@ -9,6 +9,7 @@
 #pragma once
 #include "../Primitives/TCylinder.hpp"
 
+
 /// The following code follows specific guidelines, so it is used in C++, as  
 /// well as used as a basis for generating GLSL/HLSL equivalent functions     
 ///TODO refer to guidelines
@@ -16,7 +17,7 @@ namespace Langulus::Math
 {
 
    /// Signed distance function for a centered 3D cylinder                    
-   template<CT::DenseNumber T, CT::Dimension D>
+   template<CT::Number T, CT::Dimension D>
    T SignedDistance(const TVector<T, 3>& point, const TCylinderCapped<TVector<T, 3>, D>& cylinder) {
       using V2 = TVector<T, 2>;
 

@@ -11,8 +11,8 @@
 #include "Ranges/TRange.inl"
 #include "Quaternions/TQuaternion.inl"
 
-#define TEMPLATE() template<CT::VectorBased T>
-#define TME() TInstance<T>
+#define TEMPLATE()   template<CT::VectorBased T>
+#define TME()        TInstance<T>
 
 
 namespace Langulus::Math
@@ -267,7 +267,7 @@ namespace Langulus::Math
    TEMPLATE()
    typename TME()::PointType TME()::RandomPosition(RNG& rng, const RangeType& range) const {
       // Clamp inside object                                            
-      const auto thisscale = GetScale() * ScalarType {.5};
+      const auto thisscale  = GetScale() * ScalarType {.5};
       const auto innerscale = thisscale * range.mMin;
       const auto outerscale = thisscale * range.mMax;
 
@@ -289,8 +289,7 @@ namespace Langulus::Math
    ///   @param sign - the sign of the rotation                               
    ///   @param angle - the oriented angle                                    
    ///   @param relative - whether or not the angle is relative to current    
-   TEMPLATE()
-   template<CT::Angle A, CT::Dimension D>
+   TEMPLATE() template<CT::Angle A, CT::Dimension D>
    void TME()::Rotate(ScalarType sign, const TAngle<A, D>& angle, bool relative) {
       if (relative) {
          // The rotation axis is relative                               
@@ -299,11 +298,11 @@ namespace Langulus::Math
       else {
          // The rotation axis is absolute                               
          if constexpr (CT::Same<D, Traits::X>)
-            mAim *= QuatType::FromAxisAngle(GetRight(), angle * sign);
+            mAim *= QuatType::FromAxis(GetRight(), angle * sign);
          else if constexpr (CT::Same<D, Traits::Y>)
-            mAim *= QuatType::FromAxisAngle(GetUp(), angle * sign);
+            mAim *= QuatType::FromAxis(GetUp(), angle * sign);
          else if constexpr (CT::Same<D, Traits::Z>)
-            mAim *= QuatType::FromAxisAngle(GetForward(), angle * sign);
+            mAim *= QuatType::FromAxis(GetForward(), angle * sign);
          else
             LANGULUS_ERROR("Unsupported dimension");
       }
@@ -313,8 +312,7 @@ namespace Langulus::Math
    ///   @param sign - the sign of the movement                               
    ///   @param normal - the normalized direction                             
    ///   @param relative - whether or not normal is relative to current       
-   TEMPLATE()
-   template<class K>
+   TEMPLATE() template<class K>
    void TME()::Move(ScalarType sign, const TNormal<K>& normal, bool relative) {
       if (relative)
          mUseVelocity += -mAim * (normal * sign);
@@ -326,8 +324,7 @@ namespace Langulus::Math
    ///   @param sign - the sign of the movement                               
    ///   @param sizer - the new size                                          
    ///   @param relative - whether or not size is relative to current         
-   TEMPLATE()
-   template<class K>
+   TEMPLATE() template<class K>
    void TME()::Move(ScalarType sign, const TScale<K>& sizer, bool relative) {
       if (relative)
          mScale += sizer * sign;
@@ -339,8 +336,7 @@ namespace Langulus::Math
    ///   @param sign - the sign of the movement                               
    ///   @param position - the new position                                   
    ///   @param relative - whether or not position is relative to current     
-   TEMPLATE()
-   template<class K>
+   TEMPLATE() template<class K>
    void TME()::Move(ScalarType sign, const TPoint<K>& position, bool relative) {
       if (relative)
          mPosition = -mAim * (sign * PointType {position});
@@ -352,8 +348,7 @@ namespace Langulus::Math
    ///   @param sign - the sign of the movement                               
    ///   @param force - the force to apply                                    
    ///   @param relative - whether or not force is relative to current        
-   TEMPLATE()
-   template<class K>
+   TEMPLATE() template<class K>
    void TME()::Move(ScalarType sign, const TForce<K>& force, bool relative) {
       if (relative)
          mUseVelocity += -mAim * (force * sign);

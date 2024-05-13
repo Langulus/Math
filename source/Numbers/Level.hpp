@@ -59,7 +59,7 @@ namespace Langulus::Math
       static constexpr Real Asteroid = 1;
 
       // Planets inhabit level 2 (10^6), at scale of 1 megameter        
-      // Earth for example is 3.1855 megameters   in radius             
+      // Earth for example is 3.1855 megameters in radius               
       // Our sun also falls in this category, with 695.7 Mm radius      
       static constexpr Real Planet = 2;
 
@@ -88,7 +88,7 @@ namespace Langulus::Math
       static constexpr Real Virus = -3;
 
       // Atoms inhabit level -4 (10^-12), at scale of 1 picometer       
-      // Atoms range from 50 pm to 250 pm   in radius                   
+      // Atoms range from 50 pm to 250 pm in radius                     
       static constexpr Real Atom = -4;
 
       // Neutrons inhabit level -5 (10^-15), at scale of 1 femtometer   

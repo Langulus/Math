@@ -13,10 +13,10 @@
 #include "../Dimensions.hpp"
 #include <SIMD/SIMD.hpp>
 
-#define TARGS(a) CT::ScalarBased a##T, Count a##S, int a##D
-#define TVEC(a) TVector<a##T, a##S, a##D>
-#define TEMPLATE() template<CT::ScalarBased T, Count S, int DEFAULT>
-#define TME() TVector<T, S, DEFAULT>
+#define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
+#define TVEC(a)      TVector<a##T, a##S, a##D>
+#define TEMPLATE()   template<CT::ScalarBased T, Count S, int DEFAULT>
+#define TME()        TVector<T, S, DEFAULT>
 
 
 namespace Langulus::Math
@@ -519,11 +519,6 @@ namespace Langulus::Math
 
       using TVectorBase<S, T>::all;
 
-      /*LANGULUS(INLINED)
-      constexpr const T* GetRaw() const noexcept { return all; }
-      LANGULUS(INLINED)
-      constexpr       T* GetRaw()       noexcept { return all; }*/
-
       NOD() constexpr const T& Get(Offset) const noexcept;
       NOD() constexpr       T& Get(Offset)       noexcept;
 
@@ -652,6 +647,7 @@ namespace Langulus::Math
 
       NOD() constexpr operator       T& ()       noexcept requires (S == 1);
       NOD() constexpr operator const T& () const noexcept requires (S == 1);
+      NOD() constexpr explicit operator bool () const noexcept;
 
       template<CT::ScalarBased N>
       NOD() explicit constexpr operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>);

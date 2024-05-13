@@ -56,8 +56,7 @@ namespace Langulus::Math
 
    /// Constructor from 3x3 matrix                                            
    ///   @param matrix - 3x3 matrix to convert to a quaternion                
-   TEMPLATE()
-   template<Count COLUMNS, Count ROWS>
+   TEMPLATE() template<Count COLUMNS, Count ROWS>
    constexpr QUAT()::TQuaternion(
       const TMatrix<T, COLUMNS, ROWS>& m
    ) noexcept requires (COLUMNS >= 3 and ROWS >= 3) {
@@ -142,16 +141,14 @@ namespace Langulus::Math
    }
 
    /// Create a quaternion from an oriented angle                             
-   TEMPLATE()
-   template<CT::Angle A, CT::Dimension D>
-   LANGULUS(INLINED)
+   TEMPLATE() template<CT::Angle A, CT::Dimension D> LANGULUS(INLINED)
    constexpr QUAT() QUAT()::FromAngle(const TAngle<A, D>& angle) noexcept {
       if constexpr (CT::Same<D, Traits::X>)
-         return FromAxisAngle(Axes::X<T>, angle);
+         return FromAxis(Axes::X<T>, angle);
       else if constexpr (CT::Same<D, Traits::Y>)
-         return FromAxisAngle(Axes::Y<T>, angle);
+         return FromAxis(Axes::Y<T>, angle);
       else if constexpr (CT::Same<D, Traits::Z>)
-         return FromAxisAngle(Axes::Z<T>, angle);
+         return FromAxis(Axes::Z<T>, angle);
       else
          LANGULUS_ERROR("Unsupported dimension");
    }
@@ -240,8 +237,7 @@ namespace Langulus::Math
    }
 
    /// Convert to a matrix                                                    
-   TEMPLATE()
-   template<CT::ScalarBased K, Count COLUMNS, Count ROWS>
+   TEMPLATE() template<CT::ScalarBased K, Count COLUMNS, Count ROWS>
    constexpr QUAT()::operator TMatrix<K, COLUMNS, ROWS>()
    const noexcept requires (COLUMNS >= 3 and ROWS >= 3) {
       const K qxx = x * x;

@@ -33,6 +33,7 @@ namespace Langulus::Math
    ///   -  Whenever you do int8 * int16, you get the truncated int16 as      
    ///      result, instead of an int - the better of the two is chosen!      
    ///                                                                        
+   #pragma pack(push, 1)
    template<CT::Dense T, CT::Dense WRAPPER = T>
    struct TNumber {
       LANGULUS(POD) CT::POD<T>;
@@ -55,15 +56,16 @@ namespace Langulus::Math
       constexpr TNumber() noexcept = default;
       constexpr TNumber(const TNumber&) noexcept = default;
       constexpr TNumber(TNumber&&) noexcept = default;
-      constexpr TNumber(const CT::DenseNumber auto&) noexcept;
+      constexpr TNumber(const CT::Number auto&) noexcept;
 
       TNumber& operator = (const TNumber&) noexcept = default;
       TNumber& operator = (TNumber&&) noexcept = default;
-      TNumber& operator = (const CT::DenseNumber auto&) noexcept;
+      TNumber& operator = (const CT::Number auto&) noexcept;
 
       /// All conversions are explicit only, to preserve type                 
       constexpr explicit operator const T& () const noexcept;
       constexpr explicit operator T& () noexcept;
+      constexpr explicit operator bool () const noexcept;
 
       operator Flow::Code() const;
 
@@ -75,210 +77,192 @@ namespace Langulus::Math
       NOD() TNumber operator ++ (int) noexcept;
       NOD() TNumber operator -- (int) noexcept;
    };
+   #pragma pack(pop)
+
 
 
    ///                                                                        
    ///   Operations on numbers                                                
    ///                                                                        
-   #define TARGS(a) CT::Dense a##T, CT::Dense a##W
-   #define TNUM(a) TNumber<a##T, a##W>
-   #define TEMPLATE() template<CT::Dense T, CT::Dense W>
-   #define TME() TNumber<T, W>
 
    /// Returns an inverted number                                             
-   template<TARGS(RHS)>
-   NOD() constexpr auto operator - (const TNUM(RHS)&) noexcept requires CT::Signed<RHST>;
+   template<CT::CustomNumber T> requires CT::Signed<T>
+   NOD() constexpr T operator - (const T&) noexcept;
 
    /// Returns the sum of two numbers                                         
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator + (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr auto operator + (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator + (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr LHS operator + (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator + (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr RHS operator + (const N&, const RHS&) noexcept;
 
    /// Returns the difference of two numbers                                  
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator - (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr auto operator - (const LHS&, const RHS&) noexcept;
     
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator - (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr LHS operator - (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator - (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr RHS operator - (const N&, const RHS&) noexcept;
 
    /// Returns the product of two numbers                                     
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator * (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr auto operator * (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator * (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr LHS operator * (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator * (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr RHS operator * (const N&, const RHS&) noexcept;
 
    /// Returns the division of two numbers                                    
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator / (const TNUM(LHS)&, const TNUM(RHS)&) requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr auto operator / (const LHS&, const RHS&);
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator / (const TNUM(LHS)&, const N&) requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr LHS operator / (const LHS&, const N&);
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator / (const N&, const TNUM(RHS)&) requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr RHS operator / (const N&, const RHS&);
    
    /// Returns the remainder (a.k.a. modulation) of a division                
    /// We augment c++ builtin types, by providing % operators for Real, too   
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator % (const TNUM(LHS)&, const TNUM(RHS)&) requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr auto operator % (const LHS&, const RHS&);
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr auto operator % (const TNUM(LHS)&, const N&) requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr LHS operator % (const LHS&, const N&);
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr auto operator % (const N&, const TNUM(RHS)&) requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr RHS operator % (const N&, const RHS&);
 
    /// Returns the left-shift of two integer vectors                          
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator << (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires (CT::Integer<LHST, RHST> && CT::Same<LHSW, RHSW>);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
+   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseInteger N>
-   NOD() constexpr auto operator << (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<LHS>, N>
+   NOD() constexpr LHS operator << (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseInteger N>
-   NOD() constexpr auto operator << (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<RHS>, N>
+   NOD() constexpr RHS operator << (const N&, const RHS&) noexcept;
 
    /// Returns the right-shift of two integer vectors                         
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator >> (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires (CT::Integer<LHST, RHST>&& CT::Same<LHSW, RHSW>);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
+   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseInteger N>
-   NOD() constexpr auto operator >> (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<LHS>, N>
+   NOD() constexpr LHS operator >> (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseInteger N>
-   NOD() constexpr auto operator >> (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<RHS>, N>
+   NOD() constexpr RHS operator >> (const N&, const RHS&) noexcept;
 
    /// Returns the xor of two integer vectors                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr auto operator ^ (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires (CT::Integer<LHST, RHST>&& CT::Same<LHSW, RHSW>);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
+   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseInteger N>
-   NOD() constexpr auto operator ^ (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<LHS>, N>
+   NOD() constexpr LHS operator ^ (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseInteger N>
-   NOD() constexpr auto operator ^ (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<RHS>, N>
+   NOD() constexpr RHS operator ^ (const N&, const RHS&) noexcept;
 
 
    ///                                                                        
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator += (TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   constexpr LHS& operator += (LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator += (TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   constexpr LHS& operator += (LHS&, const N&) noexcept;
 
    /// Subtract                                                               
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator -= (TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   constexpr LHS& operator -= (LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator -= (TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   constexpr LHS& operator -= (LHS&, const N&) noexcept;
 
    /// Multiply                                                               
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator *= (TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   constexpr LHS& operator *= (LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator *= (TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   constexpr LHS& operator *= (LHS&, const N&) noexcept;
 
    /// Divide                                                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   constexpr auto& operator /= (TNUM(LHS)&, const TNUM(RHS)&) requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   constexpr LHS& operator /= (LHS&, const RHS&);
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   constexpr auto& operator /= (TNUM(LHS)&, const N&) requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   constexpr LHS& operator /= (LHS&, const N&);
 
 
    ///                                                                        
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr bool operator < (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr bool operator < (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr bool operator < (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
-   template<TARGS(LHS), CT::Character N>
-   NOD() constexpr bool operator < (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator < (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr bool operator < (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
-   template<TARGS(RHS), CT::Character N>
-   NOD() constexpr bool operator < (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator < (const N&, const RHS&) noexcept;
 
    /// Bigger                                                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr bool operator > (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr bool operator > (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr bool operator > (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
-   template<TARGS(LHS), CT::Character N>
-   NOD() constexpr bool operator > (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator > (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr bool operator > (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
-   template<TARGS(RHS), CT::Character N>
-   NOD() constexpr bool operator > (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator > (const N&, const RHS&) noexcept;
 
    /// Bigger or equal                                                        
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr bool operator >= (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr bool operator >= (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr bool operator >= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
-   template<TARGS(LHS), CT::Character N>
-   NOD() constexpr bool operator >= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator >= (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr bool operator >= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
-   template<TARGS(RHS), CT::Character N>
-   NOD() constexpr bool operator >= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator >= (const N&, const RHS&) noexcept;
 
    /// Smaller or equal                                                       
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr bool operator <= (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr bool operator <= (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr bool operator <= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
-   template<TARGS(LHS), CT::Character N>
-   NOD() constexpr bool operator <= (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator <= (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr bool operator <= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
-   template<TARGS(RHS), CT::Character N>
-   NOD() constexpr bool operator <= (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator <= (const N&, const RHS&) noexcept;
 
    /// Equal                                                                  
-   template<TARGS(LHS), TARGS(RHS)>
-   NOD() constexpr bool operator == (const TNUM(LHS)&, const TNUM(RHS)&) noexcept requires CT::Same<LHSW, RHSW>;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   NOD() constexpr bool operator == (const LHS&, const RHS&) noexcept;
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   NOD() constexpr bool operator == (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
-   template<TARGS(LHS), CT::Character N>
-   NOD() constexpr bool operator == (const TNUM(LHS)&, const N&) noexcept requires (!CT::Same<LHSW, N>);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator == (const LHS&, const N&) noexcept;
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   NOD() constexpr bool operator == (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
-   template<TARGS(RHS), CT::Character N>
-   NOD() constexpr bool operator == (const N&, const TNUM(RHS)&) noexcept requires (!CT::Same<RHSW, N>);
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   NOD() constexpr bool operator == (const N&, const RHS&) noexcept;
 
 } // namespace Langulus::Math
-
-#undef TARGS
-#undef TNUM
-#undef TEMPLATE
-#undef TME
