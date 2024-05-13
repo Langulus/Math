@@ -100,7 +100,7 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// normal of the same type                                             
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct NormalOfType : Normal {
          LANGULUS(CONCRETE) Math::TNormal<Math::TVector<T, 4>>;
          LANGULUS(TYPED) TypeOf<T>;

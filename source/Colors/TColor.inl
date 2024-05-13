@@ -172,7 +172,7 @@ namespace Langulus::Math
 
    /// Copy a channel                                                         
    TEMPLATE()
-   template<CT::DenseNumber ALTT, CT::Dimension D>
+   template<CT::Number ALTT, CT::Dimension D>
    constexpr TColor<T>& TColor<T>::operator = (const TColorComponent<ALTT, D>& com) noexcept {
       static_assert(D::Index < MemberCount, "Index out of bounds");
       Get(D::Index) = Adapt(com.mValue);

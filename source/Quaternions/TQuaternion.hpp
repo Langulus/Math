@@ -107,16 +107,11 @@ namespace Langulus::Math
 
       using Base::Base;
       constexpr TQuaternion() noexcept;
-      //constexpr TQuaternion(const TQuaternion&) noexcept = default;
-      //constexpr TQuaternion(TQuaternion&&) noexcept = default;
       constexpr TQuaternion(const Base&) noexcept;
       constexpr TQuaternion(const TMatrix<T, 2>&) noexcept;
       template<Count COLUMNS, Count ROWS>
       constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>&)
          noexcept requires (COLUMNS >= 3 and ROWS >= 3);
-
-      //constexpr TQuaternion& operator = (const TQuaternion&) noexcept = default;
-      //constexpr TQuaternion& operator = (TQuaternion&&) noexcept = default;
 
       NOD() explicit operator Flow::Code() const;
 

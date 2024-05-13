@@ -10,10 +10,8 @@
 #include "TNumber.hpp"
 #include <Flow/Verbs/Interpret.hpp>
 
-#define TARGS(a) CT::Dense a##T, CT::Dense a##W
-#define TNUM(a) TNumber<a##T, a##W>
-#define TEMPLATE() template<CT::Dense T, CT::Dense W>
-#define TME() TNumber<T, W>
+#define TEMPLATE()   template<CT::Dense T, CT::Dense W>
+#define TME()        TNumber<T, W>
 
 
 namespace Langulus::Math
@@ -22,7 +20,7 @@ namespace Langulus::Math
    /// Construct from any number-convertible thing                            
    ///   @param a - value to set                                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TNumber(const CT::DenseNumber auto& a) noexcept {
+   constexpr TME()::TNumber(const CT::Number auto& a) noexcept {
       using ALT = Deref<decltype(a)>;
       if constexpr (CT::Same<T, ALT>)
          mValue = a;
@@ -37,7 +35,7 @@ namespace Langulus::Math
    ///   @param a - value to set                                              
    ///   @return a reference to this number                                   
    TEMPLATE() LANGULUS(INLINED)
-   TME()& TME()::operator = (const CT::DenseNumber auto& a) noexcept {
+   TME()& TME()::operator = (const CT::Number auto& a) noexcept {
       using ALT = Deref<decltype(a)>;
       if constexpr (CT::Same<T, ALT>)
          mValue = a;
@@ -59,6 +57,12 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::operator T& () noexcept {
       return mValue;
+   }
+
+   /// All conversions are explicit only, to preserve type                    
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::operator bool () const noexcept {
+      return mValue != T {};
    }
 
    /// Stringify the number                                                   
@@ -114,139 +118,113 @@ namespace Langulus::Math
 
    /// Returns an inverted number (standing operator)                         
    ///   @param a - number to invert                                          
-   template<TARGS(RHS)> LANGULUS(INLINED)
-   constexpr auto operator - (const TNUM(RHS)& a) noexcept requires CT::Signed<RHST> {
-      return RHSW {-a.mValue};
+   template<CT::CustomNumber T> requires CT::Signed<T> LANGULUS(INLINED)
+   constexpr T operator - (const T& a) noexcept {
+      return -FundamentalCast(a);
    }
 
-   /// Returns the sum of two numbers (standing operator)                     
+   /// Returns the sum of two cunstom numbers (standing operator)             
    ///   @param lhs - left number                                             
    ///   @param rhs - right number                                            
-   ///   @return the addition, picking a lossless type between the two        
-   template<TARGS(LHS), TARGS(RHS)> LANGULUS(INLINED)
-   constexpr auto operator + (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      if constexpr (CT::Same<Lossless<LHST, RHST>, LHST>) {
-         if constexpr (CT::Same<LHST, LHSW>)
-            return TNUM(LHS) {static_cast<LHST>(lhs.mValue + rhs.mValue)};
-         else
-            return LHSW {static_cast<LHST>(lhs.mValue + rhs.mValue)};
-      }
+   ///   @return the sum, by picking the most concrete number                 
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr auto operator + (const LHS& lhs, const RHS& rhs) noexcept {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) + FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) + FundamentalCast(rhs)};
       else {
-         if constexpr (CT::Same<RHST, RHSW>)
-            return TNUM(RHS) {static_cast<RHST>(lhs.mValue + rhs.mValue)};
-         else
-            return RHSW {static_cast<RHST>(lhs.mValue + rhs.mValue)};
+         using LOSSLESS = Lossless<TypeOf<LHS>, TypeOf<RHS>>;
+         return static_cast<LOSSLESS>(FundamentalCast(lhs) + FundamentalCast(rhs));
       }
    }
 
-   template<TARGS(LHS), CT::DenseNumber N> LANGULUS(INLINED)
-   constexpr auto operator + (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue + rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS operator + (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) + rhs;
    }
 
-   template<TARGS(RHS), CT::DenseNumber N> LANGULUS(INLINED)
-   constexpr auto operator + (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs + rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr RHS operator + (const N& lhs, const RHS& rhs) noexcept {
+      return lhs + FundamentalCast(rhs);
    }
 
    /// Returns the difference of two numbers (standing operator)              
    ///   @param lhs - left number                                             
    ///   @param rhs - right number                                            
    ///   @return the difference, picking a lossless type between the two      
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator - (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue - rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr auto operator - (const LHS& lhs, const RHS& rhs) noexcept {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) - FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) - FundamentalCast(rhs)};
+      else {
+         using LOSSLESS = Lossless<TypeOf<LHS>, TypeOf<RHS>>;
+         return static_cast<LOSSLESS>(FundamentalCast(lhs) - FundamentalCast(rhs));
+      }
    }
     
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator - (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue - rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS operator - (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) - rhs;
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator - (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs - rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr RHS operator - (const N& lhs, const RHS& rhs) noexcept {
+      return lhs - FundamentalCast(rhs);
    }
 
    /// Returns the product of two numbers (standing operator)                 
    ///   @param lhs - left number                                             
    ///   @param rhs - right number                                            
    ///   @return the product, picking a lossless type between the two         
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator * (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      if constexpr (CT::Same<Lossless<LHST, RHST>, LHST>) {
-         if constexpr (CT::Same<LHST, LHSW>)
-            return TNUM(LHS) { static_cast<LHST>(lhs.mValue * rhs.mValue) };
-         else
-            return LHSW {static_cast<LHST>(lhs.mValue * rhs.mValue)};
-      }
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr auto operator * (const LHS& lhs, const RHS& rhs) noexcept {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) * FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) * FundamentalCast(rhs)};
       else {
-         if constexpr (CT::Same<RHST, RHSW>)
-            return TNUM(RHS) { static_cast<RHST>(lhs.mValue * rhs.mValue) };
-         else
-            return RHSW {static_cast<RHST>(lhs.mValue * rhs.mValue)};
+         using LOSSLESS = Lossless<TypeOf<LHS>, TypeOf<RHS>>;
+         return static_cast<LOSSLESS>(FundamentalCast(lhs) * FundamentalCast(rhs));
       }
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator * (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      if constexpr (CT::Same<LHST, LHSW>)
-         return TNUM(LHS) { static_cast<LHST>(lhs.mValue * rhs) };
-      else
-         return LHSW {static_cast<LHST>(lhs.mValue * rhs)};
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS operator * (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) * rhs;
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator * (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      if constexpr (CT::Same<RHST, RHSW>)
-         return TNUM(RHS) { static_cast<RHST>(lhs * rhs.mValue) };
-      else
-         return RHSW {static_cast<RHST>(lhs * rhs.mValue)};
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr RHS operator * (const N& lhs, const RHS& rhs) noexcept {
+      return lhs * FundamentalCast(rhs);
    }
 
    /// Returns the division of two numbers (standing operator)                
    ///   @param lhs - left number                                             
    ///   @param rhs - right number                                            
    ///   @return the division, picking a lossless type between the two        
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator / (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) requires CT::Same<LHSW, RHSW> {
-      if constexpr (CT::Same<Lossless<LHST, RHST>, LHST>) {
-         if constexpr (CT::Same<LHST, LHSW>)
-            return TNUM(LHS) {static_cast<LHST>(lhs.mValue / rhs.mValue)};
-         else
-            return LHSW {static_cast<LHST>(lhs.mValue / rhs.mValue)};
-      }
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr auto operator / (const LHS& lhs, const RHS& rhs) {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) / FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) / FundamentalCast(rhs)};
       else {
-         if constexpr (CT::Same<RHST, RHSW>)
-            return TNUM(RHS) {static_cast<RHST>(lhs.mValue / rhs.mValue)};
-         else
-            return RHSW {static_cast<RHST>(lhs.mValue / rhs.mValue)};
+         using LOSSLESS = Lossless<TypeOf<LHS>, TypeOf<RHS>>;
+         return static_cast<LOSSLESS>(FundamentalCast(lhs) / FundamentalCast(rhs));
       }
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator / (const TNUM(LHS)& lhs, const N& rhs) requires (!CT::Same<LHSW, N>) {
-      if constexpr (CT::Same<LHST, LHSW>)
-         return TNUM(LHS) {static_cast<LHST>(lhs.mValue / rhs)};
-      else
-         return LHSW {static_cast<LHST>(lhs.mValue / rhs)};
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS operator / (const LHS& lhs, const N& rhs) {
+      return FundamentalCast(lhs) / rhs;
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator / (const N& lhs, const TNUM(RHS)& rhs) requires (!CT::Same<RHSW, N>) {
-      if constexpr (CT::Same<RHST, RHSW>)
-         return TNUM(RHS) {static_cast<RHST>(lhs / rhs.mValue)};
-      else
-         return RHSW {static_cast<RHST>(lhs / rhs.mValue)};
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr RHS operator / (const N& lhs, const RHS& rhs) {
+      return lhs / FundamentalCast(rhs);
    }
    
    /// Returns the remainder (a.k.a. modulation) of a division                
@@ -254,88 +232,113 @@ namespace Langulus::Math
    ///   @param lhs - left number                                             
    ///   @param rhs - right number                                            
    ///   @return the modulo, picking a lossless type between the two          
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator % (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) requires CT::Same<LHSW, RHSW> {
-      if constexpr (CT::Integer<LHST, RHST>)
-         return lhs.mValue % rhs.mValue;
-      else
-         return lhs.mValue - rhs.mValue * ::std::floor(lhs.mValue / rhs.mValue);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr auto operator % (const LHS& lhs, const RHS& rhs) {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>) {
+         if constexpr (CT::Integer<TypeOf<LHS>, TypeOf<RHS>>)
+            return LHS {FundamentalCast(lhs) % FundamentalCast(rhs)};
+         else {
+            return LHS {FundamentalCast(lhs) - FundamentalCast(rhs)
+               * ::std::floor(FundamentalCast(lhs) / FundamentalCast(rhs))};
+         }
+      }
+      else if constexpr (CT::DerivedFrom<RHS, LHS>) {
+         if constexpr (CT::Integer<TypeOf<LHS>, TypeOf<RHS>>)
+            return RHS {FundamentalCast(lhs) % FundamentalCast(rhs)};
+         else {
+            return RHS {FundamentalCast(lhs) - FundamentalCast(rhs)
+               * ::std::floor(FundamentalCast(lhs) / FundamentalCast(rhs))};
+         }
+      }
+      else LANGULUS_ERROR("Incompatible custom numbers for modulation");
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator % (const TNUM(LHS)& lhs, const N& rhs) requires (!CT::Same<LHSW, N>) {
-      if constexpr (CT::Integer<LHST, N>)
-         return lhs.mValue % rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS operator % (const LHS& lhs, const N& rhs) {
+      if constexpr (CT::Integer<TypeOf<LHS>, N>)
+         return FundamentalCast(lhs) % rhs;
       else
-         return lhs.mValue - rhs * ::std::floor(lhs.mValue / rhs);
+         return FundamentalCast(lhs) - rhs * ::std::floor(FundamentalCast(lhs) / rhs);
    }
 
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto operator % (const N& lhs, const TNUM(RHS)& rhs) requires (!CT::Same<RHSW, N>) {
-      if constexpr (CT::Integer<RHST, N>)
-         return lhs % rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr RHS operator % (const N& lhs, const RHS& rhs) {
+      if constexpr (CT::Integer<TypeOf<RHS>, N>)
+         return lhs % FundamentalCast(rhs);
       else
-         return lhs - rhs.mValue * ::std::floor(lhs / rhs.mValue);
+         return lhs - FundamentalCast(rhs) * ::std::floor(lhs / FundamentalCast(rhs));
    }
 
    /// Returns the left-shift of two integer vectors                          
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator << (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires (CT::Integer<LHST, RHST> && CT::Same<LHSW, RHSW>) {
-      return lhs.mValue << rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> LANGULUS(INLINED)
+   constexpr auto operator << (const LHS& lhs, const RHS& rhs) noexcept {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) << FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) << FundamentalCast(rhs)};
+      else
+         LANGULUS_ERROR("Incompatible custom numbers for left bitshift");
    }
 
-   template<TARGS(LHS), CT::DenseInteger N>
-   LANGULUS(INLINED)
-   constexpr auto operator << (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue << rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<LHS>, N> LANGULUS(INLINED)
+   constexpr LHS operator << (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) << rhs;
    }
 
-   template<TARGS(RHS), CT::DenseInteger N>
-   LANGULUS(INLINED)
-   constexpr auto operator << (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs << rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<RHS>, N> LANGULUS(INLINED)
+   constexpr RHS operator << (const N& lhs, const RHS& rhs) noexcept {
+      return lhs << FundamentalCast(rhs);
    }
 
    /// Returns the right-shift of two integer vectors                         
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator >> (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires (CT::Integer<LHST, RHST> && CT::Same<LHSW, RHSW>) {
-      return lhs.mValue >> rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> LANGULUS(INLINED)
+   constexpr auto operator >> (const LHS& lhs, const RHS& rhs) noexcept {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) >> FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) >> FundamentalCast(rhs)};
+      else
+         LANGULUS_ERROR("Incompatible custom numbers for right bitshift");
    }
 
-   template<TARGS(LHS), CT::DenseInteger N>
-   LANGULUS(INLINED)
-   constexpr auto operator >> (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue >> rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<LHS>, N> LANGULUS(INLINED)
+   constexpr LHS operator >> (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) >> rhs;
    }
 
-   template<TARGS(RHS), CT::DenseInteger N>
-   LANGULUS(INLINED)
-   constexpr auto operator >> (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs >> rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<RHS>, N> LANGULUS(INLINED)
+   constexpr RHS operator >> (const N& lhs, const RHS& rhs) noexcept {
+      return lhs >> FundamentalCast(rhs);
    }
 
    /// Returns the xor of two integer vectors                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto operator ^ (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires (CT::Integer<LHST, RHST> && CT::Same<LHSW, RHSW>) {
-      return lhs.mValue ^ rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> LANGULUS(INLINED)
+   constexpr auto operator ^ (const LHS& lhs, const RHS& rhs) noexcept {
+      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+         return LHS {FundamentalCast(lhs) ^ FundamentalCast(rhs)};
+      else if constexpr (CT::DerivedFrom<RHS, LHS>)
+         return RHS {FundamentalCast(lhs) ^ FundamentalCast(rhs)};
+      else
+         LANGULUS_ERROR("Incompatible custom numbers for xor");
    }
 
-   template<TARGS(LHS), CT::DenseInteger N>
-   LANGULUS(INLINED)
-   constexpr auto operator ^ (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue ^ rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<LHS>, N> LANGULUS(INLINED)
+   constexpr LHS operator ^ (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) ^ rhs;
    }
 
-   template<TARGS(RHS), CT::DenseInteger N>
-   LANGULUS(INLINED)
-   constexpr auto operator ^ (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs ^ rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   requires CT::Integer<TypeOf<RHS>, N> LANGULUS(INLINED)
+   constexpr RHS operator ^ (const N& lhs, const RHS& rhs) noexcept {
+      return lhs ^ FundamentalCast(rhs);
    }
 
 
@@ -343,63 +346,55 @@ namespace Langulus::Math
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto& operator += (TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      lhs.mValue += rhs.mValue;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr LHS& operator += (LHS& lhs, const RHS& rhs) noexcept {
+      FundamentalCast(lhs) += FundamentalCast(rhs);
+      return lhs;
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto& operator += (TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      lhs.mValue += rhs;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS& operator += (LHS& lhs, const N& rhs) noexcept {
+      FundamentalCast(lhs) += rhs;
+      return lhs;
    }
 
    /// Subtract                                                               
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto& operator -= (TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      lhs.mValue -= rhs.mValue;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr LHS& operator -= (LHS& lhs, const RHS& rhs) noexcept {
+      FundamentalCast(lhs) -= FundamentalCast(rhs);
+      return lhs;
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto& operator -= (TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      lhs.mValue -= rhs;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS& operator -= (LHS& lhs, const N& rhs) noexcept {
+      FundamentalCast(lhs) -= rhs;
+      return lhs;
    }
 
    /// Multiply                                                               
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto& operator *= (TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      lhs.mValue *= rhs.mValue;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr LHS& operator *= (LHS& lhs, const RHS& rhs) noexcept {
+      FundamentalCast(lhs) *= FundamentalCast(rhs);
+      return lhs;
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto& operator *= (TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      lhs.mValue *= rhs;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS& operator *= (LHS& lhs, const N& rhs) noexcept {
+      FundamentalCast(lhs) *= rhs;
+      return lhs;
    }
 
    /// Divide                                                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr auto& operator /= (TNUM(LHS)& lhs, const TNUM(RHS)& rhs) requires CT::Same<LHSW, RHSW> {
-      lhs.mValue /= rhs.mValue;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr LHS& operator /= (LHS& lhs, const RHS& rhs) {
+      FundamentalCast(lhs) /= FundamentalCast(rhs);
+      return lhs;
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr auto& operator /= (TNUM(LHS)& lhs, const N& rhs) requires (!CT::Same<LHSW, N>) {
-      lhs.mValue /= rhs;
-      return reinterpret_cast<LHSW&>(lhs);
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr LHS& operator /= (LHS& lhs, const N& rhs) {
+      FundamentalCast(lhs) /= rhs;
+      return lhs;
    }
 
 
@@ -407,163 +402,86 @@ namespace Langulus::Math
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr bool operator < (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue < rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr bool operator < (const LHS& lhs, const RHS& rhs) noexcept {
+      return FundamentalCast(lhs) < FundamentalCast(rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator < (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue < rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator < (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) < rhs;
    }
 
-   template<TARGS(LHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator < (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue < rhs;
-   }
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator < (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs < rhs.mValue;
-   }
-
-   template<TARGS(RHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator < (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs < rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator < (const N& lhs, const RHS& rhs) noexcept {
+      return lhs < FundamentalCast(rhs);
    }
 
    /// Bigger                                                                 
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr bool operator > (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue > rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr bool operator > (const LHS& lhs, const RHS& rhs) noexcept {
+      return FundamentalCast(lhs) > FundamentalCast(rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator > (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue > rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator > (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) > rhs;
    }
 
-   template<TARGS(LHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator > (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue > rhs;
-   }
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator > (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs > rhs.mValue;
-   }
-
-   template<TARGS(RHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator > (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs > rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator > (const N& lhs, const RHS& rhs) noexcept {
+      return lhs > FundamentalCast(rhs);
    }
 
    /// Bigger or equal                                                        
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr bool operator >= (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue >= rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr bool operator >= (const LHS& lhs, const RHS& rhs) noexcept {
+      return FundamentalCast(lhs) >= FundamentalCast(rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator >= (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue >= rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator >= (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) >= rhs;
    }
 
-   template<TARGS(LHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator >= (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue >= rhs;
-   }
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator >= (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs >= rhs.mValue;
-   }
-
-   template<TARGS(RHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator >= (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs >= rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator >= (const N& lhs, const RHS& rhs) noexcept {
+      return lhs >= FundamentalCast(rhs);
    }
 
    /// Smaller or equal                                                       
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr bool operator <= (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue <= rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr bool operator <= (const LHS& lhs, const RHS& rhs) noexcept {
+      return FundamentalCast(lhs) <= FundamentalCast(rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator <= (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue <= rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator <= (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) <= rhs;
    }
 
-   template<TARGS(LHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator <= (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue <= rhs;
-   }
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator <= (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs <= rhs.mValue;
-   }
-
-   template<TARGS(RHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator <= (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs <= rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator <= (const N& lhs, const RHS& rhs) noexcept {
+      return lhs <= FundamentalCast(rhs);
    }
 
    /// Equal                                                                  
-   template<TARGS(LHS), TARGS(RHS)>
-   LANGULUS(INLINED)
-   constexpr bool operator == (const TNUM(LHS)& lhs, const TNUM(RHS)& rhs) noexcept requires CT::Same<LHSW, RHSW> {
-      return lhs.mValue == rhs.mValue;
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> LANGULUS(INLINED)
+   constexpr bool operator == (const LHS& lhs, const RHS& rhs) noexcept {
+      return FundamentalCast(lhs) == FundamentalCast(rhs);
    }
 
-   template<TARGS(LHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator == (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue == rhs;
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator == (const LHS& lhs, const N& rhs) noexcept {
+      return FundamentalCast(lhs) == rhs;
    }
 
-   template<TARGS(LHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator == (const TNUM(LHS)& lhs, const N& rhs) noexcept requires (!CT::Same<LHSW, N>) {
-      return lhs.mValue == rhs;
-   }
-
-   template<TARGS(RHS), CT::DenseNumber N>
-   LANGULUS(INLINED)
-   constexpr bool operator == (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs == rhs.mValue;
-   }
-
-   template<TARGS(RHS), CT::Character N>
-   LANGULUS(INLINED)
-   constexpr bool operator == (const N& lhs, const TNUM(RHS)& rhs) noexcept requires (!CT::Same<RHSW, N>) {
-      return lhs == rhs.mValue;
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
+   constexpr bool operator == (const N& lhs, const RHS& rhs) noexcept {
+      return lhs == FundamentalCast(rhs);
    }
 
 } // namespace Langulus::Math
 
-#undef TARGS
-#undef TNUM
 #undef TEMPLATE
 #undef TME

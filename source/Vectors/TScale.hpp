@@ -111,7 +111,7 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// size of the same type                                               
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct ScaleOfType : Scale {
          LANGULUS(CONCRETE) Math::TScale<Math::TVector<T, 3, 1>>;
          LANGULUS_BASES(Scale);

@@ -112,7 +112,7 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// sampler of the same type                                            
-      template<CT::DenseNumber T>
+      template<CT::Number T>
       struct SamplerOfType : Sampler {
          LANGULUS(CONCRETE) Math::TSampler<Math::TVector<T, 3>>;
          LANGULUS(TYPED) T;

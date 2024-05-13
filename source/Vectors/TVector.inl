@@ -762,6 +762,12 @@ namespace Langulus::Math
       return all[0];
    }
 
+   /// Explicitly convert to bool                                             
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::operator bool () const noexcept {
+      return *this != (TME() {});
+   }
+
    /// Explicit cast to a compatible number of different type                 
    TEMPLATE() template<CT::ScalarBased N> LANGULUS(INLINED)
    constexpr TME()::operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>) {
@@ -1156,47 +1162,47 @@ namespace Langulus::Axes
    using namespace ::Langulus::Math;
 
    /// Canonical X axis                                                       
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr TVector<T, 4> X {1, 0, 0, 0};
    
    /// Canonical Y axis                                                       
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr TVector<T, 4> Y {0, 1, 0, 0};
 
    /// Canonical Z axis                                                       
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr TVector<T, 4> Z {0, 0, 1, 0};
 
    /// Canonical W axis                                                       
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr TVector<T, 4> W {0, 0, 0, 1};
    
    /// Canonical world origin                                                 
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr TVector<T, 4> Origin {0, 0, 0, 0};
 
    /// Canonical forward vector, pointing towards the screen, in positive Z   
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr auto Forward = Z<T>;
 
    /// Canonical backward vector, towards the human device, in negative Z     
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr auto Backward = -Z<T>;
 
    /// Canonical up vector, pointing from the ground up, in positive Y        
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr auto Up = Y<T>;
 
    /// Canonical down vector, pointing in gravity's direction, in negative Y  
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr auto Down = -Y<T>;
 
    /// Canonical right vector, pointing to right hand, in positive X          
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr auto Right = X<T>;
 
    /// Canonical left vector, pointing to left hand, in negative X            
-   template<CT::DenseNumber T = Real>
+   template<CT::Number T = Real>
    constexpr auto Left = -X<T>;
 
 } // Langulus::Axes

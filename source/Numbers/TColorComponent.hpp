@@ -16,7 +16,7 @@ namespace Langulus::Math
    ///                                                                        
    ///   Color channel                                                        
    ///                                                                        
-   template<CT::DenseNumber T, CT::Dimension D>
+   template<CT::Number T, CT::Dimension D>
    struct TColorComponent : TNumber<T, TColorComponent<T, D>> {
       LANGULUS(TYPED) T;
       using Base = TNumber<T, TColorComponent<T, D>>;
