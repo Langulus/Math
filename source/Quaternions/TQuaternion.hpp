@@ -81,7 +81,7 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::ScalarBased T>
    struct TQuaternion : TVector<T, 4> {
-      using Base = TVector<T, 4>;
+      using Base  = TVector<T, 4>;
       using Base3 = TVector<T, 3>;
 
       using Base::x;

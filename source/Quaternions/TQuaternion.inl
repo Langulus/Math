@@ -144,11 +144,11 @@ namespace Langulus::Math
    TEMPLATE() template<CT::Angle A, CT::Dimension D> LANGULUS(INLINED)
    constexpr QUAT() QUAT()::FromAngle(const TAngle<A, D>& angle) noexcept {
       if constexpr (CT::Same<D, Traits::X>)
-         return FromAxis(Axes::X<T>, angle);
+         return FromAxis(TVector<T, 4>{1, 0, 0, 0}, angle); //TODO weird MSVC bugs, can't use Axes::X for some reason
       else if constexpr (CT::Same<D, Traits::Y>)
-         return FromAxis(Axes::Y<T>, angle);
+         return FromAxis(TVector<T, 4>{0, 1, 0, 0}, angle);
       else if constexpr (CT::Same<D, Traits::Z>)
-         return FromAxis(Axes::Z<T>, angle);
+         return FromAxis(TVector<T, 4>{0, 0, 1, 0}, angle);
       else
          LANGULUS_ERROR("Unsupported dimension");
    }
