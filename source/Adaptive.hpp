@@ -100,7 +100,7 @@ namespace Langulus
 
          /// Convert from any force to text                                   
          NOD() explicit operator Flow::Code() const {
-            return {mValue};
+            return static_cast<Flow::Code>(mValue);
          }
 
          constexpr operator T& () noexcept {
