@@ -17,6 +17,7 @@
 
 #include <Math/Config.hpp>
 #include <Math/Vector.hpp>
+#include <Math/Number.hpp>
 
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>

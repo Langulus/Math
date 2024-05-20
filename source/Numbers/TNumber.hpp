@@ -86,96 +86,96 @@ namespace Langulus::Math
    ///                                                                        
 
    /// Returns an inverted number                                             
-   template<CT::CustomNumber T> requires CT::Signed<T>
+   template<CT::NumberBased T> requires CT::Signed<T>
    NOD() constexpr T operator - (const T&) noexcept;
 
    /// Returns the sum of two numbers                                         
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr auto operator + (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr LHS operator + (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr RHS operator + (const N&, const RHS&) noexcept;
 
    /// Returns the difference of two numbers                                  
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr auto operator - (const LHS&, const RHS&) noexcept;
     
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr LHS operator - (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr RHS operator - (const N&, const RHS&) noexcept;
 
    /// Returns the product of two numbers                                     
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr auto operator * (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr LHS operator * (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr RHS operator * (const N&, const RHS&) noexcept;
 
    /// Returns the division of two numbers                                    
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr auto operator / (const LHS&, const RHS&);
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr LHS operator / (const LHS&, const N&);
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr RHS operator / (const N&, const RHS&);
    
    /// Returns the remainder (a.k.a. modulation) of a division                
    /// We augment c++ builtin types, by providing % operators for Real, too   
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr auto operator % (const LHS&, const RHS&);
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr LHS operator % (const LHS&, const N&);
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr RHS operator % (const N&, const RHS&);
 
    /// Returns the left-shift of two integer vectors                          
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
    NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    requires CT::Integer<TypeOf<LHS>, N>
    NOD() constexpr LHS operator << (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    requires CT::Integer<TypeOf<RHS>, N>
    NOD() constexpr RHS operator << (const N&, const RHS&) noexcept;
 
    /// Returns the right-shift of two integer vectors                         
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
    NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    requires CT::Integer<TypeOf<LHS>, N>
    NOD() constexpr LHS operator >> (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    requires CT::Integer<TypeOf<RHS>, N>
    NOD() constexpr RHS operator >> (const N&, const RHS&) noexcept;
 
    /// Returns the xor of two integer vectors                                 
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
    NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    requires CT::Integer<TypeOf<LHS>, N>
    NOD() constexpr LHS operator ^ (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    requires CT::Integer<TypeOf<RHS>, N>
    NOD() constexpr RHS operator ^ (const N&, const RHS&) noexcept;
 
@@ -184,31 +184,31 @@ namespace Langulus::Math
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    constexpr LHS& operator += (LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    constexpr LHS& operator += (LHS&, const N&) noexcept;
 
    /// Subtract                                                               
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    constexpr LHS& operator -= (LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    constexpr LHS& operator -= (LHS&, const N&) noexcept;
 
    /// Multiply                                                               
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    constexpr LHS& operator *= (LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    constexpr LHS& operator *= (LHS&, const N&) noexcept;
 
    /// Divide                                                                 
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    constexpr LHS& operator /= (LHS&, const RHS&);
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    constexpr LHS& operator /= (LHS&, const N&);
 
 
@@ -216,53 +216,53 @@ namespace Langulus::Math
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr bool operator < (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator < (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator < (const N&, const RHS&) noexcept;
 
    /// Bigger                                                                 
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr bool operator > (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator > (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator > (const N&, const RHS&) noexcept;
 
    /// Bigger or equal                                                        
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr bool operator >= (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator >= (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator >= (const N&, const RHS&) noexcept;
 
    /// Smaller or equal                                                       
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr bool operator <= (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator <= (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator <= (const N&, const RHS&) noexcept;
 
    /// Equal                                                                  
-   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
+   template<CT::NumberBased LHS, CT::NumberBased RHS>
    NOD() constexpr bool operator == (const LHS&, const RHS&) noexcept;
 
-   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
+   template<CT::NumberBased LHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator == (const LHS&, const N&) noexcept;
 
-   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
+   template<CT::NumberBased RHS, CT::BuiltinNumber N>
    NOD() constexpr bool operator == (const N&, const RHS&) noexcept;
 
 } // namespace Langulus::Math
