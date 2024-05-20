@@ -9,6 +9,7 @@
 #pragma once
 #include "Level.hpp"
 #include "../Functions/Arithmetics.hpp"
+#include "TNumber.inl"
 
 
 namespace Langulus::Math

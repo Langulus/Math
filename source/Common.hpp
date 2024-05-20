@@ -143,9 +143,13 @@ namespace Langulus::CT
         or RangeBased<T>
         or MatrixBased<T>
         or GradientBased<T>
-        //or Deep<T>
-        //or Same<T, Describe>
       ) and ...);
+   
+   /// Anything that is a CT::CustomNumber and CT::CastsToFundamental         
+   /// It is a more constrained version of CT::CustomNumber, that omits any   
+   /// iterators and other irrelevant stuff.                                  
+   template<class...T>
+   concept NumberBased = CustomNumber<T...> and CastsToFundamental<T...>;
 
 } // namespace Langulus::CT
 
