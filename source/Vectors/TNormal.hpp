@@ -160,7 +160,7 @@ namespace Langulus
          static_assert(CT::Real<TypeOf<T>>,
             "Normal can be only made of real numbers");
 
-         LANGULUS(NAME) CustomNameOf<TNormal>::Generate();
+         LANGULUS(NAME)  CustomNameOf<TNormal>::Generate();
          LANGULUS(TYPED) TypeOf<T>;
          LANGULUS_BASES(
             A::NormalOfSize<MemberCount>,
@@ -170,21 +170,29 @@ namespace Langulus
 
          /// Construct a normal from a vector                                 
          ///   @param other - the vector to normalize                         
+         LANGULUS(INLINED)
          constexpr TNormal(const T& other)
             : T {other.Normalize()} {}
+
+         /// Manual construction via a variadic head-tail                     
+         /// Excessive elements are ignored, missing elements are defaulted   
+         template<class T1, class T2, class...TN> LANGULUS(INLINED)
+         constexpr TNormal(const T1& t1, const T2& t2, const TN&...tn)
+            : T {T {t1, t2, tn...}.Normalize()} {}
 
          /// Descriptor constructor                                           
          ///   @param describe - the descriptor                               
          TNormal(Describe&& describe)
             : T {::std::forward<Describe>(describe)} {
             const auto l = T::Length();
-            if (l == T {})
+            if (l == TypeOf<T> {0})
                LANGULUS_THROW(Arithmetic, "Degenerate normal");
-            *this *= (T {1} / l);
+            *this *= TypeOf<T> {1} / l;
          }
 
          /// Convert from any normal to text                                  
-         NOD() explicit operator Flow::Code() const {
+         LANGULUS(INLINED)
+         explicit operator Flow::Code() const {
             return T::template Serialize<TNormal>();
          }
       };
