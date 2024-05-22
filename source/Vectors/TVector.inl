@@ -348,13 +348,14 @@ namespace Langulus::Math
    ///   @return the converted vector                                         
    TEMPLATE() template<class AS, bool NORMALIZE> LANGULUS(INLINED)
    constexpr TVector<AS, S> TME()::AsCast() const noexcept {
-      auto converted = SIMD::Convert<0, Decay<AS>>(all);
+      AS converted[S];
+      SIMD::Convert<0>(all, converted);
       if constexpr (NORMALIZE) {
          // Normalize all elements by the old numeric limits            
          constexpr AS factor = AS {1} / AS {::std::numeric_limits<T>::max()};
-         SIMD::Multiply(converted, SIMD::Set(factor), converted);
+         return SIMD::Multiply(converted, factor);
       }
-      return converted;
+      else return converted;
    }
 
    /// Multiply all components together                                       
