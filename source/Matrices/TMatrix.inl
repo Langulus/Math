@@ -11,10 +11,10 @@
 #include "../Vectors/TVector.inl"
 #include "../Numbers/TAngle.inl"
 
-#define TARGS(a) CT::ScalarBased a##T, Count a##C, Count a##R
-#define TMAT(a) TMatrix<a##T, a##C, a##R>
-#define TEMPLATE() template<CT::ScalarBased T, Count COLUMNS, Count ROWS>
-#define TME() TMatrix<T, COLUMNS, ROWS>
+#define TARGS(a)     CT::ScalarBased a##T, Count a##C, Count a##R
+#define TMAT(a)      TMatrix<a##T, a##C, a##R>
+#define TEMPLATE()   template<CT::ScalarBased T, Count COLUMNS, Count ROWS>
+#define TME()        TMatrix<T, COLUMNS, ROWS>
 
 
 namespace Langulus::Math

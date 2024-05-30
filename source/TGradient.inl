@@ -11,8 +11,8 @@
 #include "Vectors/TVector.inl"
 #include <Flow/Code.hpp>
 
-#define TEMPLATE() template<CT::Dense T, Count S>
-#define TME() TGradient<T, S>
+#define TEMPLATE()   template<CT::Dense T, Count S>
+#define TME()        TGradient<T, S>
 
 
 namespace Langulus::Math

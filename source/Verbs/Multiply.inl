@@ -10,7 +10,11 @@
 #include "Multiply.hpp"
 #include "Arithmetic.inl"
 
-#define VERBOSE_MUL(...) //Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_MUL(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_MUL(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs

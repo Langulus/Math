@@ -10,7 +10,11 @@
 #include "Exponent.hpp"
 #include "Arithmetic.inl"
 
-#define VERBOSE_EXP(...) //Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_EXP(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_EXP(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs

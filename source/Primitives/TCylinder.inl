@@ -13,6 +13,7 @@
 
 #define TEMPLATE() template<CT::Vector T, CT::Dimension D>
 
+
 namespace Langulus::Math
 {
 

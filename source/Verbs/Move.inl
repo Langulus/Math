@@ -10,7 +10,11 @@
 #include "Move.hpp"
 #include "Arithmetic.inl"
 
-#define VERBOSE_MOVE(...) //Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_MOVE(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_MOVE(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs
