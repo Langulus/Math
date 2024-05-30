@@ -11,6 +11,7 @@
 
 #define TEMPLATE() template<CT::Vector T>
 
+
 namespace Langulus::Math
 {
 

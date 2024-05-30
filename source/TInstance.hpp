@@ -18,7 +18,11 @@
 #include "Randomness/MersenneTwister.hpp"
 #include "Verbs/Move.hpp"
 
-#define VERBOSE_TINSTANCE(a) // Logger::Verbose() << a
+#if 0
+   #define VERBOSE_TINSTANCE(a) Logger::Verbose() << a
+#else
+   #define VERBOSE_TINSTANCE(a) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Math

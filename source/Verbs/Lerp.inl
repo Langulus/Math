@@ -10,7 +10,11 @@
 #include "Lerp.hpp"
 #include "Arithmetic.inl"
 
-#define VERBOSE_LERP(...) //Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_LERP(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_LERP(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs

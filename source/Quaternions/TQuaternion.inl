@@ -11,8 +11,8 @@
 #include "../Vectors/TVector.inl"
 #include "../Matrices/TMatrix.inl"
 
-#define TEMPLATE() template<CT::ScalarBased T>
-#define QUAT() TQuaternion<T>
+#define TEMPLATE()   template<CT::ScalarBased T>
+#define QUAT()       TQuaternion<T>
 
 
 namespace Langulus::Math

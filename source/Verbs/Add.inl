@@ -10,7 +10,11 @@
 #include "Add.hpp"
 #include "Arithmetic.inl"
 
-#define VERBOSE_ADD(...) // Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_ADD(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_ADD(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs

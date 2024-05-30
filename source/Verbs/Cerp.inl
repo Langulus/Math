@@ -11,7 +11,11 @@
 #include "Arithmetic.inl"
 #include "../Functions/Arithmetics.hpp"
 
-#define VERBOSE_CERP(...) //Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_CERP(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_CERP(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs

@@ -10,7 +10,11 @@
 #include "Modulate.hpp"
 #include "Arithmetic.inl"
 
-#define VERBOSE_MOD(...) //Logger::Verbose(__VA_ARGS__)
+#if 0
+   #define VERBOSE_MOD(...) Logger::Verbose(__VA_ARGS__)
+#else
+   #define VERBOSE_MOD(...) LANGULUS(NOOP)
+#endif
 
 
 namespace Langulus::Verbs
