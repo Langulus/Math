@@ -35,12 +35,12 @@ namespace Langulus::Math
    }
 
    /// Create a frustum by deconstructing a view*projection matrix            
-   ///   @param projectedView - projected view matrix                         
+   ///   @param pv - projected view matrix                                    
    TEMPLATE() LANGULUS(INLINED)
-   TFrustum<T>::TFrustum(const MatrixType& projectedView) noexcept {
-      const auto right = projectedView.GetRow(0);
-      const auto top   = projectedView.GetRow(1);
-      const auto eye   = projectedView.GetRow(MemberCount > 2 ? 3 : 2) * (-1);
+   TFrustum<T>::TFrustum(const MatrixType& pv) noexcept {
+      const auto right = pv.template GetRow<0>();
+      const auto top   = pv.template GetRow<1>();
+      const auto eye   = pv.template GetRow<(MemberCount > 2 ? 3 : 2)>() * (-1);
 
       mPlanes[Left]   = TPlane<T>(eye + right);
       mPlanes[Right]  = TPlane<T>(eye - right);
@@ -48,7 +48,7 @@ namespace Langulus::Math
       mPlanes[Bottom] = TPlane<T>(eye + top);
 
       if constexpr (MemberCount > 2) {
-         const auto far = projectedView.GetRow(2);
+         const auto far = pv.template GetRow<2>();
          mPlanes[Near] = TPlane<T>(eye + far);
          mPlanes[Far]  = TPlane<T>(eye - far);
       }

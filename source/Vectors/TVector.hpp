@@ -12,6 +12,7 @@
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
 #include <SIMD/SIMD.hpp>
+#include <Core/Sequences.hpp>
 
 #define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
@@ -538,15 +539,17 @@ namespace Langulus::Math
       template<Offset HEAD, Offset...TAIL>
       NOD() constexpr decltype(auto) Swz() const noexcept;
 
-      template<Offset... I>
-      static constexpr bool SwzRequirements = S > Max(0U, I...);
+      template<Offset...I>
+      static constexpr bool SwzRequirements = ((S > I) and ...);
 
       /// Generate all combinations of all swizzle functions up to 4D         
       #define LANGULUS_TVECTOR_SWIZZLER(name, ...) \
-         NOD() decltype(auto) name() noexcept requires (SwzRequirements<__VA_ARGS__>) { \
+         NOD() LANGULUS(INLINED) decltype(auto) name() noexcept \
+         requires (SwzRequirements<__VA_ARGS__>) { \
             return Swz<__VA_ARGS__>(); \
          } \
-         NOD() decltype(auto) name() const noexcept requires (SwzRequirements<__VA_ARGS__>) { \
+         NOD() LANGULUS(INLINED) decltype(auto) name() const noexcept \
+         requires (SwzRequirements<__VA_ARGS__>) { \
             return Swz<__VA_ARGS__>(); \
          }
 
@@ -645,8 +648,8 @@ namespace Langulus::Math
 
       auto& Sort() noexcept;
 
-      NOD() constexpr operator       T& ()       noexcept requires (S == 1);
-      NOD() constexpr operator const T& () const noexcept requires (S == 1);
+      NOD() constexpr explicit operator       T& ()       noexcept requires (S == 1);
+      NOD() constexpr explicit operator const T& () const noexcept requires (S == 1);
       NOD() constexpr explicit operator bool () const noexcept;
 
       template<CT::ScalarBased N>
@@ -674,42 +677,62 @@ namespace Langulus::Math
    {
 
       ///                                                                     
-      ///   Swizzled vector, intermediate type                                
+      ///   Proxy array (a.k.a. a swizzled vector, intermediate type)         
       ///                                                                     
       /// Creates a shuffled representation of a source vector, and commits   
       /// any changes to it upon destruction                                  
       ///                                                                     
-      template<TARGS(V), Offset...I>
-      struct TProxyVector : TVector<VT, sizeof...(I), VD> {
-      LANGULUS(UNINSERTABLE) true;
-      private:
+      template<TARGS(V) = 0, Offset...I>
+      struct TProxyArray : TVector<VT, sizeof...(I), VD> {
+         LANGULUS(UNINSERTABLE) true;
+         LANGULUS(REFLECTABLE) false;
+         static_assert(sizeof...(I) > 1, "Invalid proxy array size");
+         static constexpr bool CTTI_VectorTrait = false;
+         static constexpr bool CTTI_ProxyArray = true;
          using Base = TVector<VT, sizeof...(I), VD>;
 
-         TVEC(V)& mSource;
-
       private:
+         // The original data source, will be changed upon destruction  
+         VT (&mSource)[VS];
+
          /// Commit the changes                                               
          template<Offset...I2>
-         constexpr void Commit(::std::integer_sequence<Offset, I2...>&&) noexcept {
-            ((mSource[I] = (*this)[I2]), ...);
+         constexpr void CommitInner(ExpandedSequence<I2...>) noexcept {
+            static_assert(sizeof...(I) == sizeof...(I2));
+            ((mSource[I] = Base::all[I2]), ...);
          }
 
       public:
-         TProxyVector() = delete;
-         TProxyVector(const TProxyVector&) = delete;
-         TProxyVector(TProxyVector&&) = delete;
+         TProxyArray() = delete;
+         TProxyArray(const TProxyArray&) = delete;
+         TProxyArray(TProxyArray&&) = delete;
 
-         explicit TProxyVector(TVEC(V)& source) noexcept
-            : mSource {source} {}
+         /// Create a proxy array - copy relevant contents and save a ref for 
+         /// later, when local changes have to be commited to the original    
+         explicit TProxyArray(VT (&source)[VS]) noexcept
+            : Base    {source[I]...}
+            , mSource {source} {}
 
-         ~TProxyVector() noexcept {
-            Commit(::std::make_integer_sequence<Offset, sizeof...(I)>{});
-         }
+         /// Intermediate type destructor - commits any local changes to the  
+         /// original array, making sure no information is lost               
+         ~TProxyArray() noexcept { Commit(); }
 
          using Base::operator =;
+
+         auto GetBase() noexcept -> Base&       {
+            return static_cast<Base&>(*this);
+         }
+
+         auto GetBase() const noexcept -> Base const& {
+            return static_cast<Base const&>(*this);
+         }
+
+         void Commit() noexcept {
+            CommitInner(Sequence<sizeof...(I)>::Expand);
+         }
       };
 
-   } // namespace Inner
+   } // namespace Langulus::Math::Inner
 
 
    /// Generate a lossless vector type from provided LHS and RHS types        
@@ -724,50 +747,77 @@ namespace Langulus::Math
    ///                                                                        
    /// Returns an inverted vector                                             
    NOD() constexpr auto operator - (const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ProxyArray auto&) noexcept;
 
    /// Returns the sum of two vectors                                         
    NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
+   NOD() constexpr auto operator + (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+
    /// Returns the difference of two vectors                                  
    NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
+
+   NOD() constexpr auto operator - (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
 
    /// Returns the Hadamard product of two vectors                            
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
+   NOD() constexpr auto operator * (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+
    /// Returns the division of two vectors                                    
    NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::VectorBased auto&);
    NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::ScalarBased auto&);
    NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::VectorBased auto&);
 
+   NOD() constexpr auto operator / (const CT::ProxyArray auto&, const CT::VectorBased auto&);
+   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::ProxyArray auto&);
+   NOD() constexpr auto operator / (const CT::ProxyArray auto&, const CT::ScalarBased auto&);
+   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::ProxyArray auto&);
+
    /// Returns the left-shift of two integer vectors                          
-   template<CT::VectorBased LHS, CT::VectorBased RHS>
-   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   NOD() constexpr auto operator << (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::ScalarBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
+
+   NOD() constexpr auto operator << (const CT::ProxyArrayInt auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::ProxyArrayInt auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
 
    /// Returns the right-shift of two integer vectors                         
-   template<CT::VectorBased LHS, CT::VectorBased RHS>
-   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   NOD() constexpr auto operator >> (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::ScalarBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
+
+   NOD() constexpr auto operator >> (const CT::ProxyArrayInt auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::ProxyArrayInt auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
 
    /// Returns the xor of two integer vectors                                 
-   template<CT::VectorBased LHS, CT::VectorBased RHS>
-   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
-   template<CT::VectorBased LHS, CT::ScalarBased RHS>
-   NOD() constexpr auto operator ^ (const LHS&, const RHS&) noexcept requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>;
+   NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::ScalarBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
+
+   NOD() constexpr auto operator ^ (const CT::ProxyArrayInt auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::ProxyArrayInt auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
 
 
    ///                                                                        
@@ -777,17 +827,33 @@ namespace Langulus::Math
    constexpr auto& operator += (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator += (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
+   constexpr auto& operator += (CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator += (CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   constexpr auto& operator += (CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+
    /// Subtract                                                               
    constexpr auto& operator -= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator -= (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
+
+   constexpr auto& operator -= (CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator -= (CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   constexpr auto& operator -= (CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Multiply                                                               
    constexpr auto& operator *= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator *= (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
+   constexpr auto& operator *= (CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator *= (CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   constexpr auto& operator *= (CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+
    /// Divide                                                                 
    constexpr auto& operator /= (CT::VectorBased auto&, const CT::VectorBased auto&);
    constexpr auto& operator /= (CT::VectorBased auto&, const CT::ScalarBased auto&);
+
+   constexpr auto& operator /= (CT::ProxyArray auto&, const CT::VectorBased auto&);
+   constexpr auto& operator /= (CT::VectorBased auto&, const CT::ProxyArray auto&);
+   constexpr auto& operator /= (CT::ProxyArray auto&, const CT::ScalarBased auto&);
 
 
    ///                                                                        
@@ -798,29 +864,60 @@ namespace Langulus::Math
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
+   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+
    /// Bigger                                                                 
    NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
+
+   NOD() constexpr auto operator >  (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
 
    /// Bigger or equal                                                        
    NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
+   NOD() constexpr auto operator >= (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+
    /// Smaller or equal                                                       
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
+
+   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
 
    /// Equal                                                                  
    NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
+   NOD() constexpr auto operator == (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+
+   /// Not equal                                                              
    NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
+
+   NOD() constexpr auto operator != (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
 
 } // namespace Langulus::Math
 
