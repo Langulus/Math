@@ -63,13 +63,13 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 			x4 = testMat4::Translate(testVec4 {5, 12, 2, 555});
          Logger::Special(x4);
 
-			REQUIRE(x4.GetColumn(3)[0] == T(5));
+			REQUIRE(x4.template GetColumn<3>()[0] == T(5));
 			REQUIRE(x4[3][0] == T(5));
-			REQUIRE(x4.GetColumn(3)[1] == T(12));
+			REQUIRE(x4.template GetColumn<3>()[1] == T(12));
 			REQUIRE(x4[3][1] == T(12));
-			REQUIRE(x4.GetColumn(3)[2] == T(2));
+			REQUIRE(x4.template GetColumn<3>()[2] == T(2));
 			REQUIRE(x4[3][2] == T(2));
-			REQUIRE(x4.GetColumn(3)[3] == T(1));
+			REQUIRE(x4.template GetColumn<3>()[3] == T(1));
 			REQUIRE(x4[3][3] == T(1));
 		}
 
@@ -217,19 +217,14 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 		#if LANGULUS_SIMD(256BIT)
 			Logger::Info("LANGULUS_SIMD(256BIT)");
 		#endif
-			r4 = x4 * y4;
-			Logger::Info("Multiplying the matrices r4 = x4 * y4 done");
-			r3 = x3 * y3;
-			Logger::Info("Multiplying the matrices r3 = x3 * y3 done");
 			r2 = x2 * y2;
-			Logger::Info("Multiplying the matrices r2 = x2 * y2 done");
-
 			REQUIRE(r2[0][0] == Approx(0).margin(0.001));
 			REQUIRE(r2[0][1] == Approx(1));
 			REQUIRE(r2[1][0] == Approx(-1));
 			REQUIRE(r2[1][1] == Approx(0).margin(0.001));
 
-			REQUIRE(r3[0][0] == Approx(0).margin(0.001));
+         r3 = x3 * y3;
+         REQUIRE(r3[0][0] == Approx(0).margin(0.001));
 			REQUIRE(r3[0][1] == Approx(0).margin(0.001));
 			REQUIRE(r3[0][2] == Approx(-1));
 			REQUIRE(r3[1][0] == Approx(0.70711));
@@ -239,7 +234,8 @@ TEMPLATE_TEST_CASE("Matrices", "[mat]", REAL_TYPES) {
 			REQUIRE(r3[2][1] == Approx(-0.70711));
 			REQUIRE(r3[2][2] == Approx(0).margin(0.001));
 
-			REQUIRE(r4[0][0] == Approx(0).margin(0.001));
+         r4 = x4 * y4;
+         REQUIRE(r4[0][0] == Approx(0).margin(0.001));
 			REQUIRE(r4[0][1] == Approx(0).margin(0.001));
 			REQUIRE(r4[0][2] == Approx(-1));
 			REQUIRE(r4[0][3] == Approx(0).margin(0.001));

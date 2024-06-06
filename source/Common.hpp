@@ -118,6 +118,10 @@ namespace Langulus::CT
    template<class...T>
    concept VectorBased = ((Desem<T>::CTTI_VectorTrait) and ...);
    
+   /// Anything that has the vector trait and contains integers               
+   template<class...T>
+   concept VectorBasedInt = ((VectorBased<T> and CT::Integer<TypeOf<T>>) and ...);
+   
    /// Anything that has the color trait                                      
    template<class...T>
    concept ColorBased = ((Desem<T>::CTTI_ColorTrait) and ...);
@@ -134,8 +138,16 @@ namespace Langulus::CT
    template<class...T>
    concept GradientBased = ((Desem<T>::CTTI_GradientTrait) and ...);
 
+   /// For recognizing proxy-arrays (intermediate vectors after swizzling)    
+   template<class...T>
+   concept ProxyArray = ((Desem<T>::CTTI_ProxyArray) and ...);
+
+   /// For recognizing proxy-arrays that contain integers                     
+   template<class...T>
+   concept ProxyArrayInt = ((ProxyArray<T> and CT::Integer<TypeOf<T>>) and ...);
+
    /// Anything that doesn't have any of the above traits                     
-   ///   @attention keep this one up to date, if adding new math traits       
+   ///   @maintenance keep this one up to date, if adding new math traits     
    template<class...T>
    concept ScalarBased = Scalar<T...> and
      not ((QuaternionBased<T>
@@ -143,13 +155,19 @@ namespace Langulus::CT
         or RangeBased<T>
         or MatrixBased<T>
         or GradientBased<T>
+        or ProxyArray<T>
       ) and ...);
-   
+
+   /// Anything ScalarBased that contains integers                            
+   template<class...T>
+   concept ScalarBasedInt = ((ScalarBased<T> and CT::Integer<TypeOf<T>>) and ...);
+
    /// Anything that is a CT::CustomNumber and CT::CastsToFundamental         
    /// It is a more constrained version of CT::CustomNumber, that omits any   
-   /// iterators and other irrelevant stuff.                                  
+   /// iterators and other irrelevant stuff                                   
    template<class...T>
-   concept NumberBased = CustomNumber<T...> and CastsToFundamental<T...>;
+   concept NumberBased = CustomNumber<T...> and CastsToFundamental<T...>
+       and ((not VectorBased<T>) and ...);
 
 } // namespace Langulus::CT
 

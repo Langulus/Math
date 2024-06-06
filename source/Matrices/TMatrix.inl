@@ -10,6 +10,7 @@
 #include "TMatrix.hpp"
 #include "../Vectors/TVector.inl"
 #include "../Numbers/TAngle.inl"
+#include <Core/Sequences.hpp>
 
 #define TARGS(a)     CT::ScalarBased a##T, Count a##C, Count a##R
 #define TMAT(a)      TMatrix<a##T, a##C, a##R>
@@ -91,6 +92,16 @@ namespace Langulus::Math
       constexpr auto D = Math::Min(Diagonal, CountOf<V>);
       for (Offset i = 0; i < D; ++i)
          mColumns[i][i] = Adapt(x[i]);
+   }
+
+   /// Manual initialization from an array (unsafe)                           
+   ///   @param t1 - array of scalars                                         
+   TEMPLATE() template<class T1> LANGULUS(INLINED)
+   constexpr TME()::TMatrix(const T1* t1) noexcept {
+      if constexpr (CT::Similar<T, T1>)
+         ::std::memcpy(mArray, t1, sizeof(mArray));
+      else
+         SIMD::Convert<0>(*static_cast<const T1(*)[MemberCount]>(static_cast<const void*>(t1)), mArray);
    }
 
    /// Manual initialization with variadic head-tail                          
@@ -189,8 +200,8 @@ namespace Langulus::Math
    
    /// Look at constructor - LH lookat matrix                                 
    TEMPLATE()
-   constexpr TME() TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up)
-   requires (ROWS >= 2 and COLUMNS >= 2) {
+   constexpr auto TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up)
+   -> TMatrix requires (ROWS >= 2 and COLUMNS >= 2) {
       static_assert(IsSquare, "Can't make a look-at matrix from this one");
 
       forward = forward.Normalize();
@@ -216,9 +227,8 @@ namespace Langulus::Math
 
    /// Create a rotational matrix (for 2x2 matrix, only around z)             
    TEMPLATE()
-   constexpr TME() TME()::Rotate(
-      const CT::Angle auto& roll
-   ) noexcept requires (ROWS >= 2 and COLUMNS >= 2) {
+   constexpr auto TME()::Rotate(const CT::Angle auto& roll) noexcept
+   -> TMatrix requires (ROWS >= 2 and COLUMNS >= 2) {
       auto cosR = Math::Cos(roll);
       auto sinR = Math::Sin(roll);
 
@@ -233,10 +243,8 @@ namespace Langulus::Math
    /// Create a rotational matrix based on axis and angle                     
    /// Builds a 3D rotation matrix created from normalized axis and an angle  
    TEMPLATE()
-   constexpr TME() TME()::RotateAxis(
-      const TVector<T, 3>& axis,
-      const CT::Angle auto& a
-   ) noexcept requires (ROWS >= 3 and COLUMNS >= 3) {
+   constexpr auto TME()::RotateAxis(const TVector<T, 3>& axis, const CT::Angle auto& a) noexcept
+   -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
       const T c = Math::Cos(a);
       const T s = Math::Sin(a);
 
@@ -260,10 +268,8 @@ namespace Langulus::Math
    /// Rotational constructor in euler angles (for 3x3 matrix or above)       
    /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
-   constexpr TME() TME()::Rotate(
-      const CT::Angle auto& pitch,
-      const CT::Angle auto& yaw
-   ) noexcept requires (ROWS >= 3 and COLUMNS >= 3) {
+   constexpr auto TME()::Rotate(const CT::Angle auto& pitch, const CT::Angle auto& yaw) noexcept
+   -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
       const T tmp_cp = Math::Cos(pitch);
@@ -287,11 +293,11 @@ namespace Langulus::Math
    /// Rotational constructor in euler angles (for 3x3 matrix or above)       
    /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
-   constexpr TME() TME()::Rotate(
+   constexpr auto TME()::Rotate(
       const CT::Angle auto& pitch,
       const CT::Angle auto& yaw,
       const CT::Angle auto& roll
-   ) noexcept requires (ROWS >= 3 and COLUMNS >= 3) {
+   ) noexcept -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
       const T tmp_cp = Math::Cos(pitch);
@@ -316,7 +322,8 @@ namespace Langulus::Math
    ///   @param position - the position to set                                
    ///   @return the translation matrix                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Translate(const CT::VectorBased auto& position) noexcept {
+   constexpr auto TME()::Translate(const CT::VectorBased auto& position) noexcept
+   -> TMatrix {
       TMatrix temp {};
       return temp.SetPosition(position);
    }
@@ -328,7 +335,7 @@ namespace Langulus::Math
    ///   @param x - the uniform scale factor                                  
    ///   @return the scale matrix                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Scale(const CT::ScalarBased auto& x) noexcept {
+   constexpr auto TME()::Scale(const CT::ScalarBased auto& x) noexcept -> TMatrix {
       TMatrix temp {x};
       if constexpr (Diagonal >= 4) {
          for (Count i = 3; i < Diagonal; ++i)
@@ -342,19 +349,19 @@ namespace Langulus::Math
    ///   @param x - the scale factors                                         
    ///   @return the scale matrix                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Scale(const CT::VectorBased auto& x) noexcept {
+   constexpr auto TME()::Scale(const CT::VectorBased auto& x) noexcept -> TMatrix {
       return TMatrix {x};
    }
 
    /// Create an identity matrix - identical to the default constructor       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Identity() noexcept {
+   constexpr auto TME()::Identity() noexcept -> TMatrix {
       return {};
    }
 
    /// Create a null matrix                                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Null() noexcept {
+   constexpr auto TME()::Null() noexcept -> TMatrix {
       return {0};
    }
 
@@ -363,31 +370,31 @@ namespace Langulus::Math
    ///   Assignment                                                           
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const TMatrix& other) noexcept {
+   constexpr auto TME()::operator = (const TMatrix& other) noexcept -> TMatrix& {
       for (Count i = 0; i < Columns; ++i)
          mColumns[i] = other.mColumns[i];
       return *this;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (TMatrix&& other) noexcept {
+   constexpr auto TME()::operator = (TMatrix&& other) noexcept -> TMatrix& {
       for (Count i = 0; i < Columns; ++i)
          mColumns[i] = ::std::move(other.mColumns[i]);
       return *this;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::MatrixBased auto& other) noexcept {
+   constexpr auto TME()::operator = (const CT::MatrixBased auto& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::VectorBased auto& other) noexcept {
+   constexpr auto TME()::operator = (const CT::VectorBased auto& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::ScalarBased auto& other) noexcept {
+   constexpr auto TME()::operator = (const CT::ScalarBased auto& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
@@ -438,259 +445,13 @@ namespace Langulus::Math
 
 
    ///                                                                        
-   ///   ARITHMETICS                                                          
-   ///                                                                        
-
-   /// Multiply two matrices - not commutative                                
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator * (const TME()& lhs, const TME()& rhs) noexcept {
-      TME() r = TME()::Null();
-      for (Offset col = 0; col < COLUMNS; ++col) {
-         auto& rc = r[col];
-         auto& rhsc = rhs[col];
-         for (Offset row = 0; row < ROWS; ++row)
-            rc += lhs[row] * rhsc[row];
-      }
-      return r;
-   }
-
-   /// Add two matrices                                                       
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator + (const TME()& me, const TME()& other) noexcept {
-      TME() result(me);
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         result[idx] += other.mArray[idx];
-      return result;
-   }
-
-   /// Subtract two matrices                                                  
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator - (const TME()& me, const TME()& other) noexcept {
-      TME() result(me);
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         result[idx] -= other.mArray[idx];
-      return result;
-   }
-
-   /// Multiply matrix by a scalar                                            
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator * (const TME()& me, const T& s) noexcept {
-      TME() result(me);
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         result[idx] *= s;
-      return result;
-   }
-
-   /// Multiply scalar by a matrix                                            
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator * (const T& s, const TME()& me) noexcept {
-      return me * s;
-   }
-
-   /// Divide the matrix by a scalar - not commutative                        
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator / (const TME()& me, const T& s) noexcept {
-      const auto inv_s = T(1) / s;
-      TME() result(me);
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         result[idx] *= inv_s;
-      return result;
-   }
-
-   /// Divide the scalar by a matrix - not commutative                        
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() operator / (const T& s, const TME()& me) noexcept {
-      TME() result(me);
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         result[idx] = s / result[idx];
-      return result;
-   }
-
-   /// Destructive multiplication of two matrices (not commutative)           
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& operator *= (TME()& me, const TME()& other) noexcept {
-      return me = me * other;
-   }
-
-   /// Destructive addition of two matrices. Not commutative                  
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& operator += (TME()& me, const TME()& other) noexcept {
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         me.mArray[idx] += other.mArray[idx];
-      return me;
-   }
-
-   /// Destructive subtraction of two matrices. Not commutative               
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& operator -= (TME()& me, const TME()& other) noexcept {
-      for (Offset idx = 0; idx < me.MemberCount; ++idx)
-         me.mArray[idx] -= other.mArray[idx];
-      return me;
-   }
-
-   /// Destructive multiplication by a scalar. Not commutative                
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& operator *= (TME()& me, const T& s) noexcept {
-      for (auto& it : me.mArray)
-         it *= s;
-      return me;
-   }
-
-   /// Destructive division by a scalar. Not commutative                      
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& operator /= (TME()& me, const T& s) noexcept {
-      const auto inv_s = T(1) / s;
-      for (auto& it : me.mArray)
-         it *= inv_s;
-      return me;
-   }
-
-   /// Multiply by a row vector                                               
-   ///   @return a column vector result                                       
-   template<TARGS(LHS), CT::ScalarBased T, Count C>
-   constexpr TVector<T, C> operator * (const TMAT(LHS)& me, const TVector<T, C>& vec) noexcept requires (C <= LHSC and C > 1) {
-      using LT = Lossless<T, LHST>;
-      if constexpr (LHSC == LHSR and LHSC == 2) {
-         // 2x2 matrix * row optimization                               
-         return {
-            me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1],
-            me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1]
-         };
-      }
-      else if constexpr (LHSC == LHSR and LHSC == 3) {
-         // 3x3 matrix * row optimization                               
-         return {
-            me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2],
-            me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2],
-            me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2]
-         };
-      }
-      else if constexpr (LHSC == LHSR and LHSC == 4) {
-         /* __m128 v0 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(0, 0, 0, 0));
-      __m128 v1 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(1, 1, 1, 1));
-      __m128 v2 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(2, 2, 2, 2));
-      __m128 v3 = _mm_shuffle_ps(v.data, v.data, _MM_SHUFFLE(3, 3, 3, 3));
-      __m128 m0 = _mm_mul_ps(m[0].data, v0);
-      __m128 m1 = _mm_mul_ps(m[1].data, v1);
-      __m128 a0 = _mm_add_ps(m0, m1);
-      __m128 m2 = _mm_mul_ps(m[2].data, v2);
-      __m128 m3 = _mm_mul_ps(m[3].data, v3);
-      __m128 a1 = _mm_add_ps(m2, m3);
-      __m128 a2 = _mm_add_ps(a0, a1);
-      return typename mat<4, 4, T, Q>::col_type(a2);*/
-         // 4x4 matrix * row optimization                               
-         if constexpr (C > 3) {
-            return {
-               me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2] + me.mColumns[3][0] * vec[3],
-               me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2] + me.mColumns[3][1] * vec[3],
-               me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[3][2] * vec[3],
-               me.mColumns[0][3] * vec[0] + me.mColumns[1][3] * vec[1] + me.mColumns[2][3] * vec[2] + me.mColumns[3][3] * vec[3]
-            };
-         }
-         else {
-            return {
-               me.mColumns[0][0] * vec[0] + me.mColumns[1][0] * vec[1] + me.mColumns[2][0] * vec[2] + me.mColumns[3][0],
-               me.mColumns[0][1] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[2][1] * vec[2] + me.mColumns[3][1],
-               me.mColumns[0][2] * vec[0] + me.mColumns[1][2] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[3][2],
-               me.mColumns[0][3] * vec[0] + me.mColumns[1][3] * vec[1] + me.mColumns[2][3] * vec[2] + me.mColumns[3][3]
-            };
-         }
-      }
-      else {
-         // Generic matrix * row                                        
-         LT r[C] = {};
-         for (Offset vr = 0; vr < C; ++vr) {
-            for (Offset mc = 0; mc < Math::Min(C, LHSC); ++mc)
-               r[vr] += me.mColumns[mc][vr] * vec[mc];
-         }
-         return r;
-      }
-   }
-
-   /// Multiply by a column vector                                            
-   ///   @return a row vector result                                          
-   template<TARGS(RHS), CT::ScalarBased T, Count C>
-   constexpr TVector<T, C> operator * (const TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSR and C > 1) {
-      using LT = Lossless<T, RHST>;
-      if constexpr (RHSC == RHSR and RHSC == 2) {
-         // 2x2 column * matrix optimization                            
-         return {
-            me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1],
-            me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1]
-         };
-      }
-      else if constexpr (RHSC == RHSR and RHSC == 3) {
-         // 3x3 column * matrix optimization                            
-         return {
-            me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2],
-            me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2],
-            me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2]
-         };
-      }
-      else if constexpr (RHSC == RHSR and RHSC == 4) {
-         // 4x4 column * matrix optimization                            
-         if constexpr (C > 3) {
-            return {
-               me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3] * vec[3],
-               me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2] + me.mColumns[1][3] * vec[3],
-               me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[2][3] * vec[3],
-               me.mColumns[3][0] * vec[0] + me.mColumns[3][1] * vec[1] + me.mColumns[3][2] * vec[2] + me.mColumns[3][3] * vec[3]
-            };
-         }
-         else {
-            return {
-               me.mColumns[0][0] * vec[0] + me.mColumns[0][1] * vec[1] + me.mColumns[0][2] * vec[2] + me.mColumns[0][3],
-               me.mColumns[1][0] * vec[0] + me.mColumns[1][1] * vec[1] + me.mColumns[1][2] * vec[2] + me.mColumns[1][3],
-               me.mColumns[2][0] * vec[0] + me.mColumns[2][1] * vec[1] + me.mColumns[2][2] * vec[2] + me.mColumns[2][3],
-               me.mColumns[3][0] * vec[0] + me.mColumns[3][1] * vec[1] + me.mColumns[3][2] * vec[2] + me.mColumns[3][3]
-            };
-         }
-      }
-      else {
-         // Generic column * matrix                                     
-         LT r[C] = {};
-         for (Offset vr = 0; vr < C; ++vr) {
-            for (Offset mc = 0; mc < Math::Min(C, RHSR); ++mc)
-               r[vr] += me.mColumns[vr][mc] * vec[mc];
-         }
-         return r;
-      }
-   }
-
-   /// Destructive multiplication of a row vector                             
-   template<TARGS(RHS), CT::ScalarBased T, Count C> LANGULUS(INLINED)
-   constexpr TVector<T, C>& operator *= (TVector<T, C>& vec, const TMAT(RHS)& me) noexcept requires (C <= RHSC and C > 1) {
-      return vec = vec * me;
-   }
-
-
-   ///                                                                        
-   ///   COMPARISON                                                           
-   ///                                                                        
-   /// Compare with another matrix                                            
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr bool operator == (const TME()& lhs, const TME()& rhs) noexcept {
-      return 0 == memcmp(lhs.mArray, rhs.mArray, sizeof(lhs.mArray));
-   }
-
-   /// Compare with scalar                                                    
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr bool operator == (const TME()& lhs, const T& rhs) noexcept {
-      for (auto& it : lhs.mArray)
-         if (it != rhs)
-            return false;
-      return true;
-   }
-
-
-   ///                                                                        
    ///   ENCAPSULATION                                                        
    ///                                                                        
    /// Access 1D index                                                        
    ///   @param i - index [0; MemberCount)                                    
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr typename TME()::ColumnType& TME()::operator [] (const Offset i) noexcept {
+   constexpr auto TME()::operator [] (const Offset i) noexcept -> ColumnType& {
       return mColumns[i];
    }
 
@@ -698,27 +459,27 @@ namespace Langulus::Math
    ///   @param i - index [0; COLS*ROWS)                                      
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const typename TME()::ColumnType& TME()::operator [] (const Offset i) const noexcept {
+   constexpr auto TME()::operator [] (const Offset i) const noexcept -> ColumnType const& {
       return mColumns[i];
    }
 
    /// Access raw data                                                        
    ///   @return pointer to the first element                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T* TME()::GetRaw() noexcept {
+   constexpr auto TME()::GetRaw() noexcept -> T* {
       return mArray;
    }
 
    /// Access raw data (const)                                                
    ///   @return pointer to the first element                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T* TME()::GetRaw() const noexcept {
+   constexpr auto TME()::GetRaw() const noexcept -> T const* {
       return mArray;
    }
 
    /// Get right axis                                                         
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TVector<T, 3> TME()::GetRight() const noexcept {
+   constexpr auto TME()::GetRight() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][0], mColumns[1][0], mColumns[2][0]};
       else LANGULUS_ERROR("Can't get right axis of this matrix");
@@ -726,7 +487,7 @@ namespace Langulus::Math
 
    /// Get up axis                                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TVector<T, 3> TME()::GetUp() const noexcept {
+   constexpr auto TME()::GetUp() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][1], mColumns[1][1], mColumns[2][1]};
       else LANGULUS_ERROR("Can't get up axis of this matrix");
@@ -734,7 +495,7 @@ namespace Langulus::Math
 
    /// Get view axis                                                          
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TVector<T, 3> TME()::GetView() const noexcept {
+   constexpr auto TME()::GetView() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][2], mColumns[1][2], mColumns[2][2]};
       else LANGULUS_ERROR("Can't get view axis of this matrix");
@@ -742,7 +503,7 @@ namespace Langulus::Math
 
    /// Get translation                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TVector<T, 3> TME()::GetScale() const noexcept {
+   constexpr auto TME()::GetScale() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {GetRight().Length(), GetUp().Length(), GetView().Length()};
       else LANGULUS_ERROR("Can't get translation of this matrix");
@@ -750,15 +511,15 @@ namespace Langulus::Math
 
    /// Get translation                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const TVector<T, ROWS - 1>& TME()::GetPosition()
-   const noexcept requires (ROWS > 2 and COLUMNS > 2) {
+   constexpr auto TME()::GetPosition() const noexcept
+   -> TVector<T, ROWS - 1> const& requires (ROWS > 2 and COLUMNS > 2) {
       return mColumns[Columns - 1];
    }
 
    /// Set translation                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::SetPosition(const CT::Vector auto& position)
-   noexcept requires (ROWS > 2 and COLUMNS > 2) {
+   constexpr auto TME()::SetPosition(const CT::Vector auto& position) noexcept
+   -> TMatrix& requires (ROWS > 2 and COLUMNS > 2) {
       using V = Deref<decltype(position)>;
       constexpr auto S = Math::Min(3u, CountOf<V>);
       static_assert (S <= Rows and S <= Columns,
@@ -772,20 +533,39 @@ namespace Langulus::Math
    /// Get a whole row                                                        
    ///   @param idx - row index                                               
    ///   @return a row                                                        
-   TEMPLATE() LANGULUS(INLINED)
-   typename TME()::RowType TME()::GetRow(Offset idx) const noexcept {
+   TEMPLATE() template<Offset ROW> LANGULUS(INLINED)
+   auto TME()::GetRow() const noexcept -> RowType {
+      static_assert(ROW < Rows, "Row index out if range");
       T r[Columns];
-      for (unsigned i = 0; i < Columns; ++i)
-         r[i] = mColumns[i][idx];
+      for (unsigned col = 0; col < Columns; ++col)
+         r[col] = mColumns[col][ROW];
       return r;
+   }
+
+   TEMPLATE() template<Offset ROW> LANGULUS(INLINED)
+   auto TME()::GetRow() noexcept {
+      static_assert(ROW < Rows, "Row index out if range");
+      return GetRowInner<ROW>(::std::make_integer_sequence<Offset, Columns>());
+   }
+
+   TEMPLATE() template<Offset ROW, Offset...C> LANGULUS(INLINED)
+   auto TME()::GetRowInner(::std::integer_sequence<Offset, C...>&&) noexcept {
+      return Inner::TProxyArray<T, COLUMNS, 0, (C * Rows + ROW)...>(mArray);
    }
 
    /// Get a whole column                                                     
    ///   @param idx - column index                                            
    ///   @return a column                                                     
-   TEMPLATE() LANGULUS(INLINED)
-   const typename TME()::ColumnType& TME()::GetColumn(Offset idx) const noexcept {
-      return mColumns[idx];
+   TEMPLATE() template<Offset COL> LANGULUS(INLINED)
+   auto TME()::GetColumn() const noexcept -> ColumnType const& {
+      static_assert(COL < Columns, "Column index out if range");
+      return mColumns[COL];
+   }
+
+   TEMPLATE() template<Offset COL> LANGULUS(INLINED)
+   auto TME()::GetColumn() noexcept -> ColumnType& {
+      static_assert(COL < Columns, "Column index out if range");
+      return mColumns[COL];
    }
 
    /// Check if identity                                                      
@@ -847,7 +627,7 @@ namespace Langulus::Math
    /// Transpose the matrix                                                   
    ///   @return the transposed matrix                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Transpose() const noexcept {
+   constexpr auto TME()::Transpose() const noexcept -> TMatrix {
       static_assert(IsSquare, "Can't transpose non-square matrix");
       TME() result = *this;
       for (int i = 0; i < Columns; ++i) {
@@ -861,7 +641,7 @@ namespace Langulus::Math
    /// Get cofactor                                                           
    ///   @return the given cofactor of the matrix                             
    TEMPLATE()
-   constexpr TME() TME()::Cofactor(int p, int q, int n) const noexcept {
+   constexpr auto TME()::Cofactor(int p, int q, int n) const noexcept -> TMatrix {
       TME() temp;
       int i = 0, j = 0;
       for (int row = 0; row < n; row++) {
@@ -887,7 +667,7 @@ namespace Langulus::Math
    /// Get determinant of specific dimension                                  
    ///   @return the determinant                                              
    TEMPLATE()
-   constexpr T TME()::Determinant(int n) const noexcept {
+   constexpr auto TME()::Determinant(int n) const noexcept -> T {
       float D = 0;
 
       // Base case : if matrix contains single element                  
@@ -911,7 +691,7 @@ namespace Langulus::Math
    /// Function to get adjoint of A[N][N]                                     
    ///   @return the adjoint matrix                                           
    TEMPLATE()
-   constexpr TME() TME()::Adjoint() const noexcept {
+   constexpr auto TME()::Adjoint() const noexcept -> TMatrix {
       static_assert(IsSquare, "Can't adjoint non-square matrix");
       float sign = 1;
       TME() temp, adj;
@@ -935,7 +715,7 @@ namespace Langulus::Math
    /// Invert a square matrix                                                 
    ///   @return the inverted matrix                                          
    TEMPLATE()
-   TME() TME()::Invert() const {
+   auto TME()::Invert() const -> TMatrix {
       static_assert(IsSquare, "Can't invert non-square matrix");
 
       if constexpr (Columns == 2) {
@@ -1027,32 +807,32 @@ namespace Langulus::Math
    ///   Iteration                                                            
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr typename TME()::ColumnType* TME()::begin() noexcept {
+   constexpr auto TME()::begin() noexcept -> ColumnType* {
       return mColumns;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr typename TME()::ColumnType* TME()::end() noexcept {
+   constexpr auto TME()::end() noexcept -> ColumnType* {
       return mColumns + COLUMNS;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr typename TME()::ColumnType* TME()::last() noexcept {
+   constexpr auto TME()::last() noexcept -> ColumnType* {
       return mColumns + COLUMNS - 1;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const typename TME()::ColumnType* TME()::begin() const noexcept {
+   constexpr auto TME()::begin() const noexcept -> ColumnType const* {
       return mColumns;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const typename TME()::ColumnType* TME()::end() const noexcept {
+   constexpr auto TME()::end() const noexcept -> ColumnType const* {
       return mColumns + COLUMNS;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const typename TME()::ColumnType* TME()::last() const noexcept {
+   constexpr auto TME()::last() const noexcept -> ColumnType const* {
       return mColumns + COLUMNS - 1;
    }
 
@@ -1091,18 +871,18 @@ namespace Langulus::A
    /// Perspective constructor - left-handed perspective projection matrix    
    /// described by a region on the near clipping plane                       
    template<CT::ScalarBased T>
-   constexpr Math::TMatrix<T, 4> A::Matrix::PerspectiveRegion(
+   constexpr auto A::Matrix::PerspectiveRegion(
       const T& left, const T& right,
       const T& top,  const T& bottom,
       const T& near, const T& far
-   ) {
+   ) -> Math::TMatrix<T, 4> {
       auto result = Math::TMatrix<T, 4>::Null();
-      const auto x = T {2} * near / (right - left);
-      const auto y = T {2} * near / (top - bottom);
+      const auto x = T {2} * near / (right - left  );
+      const auto y = T {2} * near / (  top - bottom);
 
-      const auto a = (right + left) / (right - left);
-      const auto b = (top + bottom) / (top - bottom);
-      const auto c = -(far + near) / (far - near);
+      const auto a =   (right + left  ) / (right - left  );
+      const auto b =   (  top + bottom) / (  top - bottom);
+      const auto c = - (  far + near  ) / (  far - near  );
       const auto d = T {-2} * far * near / (far - near);
 
       result[ 0] = x;
@@ -1117,10 +897,10 @@ namespace Langulus::A
 
    /// Orthographic constructor - LH orthographic projection matrix           
    template<CT::ScalarBased T>
-   constexpr Math::TMatrix<T, 4> A::Matrix::Orthographic(
+   constexpr auto A::Matrix::Orthographic(
       const T& width, const T& height,
       const T& near,  const T& far
-   ) {
+   ) -> Math::TMatrix<T, 4> {
       const auto range = far - near;
       if (range == 0 or width == 0 or height == 0)
          throw Except::DivisionByZero();
@@ -1142,3 +922,294 @@ namespace Langulus::A
 #undef TMAT
 #undef TEMPLATE
 #undef TME
+
+namespace Langulus::Math
+{
+
+   /// Multiply matrices                                                      
+   ///   @param lhs - left matrix                                             
+   ///   @param rhs - right matrix                                            
+   ///   @return the product                                                  
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using LHS = Deref<decltype(lhs)>;
+      using RHS = Deref<decltype(rhs)>;
+      static_assert(LHS::Rows == RHS::Columns and LHS::Columns == RHS::Rows,
+         "Can't multiply these matrices - their sizes aren't compatible");
+      using Ret = LosslessMatrix<LHS, RHS>;
+
+      Ret r = Ret::Null();
+      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+         auto& rc = r.template GetColumn<COL>();
+         auto& rhsc = rhs.template GetColumn<COL>();
+
+         Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
+            SIMD::Add(
+               rc,
+               SIMD::Inner::Multiply(lhs.template GetColumn<ROW>(), rhsc.template GetIdx<ROW>()),
+               rc
+            );
+         });
+      });
+      return r;
+   }
+
+   /// Add matrices (commutative)                                             
+   ///   @param lhs - left matrix                                             
+   ///   @param rhs - right matrix                                            
+   ///   @return the added matrices                                           
+   LANGULUS(INLINED)
+   constexpr auto operator + (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
+      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+         SIMD::Add(lhs.template GetColumn<COL>(), rhs.template GetColumn<COL>(), result[COL]);
+      });
+      return Ret {result};
+   }
+
+   /// Subtract matrices                                                      
+   ///   @param lhs - left matrix                                             
+   ///   @param rhs - right matrix                                            
+   ///   @return the subtracted matrices                                      
+   LANGULUS(INLINED)
+   constexpr auto operator - (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
+      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+         SIMD::Subtract(lhs.template GetColumn<COL>(), rhs.template GetColumn<COL>(), result[COL]);
+      });
+      return Ret {result};
+   }
+
+   /// Multiply by a column vector                                            
+   ///   @param lhs - vector                                                  
+   ///   @param rhs - matrix                                                  
+   ///   @return the transformed vector                                       
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(lhs)>;
+      constexpr auto C = CountOf<Ret>;
+      TypeOf<Ret> r[C];
+      Sequence<C>::ForEach([&]<Offset COL>() noexcept {
+         r[COL] = (rhs.template GetColumn<COL>() * lhs).HSum();
+      });
+      return Ret {r};
+   }
+
+   /// Add a column vector                                                    
+   ///   @param lhs - vector                                                  
+   ///   @param rhs - matrix                                                  
+   ///   @return the modified matrix                                          
+   LANGULUS(INLINED)
+   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(rhs)>;
+      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+         SIMD::Add(rhs.template GetColumn<COL>(), lhs, result[COL]);
+      });
+      return Ret {result};
+   }
+
+   /// Subtract a column vector                                               
+   ///   @param lhs - vector                                                  
+   ///   @param rhs - matrix                                                  
+   ///   @return the modified matrix                                          
+   LANGULUS(INLINED)
+   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(rhs)>;
+      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+         SIMD::Subtract(lhs, rhs.template GetColumn<COL>(), result[COL]);
+      });
+      return Ret {result};
+   }
+
+   /// Multiply by a row vector                                               
+   ///   @param lhs - matrix                                                  
+   ///   @param rhs - vector                                                  
+   ///   @return the transformed vector                                       
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(rhs)>;
+      constexpr auto C = CountOf<Ret>;
+      TypeOf<Ret> r[C];
+      Sequence<C>::ForEach([&]<Offset ROW>() noexcept {
+         r[ROW] = (lhs.template GetRow<ROW>() * rhs).HSum();
+      });
+      return Ret {r};
+   }
+
+   /// Add a row vector                                                       
+   ///   @param lhs - matrix                                                  
+   ///   @param rhs - vector                                                  
+   ///   @return the modified matrix                                          
+   LANGULUS(INLINED)
+   constexpr auto operator + (const CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(lhs)>;
+      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
+         SIMD::Add(lhs.template GetRow<ROW>(), rhs, result[ROW]);
+      });
+      return Ret {result};
+   }
+
+   /// Subtract a row vector                                                  
+   ///   @param lhs - matrix                                                  
+   ///   @param rhs - vector                                                  
+   ///   @return the modified matrix                                          
+   LANGULUS(INLINED)
+   constexpr auto operator - (const CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(lhs)>;
+      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
+         SIMD::Subtract(lhs.template GetRow<ROW>(), rhs, result[ROW]);
+      });
+      return Ret {result};
+   }
+
+   /// Multiply a matrix by a scalar (commutative)                            
+   ///   @param lhs - scalar                                                  
+   ///   @param rhs - matrix                                                  
+   ///   @return the scaled matrix                                            
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(rhs)>;
+      TypeOf<Ret> result[Ret::MemberCount];
+      SIMD::Multiply(rhs.mArray, lhs, result);
+      return Ret {result};
+   }
+
+   LANGULUS(INLINED)
+   constexpr auto operator * (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      return rhs * lhs;
+   }
+
+   /// Divide a matrix by a scalar                                            
+   ///   @param lhs - matrix                                                  
+   ///   @param rhs - scalar                                                  
+   ///   @return the scaled matrix                                            
+   LANGULUS(INLINED)
+   constexpr auto operator / (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) {
+      using Ret = Deref<decltype(lhs)>;
+      TypeOf<Ret> result[Ret::MemberCount];
+      SIMD::Divide(lhs.mArray, rhs, result);
+      return Ret {result};
+   }
+
+   /// Add a scalar to a matrix (commutative)                                 
+   ///   @param lhs - scalar                                                  
+   ///   @param rhs - matrix                                                  
+   ///   @return the modified matrix                                          
+   LANGULUS(INLINED)
+   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(rhs)>;
+      TypeOf<Ret> result[Ret::MemberCount];
+      SIMD::Add(rhs.mArray, lhs, result);
+      return Ret {result};
+   }
+
+   LANGULUS(INLINED)
+   constexpr auto operator + (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      return rhs + lhs;
+   }
+
+   /// Subtract a scalar from a matrix                                        
+   ///   @param lhs - matrix                                                  
+   ///   @param rhs - scalar                                                  
+   ///   @return the modified matrix                                          
+   LANGULUS(INLINED)
+   constexpr auto operator - (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      using Ret = Deref<decltype(lhs)>;
+      TypeOf<Ret> result[Ret::MemberCount];
+      SIMD::Subtract(lhs.mArray, rhs, result);
+      return Ret {result};
+   }
+
+
+   ///                                                                        
+   ///   Mutators                                                             
+   ///                                                                        
+   /// Add two matrices                                                       
+   LANGULUS(INLINED)
+   constexpr auto& operator += (CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      SIMD::Add(lhs.mArray, rhs.mArray, lhs.mArray);
+      return lhs;
+   }
+
+   /// Add a scalar to a matrix                                               
+   LANGULUS(INLINED)
+   constexpr auto& operator += (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      SIMD::Add(lhs.mArray, rhs, lhs.mArray);
+      return lhs;
+   }
+
+   /// Add a vector to each column of a matrix                                
+   LANGULUS(INLINED)
+   constexpr auto& operator += (CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      return (lhs = lhs + rhs);
+   }
+
+   /// Subtract two matrices                                                  
+   LANGULUS(INLINED)
+   constexpr auto& operator -= (CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      SIMD::Subtract(lhs.mArray, rhs.mArray, lhs.mArray);
+      return lhs;
+   }
+
+   /// Subtract a scalar from a matrix                                        
+   LANGULUS(INLINED)
+   constexpr auto& operator -= (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      SIMD::Subtract(lhs.mArray, rhs, lhs.mArray);
+      return lhs;
+   }
+
+   /// Subtract a vector from each column of a matrix                         
+   LANGULUS(INLINED)
+   constexpr auto& operator -= (CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+      return (lhs = lhs - rhs);
+   }
+
+   /// Multiply two matrices                                                  
+   LANGULUS(INLINED)
+   constexpr auto& operator *= (CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      return (lhs = lhs * rhs);
+   }
+
+   /// Multiply matrix by a scalar                                            
+   LANGULUS(INLINED)
+   constexpr auto& operator *= (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      SIMD::Multiply(lhs.mArray, rhs, lhs.mArray);
+      return lhs;
+   }
+
+   /// Divide matrix by a scalar                                              
+   LANGULUS(INLINED)
+   constexpr auto& operator /= (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) {
+      SIMD::Divide(lhs.mArray, rhs, lhs.mArray);
+      return lhs;
+   }
+
+
+   ///                                                                        
+   ///   Comparison                                                           
+   ///                                                                        
+   LANGULUS(INLINED)
+   constexpr auto operator == (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      if constexpr (lhs.Columns != rhs.Columns or lhs.Rows != rhs.Rows)
+         return false;
+      else
+         return SIMD::Equals(lhs.mArray, rhs.mArray);
+   }
+
+   LANGULUS(INLINED)
+   constexpr auto operator == (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+      return SIMD::Equals(lhs.mArray, rhs);
+   }
+
+   LANGULUS(INLINED)
+   constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+      return SIMD::Equals(rhs.mArray, lhs);
+   }
+
+} // namespace Langulus::Math
