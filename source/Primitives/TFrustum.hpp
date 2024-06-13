@@ -76,7 +76,7 @@ namespace Langulus::Math
    public:
       constexpr TFrustum() noexcept;
       template<template<class> class S> requires CT::Semantic<S<TFrustum<T>>>
-      constexpr TFrustum(S<TFrustum>&&) noexcept;
+      constexpr TFrustum(S<TFrustum<T>>&&) noexcept;
       constexpr TFrustum(const MatrixType&) noexcept;
 
       NOD() constexpr bool IsDegenerate() const noexcept;
