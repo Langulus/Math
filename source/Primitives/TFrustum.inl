@@ -18,7 +18,7 @@ namespace Langulus::Math
 
    /// Default unit frustum construction                                      
    TEMPLATE() LANGULUS(INLINED)
-   TFrustum<T>::TFrustum() noexcept {
+   constexpr TFrustum<T>::TFrustum() noexcept {
       const T right {0.5, 0, 0};
       const T top   {0, 0.5, 0};
 
@@ -34,10 +34,16 @@ namespace Langulus::Math
       }
    }
 
+   /// Copy/move construction                                                 
+   TEMPLATE() template<template<class> class S>
+   requires CT::Semantic<S<TFrustum<T>>> LANGULUS(INLINED)
+   constexpr TFrustum<T>::TFrustum(S<TFrustum<T>>&& s) noexcept
+      : mPlanes {s->mPlanes} {}
+
    /// Create a frustum by deconstructing a view*projection matrix            
    ///   @param pv - projected view matrix                                    
    TEMPLATE() LANGULUS(INLINED)
-   TFrustum<T>::TFrustum(const MatrixType& pv) noexcept {
+   constexpr TFrustum<T>::TFrustum(const MatrixType& pv) noexcept {
       const auto right = pv.template GetRow<0>();
       const auto top   = pv.template GetRow<1>();
       const auto eye   = pv.template GetRow<(MemberCount > 2 ? 3 : 2)>() * (-1);

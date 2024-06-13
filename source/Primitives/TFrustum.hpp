@@ -69,13 +69,15 @@ namespace Langulus::Math
       using MatrixType = TMatrix<ScalarType, MemberCount + 1>;
       static_assert(MemberCount > 1, "Can't have one-dimensional frustum");
 
-      TPlane<T> mPlanes[MemberCount * 2];
+      ::std::array<TPlane<T>, MemberCount * 2> mPlanes;
 
       enum {Left = 0, Right, Top, Bottom, Near, Far};
 
    public:
-      TFrustum() noexcept;
-      TFrustum(const MatrixType&) noexcept;
+      constexpr TFrustum() noexcept;
+      template<template<class> class S> requires CT::Semantic<S<TFrustum<T>>>
+      constexpr TFrustum(S<TFrustum>&&) noexcept;
+      constexpr TFrustum(const MatrixType&) noexcept;
 
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool IsHollow() const noexcept;
