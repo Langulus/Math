@@ -35,9 +35,8 @@ namespace Langulus::Math
    }
 
    /// Copy/move construction                                                 
-   TEMPLATE() template<template<class> class S>
-   requires CT::Semantic<S<TFrustum<T>>> LANGULUS(INLINED)
-   constexpr TFrustum<T>::TFrustum(S<TFrustum<T>>&& s) noexcept
+   TEMPLATE() template<template<class> class S> LANGULUS(INLINED)
+   constexpr TFrustum<T>::TFrustum(S<TFrustum>&& s) noexcept requires CT::Semantic<S<TFrustum>>
       : mPlanes {s->mPlanes} {}
 
    /// Create a frustum by deconstructing a view*projection matrix            
