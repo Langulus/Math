@@ -1196,7 +1196,9 @@ namespace Langulus::Math
    ///                                                                        
    LANGULUS(INLINED)
    constexpr auto operator == (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
-      if constexpr (lhs.Columns != rhs.Columns or lhs.Rows != rhs.Rows)
+      using LHS = Deref<decltype(lhs)>;
+      using RHS = Deref<decltype(rhs)>;
+      if constexpr (LHS::Columns != RHS::Columns or LHS::Rows != RHS::Rows)
          return false;
       else
          return SIMD::Equals(lhs.mArray, rhs.mArray);
