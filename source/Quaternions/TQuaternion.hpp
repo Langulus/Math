@@ -135,8 +135,8 @@ namespace Langulus::Math
       NOD() constexpr TQuaternion operator - () const noexcept;
 
       template<CT::ScalarBased K = T, Count COLUMNS, Count ROWS>
-      NOD() explicit constexpr operator TMatrix<K, COLUMNS, ROWS>()
-         const noexcept requires (COLUMNS >= 3 and ROWS >= 3);
+      NOD() explicit constexpr operator TMatrix<K, COLUMNS, ROWS>() const noexcept
+      requires (COLUMNS >= 3 and ROWS >= 3);
    };
 
 

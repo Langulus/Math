@@ -451,24 +451,7 @@ namespace Langulus::Math
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
-   #if LANGULUS_SIMD(128BIT)
-      TVector(const simde__m128&)  noexcept;
-      TVector(const simde__m128d&) noexcept;
-      TVector(const simde__m128i&) noexcept;
-   #endif
-
-   #if LANGULUS_SIMD(256BIT)
-      TVector(const simde__m256&)  noexcept;
-      TVector(const simde__m256d&) noexcept;
-      TVector(const simde__m256i&) noexcept;
-   #endif
-
-   #if LANGULUS_SIMD(512BIT)
-      TVector(const simde__m512&)  noexcept;
-      TVector(const simde__m512d&) noexcept;
-      TVector(const simde__m512i&) noexcept;
-   #endif
-
+      TVector(const CT::SIMD auto&)  noexcept;
       TVector(Describe&&);
 
       ///                                                                     
@@ -648,17 +631,14 @@ namespace Langulus::Math
 
       auto& Sort() noexcept;
 
-      NOD() constexpr explicit operator       T& ()       noexcept requires (S == 1);
-      NOD() constexpr explicit operator const T& () const noexcept requires (S == 1);
+      NOD() constexpr explicit operator T&   () const noexcept requires (S == 1);
       NOD() constexpr explicit operator bool () const noexcept;
 
       template<CT::ScalarBased N>
       NOD() explicit constexpr operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>);
 
       template<Count ALTS>
-      NOD() operator TVector<T, ALTS>& () noexcept requires (ALTS < S);
-      template<Count ALTS>
-      NOD() operator const TVector<T, ALTS>& () const noexcept requires (ALTS < S);
+      NOD() operator TVector<T, ALTS>& () const noexcept requires (ALTS < S);
 
       ///                                                                     
       ///   Iteration                                                         
