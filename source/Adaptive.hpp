@@ -103,12 +103,8 @@ namespace Langulus
             return static_cast<Flow::Code>(mValue);
          }
 
-         constexpr operator T& () noexcept {
-            return mValue;
-         }
-
-         constexpr operator const T& () const noexcept {
-            return mValue;
+         constexpr operator T& () const noexcept {
+            return const_cast<T&>(mValue);
          }
       };
 

@@ -49,14 +49,8 @@ namespace Langulus::Math
 
    /// All conversions are explicit only, to preserve type                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::operator const T& () const noexcept {
-      return mValue;
-   }
-
-   /// All conversions are explicit only, to preserve type                    
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::operator T& () noexcept {
-      return mValue;
+   constexpr TME()::operator T& () const noexcept {
+      return const_cast<T&>(mValue);
    }
 
    /// All conversions are explicit only, to preserve type                    

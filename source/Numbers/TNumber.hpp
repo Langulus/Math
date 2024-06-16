@@ -63,8 +63,7 @@ namespace Langulus::Math
       TNumber& operator = (const CT::Number auto&) noexcept;
 
       /// All conversions are explicit only, to preserve type                 
-      constexpr explicit operator const T& () const noexcept;
-      constexpr explicit operator T& () noexcept;
+      constexpr explicit operator T&   () const noexcept;
       constexpr explicit operator bool () const noexcept;
 
       operator Flow::Code() const;

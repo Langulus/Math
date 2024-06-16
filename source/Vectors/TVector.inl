@@ -109,56 +109,10 @@ namespace Langulus::Math
       all[D::Index] = Adapt(source.mValue);
    }
    
-#if LANGULUS_SIMD(128BIT)
    TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m128& source) noexcept {
+   TME()::TVector(const CT::SIMD auto& source) noexcept {
       SIMD::Store(source, all);
    }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m128d& source) noexcept {
-      SIMD::Store(source, all);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m128i& source) noexcept {
-      SIMD::Store(source, all);
-   }
-#endif
-
-#if LANGULUS_SIMD(256BIT)
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m256& source) noexcept {
-      SIMD::Store(source, all);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m256d& source) noexcept {
-      SIMD::Store(source, all);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m256i& source) noexcept {
-      SIMD::Store(source, all);
-   }
-#endif
-
-#if LANGULUS_SIMD(512BIT)
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m512& source) noexcept {
-      SIMD::Store(source, all);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m512d& source) noexcept {
-      SIMD::Store(source, all);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const simde__m512i& source) noexcept {
-      SIMD::Store(source, all);
-   }
-#endif
 
    /// Construct from a descriptor                                            
    ///   @param describe - the descriptor to scan                             
@@ -748,16 +702,10 @@ namespace Langulus::Math
       }
    }
 
-   /// Implicitly convert to a number if size is 1                            
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::operator const T& () const noexcept requires (S == 1) {
-      return all[0];
-   }
-
    /// Implicitly convert to a number if size is 1 (mutable)                  
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::operator T& () noexcept requires (S == 1) {
-      return all[0];
+   constexpr TME()::operator T& () const noexcept requires (S == 1) {
+      return const_cast<T&>(all[0]);
    }
 
    /// Explicitly convert to bool                                             
@@ -773,13 +721,8 @@ namespace Langulus::Math
    }
    
    TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
-   TME()::operator TVector<T, ALTS>& () noexcept requires (ALTS < S) {
-      return reinterpret_cast<TVector<T, ALTS>&>(*this);
-   }
-
-   TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
-   TME()::operator const TVector<T, ALTS>& () const noexcept requires (ALTS < S) {
-      return reinterpret_cast<const TVector<T, ALTS>&>(*this);
+   TME()::operator TVector<T, ALTS>& () const noexcept requires (ALTS < S) {
+      return const_cast<TVector<T, ALTS>&>(reinterpret_cast<const TVector<T, ALTS>&>(*this));
    }
    
    TEMPLATE() LANGULUS(INLINED)
