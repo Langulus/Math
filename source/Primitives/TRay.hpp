@@ -7,7 +7,8 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
+
 
 namespace Langulus
 {
@@ -16,9 +17,9 @@ namespace Langulus
 
       template<CT::Vector> struct TRay;
 
-      using Ray2 = TRay<Point2>;
-      using Ray3 = TRay<Point3>;
-      using Ray = Ray3;
+      using Ray2 = TRay<Vec2>;
+      using Ray3 = TRay<Vec3>;
+      using Ray  = Ray3;
 
    } // namespace Langulus::Math
 

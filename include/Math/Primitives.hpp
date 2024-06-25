@@ -13,7 +13,6 @@
 #include "../../source/Primitives/TFrustum.inl"
 #include "../../source/Primitives/TLine.inl"
 #include "../../source/Primitives/TPlane.inl"
-#include "../../source/Primitives/TPoint.hpp"
 #include "../../source/Primitives/TPolygon.hpp"
 #include "../../source/Primitives/TRay.hpp"
 #include "../../source/Primitives/TSphere.hpp"
@@ -44,9 +43,10 @@ namespace Langulus::Math
       (void) MetaOf<LineStrip2>();
       (void) MetaOf<LineStrip3>();
              
-      (void) MetaOf<Point1>();
-      (void) MetaOf<Point2>();
-      (void) MetaOf<Point3>();
+      (void) MetaOf<Vec1>();
+      (void) MetaOf<Vec2>();
+      (void) MetaOf<Vec3>();
+      (void) MetaOf<Vec4>();
              
       (void) MetaOf<Polygon2>();
       (void) MetaOf<Polygon3>();
@@ -56,10 +56,13 @@ namespace Langulus::Math
              
       (void) MetaOf<Triangle2>();
       (void) MetaOf<Triangle3>();
+      (void) MetaOf<Triangle4>();
       (void) MetaOf<TriangleStrip2>();
       (void) MetaOf<TriangleStrip3>();
+      (void) MetaOf<TriangleStrip4>();
       (void) MetaOf<TriangleFan2>();
       (void) MetaOf<TriangleFan3>();
+      (void) MetaOf<TriangleFan4>();
    }
 
 } // namespace Langulus::Math

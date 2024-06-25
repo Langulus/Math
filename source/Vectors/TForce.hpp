@@ -89,4 +89,5 @@ namespace Langulus
       using Forceu64  = Force3u64;
 
    } // namespace Langulus::Math
+
 } // namespace Langulus

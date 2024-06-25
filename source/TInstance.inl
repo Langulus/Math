@@ -23,7 +23,7 @@ namespace Langulus::Math
    ///   @param reference - the reference octave                              
    ///   @return the AABB range                                               
    TEMPLATE()
-   typename TME()::RangeType TME()::GetRange(Level level) const {
+   auto TME()::GetRange(Level level) const -> RangeType {
       const auto halfSize = GetScale() * ScalarType {.5};
       const auto factor   = Pow(Level::Unit, mLevel - level);
       const auto position = GetPosition();
@@ -35,7 +35,7 @@ namespace Langulus::Math
    ///   @param reference - the reference octave                              
    ///   @return the AABB range                                               
    TEMPLATE()
-   typename TME()::RangeType TME()::GetRangeRotated(Level reference) const {
+   auto TME()::GetRangeRotated(Level reference) const -> RangeType {
       // AABB before rotation                                           
       const auto aabb = GetRange(reference);
       if (aabb.IsDegenerate())
@@ -75,7 +75,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
-   typename TME()::PointType TME()::GetPositionNext(const ScalarType& dt) const noexcept {
+   auto TME()::GetPositionNext(const ScalarType& dt) const noexcept -> PointType {
       return mPosition + mVelocity * dt;
    }
 
@@ -83,7 +83,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
-   typename TME()::PointType TME()::GetPositionPrev(const ScalarType& dt) const noexcept {
+   auto TME()::GetPositionPrev(const ScalarType& dt) const noexcept -> PointType {
       return mPosition - mVelocity * dt;
    }
 
@@ -91,7 +91,7 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
-   typename TME()::PointType TME()::GetVelocityNext(const ScalarType& dt) const noexcept {
+   auto TME()::GetVelocityNext(const ScalarType& dt) const noexcept -> PointType {
       return mVelocity + mAcceleration * dt;
    }
 
@@ -99,28 +99,28 @@ namespace Langulus::Math
    ///   @param dt - delta time between frames                                
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
-   typename TME()::PointType TME()::GetVelocityPrev(const ScalarType& dt) const noexcept {
+   auto TME()::GetVelocityPrev(const ScalarType& dt) const noexcept -> PointType {
       return mVelocity - mAcceleration * dt;
    }
 
    /// Get the right normal of the instance                                   
    ///   @return the oriented right vector                                    
    TEMPLATE()
-   typename TME()::PointType TME()::GetRight() const noexcept {
+   auto TME()::GetRight() const noexcept -> PointType {
       return GetAim() * Axes::Right<ScalarType>;
    }
 
    /// Get the up normal of the instance                                      
    ///   @return the oriented up vector                                       
    TEMPLATE()
-   typename TME()::PointType TME()::GetUp() const noexcept {
+   auto TME()::GetUp() const noexcept -> PointType {
       return GetAim() * Axes::Up<ScalarType>;
    }
 
    /// Get the forward normal of the instance                                 
    ///   @return the oriented forward vector                                  
    TEMPLATE()
-   typename TME()::PointType TME()::GetForward() const noexcept {
+   auto TME()::GetForward() const noexcept -> PointType {
       return GetAim() * Axes::Forward<ScalarType>;
    }
 
@@ -128,7 +128,7 @@ namespace Langulus::Math
    ///   @param octave - the octave                                           
    ///   @return the scale                                                    
    TEMPLATE()
-   typename TME()::SizeType TME()::GetScale(Level level) const {
+   auto TME()::GetScale(Level level) const -> SizeType {
       const auto factor = Math::Pow(Level::Unit, mLevel - level);
       return GetScale() * factor;
    }
@@ -136,14 +136,14 @@ namespace Langulus::Math
    /// Get scale                                                              
    ///   @return the scale                                                    
    TEMPLATE()
-   typename TME()::SizeType TME()::GetScale() const noexcept {
+   auto TME()::GetScale() const noexcept -> SizeType {
       return mParent ? SizeType {mParent->GetScale() * mScale} : mScale;
    }
 
    /// Get orientation                                                        
    ///   @return the orientation quaternion                                   
    TEMPLATE()
-   typename TME()::QuatType TME()::GetAim() const noexcept {
+   auto TME()::GetAim() const noexcept -> QuatType {
       return mParent ? (mParent->GetAim() * mAim).Normalize() : mAim;
    }
 
@@ -151,7 +151,7 @@ namespace Langulus::Math
    ///   @param level - the level                                             
    ///   @return the position                                                 
    TEMPLATE()
-   typename TME()::PointType TME()::GetPosition(Level level) const {
+   auto TME()::GetPosition(Level level) const -> PointType {
       const auto factor = Math::Pow(Level::Unit, mLevel - level);
       return GetPosition() * factor;
    }
@@ -159,14 +159,14 @@ namespace Langulus::Math
    /// Get position                                                           
    ///   @return the position                                                 
    TEMPLATE()
-   typename TME()::PointType TME()::GetPosition() const noexcept {
+   auto TME()::GetPosition() const noexcept -> PointType {
       return mParent ? mParent->GetPosition() + mPosition : mPosition;
    }
 
    /// Get octave                                                             
    ///   @return the octave                                                   
    TEMPLATE()
-   Level TME()::GetLevel() const noexcept {
+   auto TME()::GetLevel() const noexcept -> Level {
       return mLevel;
    }
 
@@ -174,7 +174,7 @@ namespace Langulus::Math
    ///   @param level - the level                                             
    ///   @return the model matrix                                             
    TEMPLATE()
-   typename TME()::MatrixType TME()::GetModelTransform(Level level) const {
+   auto TME()::GetModelTransform(Level level) const -> MatrixType {
       const auto factor = Math::Pow(Level::Unit, mLevel - level);
       const auto translate = GetPosition() * factor;
       auto scale = GetScale() * factor;
@@ -186,7 +186,7 @@ namespace Langulus::Math
    /// Get model transformation                                               
    ///   @return the model matrix                                             
    TEMPLATE()
-   typename TME()::MatrixType TME()::GetModelTransform() const {
+   auto TME()::GetModelTransform() const -> MatrixType {
       auto scale = GetScale();
       if (scale.IsDegenerate())
          scale = 1;
@@ -197,14 +197,14 @@ namespace Langulus::Math
    ///   @param level - the level                                             
    ///   @return the view matrix                                              
    TEMPLATE()
-   typename TME()::MatrixType TME()::GetViewTransform(Level level) const {
+   auto TME()::GetViewTransform(Level level) const -> MatrixType {
       return A::Matrix::From<PointType>(GetAim(), GetPosition(level));
    }
 
    /// Get view transformation                                                
    ///   @return the view matrix                                              
    TEMPLATE()
-   typename TME()::MatrixType TME()::GetViewTransform() const {
+   auto TME()::GetViewTransform() const -> MatrixType {
       return A::Matrix::From<PointType>(GetAim(), GetPosition());
    }
 
@@ -265,7 +265,7 @@ namespace Langulus::Math
    ///   @param range - the symbolic range for modifying the volume           
    ///   @return the generated position                                       
    TEMPLATE()
-   typename TME()::PointType TME()::RandomPosition(RNG& rng, const RangeType& range) const {
+   auto TME()::RandomPosition(RNG& rng, const RangeType& range) const -> PointType {
       // Clamp inside object                                            
       const auto thisscale  = GetScale() * ScalarType {.5};
       const auto innerscale = thisscale * range.mMin;
@@ -336,10 +336,10 @@ namespace Langulus::Math
    ///   @param sign - the sign of the movement                               
    ///   @param position - the new position                                   
    ///   @param relative - whether or not position is relative to current     
-   TEMPLATE() template<class K>
-   void TME()::Move(ScalarType sign, const TPoint<K>& position, bool relative) {
+   TEMPLATE()
+   void TME()::Move(ScalarType sign, const CT::VectorBased auto& position, bool relative) {
       if (relative)
-         mPosition = -mAim * (sign * PointType {position});
+         mPosition = -mAim * (sign * static_cast<PointType>(position));
       else
          mPosition = position;
    }
@@ -382,7 +382,7 @@ namespace Langulus::Math
                Move(sign, normal, relative);
                verb.Done();
             },
-            [&](const Point2& point) {
+            [&](const Vec2& point) {
                // Move towards a point in space                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point2: " << point
@@ -390,7 +390,7 @@ namespace Langulus::Math
                Move(sign, point, relative);
                verb.Done();
             },
-            [&](const Point3& point) {
+            [&](const Vec3& point) {
                // Move towards a point in space                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point3: " << point
