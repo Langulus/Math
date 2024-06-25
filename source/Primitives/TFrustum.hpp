@@ -8,7 +8,6 @@
 ///                                                                           
 #pragma once
 #include "TPlane.hpp"
-#include "TPoint.hpp"
 #include "../Ranges/TRange.hpp"
 
 
@@ -20,8 +19,8 @@ namespace Langulus
       template<CT::Vector T>
       struct TFrustum;
 
-      using Frustum2 = TFrustum<Point2>;
-      using Frustum3 = TFrustum<Point3>;
+      using Frustum2 = TFrustum<Vec2>;
+      using Frustum3 = TFrustum<Vec3>;
 
       using Frustum = Frustum3;
 

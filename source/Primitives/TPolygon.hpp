@@ -7,7 +7,8 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
+
 
 namespace Langulus
 {
@@ -17,10 +18,10 @@ namespace Langulus
       template<CT::Vector>
       struct TPolygon;
 
-      using Polygon2 = TPolygon<Point2>;
-      using Polygon3 = TPolygon<Point3>;
+      using Polygon2 = TPolygon<Vec2>;
+      using Polygon3 = TPolygon<Vec3>;
 
-      using Polygon = Polygon3;
+      using Polygon  = Polygon3;
 
    } // namespace Langulus::Math
 
@@ -68,4 +69,5 @@ namespace Langulus
       };
 
    } // namespace Langulus::Math
+
 } // namespace Langulus

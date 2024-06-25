@@ -7,7 +7,8 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
+
 
 namespace Langulus
 {

@@ -7,7 +7,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
 
 
 namespace Langulus
@@ -24,16 +24,21 @@ namespace Langulus
       template<CT::Vector>
       struct TTriangleFan;
 
-      using Triangle2 = TTriangle<Point2>;
-      using Triangle3 = TTriangle<Point3>;
-      using TriangleStrip2 = TTriangleStrip<Point2>;
-      using TriangleStrip3 = TTriangleStrip<Point3>;
-      using TriangleFan2 = TTriangleFan<Point2>;
-      using TriangleFan3 = TTriangleFan<Point3>;
+      using Triangle2      = TTriangle<Vec2>;
+      using Triangle3      = TTriangle<Vec3>;
+      using Triangle4      = TTriangle<Vec4>;
 
-      using Triangle = Triangle3;
-      using TriangleStrip = TriangleStrip3;
-      using TriangleFan = TriangleFan3;
+      using TriangleStrip2 = TTriangleStrip<Vec2>;
+      using TriangleStrip3 = TTriangleStrip<Vec3>;
+      using TriangleStrip4 = TTriangleStrip<Vec4>;
+
+      using TriangleFan2   = TTriangleFan<Vec2>;
+      using TriangleFan3   = TTriangleFan<Vec3>;
+      using TriangleFan4   = TTriangleFan<Vec4>;
+
+      using Triangle       = Triangle3;
+      using TriangleStrip  = TriangleStrip3;
+      using TriangleFan    = TriangleFan3;
 
    } // namespace Langulus::Math
 
@@ -182,7 +187,8 @@ namespace Langulus::Math
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
+      static_assert(MemberCount > 1,
+         "Triangles don't exist below two dimensions");
 
       T mABC[3] {};
 
@@ -214,8 +220,8 @@ namespace Langulus::Math
       ///   @return true if any of the points overlap                         
       NOD() constexpr bool IsDegenerate() const noexcept {
          return mABC[0] == mABC[1]
-             || mABC[0] == mABC[2]
-             || mABC[1] == mABC[2];
+             or mABC[0] == mABC[2]
+             or mABC[1] == mABC[2];
       }
 
       /// Subdivide triangle                                                  
@@ -226,10 +232,10 @@ namespace Langulus::Math
          const T m12 = mABC[1] + (mABC[2] - mABC[1]) / two;
          const T m20 = mABC[2] + (mABC[0] - mABC[2]) / two;
          return {
-            {mABC[0], m01, m20}, 
-            {m01, mABC[1], m12}, 
-            {m20, m12, mABC[2]}, 
-            {m01, m12, m20}
+            {mABC[0],     m01,     m20}, 
+            {    m01, mABC[1],     m12}, 
+            {    m20,     m12, mABC[2]}, 
+            {    m01,     m12,     m20}
          };
       }
 
@@ -240,9 +246,9 @@ namespace Langulus::Math
          const auto e0 = mABC[1] - mABC[0];
          const auto e1 = mABC[2] - mABC[1];
          const auto e2 = mABC[0] - mABC[2];
-         const auto v0 = point - mABC[0];
-         const auto v1 = point - mABC[1];
-         const auto v2 = point - mABC[2];
+         const auto v0 =   point - mABC[0];
+         const auto v1 =   point - mABC[1];
+         const auto v2 =   point - mABC[2];
 
          if constexpr (MemberCount < 3) {
             // 2D signed distance field                                 

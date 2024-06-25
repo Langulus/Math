@@ -135,6 +135,8 @@ namespace Langulus
          LANGULUS_BASES(Vector);
       };
 
+      using Point = Vector;
+
    } // namespace Langulus::A
 
 

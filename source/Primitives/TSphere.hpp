@@ -7,7 +7,8 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
+
 
 namespace Langulus
 {
@@ -20,12 +21,12 @@ namespace Langulus
       template<CT::Vector>
       struct TEllipsoid;
 
-      using Circle = TSphere<Point2>;
-      using Sphere = TSphere<Point3>;
+      using Circle     = TSphere<Vec2>;
+      using Sphere     = TSphere<Vec3>;
 
-      using Ellipsoid2 = TEllipsoid<Point2>;
-      using Ellipsoid3 = TEllipsoid<Point3>;
-      using Ellipsoid = Ellipsoid3;
+      using Ellipsoid2 = TEllipsoid<Vec2>;
+      using Ellipsoid3 = TEllipsoid<Vec3>;
+      using Ellipsoid  = Ellipsoid3;
 
    } // namespace Langulus::Math
 

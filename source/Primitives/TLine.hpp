@@ -7,7 +7,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
 
 
 namespace Langulus
@@ -24,16 +24,16 @@ namespace Langulus
       template<CT::Vector>
       struct TLineStrip;
 
-      using Line2 = TLine<Point2>;
-      using Line3 = TLine<Point3>;
-      using LineLoop2 = TLineLoop<Point2>;
-      using LineLoop3 = TLineLoop<Point3>;
-      using LineStrip2 = TLineStrip<Point2>;
-      using LineStrip3 = TLineStrip<Point3>;
+      using Line2      = TLine<Vec2>;
+      using Line3      = TLine<Vec3>;
+      using LineLoop2  = TLineLoop<Vec2>;
+      using LineLoop3  = TLineLoop<Vec3>;
+      using LineStrip2 = TLineStrip<Vec2>;
+      using LineStrip3 = TLineStrip<Vec3>;
 
-      using Line = Line3;
-      using LineLoop = LineLoop3;
-      using LineStrip = LineStrip3;
+      using Line       = Line3;
+      using LineLoop   = LineLoop3;
+      using LineStrip  = LineStrip3;
 
    } // namespace Langulus::Maht
 

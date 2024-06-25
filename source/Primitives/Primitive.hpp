@@ -40,11 +40,15 @@ namespace Langulus
 
       /// Concept for distinguishing primitives                               
       template<class...T>
-      concept Primitive = ((DerivedFrom<T, A::Primitive>) and ...);
+      concept Point = (DerivedFrom<T, A::Point> and ...);
+
+      /// Concept for distinguishing primitives                               
+      template<class...T>
+      concept Primitive = ((DerivedFrom<T, A::Primitive> or Point<T>) and ...);
 
       /// Concept for distinguishing topologies                               
       template<class...T>
-      concept Topology = ((DerivedFrom<T, A::Topology>) and ...);
+      concept Topology = ((DerivedFrom<T, A::Topology> or Point<T>) and ...);
 
    } // namespace Langulus::CT
 

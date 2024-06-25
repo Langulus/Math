@@ -7,7 +7,8 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "TPoint.hpp"
+#include "../Vectors/TVector.hpp"
+
 
 namespace Langulus
 {
@@ -19,11 +20,11 @@ namespace Langulus
       template<CT::Vector, CT::Dimension = Traits::Y>
       struct TCylinderCapped;
 
-      using Cylinder3 = TCylinder<Point3>;
-      using CylinderCapped3 = TCylinderCapped<Point3>;
+      using Cylinder3       = TCylinder<Vec3>;
+      using CylinderCapped3 = TCylinderCapped<Vec3>;
 
-      using Cylinder = Cylinder3;
-      using CylinderCapped = CylinderCapped3;
+      using Cylinder        = Cylinder3;
+      using CylinderCapped  = CylinderCapped3;
 
    } // namespace Langulus::Math
 

@@ -35,75 +35,14 @@ namespace Langulus::Math
    /// scaling, and primitive collisions. Can be 2D or 3D, depending on T     
    ///                                                                        
    template<CT::VectorBased T>
-   class TInstance {
-   public:
+   struct TInstance {
       using ScalarType = TypeOf<T>;
       using PointType  = T;
       using MatrixType = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
       using RangeType  = TRange<T>;
       using QuatType   = TQuaternion<ScalarType>;
       using SizeType   = TScale<TVector<ScalarType, T::MemberCount, 1>>;
-
-   public:
-      LANGULUS_VERBS(Verbs::Move);
-
-      TInstance() noexcept = default;
-
-      NOD() RangeType GetRange(Level) const;
-      NOD() RangeType GetRangeRotated(Level) const;
-
-      NOD() PointType GetPositionNext(const ScalarType&) const noexcept;
-      NOD() PointType GetPositionPrev(const ScalarType&) const noexcept;
-      NOD() PointType GetVelocityNext(const ScalarType&) const noexcept;
-      NOD() PointType GetVelocityPrev(const ScalarType&) const noexcept;
-
-      NOD() PointType GetRight() const noexcept;
-      NOD() PointType GetUp() const noexcept;
-      NOD() PointType GetForward() const noexcept;
-      NOD() SizeType GetScale(Level) const;
-      NOD() SizeType GetScale() const noexcept;
-      NOD() QuatType GetAim() const noexcept;
-      NOD() PointType GetPosition(Level) const;
-      NOD() PointType GetPosition() const noexcept;
-      NOD() Level GetLevel() const noexcept;
-
-      NOD() MatrixType GetModelTransform(Level) const;
-      NOD() MatrixType GetModelTransform() const;
-
-      NOD() MatrixType GetViewTransform(Level) const;
-      NOD() MatrixType GetViewTransform() const;
-
-      void ConstrainPosition(const TInstance<T>&, const RangeType&);
-
-      template<bool RELATIVE = false>
-      void SetScale(const SizeType&);
-      template<bool RELATIVE = false>
-      void SetPosition(const PointType&);
-
-      NOD() PointType RandomPosition(RNG&, const RangeType&) const;
-
-      void Move(Flow::Verb&);
-
-      template<CT::Angle A, CT::Dimension D>
-      void Rotate(ScalarType, const TAngle<A, D>&, bool relative = false);
-
-      template<class K>
-      void Move(ScalarType, const TNormal<K>&, bool relative = false);
-
-      template<class K>
-      void Move(ScalarType, const TScale<K>&, bool relative = false);
-
-      template<class K>
-      void Move(ScalarType, const TPoint<K>&, bool relative = false);
-
-      template<class K>
-      void Move(ScalarType, const TForce<K>&, bool relative = false);
-
-      void ChangeLevel(ScalarType, const Level&, bool relative = false);
-
-      bool operator == (const TInstance&) const noexcept = default;
-
-   public:
+      
       // Optional parent for inheriting transformations                 
       Anyness::Ref<TInstance<T>> mParent;
 
@@ -171,6 +110,64 @@ namespace Langulus::Math
       Level mUseLevelChange = 0;
       // Octave for scaling, position, acceleration and velocity        
       Level mLevel = 0;
+
+   public:
+      LANGULUS_VERBS(Verbs::Move);
+
+      TInstance() noexcept = default;
+
+      NOD() auto GetRange(Level) const -> RangeType;
+      NOD() auto GetRangeRotated(Level) const -> RangeType;
+
+      NOD() auto GetPositionNext(const ScalarType&) const noexcept -> PointType;
+      NOD() auto GetPositionPrev(const ScalarType&) const noexcept -> PointType;
+      NOD() auto GetVelocityNext(const ScalarType&) const noexcept -> PointType;
+      NOD() auto GetVelocityPrev(const ScalarType&) const noexcept -> PointType;
+
+      NOD() auto GetRight() const noexcept -> PointType;
+      NOD() auto GetUp() const noexcept -> PointType;
+      NOD() auto GetForward() const noexcept -> PointType;
+      NOD() auto GetScale(Level) const -> SizeType;
+      NOD() auto GetScale() const noexcept -> SizeType;
+      NOD() auto GetAim() const noexcept -> QuatType;
+      NOD() auto GetPosition(Level) const -> PointType;
+      NOD() auto GetPosition() const noexcept -> PointType;
+      NOD() auto GetLevel() const noexcept -> Level;
+
+      NOD() auto GetModelTransform(Level) const -> MatrixType;
+      NOD() auto GetModelTransform() const -> MatrixType;
+
+      NOD() auto GetViewTransform(Level) const -> MatrixType;
+      NOD() auto GetViewTransform() const -> MatrixType;
+
+      void ConstrainPosition(const TInstance<T>&, const RangeType&);
+
+      template<bool RELATIVE = false>
+      void SetScale(const SizeType&);
+      template<bool RELATIVE = false>
+      void SetPosition(const PointType&);
+
+      NOD() auto RandomPosition(RNG&, const RangeType&) const -> PointType;
+
+      void Move(Flow::Verb&);
+
+      template<CT::Angle A, CT::Dimension D>
+      void Rotate(ScalarType, const TAngle<A, D>&, bool relative = false);
+
+      template<class K>
+      void Move(ScalarType, const TNormal<K>&, bool relative = false);
+
+      template<class K>
+      void Move(ScalarType, const TScale<K>&, bool relative = false);
+
+      void Move(ScalarType, const CT::VectorBased auto&, bool relative = false);
+
+      template<class K>
+      void Move(ScalarType, const TForce<K>&, bool relative = false);
+
+      void ChangeLevel(ScalarType, const Level&, bool relative = false);
+
+      bool operator == (const TInstance&) const noexcept = default;
    };
 
 } // namespace Langulus::Math
