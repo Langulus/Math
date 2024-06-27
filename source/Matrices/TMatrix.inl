@@ -944,11 +944,23 @@ namespace Langulus::Math
          auto& rhsc = rhs.template GetColumn<COL>();
 
          Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
-            SIMD::Add(
-               rc,
-               SIMD::Inner::Multiply(lhs.template GetColumn<ROW>(), rhsc.template GetIdx<ROW>()),
-               rc
-            );
+            //TODO make this more elegant somehow...
+            IF_CONSTEXPR() {
+               SIMD::Add(rc,
+                  SIMD::Inner::MultiplyConstexpr(
+                     lhs.template GetColumn<ROW>(),
+                     rhsc.template GetIdx<ROW>()
+                  ), rc
+               );
+            }
+            else {
+               SIMD::Add(rc,
+                  SIMD::Inner::Multiply(
+                     lhs.template GetColumn<ROW>(),
+                     rhsc.template GetIdx<ROW>()
+                  ), rc
+               );
+            }
          });
       });
       return r;
@@ -963,7 +975,11 @@ namespace Langulus::Math
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
-         SIMD::Add(lhs.template GetColumn<COL>(), rhs.template GetColumn<COL>(), result[COL]);
+         SIMD::Add(
+            lhs.template GetColumn<COL>(),
+            rhs.template GetColumn<COL>(),
+            result[COL]
+         );
       });
       return Ret {result};
    }
@@ -977,7 +993,11 @@ namespace Langulus::Math
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
-         SIMD::Subtract(lhs.template GetColumn<COL>(), rhs.template GetColumn<COL>(), result[COL]);
+         SIMD::Subtract(
+            lhs.template GetColumn<COL>(),
+            rhs.template GetColumn<COL>(),
+            result[COL]
+         );
       });
       return Ret {result};
    }
