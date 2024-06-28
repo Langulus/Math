@@ -414,33 +414,32 @@ namespace Langulus::Math
 
    /// Write the body of the matrix                                           
    ///   @return the resulting body                                           
-   TEMPLATE() template<class TOKEN>
-   Flow::Code TME()::Serialize() const {
-      using Flow::Code;
-      Code result;
+   TEMPLATE() template<CT::Serial AS, class TOKEN>
+   AS TME()::Serialize() const {
+      AS result;
       constexpr bool SCOPED = not CT::Same<TME(), TOKEN>;
       if constexpr (SCOPED) {
          result += MetaDataOf<TOKEN>();
-         result += Code::Operator::OpenScope;
+         result += "(";
       }
 
       Anyness::MakeBlock(GetRaw(), MemberCount).Serialize(result);
 
       if constexpr (SCOPED)
-         result += Code::Operator::CloseScope;
+         result += ")";
       return Abandon(result);
    }
 
    /// Stringify vector for debugging                                         
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Anyness::Text() const {
-      return Serialize<TME()>();
+      return Serialize<Anyness::Text, TME()>();
    }
 
    /// Serialize vector as code                                               
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
-      return Serialize<TME()>();
+      return Serialize<Flow::Code, TME()>();
    }
 
 

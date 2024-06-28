@@ -174,14 +174,14 @@ namespace Langulus::Math
 {
 
    #pragma pack(push, 1)
-   template<Count S, CT::ScalarBased T>
+   template<Count, CT::ScalarBased>
    struct TVectorBase;
 
-   template<CT::ScalarBased T>
-   struct TVectorBase<1, T> {
+   template<CT::ScalarBased TYPE>
+   struct TVectorBase<1, TYPE> {
       union {
-         union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first, r, red, u; };
-         T all[1] {};
+         TYPE all[1] {};
+         union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first, r, red, u; };
       };
 
       // Declare the rest as functions, so that they don't take up space
@@ -229,14 +229,14 @@ namespace Langulus::Math
       }
    };
 
-   template<CT::ScalarBased T>
-   struct TVectorBase<2, T> {
+   template<CT::ScalarBased TYPE>
+   struct TVectorBase<2, TYPE> {
       union {
+         TYPE all[2] {};
          struct {
-            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
          };
-         T all[2] {};
       };
 
       // Declare the rest as functions, so that they don't take up space
@@ -280,15 +280,15 @@ namespace Langulus::Math
       }
    };
 
-   template<CT::ScalarBased T>
-   struct TVectorBase<3, T> {
+   template<CT::ScalarBased TYPE>
+   struct TVectorBase<3, TYPE> {
       union {
+         TYPE all[3] {};
          struct {
-            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
-            union { RTTI::Tag<T, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
+            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<TYPE, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
          };
-         T all[3] {};
       };
 
       // Declare the rest as functions, so that they don't take up space
@@ -326,16 +326,16 @@ namespace Langulus::Math
       }
    };
 
-   template<CT::ScalarBased T>
-   struct TVectorBase<4, T> {
+   template<CT::ScalarBased TYPE>
+   struct TVectorBase<4, TYPE> {
       union {
+         TYPE all[4] {};
          struct {
-            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
-            union { RTTI::Tag<T, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
-            union { RTTI::Tag<T, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
+            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<TYPE, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
+            union { RTTI::Tag<TYPE, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
          };
-         T all[4] {};
       };
 
       void tail()    { LANGULUS_ERROR("4D vector doesn't have a tail"); }
@@ -363,23 +363,19 @@ namespace Langulus::Math
       }
    };
 
-   template<Count S, CT::ScalarBased T>
-   struct TVectorBase {
-      static_assert(S > 4, 
-         "Smaller S should've been defined in specializations, "
-         "something's wrong with your compiler");
-
+   template<Count S, CT::ScalarBased TYPE> requires (S > 4)
+   struct TVectorBase<S, TYPE> {
       union {
+         TYPE all[S] {};
          struct {
-            union { RTTI::Tag<T, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<T, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
-            union { RTTI::Tag<T, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
-            union { RTTI::Tag<T, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
+            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
+            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union { RTTI::Tag<TYPE, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
+            union { RTTI::Tag<TYPE, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
 
             // The remaining elements, that don't have custom names     
-            T tail[S - 4];
+            TYPE tail[S - 4];
          };
-         T all[S] {};
       };
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
@@ -468,8 +464,8 @@ namespace Langulus::Math
       ///                                                                     
       ///   Interpretation                                                    
       ///                                                                     
-      template<class TOKEN>
-      Flow::Code Serialize() const;
+      template<CT::Serial AS, class TOKEN>
+      AS Serialize() const;
 
       NOD() explicit operator Anyness::Text() const;
       NOD() explicit operator Flow::Code() const;
@@ -701,7 +697,7 @@ namespace Langulus::Math
 
          using Base::operator =;
 
-         auto GetBase() noexcept -> Base&       {
+         auto GetBase() noexcept -> Base& {
             return static_cast<Base&>(*this);
          }
 
@@ -729,77 +725,77 @@ namespace Langulus::Math
    ///                                                                        
    /// Returns an inverted vector                                             
    NOD() constexpr auto operator - (const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ProxyArray  auto&) noexcept;
 
    /// Returns the sum of two vectors                                         
    NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator + (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Returns the difference of two vectors                                  
    NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator - (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Returns the Hadamard product of two vectors                            
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator * (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Returns the division of two vectors                                    
    NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::VectorBased auto&);
    NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::ScalarBased auto&);
    NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::VectorBased auto&);
 
-   NOD() constexpr auto operator / (const CT::ProxyArray auto&, const CT::VectorBased auto&);
-   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::ProxyArray auto&);
-   NOD() constexpr auto operator / (const CT::ProxyArray auto&, const CT::ScalarBased auto&);
-   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::ProxyArray auto&);
+   NOD() constexpr auto operator / (const CT::ProxyArray  auto&, const CT::VectorBased auto&);
+   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::ProxyArray  auto&);
+   NOD() constexpr auto operator / (const CT::ProxyArray  auto&, const CT::ScalarBased auto&);
+   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::ProxyArray  auto&);
 
    /// Returns the left-shift of two integer vectors                          
    NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
    NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::ScalarBasedInt auto&) noexcept;
    NOD() constexpr auto operator << (const CT::ScalarBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
 
-   NOD() constexpr auto operator << (const CT::ProxyArrayInt auto&, const CT::VectorBasedInt auto&) noexcept;
-   NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
-   NOD() constexpr auto operator << (const CT::ProxyArrayInt auto&, const CT::ScalarBasedInt auto&) noexcept;
-   NOD() constexpr auto operator << (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::ProxyArrayInt  auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt  auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::ProxyArrayInt  auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator << (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt  auto&) noexcept;
 
    /// Returns the right-shift of two integer vectors                         
    NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
    NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::ScalarBasedInt auto&) noexcept;
    NOD() constexpr auto operator >> (const CT::ScalarBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
 
-   NOD() constexpr auto operator >> (const CT::ProxyArrayInt auto&, const CT::VectorBasedInt auto&) noexcept;
-   NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
-   NOD() constexpr auto operator >> (const CT::ProxyArrayInt auto&, const CT::ScalarBasedInt auto&) noexcept;
-   NOD() constexpr auto operator >> (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::ProxyArrayInt  auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt  auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::ProxyArrayInt  auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator >> (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt  auto&) noexcept;
 
    /// Returns the xor of two integer vectors                                 
    NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
    NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::ScalarBasedInt auto&) noexcept;
    NOD() constexpr auto operator ^ (const CT::ScalarBasedInt auto&, const CT::VectorBasedInt auto&) noexcept;
 
-   NOD() constexpr auto operator ^ (const CT::ProxyArrayInt auto&, const CT::VectorBasedInt auto&) noexcept;
-   NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
-   NOD() constexpr auto operator ^ (const CT::ProxyArrayInt auto&, const CT::ScalarBasedInt auto&) noexcept;
-   NOD() constexpr auto operator ^ (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::ProxyArrayInt  auto&, const CT::VectorBasedInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::VectorBasedInt auto&, const CT::ProxyArrayInt  auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::ProxyArrayInt  auto&, const CT::ScalarBasedInt auto&) noexcept;
+   NOD() constexpr auto operator ^ (const CT::ScalarBasedInt auto&, const CT::ProxyArrayInt  auto&) noexcept;
 
 
    ///                                                                        
@@ -809,33 +805,33 @@ namespace Langulus::Math
    constexpr auto& operator += (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator += (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
-   constexpr auto& operator += (CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator += (CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator += (CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   constexpr auto& operator += (CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto& operator += (CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Subtract                                                               
    constexpr auto& operator -= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator -= (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
-   constexpr auto& operator -= (CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator -= (CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator -= (CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   constexpr auto& operator -= (CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto& operator -= (CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Multiply                                                               
    constexpr auto& operator *= (CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator *= (CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
 
-   constexpr auto& operator *= (CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto& operator *= (CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto& operator *= (CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   constexpr auto& operator *= (CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto& operator *= (CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
 
    /// Divide                                                                 
    constexpr auto& operator /= (CT::VectorBased auto&, const CT::VectorBased auto&);
    constexpr auto& operator /= (CT::VectorBased auto&, const CT::ScalarBased auto&);
 
-   constexpr auto& operator /= (CT::ProxyArray auto&, const CT::VectorBased auto&);
+   constexpr auto& operator /= (CT::ProxyArray  auto&, const CT::VectorBased auto&);
    constexpr auto& operator /= (CT::VectorBased auto&, const CT::ProxyArray auto&);
-   constexpr auto& operator /= (CT::ProxyArray auto&, const CT::ScalarBased auto&);
+   constexpr auto& operator /= (CT::ProxyArray  auto&, const CT::ScalarBased auto&);
 
 
    ///                                                                        
@@ -846,60 +842,60 @@ namespace Langulus::Math
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Bigger                                                                 
    NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator >  (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Bigger or equal                                                        
    NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator >= (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Smaller or equal                                                       
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Equal                                                                  
    NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator == (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
    /// Not equal                                                              
    NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
    NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::ScalarBased auto&) noexcept;
    NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::VectorBased auto&) noexcept;
 
-   NOD() constexpr auto operator != (const CT::ProxyArray auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::ProxyArray auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::ProxyArray auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::ProxyArray auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
+   NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
 
 } // namespace Langulus::Math
 

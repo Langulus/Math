@@ -43,13 +43,13 @@ namespace Langulus::Math
    /// Stringify box for debugging                                            
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Anyness::Text() const {
-      return mOffsets.template Serialize<TME()>();
+      return mOffsets.template Serialize<Anyness::Text, TME()>();
    }
 
    /// Serialize box as code                                                  
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
-      return mOffsets.template Serialize<TME()>();
+      return mOffsets.template Serialize<Flow::Code, TME()>();
    }
 
 } // namespace Langulus::Math

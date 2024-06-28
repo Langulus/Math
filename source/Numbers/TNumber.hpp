@@ -66,7 +66,7 @@ namespace Langulus::Math
       constexpr explicit operator T&   () const noexcept;
       constexpr explicit operator bool () const noexcept;
 
-      operator Flow::Code() const;
+      explicit operator Flow::Code() const;
 
       /// Prefix operators                                                    
       TNumber& operator ++ () noexcept;

@@ -34,14 +34,14 @@ namespace Langulus::Flow
       using TVerb<VERB>::TVerb;
 
       template<CT::Data T>
-      static bool Vector(const Block<>&, const Block<>&, Verb&, Operator<T>) noexcept(NOEXCEPT);
+      static bool Vector(const Many&, const Many&, Verb&, Operator<T>) noexcept(NOEXCEPT);
       template<CT::Data T>
-      static bool Vector(const Block<>&, Block<>&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
+      static bool Vector(const Many&, Many&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
 
       template<CT::Data T>
-      static bool Scalar(const Block<>&, const Block<>&, Verb&, Operator<T>) noexcept(NOEXCEPT);
+      static bool Scalar(const Many&, const Many&, Verb&, Operator<T>) noexcept(NOEXCEPT);
       template<CT::Data T>
-      static bool Scalar(const Block<>&, Block<>&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
+      static bool Scalar(const Many&, Many&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
    };
 
 } // namespace Langulus::Flow

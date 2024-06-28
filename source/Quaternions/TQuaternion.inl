@@ -114,10 +114,16 @@ namespace Langulus::Math
       }
    }
 
+   /// Serialize quaternion to text                                           
+   TEMPLATE() LANGULUS(INLINED)
+   QUAT()::operator Anyness::Text() const {
+      return Base::template Serialize<Anyness::Text, TQuaternion>();
+   }
+
    /// Serialize quaternion to code                                           
    TEMPLATE() LANGULUS(INLINED)
    QUAT()::operator Flow::Code() const {
-      return Base::template Serialize<TQuaternion>();
+      return Base::template Serialize<Flow::Code, TQuaternion>();
    }
 
    /// Create a quaternion from euler angles   in radians                     

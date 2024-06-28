@@ -256,8 +256,8 @@ namespace Langulus
          ///                                                                  
          ///   Interpretation                                                 
          ///                                                                  
-         template<class TOKEN>
-         Flow::Code Serialize() const;
+         template<CT::Serial AS, class TOKEN>
+         AS Serialize() const;
 
          NOD() explicit operator Anyness::Text() const;
          NOD() explicit operator Flow::Code() const;

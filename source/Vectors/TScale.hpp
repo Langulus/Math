@@ -172,9 +172,14 @@ namespace Langulus
          static_assert(T::Default == TypeOf<T> {1},
             "Scaling type does not default to 1");
 
-         /// Convert from any size to text                                    
+         /// Convert from any size to code                                    
          NOD() explicit operator Flow::Code() const {
-            return T::template Serialize<TScale>();
+            return T::template Serialize<Flow::Code, TScale>();
+         }
+
+         /// Convert from any size to text                                    
+         NOD() explicit operator Anyness::Text() const {
+            return T::template Serialize<Anyness::Text, TScale>();
          }
       };
 

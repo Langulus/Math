@@ -21,7 +21,7 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
-      const Block<>& original, const Block<>& lhs, Verb& rhs, Operator<T> op
+      const Many& original, const Many& lhs, Verb& rhs, Operator<T> op
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
@@ -49,7 +49,7 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
-      const Block<>& original, Block<>& lhs, Verb& rhs, OperatorMutable<T> o
+      const Many& original, Many& lhs, Verb& rhs, OperatorMutable<T> o
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
@@ -75,7 +75,7 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
-      const Block<>& original, const Block<>& lhs, Verb& rhs, Operator<T> o
+      const Many& original, const Many& lhs, Verb& rhs, Operator<T> o
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
@@ -104,7 +104,7 @@ namespace Langulus::Flow
    ///   @param rhs - right operand                                           
    template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
-      const Block<>& original, Block<>& lhs, Verb& rhs, OperatorMutable<T> o
+      const Many& original, Many& lhs, Verb& rhs, OperatorMutable<T> o
    ) noexcept (NOEXCEPT) {
       //TODO use TSIMD to batch compute
       //TODO once vulkan module is available, lock and replace the ExecuteDefault in
