@@ -190,10 +190,16 @@ namespace Langulus
             *this *= TypeOf<T> {1} / l;
          }
 
-         /// Convert from any normal to text                                  
+         /// Convert from any normal to code                                  
          LANGULUS(INLINED)
          explicit operator Flow::Code() const {
-            return T::template Serialize<TNormal>();
+            return T::template Serialize<Flow::Code, TNormal>();
+         }
+
+         /// Convert from any normal to text                                  
+         LANGULUS(INLINED)
+         explicit operator Anyness::Text() const {
+            return T::template Serialize<Anyness::Text, TNormal>();
          }
       };
 

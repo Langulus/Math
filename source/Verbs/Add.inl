@@ -22,7 +22,7 @@ namespace Langulus::Verbs
 
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
-   template<CT::Dense T, CT::Data... A>
+   template<CT::Dense T, CT::Data...A>
    constexpr bool Add::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 0) {
          return requires (T& t, Verb& v) { t.Add(v); }
@@ -43,16 +43,16 @@ namespace Langulus::Verbs
 
    /// Get the verb functor for the given type and arguments                  
    ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::Data... A>
+   template<CT::Dense T, CT::Data...A>
    constexpr auto Add::Of() noexcept {
       if constexpr (CT::Constant<T>) {
-         return [](const void* context, Flow::Verb& verb, A... args) {
+         return [](const void* context, Flow::Verb& verb, A...args) {
             auto typedContext = static_cast<const T*>(context);
             typedContext->Add(verb, args...);
          };
       }
       else {
-         return [](void* context, Flow::Verb& verb, A... args) {
+         return [](void* context, Flow::Verb& verb, A...args) {
             auto typedContext = static_cast<T*>(context);
             typedContext->Add(verb, args...);
          };
@@ -79,7 +79,7 @@ namespace Langulus::Verbs
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
    template<CT::Data... T>
-   bool Add::OperateOnTypes(const Block& context, const Block& common, Verb& verb) {
+   bool Add::OperateOnTypes(const Many& context, const Many& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
          and ArithmeticVerb::Vector<T>(context, common, verb,
             verb.GetMass() < 0
@@ -100,7 +100,7 @@ namespace Langulus::Verbs
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
    template<CT::Data... T>
-   bool Add::OperateOnTypes(const Block& context, Block& common, Verb& verb) {
+   bool Add::OperateOnTypes(const Many& context, Many& common, Verb& verb) {
       return ((common.CastsTo<T, true>()
          and ArithmeticVerb::Vector<T>(context, common, verb,
             verb.GetMass() < 0
@@ -120,7 +120,7 @@ namespace Langulus::Verbs
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
    template<CT::Data... T>
-   bool Add::OperateOnTypes(Block& common, Verb& verb) {
+   bool Add::OperateOnTypes(Many& common, Verb& verb) {
       return ((common.template CastsTo<T, true>()
          and ArithmeticVerb::Scalar<T>(common, common, verb,
             [](T* lhs, const T*) noexcept {
@@ -132,7 +132,7 @@ namespace Langulus::Verbs
    /// Default add/subtract in an immutable context                           
    ///   @param context - the block to execute in                             
    ///   @param verb - add/subtract verb                                      
-   inline bool Add::ExecuteDefault(const Block& context, Verb& verb) {
+   inline bool Add::ExecuteDefault(const Many& context, Verb& verb) {
       const auto common = context.ReinterpretAs(verb.GetArgument());
       if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<
@@ -148,7 +148,7 @@ namespace Langulus::Verbs
    /// Default add/subtract in mutable context                                
    ///   @param context - the block to execute in                             
    ///   @param verb - add/subtract verb                                      
-   inline bool Add::ExecuteDefault(Block& context, Verb& verb) {
+   inline bool Add::ExecuteDefault(Many& context, Verb& verb) {
       auto common = context.ReinterpretAs(verb.GetArgument());
       if (common.template CastsTo<A::Number>()) {
          return OperateOnTypes<

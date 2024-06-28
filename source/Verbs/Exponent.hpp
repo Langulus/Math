@@ -29,21 +29,21 @@ namespace Langulus::Verbs
 
       using ArithmeticVerb::ArithmeticVerb;
 
-      template<CT::Dense T, CT::Data... A>
+      template<CT::Dense, CT::Data...>
       static constexpr bool AvailableFor() noexcept;
-      template<CT::Dense T, CT::Data... A>
+      template<CT::Dense, CT::Data...>
       static constexpr auto Of() noexcept;
 
       template<CT::Dense T>
       static bool ExecuteIn(T&, Verb&);
 
-      static bool ExecuteDefault(const Block&, Verb&);
-      static bool ExecuteDefault(Block&, Verb&);
+      static bool ExecuteDefault(const Many&, Verb&);
+      static bool ExecuteDefault(Many&, Verb&);
 
-      template<CT::Data... T>
-      static bool OperateOnTypes(const Block&, const Block&, Verb&);
-      template<CT::Data... T>
-      static bool OperateOnTypes(const Block&, Block&, Verb&);
+      template<CT::Data...>
+      static bool OperateOnTypes(const Many&, const Many&, Verb&);
+      template<CT::Data...>
+      static bool OperateOnTypes(const Many&, Many&, Verb&);
    };
 
 } // namespace Langulus::Verbs
