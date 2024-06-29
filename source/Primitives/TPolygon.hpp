@@ -3,11 +3,10 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../Vectors/TVector.hpp"
+#include "Primitive.hpp"
 
 
 namespace Langulus
@@ -46,11 +45,11 @@ namespace Langulus
       /// A list of coplanar points that form a surface with a complex edge   
       ///                                                                     
       template<CT::Vector T>
-      struct TPolygon : TMany<T> {
+      struct TPolygon : Anyness::TMany<T> {
          LANGULUS(DEEP) false;
          LANGULUS_BASES(A::Polygon);
 
-         using Base = TMany<T>;
+         using Base = Anyness::TMany<T>;
          using PointType = T;
          static constexpr auto MemberCount = T::MemberCount;
          static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");

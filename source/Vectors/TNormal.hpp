@@ -3,11 +3,10 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "TVector.hpp"
+#include "TVector.inl"
 
 
 namespace Langulus
@@ -15,64 +14,26 @@ namespace Langulus
    namespace Math
    {
 
+      LANGULUS_API(MATH) extern void RegisterNormals();
+
       template<CT::Vector T>
       struct TNormal;
 
-      using Normal2      = TNormal<TVector<Real, 2>>;
-      using Normal2f     = TNormal<TVector<Float, 2>>;
-      using Normal2d     = TNormal<TVector<Double, 2>>;
-      using Normal2i     = TNormal<TVector<signed, 2>>;
-      using Normal2u     = TNormal<TVector<unsigned, 2>>;
-      using Normal2i8    = TNormal<TVector<::std::int8_t, 2>>;
-      using Normal2u8    = TNormal<TVector<::std::uint8_t, 2>>;
-      using Normal2i16   = TNormal<TVector<::std::int16_t, 2>>;
-      using Normal2u16   = TNormal<TVector<::std::uint16_t, 2>>;
-      using Normal2i32   = TNormal<TVector<::std::int32_t, 2>>;
-      using Normal2u32   = TNormal<TVector<::std::uint32_t, 2>>;
-      using Normal2i64   = TNormal<TVector<::std::int64_t, 2>>;
-      using Normal2u64   = TNormal<TVector<::std::uint64_t, 2>>;
+      using Normal2   = TNormal<TVector<Real, 2>>;
+      using Normal2f  = TNormal<TVector<Float, 2>>;
+      using Normal2d  = TNormal<TVector<Double, 2>>;
 
-      using Normal3      = TNormal<TVector<Real, 3>>;
-      using Normal3f     = TNormal<TVector<Float, 3>>;
-      using Normal3d     = TNormal<TVector<Double, 3>>;
-      using Normal3i     = TNormal<TVector<signed, 3>>;
-      using Normal3u     = TNormal<TVector<unsigned, 3>>;
-      using Normal3i8    = TNormal<TVector<::std::int8_t, 3>>;
-      using Normal3u8    = TNormal<TVector<::std::uint8_t, 3>>;
-      using Normal3i16   = TNormal<TVector<::std::int16_t, 3>>;
-      using Normal3u16   = TNormal<TVector<::std::uint16_t, 3>>;
-      using Normal3i32   = TNormal<TVector<::std::int32_t, 3>>;
-      using Normal3u32   = TNormal<TVector<::std::uint32_t, 3>>;
-      using Normal3i64   = TNormal<TVector<::std::int64_t, 3>>;
-      using Normal3u64   = TNormal<TVector<::std::uint64_t, 3>>;
+      using Normal3   = TNormal<TVector<Real, 3>>;
+      using Normal3f  = TNormal<TVector<Float, 3>>;
+      using Normal3d  = TNormal<TVector<Double, 3>>;
 
-      using Normal4      = TNormal<TVector<Real, 4>>;
-      using Normal4f     = TNormal<TVector<Float, 4>>;
-      using Normal4d     = TNormal<TVector<Double, 4>>;
-      using Normal4i     = TNormal<TVector<signed, 4>>;
-      using Normal4u     = TNormal<TVector<unsigned, 4>>;
-      using Normal4i8    = TNormal<TVector<::std::int8_t, 4>>;
-      using Normal4u8    = TNormal<TVector<::std::uint8_t, 4>>;
-      using Normal4i16   = TNormal<TVector<::std::int16_t, 4>>;
-      using Normal4u16   = TNormal<TVector<::std::uint16_t, 4>>;
-      using Normal4i32   = TNormal<TVector<::std::int32_t, 4>>;
-      using Normal4u32   = TNormal<TVector<::std::uint32_t, 4>>;
-      using Normal4i64   = TNormal<TVector<::std::int64_t, 4>>;
-      using Normal4u64   = TNormal<TVector<::std::uint64_t, 4>>;
+      using Normal4   = TNormal<TVector<Real, 4>>;
+      using Normal4f  = TNormal<TVector<Float, 4>>;
+      using Normal4d  = TNormal<TVector<Double, 4>>;
 
-      using Normal       = Normal3;
-      using Normalf      = Normal3f;
-      using Normald      = Normal3d;
-      using Normali      = Normal3i;
-      using Normalu      = Normal3u;
-      using Normali8     = Normal3i8;
-      using Normalu8     = Normal3u8;
-      using Normali16    = Normal3i16;
-      using Normalu16    = Normal3u16;
-      using Normali32    = Normal3i32;
-      using Normalu32    = Normal3u32;
-      using Normali64    = Normal3i64;
-      using Normalu64    = Normal3u64;
+      using Normal    = Normal3;
+      using Normalf   = Normal3f;
+      using Normald   = Normal3d;
 
    } // namespace Langulus::Math
 
@@ -185,9 +146,8 @@ namespace Langulus
          TNormal(Describe&& describe)
             : T {::std::forward<Describe>(describe)} {
             const auto l = T::Length();
-            if (l == TypeOf<T> {0})
-               LANGULUS_THROW(Arithmetic, "Degenerate normal");
-            *this *= TypeOf<T> {1} / l;
+            LANGULUS_ASSERT(l != TypeOf<T> {0}, Arithmetic, "Degenerate normal");
+            *this /= l;
          }
 
          /// Convert from any normal to code                                  

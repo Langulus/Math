@@ -3,14 +3,15 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include <Core/Exceptions.hpp>
 #include <Anyness/Trait.hpp>
 #include <Flow/Code.hpp>
 
+/// Make the rest of the code aware, that Langulus::Math has been included    
+#define LANGULUS_LIBRARY_MATH() 1
 
 #if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
    #define LANGULUS_API_MATH() LANGULUS_EXPORT()
@@ -18,8 +19,8 @@
    #define LANGULUS_API_MATH() LANGULUS_IMPORT()
 #endif
 
-LANGULUS_EXCEPTION(Arithmetic);
 
+LANGULUS_EXCEPTION(Arithmetic);
 
 /// Built-in math traits                                                      
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(X, "X (first) vector component",
@@ -171,5 +172,10 @@ namespace Langulus::CT
 
 } // namespace Langulus::CT
 
-/// Make the rest of the code aware, that Langulus::Math has been included    
-#define LANGULUS_LIBRARY_MATH() 1
+namespace Langulus::Math
+{
+
+   LANGULUS_API(MATH) extern void RegisterTraits();
+   LANGULUS_API(MATH) extern void RegisterVerbs();
+
+} // namespace Langulus::Math

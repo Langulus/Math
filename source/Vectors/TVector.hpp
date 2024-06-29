@@ -3,8 +3,7 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include "../Functions/Trigonometry.hpp"
@@ -22,6 +21,8 @@
 
 namespace Langulus::Math
 {
+
+   LANGULUS_API(MATH) extern void RegisterVectors();
 
    template<CT::ScalarBased T, CT::Dimension D>
    struct TVectorComponent;
@@ -177,6 +178,9 @@ namespace Langulus::Math
    template<Count, CT::ScalarBased>
    struct TVectorBase;
 
+
+   ///                                                                        
+   /// 1D vector base                                                         
    template<CT::ScalarBased TYPE>
    struct TVectorBase<1, TYPE> {
       union {
@@ -220,15 +224,18 @@ namespace Langulus::Math
          all[0] = other.all[0];
       }
 
-      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+      constexpr auto& operator = (const TVectorBase& other) noexcept {
          return *new (this) TVectorBase {other};
       }
 
-      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+      constexpr auto& operator = (TVectorBase&& other) noexcept {
          return *new (this) TVectorBase {Forward<TVectorBase>(other)};
       }
    };
 
+
+   ///                                                                        
+   /// 2D vector base                                                         
    template<CT::ScalarBased TYPE>
    struct TVectorBase<2, TYPE> {
       union {
@@ -271,15 +278,18 @@ namespace Langulus::Math
             all[i] = other.all[i];
       }
 
-      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+      constexpr auto& operator = (const TVectorBase& other) noexcept {
          return *new (this) TVectorBase {other};
       }
 
-      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+      constexpr auto& operator = (TVectorBase&& other) noexcept {
          return *new (this) TVectorBase {Forward<TVectorBase>(other)};
       }
    };
 
+
+   ///                                                                        
+   /// 3D vector base                                                         
    template<CT::ScalarBased TYPE>
    struct TVectorBase<3, TYPE> {
       union {
@@ -317,15 +327,18 @@ namespace Langulus::Math
             all[i] = other.all[i];
       }
 
-      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+      constexpr auto& operator = (const TVectorBase& other) noexcept {
          return *new (this) TVectorBase {other};
       }
 
-      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+      constexpr auto& operator = (TVectorBase&& other) noexcept {
          return *new (this) TVectorBase {Forward<TVectorBase>(other)};
       }
    };
 
+
+   ///                                                                        
+   /// 4D vector base                                                         
    template<CT::ScalarBased TYPE>
    struct TVectorBase<4, TYPE> {
       union {
@@ -354,15 +367,18 @@ namespace Langulus::Math
             all[i] = other.all[i];
       }
 
-      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+      constexpr auto& operator = (const TVectorBase& other) noexcept {
          return *new (this) TVectorBase {other};
       }
 
-      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+      constexpr auto& operator = (TVectorBase&& other) noexcept {
          return *new (this) TVectorBase {Forward<TVectorBase>(other)};
       }
    };
 
+
+   ///                                                                        
+   /// 5+D vector base                                                        
    template<Count S, CT::ScalarBased TYPE> requires (S > 4)
    struct TVectorBase<S, TYPE> {
       union {
@@ -392,11 +408,11 @@ namespace Langulus::Math
             all[i] = other.all[i];
       }
 
-      constexpr TVectorBase& operator = (const TVectorBase& other) noexcept {
+      constexpr auto& operator = (const TVectorBase& other) noexcept {
          return *new (this) TVectorBase {other};
       }
 
-      constexpr TVectorBase& operator = (TVectorBase&& other) noexcept {
+      constexpr auto& operator = (TVectorBase&& other) noexcept {
          return *new (this) TVectorBase {Forward<TVectorBase>(other)};
       }
    };
@@ -455,11 +471,11 @@ namespace Langulus::Math
       ///                                                                     
       ///   Assignment                                                        
       ///                                                                     
-      constexpr TVector& operator = (const CT::Vector auto&) noexcept;
-      constexpr TVector& operator = (const CT::Scalar auto&) noexcept;
+      constexpr auto operator = (const CT::Vector auto&) noexcept -> TVector&;
+      constexpr auto operator = (const CT::Scalar auto&) noexcept -> TVector&;
 
       template<CT::ScalarBased N, CT::Dimension D>
-      constexpr TVector& operator = (const TVectorComponent<N, D>&) noexcept;
+      constexpr auto operator = (const TVectorComponent<N, D>&) noexcept -> TVector&;
 
       ///                                                                     
       ///   Interpretation                                                    
@@ -501,18 +517,18 @@ namespace Langulus::Math
 
       using TVectorBase<S, T>::all;
 
-      NOD() constexpr const T& Get(Offset) const noexcept;
-      NOD() constexpr       T& Get(Offset)       noexcept;
+      NOD() constexpr auto Get(Offset) const noexcept -> const T&;
+      NOD() constexpr auto Get(Offset)       noexcept ->       T&;
 
       template<Offset I>
-      NOD() constexpr const T& GetIdx() const noexcept;
+      NOD() constexpr auto GetIdx() const noexcept -> const T&;
 
-      NOD() constexpr       T& operator [] (Offset)       noexcept;
-      NOD() constexpr const T& operator [] (Offset) const noexcept;
+      NOD() constexpr auto operator [] (Offset)       noexcept ->       T&;
+      NOD() constexpr auto operator [] (Offset) const noexcept -> const T&;
 
-      NOD() constexpr Count GetCount() const noexcept;
-      NOD() constexpr T LengthSquared() const noexcept;
-      NOD() constexpr T Length() const noexcept;
+      NOD() constexpr auto GetCount() const noexcept -> Count;
+      NOD() constexpr auto LengthSquared() const noexcept -> T;
+      NOD() constexpr auto Length() const noexcept -> T;
       NOD() constexpr bool IsDegenerate() const noexcept;
 
       template<Offset HEAD, Offset...TAIL>
@@ -570,83 +586,74 @@ namespace Langulus::Math
       LANGULUS_TVECTOR_SWIZZLER4(z, 2U)
       LANGULUS_TVECTOR_SWIZZLER4(w, 3U)
 
+      #undef LANGULUS_TVECTOR_SWIZZLER
+      #undef LANGULUS_TVECTOR_SWIZZLER2
+      #undef LANGULUS_TVECTOR_SWIZZLER3
+      #undef LANGULUS_TVECTOR_SWIZZLER4
 
       template<class AS, bool NORMALIZE = CT::Real<AS> and not CT::Real<T>>
-      NOD() constexpr TVector<AS, S> AsCast() const noexcept;
+      NOD() constexpr auto AsCast() const noexcept -> TVector<AS, S>;
+
       template<Count = Math::Min(S, 3u)>
       NOD() constexpr auto Volume() const noexcept;
 
-      template<TARGS(ALT)>
-      NOD() constexpr T Dot(const TVEC(ALT)&) const noexcept;
+      NOD() constexpr auto Dot(const CT::VectorBased auto&) const noexcept -> T;
 
-      template<TARGS(ALT)>
-      NOD() constexpr TVector<T, 3> Cross(const TVEC(ALT)&) const noexcept requires (S >= 3 and ALTS >= 3);
+      template<CT::VectorBased V> requires (S >= 3 and CountOf<V> >= 3)
+      NOD() constexpr auto Cross(const V&) const noexcept -> TVector<T, 3>;
 
-      NOD() constexpr auto Normalize() const requires (S > 1);
+      NOD() constexpr auto Normalize() const -> TVector requires (S > 1);
 
-      template<TARGS(MIN), TARGS(MAX)>
-      NOD() constexpr auto Clamp(const TVEC(MIN)&, const TVEC(MAX)&) const noexcept;
-      template<TARGS(MIN), TARGS(MAX)>
-      NOD() constexpr auto ClampRev(const TVEC(MIN)&, const TVEC(MAX)&) const noexcept;
+      NOD() constexpr auto Clamp   (const auto&, const auto&) const noexcept -> TVector;
+      NOD() constexpr auto ClampRev(const auto&, const auto&) const noexcept -> TVector;
 
-      NOD() constexpr auto Round() const noexcept;
-      NOD() constexpr auto Floor() const noexcept;
-      NOD() constexpr auto Ceil() const noexcept;
-      NOD() constexpr auto Abs() const noexcept;
-      NOD() constexpr auto Sign() const noexcept;
-      NOD() constexpr auto Frac() const noexcept;
-      NOD() constexpr auto Sqrt() const noexcept;
-      NOD() constexpr auto Exp() const noexcept;
-      NOD() constexpr auto Sin() const noexcept;
-      NOD() constexpr auto Cos() const noexcept;
-      NOD() constexpr auto Warp(const T&) const noexcept;
+      NOD() constexpr auto Round() const noexcept -> TVector;
+      NOD() constexpr auto Floor() const noexcept -> TVector;
+      NOD() constexpr auto Ceil () const noexcept -> TVector;
+      NOD() constexpr auto Abs  () const noexcept -> TVector;
+      NOD() constexpr auto Sign () const noexcept -> TVector;
+      NOD() constexpr auto Frac () const noexcept -> TVector;
+      NOD() constexpr auto Sqrt () const noexcept -> TVector;
+      NOD() constexpr auto Exp  () const noexcept -> TVector;
+      NOD() constexpr auto Sin  () const noexcept -> TVector;
+      NOD() constexpr auto Cos  () const noexcept -> TVector;
+      NOD() constexpr auto Warp(const T&) const noexcept -> TVector;
 
-      NOD() static constexpr TVector Max() noexcept;
-      NOD() constexpr auto Max(const T&) const noexcept;
-      template<TARGS(ALT)>
-      NOD() constexpr auto Max(const TVEC(ALT)&) const noexcept;
-      NOD() constexpr auto HMax() const noexcept;
+      NOD() static constexpr auto Max() noexcept -> TVector;
+      NOD() static constexpr auto Min() noexcept -> TVector;
 
-      NOD() static constexpr TVector Min() noexcept;
-      NOD() constexpr auto Min(const T&) const noexcept;
-      template<TARGS(ALT)>
-      NOD() constexpr auto Min(const TVEC(ALT)&) const noexcept;
-      NOD() constexpr auto HMin() const noexcept;
+      NOD() constexpr auto Max(const auto&) const noexcept;
+      NOD() constexpr auto Min(const auto&) const noexcept;
 
-      NOD() constexpr auto HSum() const noexcept;
-      NOD() constexpr auto HMul() const noexcept;
+      NOD() constexpr auto HMax() const noexcept -> T;
+      NOD() constexpr auto HMin() const noexcept -> T;
+      NOD() constexpr auto HSum() const noexcept -> T;
+      NOD() constexpr auto HMul() const noexcept -> T;
 
-      NOD() constexpr auto Mod(const T&) const noexcept;
-      template<TARGS(ALT)>
-      NOD() constexpr auto Mod(const TVEC(ALT)&) const noexcept;
-
-      NOD() constexpr auto Step(const T&) const noexcept;
-      template<TARGS(ALT)>
-      NOD() constexpr auto Step(const TVEC(ALT)&) const noexcept;
-
-      template<class ALT>
-      NOD() constexpr TME() Pow(const ALT&) const noexcept;
+      NOD() constexpr auto Mod (const auto&) const noexcept -> TVector;
+      NOD() constexpr auto Step(const auto&) const noexcept -> TVector;
+      NOD() constexpr auto Pow (const auto&) const noexcept -> TVector;
 
       auto& Sort() noexcept;
 
       NOD() constexpr explicit operator T&   () const noexcept requires (S == 1);
       NOD() constexpr explicit operator bool () const noexcept;
 
-      template<CT::ScalarBased N>
-      NOD() explicit constexpr operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>);
-
-      template<Count ALTS>
-      NOD() operator TVector<T, ALTS>& () const noexcept requires (ALTS < S);
+      template<CT::ScalarBased N> requires (S == 1 and CT::Convertible<N, T>)
+      NOD() explicit constexpr operator N () const noexcept;
+      
+      template<Count ALTS> requires (ALTS < S)
+      NOD() operator TVector<T, ALTS>& () const noexcept;
 
       ///                                                                     
       ///   Iteration                                                         
       ///                                                                     
-      NOD() constexpr       T* begin() noexcept;
-      NOD() constexpr       T* end() noexcept;
-      NOD() constexpr       T* last() noexcept;
-      NOD() constexpr const T* begin() const noexcept;
-      NOD() constexpr const T* end() const noexcept;
-      NOD() constexpr const T* last() const noexcept;
+      NOD() constexpr auto begin()       noexcept -> T*;
+      NOD() constexpr auto end()         noexcept -> T*;
+      NOD() constexpr auto last()        noexcept -> T*;
+      NOD() constexpr auto begin() const noexcept -> T const*;
+      NOD() constexpr auto end()   const noexcept -> T const*;
+      NOD() constexpr auto last()  const noexcept -> T const*;
    };
    #pragma pack(pop)
 

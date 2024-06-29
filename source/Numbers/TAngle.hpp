@@ -3,8 +3,7 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include "../Vectors/TVector.hpp"
@@ -33,6 +32,8 @@ namespace Langulus
 
    namespace Math
    {
+
+      LANGULUS_API(MATH) extern void RegisterAngles();
 
       template<CT::Number>
       struct TDegrees;
@@ -146,10 +147,10 @@ namespace Langulus
       using Pitch   = TPitch<Radians>;
       using Roll    = TRoll<Radians>;
 
-      constexpr Degrees operator""_deg(long double n) noexcept { return {n}; }
-      constexpr Degrees operator""_deg(unsigned long long n) noexcept { return {n}; }
-      constexpr Radians operator""_rad(long double n) noexcept { return {n}; }
-      constexpr Radians operator""_rad(unsigned long long n) noexcept { return {n}; }
+      constexpr Degrees operator""_deg(long double n) noexcept;
+      constexpr Degrees operator""_deg(unsigned long long n) noexcept;
+      constexpr Radians operator""_rad(long double n) noexcept;
+      constexpr Radians operator""_rad(unsigned long long n) noexcept;
 
    } // namespace Langulus::Math
 
@@ -235,6 +236,7 @@ namespace Langulus
          TAngle(Describe&&);
 
          NOD() explicit operator Anyness::Text() const;
+         NOD() explicit operator Flow::Code() const;
       };
 
    } // namespace Langulus::Math
