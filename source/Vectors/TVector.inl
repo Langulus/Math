@@ -3,8 +3,7 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include "TVector.hpp"
@@ -24,23 +23,23 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
       if constexpr (S > 1) {
-         static_assert(CT::Vector<TME()>,
+         static_assert(CT::Vector<TVector>,
             "Vectors should match CT::Vector, if their size is larger than 1");
       }
       else {
-         static_assert(CT::Scalar<TME()>,
+         static_assert(CT::Scalar<TVector>,
             "Vectors should match CT::Scalar, if their size is 1");
       }
 
-      static_assert(not CT::QuaternionBased<TME()>,
+      static_assert(not CT::QuaternionBased<TVector>,
          "Vectors shouldn't match CT::QuaternionBased");
-      static_assert(CT::VectorBased<TME()>,
+      static_assert(CT::VectorBased<TVector>,
          "Vectors should match CT::VectorBased");
-      static_assert(sizeof(TME()) == sizeof(T) * S,
+      static_assert(sizeof(TVector) == sizeof(T) * S,
          "Vectors should match T*4 size");
-      static_assert(CountOf<TME()> == S,
+      static_assert(CountOf<TVector> == S,
          "Vectors size should correspond to CountOf");
-      static_assert(CT::Exact<TypeOf<TME()>, T>,
+      static_assert(CT::Exact<TypeOf<TVector>, T>,
          "Vectors should have type");
 
       for (auto& e : all)
@@ -156,7 +155,7 @@ namespace Langulus::Math
    TEMPLATE() template<CT::Serial AS, class TOKEN>
    AS TME()::Serialize() const {
       AS result;
-      constexpr bool SCOPED = S > 1 or not CT::Same<TME(), TOKEN>;
+      constexpr bool SCOPED = S > 1 or not CT::Same<TVector, TOKEN>;
       if constexpr (SCOPED) {
          result += MetaDataOf<TOKEN>();
          result += '(';
@@ -172,13 +171,13 @@ namespace Langulus::Math
    /// Stringify vector for debugging                                         
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Anyness::Text() const {
-      return Serialize<Anyness::Text, TME()>();
+      return Serialize<Anyness::Text, TVector>();
    }
 
    /// Serialize vector as code                                               
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
-      return Serialize<Flow::Code, TME()>();
+      return Serialize<Flow::Code, TVector>();
    }
 
    /// Adapt a component to the vector's internal type                        
@@ -204,19 +203,19 @@ namespace Langulus::Math
    ///   @param i - index of the component (0, 1, 2 correspond to X, Y, Z)    
    ///   @return a reference to the component                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T& TME()::Get(const Offset i) const noexcept {
+   constexpr auto TME()::Get(const Offset i) const noexcept -> const T& {
       return all[i];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T& TME()::Get(const Offset i) noexcept {
+   constexpr auto TME()::Get(const Offset i) noexcept -> T& {
       return all[i];
    }
 
    /// Get the value of a specific component index (with static check)        
    ///   @return a reference to the component                                 
    TEMPLATE() template<Offset I> LANGULUS(INLINED)
-   constexpr const T& TME()::GetIdx() const noexcept {
+   constexpr auto TME()::GetIdx() const noexcept -> const T& {
       static_assert(I < S, "Index is out of limits");
       return all[I];
    }
@@ -226,26 +225,26 @@ namespace Langulus::Math
    ///   @param a - index of the element (0, 1, 2 correspond to X, Y, Z)      
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T& TME()::operator [] (const Offset a) noexcept {
+   constexpr auto TME()::operator [] (const Offset a) noexcept -> T& {
       return all[a];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T& TME()::operator [] (const Offset a) const noexcept {
+   constexpr auto TME()::operator [] (const Offset a) const noexcept -> const T& {
       return all[a];
    }
 
    /// Get the number of components                                           
    ///   @return the number of components                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr Count TME()::GetCount() const noexcept {
+   constexpr auto TME()::GetCount() const noexcept -> Count {
       return MemberCount;
    }
 
    /// Get the squared magnitute of the vector                                
    ///   @return the length of the vector, before the Sqrt operation          
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T TME()::LengthSquared() const noexcept {
+   constexpr auto TME()::LengthSquared() const noexcept -> T {
       auto start = all;
       const auto end = start + S;
       T accum = Math::Sq(*(start++));
@@ -257,7 +256,7 @@ namespace Langulus::Math
    /// Get the magnitute of the vector                                        
    ///   @return the length of the vector                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T TME()::Length() const noexcept {
+   constexpr auto TME()::Length() const noexcept -> T {
       return Math::Sqrt(LengthSquared());
    }
 
@@ -303,6 +302,7 @@ namespace Langulus::Math
    constexpr TVector<AS, S> TME()::AsCast() const noexcept {
       AS converted[S];
       SIMD::Convert<0>(all, converted);
+
       if constexpr (NORMALIZE) {
          // Normalize all elements by the old numeric limits            
          constexpr AS factor = AS {1} / AS {::std::numeric_limits<T>::max()};
@@ -331,7 +331,7 @@ namespace Langulus::Math
    ///   @param scalar - the scalar value                                     
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::Scalar auto& scalar) noexcept {
+   constexpr auto TME()::operator = (const CT::Scalar auto& scalar) noexcept -> TVector& {
       return *new (this) TVector {scalar};
    }
 
@@ -339,7 +339,7 @@ namespace Langulus::Math
    ///   @param vec - the vector to copy                                      
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::Vector auto& vec) noexcept {
+   constexpr auto TME()::operator = (const CT::Vector auto& vec) noexcept -> TVector& {
       return *new (this) TVector {vec};
    }
 
@@ -347,7 +347,7 @@ namespace Langulus::Math
    ///   @param com - the component to overwrite                              
    ///   @return a reference to this vector                                   
    TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const TVectorComponent<N, D>& com) noexcept {
+   constexpr auto TME()::operator = (const TVectorComponent<N, D>& com) noexcept -> TVector& {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
       all[D::Index] = Adapt(com.mValue);
       return *this;
@@ -356,11 +356,11 @@ namespace Langulus::Math
    /// Dot product                                                            
    ///   @param other - the vector to dot with                                
    ///   @return the dot product of both vectors                              
-   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
-   constexpr T TME()::Dot(const TVEC(ALT)& other) const noexcept {
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr auto TME()::Dot(const CT::VectorBased auto& other) const noexcept -> T {
       auto source = other.all;
       auto start = all;
-      const auto end = start + Math::Min(S, ALTS);
+      const auto end = start + Math::Min(S, CountOf<decltype(other)>);
       T accum = *(start++) * *(source++);
       while (start != end)
          accum += *(start++) * *(source++);
@@ -370,22 +370,19 @@ namespace Langulus::Math
    /// Cross product                                                          
    ///   @param rhs - the vector to cross with                                
    ///   @return the cross product of both vectors                            
-   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
-   constexpr TVector<T, 3> TME()::Cross(const TVEC(ALT)& rhs) const noexcept
-   requires (S >= 3 and ALTS >= 3) {
-      return {
-         y * rhs.z - z * rhs.y,
-         z * rhs.x - x * rhs.z,
-         x * rhs.y - y * rhs.x
-      };
+   TEMPLATE() template<CT::VectorBased V> requires (S >= 3 and CountOf<V> >= 3)
+   constexpr auto TME()::Cross(const V& rhs) const noexcept -> TVector<T, 3> {
+      return { y * rhs.z - z * rhs.y,
+               z * rhs.x - x * rhs.z,
+               x * rhs.y - y * rhs.x };
    }
 
    /// Normalize                                                              
    ///   @return the normalized vector                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Normalize() const requires (S > 1) {
+   constexpr auto TME()::Normalize() const -> TVector requires (S > 1) {
       const auto l = Length();
-      if (l == T {}) UNLIKELY()
+      if (l == T {})
          LANGULUS_THROW(Arithmetic, "Degenerate vector");
       return *this * (T {1} / l);
    }
@@ -394,13 +391,15 @@ namespace Langulus::Math
    ///   @param min - lower limit                                             
    ///   @param max - higher limit                                            
    ///   @return the clamped equivalent of this vector                        
-   TEMPLATE() template<TARGS(MIN), TARGS(MAX)> LANGULUS(INLINED)
-   constexpr auto TME()::Clamp(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr auto TME()::Clamp(const auto& min, const auto& max) const noexcept -> TVector {
       TVector result {*this};
       auto minp = min.all;
       auto maxp = max.all;
       auto start = result.all;
-      const auto end = start + Math::Min(S, MINS, MAXS);
+      const auto end = start
+         + Math::Min(S, CountOf<decltype(min)>, CountOf<decltype(max)>);
+
       while (start != end) {
          *start = Math::Clamp(*start, *(minp++), *(maxp++));
          ++start;
@@ -412,13 +411,15 @@ namespace Langulus::Math
    ///   @param min - lower limit                                             
    ///   @param max - higher limit                                            
    ///   @return the clamped equivalent of this vector                        
-   TEMPLATE() template<TARGS(MIN), TARGS(MAX)> LANGULUS(INLINED)
-   constexpr auto TME()::ClampRev(const TVEC(MIN)& min, const TVEC(MAX)& max) const noexcept {
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr auto TME()::ClampRev(const auto& min, const auto& max) const noexcept -> TVector {
       TVector result {*this};
       auto minp = min.all;
       auto maxp = max.all;
       auto start = result.all;
-      const auto end = start + Math::Min(S, MINS, MAXS);
+      const auto end = start
+         + Math::Min(S, CountOf<decltype(min)>, CountOf<decltype(max)>);
+
       while (start != end) {
          *start = Math::ClampRev(*start, *(minp++), *(maxp++));
          ++start;
@@ -428,87 +429,72 @@ namespace Langulus::Math
 
    /// Round each element of the vector                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Round() const noexcept {
+   constexpr auto TME()::Round() const noexcept -> TVector {
       if constexpr (CT::Real<T>)
-         return TME() {SIMD::Round(*this)};
+         return SIMD::Round(*this);
       else
          return *this;
    }
 
    /// Round down each vector component                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Floor() const noexcept {
+   constexpr auto TME()::Floor() const noexcept -> TVector {
       if constexpr (CT::Real<T>)
-         return TME() {SIMD::Floor(*this)};
+         return SIMD::Floor(*this);
       else
          return *this;
    }
 
    /// Round up each vector component                                         
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Ceil() const noexcept {
+   constexpr auto TME()::Ceil() const noexcept -> TVector {
       if constexpr (CT::Real<T>)
-         return TME() {SIMD::Ceil(*this)};
+         return SIMD::Ceil(*this);
       else
          return *this;
    }
 
    /// Invert negative components of vector                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Abs() const noexcept {
+   constexpr auto TME()::Abs() const noexcept -> TVector {
       if constexpr (CT::Signed<T>)
-         return TME() {SIMD::Abs(*this)};
+         return SIMD::Abs(*this);
       else
          return *this;
    }
 
    /// Get biggest possible vector of the type                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Max() noexcept {
+   constexpr auto TME()::Max() noexcept -> TVector {
       return ::std::numeric_limits<T>::max();
-   }
-
-   /// Get scalar maximum of each element                                     
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Max(const T& limit) const noexcept {
-      using Ret = LosslessVector<TME(), T>;
-      return Ret {SIMD::Max(*this, limit)};
-   }
-
-   /// Get maximum of each element                                            
-   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
-   constexpr auto TME()::Max(const TVEC(ALT)& limits) const noexcept {
-      using Ret = LosslessVector<TME(), TVEC(ALT)>;
-      return Ret {SIMD::Max(*this, limits)};
    }
 
    /// Get smallest possible vector of the type                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::Min() noexcept {
+   constexpr auto TME()::Min() noexcept -> TVector {
       if constexpr (CT::Real<T>)
          return {::std::numeric_limits<T>::lowest()};
       else
          return {::std::numeric_limits<T>::min()};
    }
 
-   /// Get scalar minimum of each element                                     
+   /// Get maximum of each element                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Min(const T& limit) const noexcept {
-      using Ret = LosslessVector<TME(), T>;
-      return Ret {SIMD::Min(*this, limit)};
+   constexpr auto TME()::Max(const auto& limits) const noexcept {
+      using Ret = LosslessVector<TVector, decltype(limits)>;
+      return Ret {SIMD::Max(*this, limits)};
    }
 
    /// Get minimum of each element                                            
-   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
-   constexpr auto TME()::Min(const TVEC(ALT)& limits) const noexcept {
-      using Ret = LosslessVector<TME(), TVEC(ALT)>;
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr auto TME()::Min(const auto& limits) const noexcept {
+      using Ret = LosslessVector<TVector, decltype(limits)>;
       return Ret {SIMD::Min(*this, limits)};
    }
    
    /// Horizontal max                                                         
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::HMax() const noexcept {
-      // Related: https://stackoverflow.com/questions/22256525/         
+   constexpr auto TME()::HMax() const noexcept -> T {
       auto start = all;
       const auto end = start + S;
       T t = *(start++);
@@ -519,8 +505,7 @@ namespace Langulus::Math
 
    /// Horizontal min                                                         
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::HMin() const noexcept {
-      // Related: https://stackoverflow.com/questions/22256525/         
+   constexpr auto TME()::HMin() const noexcept -> T {
       auto start = all;
       const auto end = start + S;
       T t = *(start++);
@@ -531,8 +516,7 @@ namespace Langulus::Math
 
    /// Horizontal sum                                                         
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::HSum() const noexcept {
-      // Related: https://stackoverflow.com/questions/6996764/          
+   constexpr auto TME()::HSum() const noexcept -> T {
       auto start = all;
       const auto end = start + S;
       T t = *(start++);
@@ -543,7 +527,7 @@ namespace Langulus::Math
 
    /// Horizontal multiply (similar to Volume)                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::HMul() const noexcept {
+   constexpr auto TME()::HMul() const noexcept -> T {
       T product {1};
       for (auto& i : all)
          product *= i;
@@ -552,75 +536,85 @@ namespace Langulus::Math
 
    /// Sign                                                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Sign() const noexcept {
-      T result[S];
-      T* it = result;
-      for (auto& i : all)
-         *(it++) = Math::Sign(i);
-      return result;
+   constexpr auto TME()::Sign() const noexcept -> TVector {
+      if constexpr (CT::Unsigned<T>)
+         return TVector {1};
+      else {
+         T result[S];
+         T* it = result;
+         for (auto& i : all)
+            *(it++) = Math::Sign(i);
+         return result;
+      }
    }
 
-   /// Modulate via a scalar                                                  
+   /// Modulate                                                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Mod(const T& period) const noexcept {
-      T result[S];
-      T* it = result;
-      for (auto& i : all)
-         *(it++) = Math::Mod(i, period);
-      return result;
+   constexpr auto TME()::Mod(const auto& period) const noexcept -> TVector {
+      using RHS = Deref<decltype(period)>;
+
+      if constexpr (CT::Scalar<RHS>) {
+         T result[S];
+         T* it = result;
+         for (auto& i : all)
+            *(it++) = Math::Mod(i, period);
+         return result;
+      }
+      else {
+         T result[Math::Min(S, CountOf<RHS>)];
+         const T* lhs = all;
+         const T* rhs = period.all;
+         for (auto& i : result)
+            i = Math::Mod(*(lhs++), *(rhs++));
+         return result;
+      }
    }
 
-   /// Modulate via a vector                                                  
-   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
-   constexpr auto TME()::Mod(const TVEC(ALT)& period) const noexcept {
-      T result[Min(S, ALTS)];
-      const T* lhs = all;
-      const T* rhs = period.all;
-      for (auto& i : result)
-         i = Math::Mod(*(lhs++), *(rhs++));
-      return result;
-   }
-
-   /// Step via a scalar                                                      
+   /// Step                                                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Step(const T& edge) const noexcept {
-      T result[S];
-      T* it = result;
-      for (auto& i : result)
-         *(it++) = Math::Step(edge, i);
-      return result;
-   }
+   constexpr auto TME()::Step(const auto& edge) const noexcept -> TVector {
+      using RHS = Deref<decltype(edge)>;
 
-   /// Step via a vector                                                      
-   TEMPLATE() template<TARGS(ALT)> LANGULUS(INLINED)
-   constexpr auto TME()::Step(const TVEC(ALT)& edge) const noexcept {
-      T result[Min(S, ALTS)];
-      const T* lhs = all;
-      const T* rhs = edge.all;
-      for (auto& i : result)
-         i = Math::Step(*(rhs++), *(lhs++));
-      return result;
+      if constexpr (CT::Scalar<RHS>) {
+         T result[S];
+         T* it = result;
+         for (auto& i : result)
+            *(it++) = Math::Step(edge, i);
+         return result;
+      }
+      else {
+         T result[Min(S, CountOf<RHS>)];
+         const T* lhs = all;
+         const T* rhs = edge.all;
+         for (auto& i : result)
+            i = Math::Step(*(rhs++), *(lhs++));
+         return result;
+      }
    }
 
    /// Power via a vector                                                     
-   TEMPLATE() template<class ALT> LANGULUS(INLINED)
-   constexpr TME() TME()::Pow(const ALT& exponents) const noexcept {
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr auto TME()::Pow(const auto& exponents) const noexcept -> TVector {
       return SIMD::Power(all, exponents);
    }
 
    /// Fraction                                                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Frac() const noexcept {
-      T result[S];
-      T* it = result;
-      for (auto& i : all)
-         *(it++) = Math::Frac(i);
-      return result;
+   constexpr auto TME()::Frac() const noexcept -> TVector {
+      if constexpr (not CT::Real<T>)
+         return {0};
+      else {
+         T result[S];
+         T* it = result;
+         for (auto& i : all)
+            *(it++) = Math::Frac(i);
+         return result;
+      }
    }
 
    /// Square root                                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Sqrt() const noexcept {
+   constexpr auto TME()::Sqrt() const noexcept -> TVector {
       T result[S];
       T* it = result;
       for (auto& i : all)
@@ -630,7 +624,7 @@ namespace Langulus::Math
 
    /// Exponent                                                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Exp() const noexcept {
+   constexpr auto TME()::Exp() const noexcept -> TVector {
       T result[S];
       T* it = result;
       for (auto& i : all)
@@ -640,7 +634,7 @@ namespace Langulus::Math
 
    /// Sine                                                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Sin() const noexcept {
+   constexpr auto TME()::Sin() const noexcept -> TVector {
       T result[S];
       T* it = result;
       for (auto& i : all)
@@ -650,7 +644,7 @@ namespace Langulus::Math
 
    /// Cosine                                                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Cos() const noexcept {
+   constexpr auto TME()::Cos() const noexcept -> TVector {
       T result[S];
       T* it = result;
       for (auto& i : all)
@@ -678,7 +672,7 @@ namespace Langulus::Math
 
    /// Warp (used for periodic boundary conditions)                           
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Warp(const T& scalar) const noexcept {
+   constexpr auto TME()::Warp(const T& scalar) const noexcept -> TVector {
       if constexpr (CT::Signed<T>) {
          const auto absScale = Abs(scalar);
          const auto halfScale = absScale / T {2};
@@ -714,43 +708,46 @@ namespace Langulus::Math
    }
 
    /// Explicit cast to a compatible number of different type                 
-   TEMPLATE() template<CT::ScalarBased N> LANGULUS(INLINED)
-   constexpr TME()::operator N () const noexcept requires (S == 1 and CT::Convertible<N, T>) {
+   TEMPLATE() template<CT::ScalarBased N>
+   requires (S == 1 and CT::Convertible<N, T>) LANGULUS(INLINED)
+   constexpr TME()::operator N () const noexcept {
       return static_cast<N>(all[0]);
    }
    
-   TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
-   TME()::operator TVector<T, ALTS>& () const noexcept requires (ALTS < S) {
-      return const_cast<TVector<T, ALTS>&>(reinterpret_cast<const TVector<T, ALTS>&>(*this));
+   TEMPLATE() template<Count ALTS> requires (ALTS < S) LANGULUS(INLINED)
+   TME()::operator TVector<T, ALTS>& () const noexcept {
+      return const_cast<TVector<T, ALTS>&>(
+         reinterpret_cast<const TVector<T, ALTS>&>(*this)
+      );
    }
    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T* TME()::begin() noexcept {
+   constexpr auto TME()::begin() noexcept -> T* {
       return all;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T* TME()::end() noexcept {
+   constexpr auto TME()::end() noexcept -> T* {
       return all + S;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T* TME()::last() noexcept {
+   constexpr auto TME()::last() noexcept -> T* {
       return all + S - 1;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T* TME()::begin() const noexcept {
+   constexpr auto TME()::begin() const noexcept -> const T* {
       return all;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T* TME()::end() const noexcept {
+   constexpr auto TME()::end() const noexcept -> const T* {
       return all + S;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T* TME()::last() const noexcept {
+   constexpr auto TME()::last() const noexcept -> const T* {
       return all + S - 1;
    }
 
@@ -1668,3 +1665,29 @@ namespace Langulus::Axes
    constexpr auto Left = -X<T>;
 
 } // Langulus::Axes
+
+
+LANGULUS_DEFINE_CONSTANT(Forward, ::Langulus::Axes::Forward<>,
+   "Axes::Forward", "A canonical forward vector")
+LANGULUS_DEFINE_CONSTANT(Backward, ::Langulus::Axes::Backward<>,
+   "Axes::Backward", "A canonical backward vector")
+LANGULUS_DEFINE_CONSTANT(Up, ::Langulus::Axes::Up<>,
+   "Axes::Up", "A canonical up vector")
+LANGULUS_DEFINE_CONSTANT(Down, ::Langulus::Axes::Down<>,
+   "Axes::Down", "A canonical down vector")
+LANGULUS_DEFINE_CONSTANT(Right, ::Langulus::Axes::Right<>, 
+   "Axes::Right", "A canonical right vector")
+LANGULUS_DEFINE_CONSTANT(Left, ::Langulus::Axes::Left<>,
+   "Axes::Left", "A canonical left vector")
+
+LANGULUS_DEFINE_CONSTANT(X, ::Langulus::Axes::X<>,
+   "Axes::X", "A canonical X axis")
+LANGULUS_DEFINE_CONSTANT(Y, ::Langulus::Axes::Y<>,
+   "Axes::Y", "A canonical Y axis")
+LANGULUS_DEFINE_CONSTANT(Z, ::Langulus::Axes::Z<>,
+   "Axes::Z", "A canonical Z axis")
+LANGULUS_DEFINE_CONSTANT(W, ::Langulus::Axes::W<>,
+   "Axes::W", "A canonical W axis")
+
+LANGULUS_DEFINE_CONSTANT(Origin, ::Langulus::Axes::Origin<>,
+   "Origin", "A canonical zero vector")

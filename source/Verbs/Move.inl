@@ -3,8 +3,7 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include "Move.hpp"
@@ -28,11 +27,6 @@ namespace Langulus::Verbs
          return requires (T& t, Verb& v) { t.Move(v); };
       else
          return requires (T& t, Verb& v, A...a) { t.Move(v, a...); };
-
-      /*if constexpr (sizeof...(A) == 1)
-         return requires (T& t, Verb& v, A... a) { t.Move(v, a...); };
-      else
-         return false;*/
    }
 
    /// Get the verb functor for the given type and arguments                  

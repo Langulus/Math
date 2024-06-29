@@ -24,6 +24,12 @@ if(PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
     fetch_langulus_module(Flow	  GIT_TAG 8f4af5ea3da65d8a2f7c58d8a78a2c8db0e955cc)
 endif()
 
+file(GLOB_RECURSE
+	LANGULUS_MATH_SOURCES 
+	LIST_DIRECTORIES FALSE CONFIGURE_DEPENDS
+	source/*.cpp
+)
+
 # Build and install Math library                                            
 add_library(LangulusMath ${LANGULUS_LIBRARY_TYPE}
     $<TARGET_OBJECTS:LangulusLogger>
@@ -31,6 +37,7 @@ add_library(LangulusMath ${LANGULUS_LIBRARY_TYPE}
     $<$<BOOL:${LANGULUS_FEATURE_MANAGED_MEMORY}>:$<TARGET_OBJECTS:LangulusFractalloc>>
     $<TARGET_OBJECTS:LangulusAnyness>
     $<TARGET_OBJECTS:LangulusFlow>
+	${LANGULUS_MATH_SOURCES}
 )
 
 target_include_directories(LangulusMath PUBLIC include
@@ -47,7 +54,7 @@ target_link_libraries(LangulusMath
                 fmt
 )
 
-target_compile_definitions(LangulusFlow
+target_compile_definitions(LangulusMath
     PRIVATE     LANGULUS_EXPORT_ALL
 )
 

@@ -3,8 +3,7 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include "TAngle.hpp"
@@ -118,7 +117,18 @@ namespace Langulus::Math
       Anyness::Text result;
       result += NameOf<TAngle>();
       result += Flow::Code::Operator::OpenScope;
-      result += Anyness::Text {mValue};
+      result += static_cast<Anyness::Text>(mValue);
+      result += Flow::Code::Operator::CloseScope;
+      return result;
+   }
+
+   /// Convert from any angle to code                                         
+   template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
+   TAngle<T, D>::operator Flow::Code() const {
+      Flow::Code result;
+      result += NameOf<TAngle>();
+      result += Flow::Code::Operator::OpenScope;
+      result += static_cast<Flow::Code>(mValue);
       result += Flow::Code::Operator::CloseScope;
       return result;
    }
@@ -221,6 +231,30 @@ namespace Langulus::Math
    ) {
       lhs = lhs / rhs;
       return lhs;
+   }
+
+   /// Real number of degrees literal                                         
+   LANGULUS(INLINED)
+   constexpr Degrees operator""_deg(long double n) noexcept {
+      return {n};
+   }
+
+   /// Real number of degrees literal (from unsigned)                         
+   LANGULUS(INLINED)
+   constexpr Degrees operator""_deg(unsigned long long n) noexcept {
+      return {n};
+   }
+
+   /// Real number of radians literal                                         
+   LANGULUS(INLINED)
+   constexpr Radians operator""_rad(long double n) noexcept {
+      return {n};
+   }
+
+   /// Real number of radians literal (from unsigned)                         
+   LANGULUS(INLINED)
+   constexpr Radians operator""_rad(unsigned long long n) noexcept {
+      return {n};
    }
 
 } // namespace Langulus::Math

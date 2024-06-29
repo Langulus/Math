@@ -3,11 +3,10 @@
 /// Copyright (c) 2014 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../Common.hpp"
+#include "../Vectors/TVector.inl"
 
 LANGULUS_DEFINE_TRAIT(Topology, "Topology type");
 
@@ -51,5 +50,12 @@ namespace Langulus
       concept Topology = ((DerivedFrom<T, A::Topology> or Point<T>) and ...);
 
    } // namespace Langulus::CT
+
+   namespace Math
+   {
+
+      LANGULUS_API(MATH) extern void RegisterPrimitives();
+
+   } // namespace Langulus::Math
 
 } // namespace Langulus
