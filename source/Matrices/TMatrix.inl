@@ -45,7 +45,7 @@ namespace Langulus::Math
    ///   @param a - differently sized matrix                                  
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::MatrixBased auto& a) noexcept {
-      using M = Deref<Desem<decltype(a)>>;
+      using M = Deref<Deint<decltype(a)>>;
       if constexpr (M::Columns != Columns or M::Rows != Rows) {
          if constexpr (M::Columns < Columns or M::Rows < Rows) {
             // If copied region is smaller, make sure to reset          
@@ -54,19 +54,19 @@ namespace Langulus::Math
 
          for (Offset col = 0; col < Math::Min(Columns, M::Columns); ++col) {
             for (Offset row = 0; row < Math::Min(Rows, M::Rows); ++row) {
-               mColumns[col][row] = Adapt(DesemCast(a).mColumns[col][row]);
+               mColumns[col][row] = Adapt(DeintCast(a).mColumns[col][row]);
             }
          }
       }
       else if constexpr (not CT::Same<TypeOf<M>, T>) {
          for (int i = 0; i < MemberCount; ++i) {
             // Convert all elements                                     
-            mArray[i] = Adapt(DesemCast(a).mArray[i]);
+            mArray[i] = Adapt(DeintCast(a).mArray[i]);
          }
       }
       else {
          // Direct memory copy (fastest)                                
-         CopyMemory(mArray, DesemCast(a).mArray);
+         CopyMemory(mArray, DeintCast(a).mArray);
       }
    }
    
@@ -74,7 +74,7 @@ namespace Langulus::Math
    ///   @param x - spread across entire matrix diagonal                      
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::ScalarBased auto& x) noexcept {
-      const T xx = Adapt(DesemCast(x));
+      const T xx = Adapt(DeintCast(x));
       for (Offset i = 0; i < Diagonal; ++i)
          mColumns[i][i] = xx;
    }
@@ -87,7 +87,7 @@ namespace Langulus::Math
    ///      defaulting to identity                                            
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::VectorBased auto& x) noexcept {
-      using V = Deref<Desem<decltype(x)>>;
+      using V = Deref<Deint<decltype(x)>>;
       constexpr auto D = Math::Min(Diagonal, CountOf<V>);
       for (Offset i = 0; i < D; ++i)
          mColumns[i][i] = Adapt(x[i]);

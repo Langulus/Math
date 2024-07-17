@@ -32,13 +32,13 @@ namespace Langulus::Math
    /// minX, minY, minZ..., maxX, maxY, maxZ...                               
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::Vector auto& other) noexcept {
-      SIMD::Convert<0>(DesemCast(other), mArray);
+      SIMD::Convert<0>(DeintCast(other), mArray);
    }
 
    /// Construct the range from scalar                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::Scalar auto& other) noexcept {
-      SIMD::Convert<0>(DesemCast(other), mArray);
+      SIMD::Convert<0>(DeintCast(other), mArray);
    }
 
    /// Create range from a min and a max vectors                              
@@ -146,7 +146,7 @@ namespace Langulus::Math
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::RangeBased auto& r) noexcept {
-      return *new (this) TRange {DesemCast(r)};
+      return *new (this) TRange {DeintCast(r)};
    }
 
    /// Copy vector                                                            
@@ -154,7 +154,7 @@ namespace Langulus::Math
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::VectorBased auto& v) noexcept {
-      return *new (this) TRange {DesemCast(v)};
+      return *new (this) TRange {DeintCast(v)};
    }
   
    /// Copy scalar                                                            
@@ -162,7 +162,7 @@ namespace Langulus::Math
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()& TME()::operator = (const CT::ScalarBased auto& s) noexcept {
-      return *new (this) TRange {DesemCast(s)};
+      return *new (this) TRange {DeintCast(s)};
    }
 
    /// Set only a specific component                                          
