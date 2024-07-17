@@ -91,7 +91,7 @@ namespace Langulus
             return *this;
          }
 
-         template<CT::NotSemantic RHS> requires CT::NotAdaptive<RHS>
+         template<CT::NoIntent RHS> requires CT::NotAdaptive<RHS>
          constexpr Adaptive& operator = (const RHS& rhs) noexcept {
             mValue = rhs;
             return *this;
@@ -108,7 +108,7 @@ namespace Langulus
       };
 
       template<class T>
-      Adaptive(const T& data, Level level) -> Adaptive<Desem<T>>;
+      Adaptive(const T& data, Level level) -> Adaptive<Deint<T>>;
 
    } // namespace Langulus::Math
 

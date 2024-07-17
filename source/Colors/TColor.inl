@@ -19,7 +19,7 @@ namespace Langulus::Math
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
    constexpr TColor<T>::TColor(const CT::Vector auto& source) noexcept {
-      SIMD::Convert<0>(DesemCast(source), all);
+      SIMD::Convert<0>(DeintCast(source), all);
    }
 
    /// Covert a console color to a 3-component color                          
