@@ -35,6 +35,11 @@ namespace Langulus::Math
             alpha = 255;
       }
 
+      reinterpret_cast<unsigned&>(from) &= 
+         ~(static_cast<unsigned>(Logger::NextColor)
+         | static_cast<unsigned>(Logger::PreviousColor)
+      );
+
       switch (from) {
       case Logger::DarkBlue:
       case Logger::DarkBlueBgr:
@@ -165,6 +170,9 @@ namespace Langulus::Math
             red = green = blue = 0.0;
          else
             red = green = blue = 0;
+         break;
+      default:
+         // Not reachable, but avoid warnings                           
          break;
       }
    }
