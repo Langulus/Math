@@ -14,7 +14,7 @@ jobs:
         arch: [x86, x64]
         cxx: [g++, clang++-17, ClangCl, v143]
         feature: [
-          [NoSIMD, 16, ' ', ' '],
+          [NoSIMD, 16, ' ', '/arch:IA32'],
           [SSE2, 16, '-msse2', '/arch:SSE2'],
           [SSE3, 16, '-msse3', '<not available on msvc>'],
           [SSSE3, 16, '-mssse3', '<not available on msvc>'],
@@ -142,7 +142,6 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{matrix.cxx}}
           ${{matrix.cmake_args}} 
           -DCMAKE_BUILD_TYPE=${{matrix.build}}
-          -DCMAKE_C_FLAGS="${{matrix.feature[2]}}"
           -DCMAKE_CXX_FLAGS="${{matrix.feature[2]}}"
           -DLANGULUS_ALIGNMENT=${{matrix.feature[1]}}
           -DLANGULUS_TESTING=ON
