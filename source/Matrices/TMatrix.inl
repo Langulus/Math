@@ -929,7 +929,10 @@ namespace Langulus::Math
    ///   @param rhs - right matrix                                            
    ///   @return the product                                                  
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator * (
+      const CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using LHS = Deref<decltype(lhs)>;
       using RHS = Deref<decltype(rhs)>;
       static_assert(LHS::Rows == RHS::Columns and LHS::Columns == RHS::Rows,
@@ -969,7 +972,10 @@ namespace Langulus::Math
    ///   @param rhs - right matrix                                            
    ///   @return the added matrices                                           
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator + (
+      const CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
@@ -987,7 +993,10 @@ namespace Langulus::Math
    ///   @param rhs - right matrix                                            
    ///   @return the subtracted matrices                                      
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator - (
+      const CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
@@ -1005,7 +1014,10 @@ namespace Langulus::Math
    ///   @param rhs - matrix                                                  
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator * (
+      const CT::VectorBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       constexpr auto C = CountOf<Ret>;
       TypeOf<Ret> r[C];
@@ -1020,7 +1032,10 @@ namespace Langulus::Math
    ///   @param rhs - matrix                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator + (
+      const CT::VectorBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
@@ -1034,7 +1049,10 @@ namespace Langulus::Math
    ///   @param rhs - matrix                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator - (
+      const CT::VectorBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
@@ -1048,7 +1066,10 @@ namespace Langulus::Math
    ///   @param rhs - vector                                                  
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator * (
+      const CT::MatrixBased auto& lhs,
+      const CT::VectorBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       constexpr auto C = CountOf<Ret>;
       TypeOf<Ret> r[C];
@@ -1063,7 +1084,10 @@ namespace Langulus::Math
    ///   @param rhs - vector                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator + (
+      const CT::MatrixBased auto& lhs,
+      const CT::VectorBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
@@ -1077,7 +1101,10 @@ namespace Langulus::Math
    ///   @param rhs - vector                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator - (
+      const CT::MatrixBased auto& lhs,
+      const CT::VectorBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
       Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
@@ -1091,7 +1118,10 @@ namespace Langulus::Math
    ///   @param rhs - matrix                                                  
    ///   @return the scaled matrix                                            
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator * (
+      const CT::ScalarBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
       SIMD::Multiply(rhs.mArray, lhs, result);
@@ -1099,7 +1129,10 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator * (
+      const CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       return rhs * lhs;
    }
 
@@ -1108,7 +1141,10 @@ namespace Langulus::Math
    ///   @param rhs - scalar                                                  
    ///   @return the scaled matrix                                            
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto operator / (
+      const CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
       SIMD::Divide(lhs.mArray, rhs, result);
@@ -1120,7 +1156,10 @@ namespace Langulus::Math
    ///   @param rhs - matrix                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator + (
+      const CT::ScalarBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
       SIMD::Add(rhs.mArray, lhs, result);
@@ -1128,7 +1167,10 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator + (
+      const CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       return rhs + lhs;
    }
 
@@ -1137,7 +1179,10 @@ namespace Langulus::Math
    ///   @param rhs - scalar                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator - (
+      const CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
       SIMD::Subtract(lhs.mArray, rhs, result);
@@ -1150,60 +1195,87 @@ namespace Langulus::Math
    ///                                                                        
    /// Add two matrices                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto& operator += (
+      CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       SIMD::Add(lhs.mArray, rhs.mArray, lhs.mArray);
       return lhs;
    }
 
    /// Add a scalar to a matrix                                               
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator += (
+      CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       SIMD::Add(lhs.mArray, rhs, lhs.mArray);
       return lhs;
    }
 
    /// Add a vector to each column of a matrix                                
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator += (
+      CT::MatrixBased auto& lhs,
+      const CT::VectorBased auto& rhs
+   ) noexcept {
       return (lhs = lhs + rhs);
    }
 
    /// Subtract two matrices                                                  
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto& operator -= (
+      CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       SIMD::Subtract(lhs.mArray, rhs.mArray, lhs.mArray);
       return lhs;
    }
 
    /// Subtract a scalar from a matrix                                        
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator -= (
+      CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       SIMD::Subtract(lhs.mArray, rhs, lhs.mArray);
       return lhs;
    }
 
    /// Subtract a vector from each column of a matrix                         
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::MatrixBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator -= (
+      CT::MatrixBased auto& lhs,
+      const CT::VectorBased auto& rhs
+   ) noexcept {
       return (lhs = lhs - rhs);
    }
 
    /// Multiply two matrices                                                  
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto& operator *= (
+      CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       return (lhs = lhs * rhs);
    }
 
    /// Multiply matrix by a scalar                                            
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator *= (
+      CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       SIMD::Multiply(lhs.mArray, rhs, lhs.mArray);
       return lhs;
    }
 
    /// Divide matrix by a scalar                                              
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto& operator /= (
+      CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) {
       SIMD::Divide(lhs.mArray, rhs, lhs.mArray);
       return lhs;
    }
@@ -1213,7 +1285,10 @@ namespace Langulus::Math
    ///   Comparison                                                           
    ///                                                                        
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::MatrixBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator == (
+      const CT::MatrixBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       using LHS = Deref<decltype(lhs)>;
       using RHS = Deref<decltype(rhs)>;
       if constexpr (LHS::Columns != RHS::Columns or LHS::Rows != RHS::Rows)
@@ -1223,12 +1298,18 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::MatrixBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator == (
+      const CT::MatrixBased auto& lhs,
+      const CT::ScalarBased auto& rhs
+   ) noexcept {
       return SIMD::Equals(lhs.mArray, rhs);
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::MatrixBased auto& rhs) noexcept {
+   constexpr auto operator == (
+      const CT::ScalarBased auto& lhs,
+      const CT::MatrixBased auto& rhs
+   ) noexcept {
       return SIMD::Equals(rhs.mArray, lhs);
    }
 
