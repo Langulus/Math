@@ -15,6 +15,8 @@
 namespace Langulus::Math
 {
 
+   LANGULUS_API(MATH) extern void RegisterRanges();
+
    TEMPLATE() struct TRange;
 
    using Range1f   = TRange<Vec1f>;
@@ -180,57 +182,42 @@ namespace Langulus::Math
       constexpr TRange(const PointType&, const PointType&) noexcept;
       constexpr TRange(const MemberType&, const MemberType&) noexcept;
 
-   #if LANGULUS_SIMD(128BIT)
-      TRange(const simde__m128&)  noexcept;
-      TRange(const simde__m128d&) noexcept;
-      TRange(const simde__m128i&) noexcept;
-   #endif
-
-   #if LANGULUS_SIMD(256BIT)
-      TRange(const simde__m256&)  noexcept;
-      TRange(const simde__m256d&) noexcept;
-      TRange(const simde__m256i&) noexcept;
-   #endif
-
-   #if LANGULUS_SIMD(512BIT)
-      TRange(const simde__m512&)  noexcept;
-      TRange(const simde__m512d&) noexcept;
-      TRange(const simde__m512i&) noexcept;
-   #endif
-
+      TRange(const CT::SIMD auto&) noexcept;
       TRange(Describe&&);
 
       ///                                                                     
       ///   Assignment                                                        
       ///                                                                     
-      constexpr TRange& operator = (const TRange&) noexcept = default;
-      constexpr TRange& operator = (const CT::RangeBased auto&) noexcept;
-      constexpr TRange& operator = (const CT::VectorBased auto&) noexcept;
-      constexpr TRange& operator = (const CT::ScalarBased auto&) noexcept;
+      constexpr auto operator = (const TRange&) noexcept -> TRange& = default;
+      constexpr auto operator = (const CT::RangeBased auto&) noexcept -> TRange&;
+      constexpr auto operator = (const CT::VectorBased auto&) noexcept -> TRange&;
+      constexpr auto operator = (const CT::ScalarBased auto&) noexcept -> TRange&;
 
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
+
       NOD() explicit operator Anyness::Text() const;
       NOD() explicit operator Flow::Code() const;
 
-      constexpr TRange& Embrace(const auto&) noexcept;
-      constexpr TRange& ConstrainBy(const auto&) noexcept;
+      constexpr auto Embrace(const auto&) noexcept -> TRange&;
+      constexpr auto ConstrainBy(const auto&) noexcept -> TRange&;
 
-      NOD() const PointType& GetMin() const noexcept;
-      NOD() const PointType& GetMax() const noexcept;
-      NOD() PointType Length() const noexcept;
-      NOD() PointType Center() const noexcept;
+      NOD() auto GetMin() const noexcept -> const PointType&;
+      NOD() auto GetMax() const noexcept -> const PointType&;
+      NOD() auto Length() const noexcept -> PointType;
+      NOD() auto Center() const noexcept -> PointType;
+
       NOD() constexpr bool IsDegenerate() const noexcept;
       NOD() constexpr bool Inside(const PointType&) const noexcept;
       NOD() constexpr bool IsInsideHalfClosed(const PointType&) const noexcept;
-      NOD() constexpr PointType ClampRev(const PointType&) const noexcept;
-      NOD() constexpr PointType Clamp(const PointType&) const noexcept;
+      NOD() constexpr auto ClampRev(const PointType&) const noexcept -> PointType;
+      NOD() constexpr auto Clamp(const PointType&) const noexcept -> PointType;
 
-      NOD() constexpr TRange  operator |  (const TRange&) const noexcept;
-            constexpr TRange& operator |= (const TRange&)       noexcept;
+      NOD() constexpr auto operator |  (const TRange&) const noexcept -> TRange ;
+            constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
 
-      NOD() constexpr       MemberType& operator [] (Offset)       noexcept;
-      NOD() constexpr const MemberType& operator [] (Offset) const noexcept;
+      NOD() constexpr auto operator [] (Offset)       noexcept ->       MemberType&;
+      NOD() constexpr auto operator [] (Offset) const noexcept -> const MemberType&;
    };
    #pragma pack(pop)
 
