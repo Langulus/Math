@@ -53,56 +53,11 @@ namespace Langulus::Math
       : mMin {min}
       , mMax {max} {}
    
-#if LANGULUS_SIMD(128BIT)
+   /// Create from registers                                                  
    TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m128& source) noexcept {
+   TME()::TRange(const CT::SIMD auto& source) noexcept {
       SIMD::Store(source, mArray);
    }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m128d& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m128i& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-#endif
-
-#if LANGULUS_SIMD(256BIT)
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m256& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m256d& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m256i& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-#endif
-
-#if LANGULUS_SIMD(512BIT)
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m512& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m512d& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const simde__m512i& source) noexcept {
-      SIMD::Store(source, mArray);
-   }
-#endif
    
    /// Construct from a descriptor                                            
    ///   @param describe - the descriptor to scan                             
@@ -145,7 +100,7 @@ namespace Langulus::Math
    ///   @param r - the range to copy                                         
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::RangeBased auto& r) noexcept {
+   constexpr auto TME()::operator = (const CT::RangeBased auto& r) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(r)};
    }
 
@@ -153,7 +108,7 @@ namespace Langulus::Math
    ///   @param v - the vector to copy                                        
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::VectorBased auto& v) noexcept {
+   constexpr auto TME()::operator = (const CT::VectorBased auto& v) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(v)};
    }
   
@@ -161,16 +116,14 @@ namespace Langulus::Math
    ///   @param s - the scalar value                                          
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator = (const CT::ScalarBased auto& s) noexcept {
+   constexpr auto TME()::operator = (const CT::ScalarBased auto& s) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(s)};
    }
 
    /// Set only a specific component                                          
    ///   @param c - the component to overwrite                                
    ///   @return a reference to this vector                                   
-   TEMPLATE()
-   template<CT::ScalarBased N, CT::Dimension D>
-   LANGULUS(INLINED)
+   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& c) noexcept {
       return *new (this) TRange {PointType {c}};
    }
@@ -195,36 +148,36 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::Embrace(const auto& other) noexcept {
+   constexpr auto TME()::Embrace(const auto& other) noexcept -> TRange& {
       mMin = Min(mMin, other);
       mMax = Max(mMax, other);
       return *this;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::ConstrainBy(const auto& limits) noexcept {
+   constexpr auto TME()::ConstrainBy(const auto& limits) noexcept -> TRange& {
       mMin = Clamp(mMin, limits.mMin, limits.mMax);
       mMax = Clamp(mMax, limits.mMin, limits.mMax);
       return *this;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   const typename TME()::PointType& TME()::GetMin() const noexcept {
+   auto TME()::GetMin() const noexcept -> const PointType& {
       return mMin;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   const typename TME()::PointType& TME()::GetMax() const noexcept {
+   auto TME()::GetMax() const noexcept -> const PointType& {
       return mMax;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   typename TME()::PointType TME()::Length() const noexcept {
+   auto TME()::Length() const noexcept -> PointType {
       return mMax - mMin;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   typename TME()::PointType TME()::Center() const noexcept {
+   auto TME()::Center() const noexcept -> PointType {
       return mMin + Length() * 0.5f;
    }
 
@@ -244,17 +197,17 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr typename TME()::PointType TME()::ClampRev(const PointType& pos) const noexcept {
+   constexpr auto TME()::ClampRev(const PointType& pos) const noexcept -> PointType {
       return pos.ClampRev(mMin, mMax);
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr typename TME()::PointType TME()::Clamp(const PointType& pos) const noexcept {
+   constexpr auto TME()::Clamp(const PointType& pos) const noexcept -> PointType {
       return pos.Clamp(mMin, mMax);
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME() TME()::operator | (const TME()& a) const noexcept {
+   constexpr auto TME()::operator | (const TME()& a) const noexcept -> TRange {
       return {
          mMin.Clamp(a.mMin, a.mMax),
          mMax.Clamp(a.mMin, a.mMax)
@@ -262,7 +215,7 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()& TME()::operator |= (const TME()& a) noexcept {
+   constexpr auto TME()::operator |= (const TME()& a) noexcept -> TRange& {
       *this = *this | a;
    }
    
@@ -273,12 +226,12 @@ namespace Langulus::Math
    ///      minX minY minZ ... maxX            maxY            maxZ ...       
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TypeOf<T>& TME()::operator [] (const Offset a) noexcept {
+   constexpr auto TME()::operator [] (const Offset a) noexcept -> MemberType& {
       return mArray[a];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const TypeOf<T>& TME()::operator [] (const Offset a) const noexcept {
+   constexpr auto TME()::operator [] (const Offset a) const noexcept -> const MemberType& {
       return mArray[a];
    }
 
@@ -434,8 +387,7 @@ namespace Langulus::Math
    ///                                                                        
 
    /// Add                                                                    
-   template<class T1, class T2>
-   LANGULUS(INLINED)
+   template<class T1, class T2> LANGULUS(INLINED)
    auto& operator += (TRange<T1>& me, const TRange<T2>& other) noexcept {
       me.mMin += other.mMin;
       me.mMax += other.mMax;
@@ -443,8 +395,7 @@ namespace Langulus::Math
    }
 
    /// Subtract                                                               
-   template<class T1, class T2>
-   LANGULUS(INLINED)
+   template<class T1, class T2> LANGULUS(INLINED)
    auto& operator -= (TRange<T1>& me, const TRange<T2>& other) noexcept {
       me.mMin -= other.mMin;
       me.mMax -= other.mMax;
@@ -452,8 +403,7 @@ namespace Langulus::Math
    }
 
    /// Multiply                                                               
-   template<class T1, class T2>
-   LANGULUS(INLINED)
+   template<class T1, class T2> LANGULUS(INLINED)
    auto& operator *= (TRange<T1>& me, const TRange<T2>& other) noexcept {
       me.mMin *= other.mMin;
       me.mMax *= other.mMax;
@@ -461,8 +411,7 @@ namespace Langulus::Math
    }
 
    /// Divide                                                                 
-   template<class T1, class T2>
-   LANGULUS(INLINED)
+   template<class T1, class T2> LANGULUS(INLINED)
    auto& operator /= (TRange<T1>& me, const TRange<T2>& other) {
       me.mMin /= other.mMin;
       me.mMax /= other.mMax;

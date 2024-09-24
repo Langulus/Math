@@ -16,6 +16,7 @@
 
 #include <Math/Config.hpp>
 #include <Math/Vector.hpp>
+#include <Math/Range.hpp>
 #include <Math/Number.hpp>
 
 #define CATCH_CONFIG_RUNNER
@@ -28,6 +29,7 @@ int main(int argc, char* argv[]) {
    Math::RegisterTraits();
    Math::RegisterVerbs();
    Math::RegisterVectors();
+   Math::RegisterRanges();
 
 	Catch::Session session;
 	return session.run(argc, argv);
