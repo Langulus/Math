@@ -6,5 +6,20 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../source/Numbers/TNumber.inl"
-#include "../../source/Numbers/Infinity.hpp"
+#include "TNumber.hpp"
+
+
+namespace Langulus::Math
+{
+
+   ///                                                                        
+   ///   Infinity representation for use in descriptors                       
+   ///                                                                        
+   struct Infinity {
+      int mOrder;
+   };
+
+} // namespace Langulus::Math
+
+LANGULUS_DEFINE_CONSTANT(Infinity, ::Langulus::Math::Infinity {1},
+   "Infinity", "First order of infinity")

@@ -21,7 +21,6 @@ namespace Langulus::Math
       }
    };
 
-
    /// Register all commonly used vector types and constants, so they can be  
    /// instantiated from scripts                                              
    void RegisterVectors() {
