@@ -94,3 +94,84 @@ namespace Langulus::Math
    }
 
 } // namespace Langulus::Math
+
+
+LANGULUS_DEFINE_CONSTANT(LevelHuman,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Human},
+   "Level::Human", "A canonical human level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelAsteroid,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Asteroid},
+   "Level::Asteroid", "A canonical asteroid level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelPlanet,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Planet},
+   "Level::Planet", "A canonical planet level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelSystem,
+   ::Langulus::Math::Level {::Langulus::Math::Level::System},
+   "Level::System", "A canonical system level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelGalaxy,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Galaxy},
+   "Level::Galaxy", "A canonical galaxy level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelUniverse,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Universe},
+   "Level::Universe", "A canonical universe level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelCell,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Cell},
+   "Level::Cell", "A canonical cell level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelVirus,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Virus},
+   "Level::Virus", "A canonical virus level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelAtom,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Atom},
+   "Level::Atom", "A canonical atom level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelNeutron,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Neutron},
+   "Level::Neutron", "A canonical neutron level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelQuark,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Quark},
+   "Level::Quark", "A canonical quark level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelNeutrino,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Neutrino},
+   "Level::Neutrino", "A canonical neutrino level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelPlanck,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Planck},
+   "Level::Planck", "A canonical Planck level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelMax,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Max},
+   "Level::Max", "A canonical max level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelMin,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Min},
+   "Level::Min", "A canonical min level"
+)
+
+LANGULUS_DEFINE_CONSTANT(LevelDefault,
+   ::Langulus::Math::Level {::Langulus::Math::Level::Default},
+   "Level::Default", "The default level"
+)
