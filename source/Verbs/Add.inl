@@ -8,6 +8,7 @@
 #pragma once
 #include "Add.hpp"
 #include "Arithmetic.inl"
+#include "../Numbers/Infinity.hpp"
 
 #if 0
    #define VERBOSE_ADD(...) Logger::Verbose(__VA_ARGS__)
@@ -173,6 +174,19 @@ namespace Langulus::Verbs
                int32_t, int64_t,
                int8_t, int16_t
             >(verb, verb);
+         }
+         else {
+            // Don't do anything                                        
+            verb << verb.GetArgument();
+            return true;
+         }
+      }
+      else if (verb.CastsTo<Math::Infinity>()) {
+         if (verb.GetMass() < 0) {
+            // Negate infinity                                          
+            verb.ForEach([&](Math::Infinity i) {
+               verb << Math::Infinity {-i.mOrder};
+            });
          }
          else {
             // Don't do anything                                        

@@ -12,6 +12,9 @@
 namespace Langulus::Math
 {
 
+   LANGULUS_API(MATH) extern void RegisterNumbers();
+
+
    ///                                                                        
    ///   Templated number                                                     
    ///                                                                        
@@ -44,7 +47,10 @@ namespace Langulus::Math
             , A::Real
             , Conditional<CT::Signed<T>
                , A::SignedInteger
-               , A::UnsignedInteger>>);
+               , A::UnsignedInteger
+            >
+         >
+      );
       LANGULUS_CONVERTS_TO(Flow::Code);
 
       static constexpr Count MemberCount = 1;
