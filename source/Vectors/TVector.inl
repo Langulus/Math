@@ -107,7 +107,9 @@ namespace Langulus::Math
       static_assert(D::Index < S, "LHS doesn't have such dimension");
       all[D::Index] = Adapt(source.mValue);
    }
-   
+
+   /// Construct from a SIMD register                                         
+   ///   @param source - register                                             
    TEMPLATE() LANGULUS(INLINED)
    TME()::TVector(const CT::SIMD auto& source) noexcept {
       SIMD::Store(source, all);

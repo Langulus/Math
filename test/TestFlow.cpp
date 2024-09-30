@@ -24,11 +24,9 @@ SCENARIO("Parsing scripts", "[code]") {
       const auto code = "- 4 ^ 2"_code;
 
       WHEN("Parsed without optimization") {
-         Many required = Verbs::Add {
-            Many {Verbs::Exponent {Real(2)}
-               .SetSource(Real(4))
-            }
-         }.SetMass(-1);
+         Many required = Verbs::Add {Many {
+            Verbs::Exponent {Real(2)}.SetSource(Real(4))
+         }}.SetMass(-1);
 
          const auto parsed = code.Parse(false);
          DumpResults(code, parsed, required);
@@ -48,13 +46,13 @@ SCENARIO("Parsing scripts", "[code]") {
       const auto code = "- .Sampler.y ^ 2"_code;
 
       WHEN("Parsed without optimization") {
-         Many required = Verbs::Add {
-            Many {Verbs::Exponent {Real(2)}
-               .SetSource(Verbs::Select {MetaOf<Traits::Y>()}
-                  .SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
+         Many required = Verbs::Add {Many {
+            Verbs::Exponent {Real(2)}.SetSource(
+               Verbs::Select {MetaOf<Traits::Y>()}.SetSource(
+                  Verbs::Select {MetaOf<Traits::Sampler>()}
                )
-            }
-         }.SetMass(-1);
+            )
+         }}.SetMass(-1);
 
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
@@ -66,26 +64,24 @@ SCENARIO("Parsing scripts", "[code]") {
       const auto code = "Vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))"_code;
 
       WHEN("Parsed without optimization") {
-         Many required = Construct::From<Vec2>(
-            Verbs::Select {MetaOf<Traits::X>()}
-               .SetSource(
-                  Verbs::Select {MetaOf<Traits::Sampler>()}
-               ),
-            Verbs::Add {
-               Many {Verbs::Add {
-                  Many {Verbs::Exponent {Real(2)}
-                     .SetSource(
-                        Verbs::Select {MetaOf<Traits::Y>()}
-                           .SetSource(Verbs::Select {MetaOf<Traits::Sampler>()})
-                     )}
-               }.SetSource(
-                  Verbs::Multiply {Real(8.75)}
-                     .SetSource(
-                        Verbs::Select {MetaOf<Traits::Time>()}
+         Many required = Construct::From<Vec2>(Many::Wrap<Verb>(
+            Verbs::Select {MetaOf<Traits::X>()}.SetSource(
+               Verbs::Select {MetaOf<Traits::Sampler>()}
+            ),
+            Verbs::Add {Many {
+               Verbs::Add {Many {
+                  Verbs::Exponent {Real(2)}.SetSource(
+                     Verbs::Select {MetaOf<Traits::Y>()}.SetSource(
+                        Verbs::Select {MetaOf<Traits::Sampler>()}
                      )
-               ).SetMass(-1)}
-            }.SetMass(-1)
-         );
+                  )
+               }}.SetSource(
+                  Verbs::Multiply {Real(8.75)}.SetSource(
+                     Verbs::Select {MetaOf<Traits::Time>()}
+                  )
+               ).SetMass(-1)
+            }}.SetMass(-1)
+         ));
 
          const auto parsed = code.Parse();
          DumpResults(code, parsed, required);
@@ -95,11 +91,9 @@ SCENARIO("Parsing scripts", "[code]") {
    
    GIVEN("The script: Create^1(Count(1)) Add^3 2") {
       const Code code = "Create^1(Count(1)) Add^3 2";
-      const Many required = Verbs::Add {Real(2)}
-         .SetSource(
-            Verbs::Create {Traits::Count {Real(1)}}
-               .SetRate(1))
-         .SetRate(3);
+      const Many required = Verbs::Add {Real(2)}.SetSource(
+            Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
+         ).SetRate(3);
 
       WHEN("Parsed") {
          const auto parsed = code.Parse();
@@ -110,11 +104,9 @@ SCENARIO("Parsing scripts", "[code]") {
 
    GIVEN("The script: Create^1(Count(1)) Add^3(2)") {
       const Code code = "Create^1(Count(1)) Add^3(2)";
-      const Many required = Verbs::Add {Real(2)}
-         .SetSource(
-            Verbs::Create {Traits::Count {Real(1)}}
-               .SetRate(1))
-         .SetRate(3);
+      const Many required = Verbs::Add {Real(2)}.SetSource(
+            Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
+         ).SetRate(3);
 
       WHEN("Parsed") {
          const auto parsed = code.Parse();
@@ -126,13 +118,10 @@ SCENARIO("Parsing scripts", "[code]") {
    GIVEN("The script: Create^1(Count(1)) Add^2(2) Multiply^3(4)") {
       const Code code = "Create^1(Count(1)) Add^2(2) Multiply^3(4)";
       const Many multiply = Verbs::Multiply {Real(4)}
-         .SetSource(Real(2))
-         .SetRate(3);
+         .SetSource(Real(2)).SetRate(3);
       const Many required = Verbs::Add {multiply}
-         .SetRate(2)
-         .SetSource(
-            Verbs::Create {Traits::Count {Real(1)}}
-               .SetRate(1)
+         .SetRate(2).SetSource(
+            Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
          );
 
       WHEN("Parsed") {
@@ -144,10 +133,8 @@ SCENARIO("Parsing scripts", "[code]") {
 
    GIVEN("The script: Create^1(Count(1)) + 2 * 4") {
       const Code code = "Create^1(Count(1)) + 2 * 4";
-      const Many required = Verbs::Add {Real(8)}
-         .SetSource(
-            Verbs::Create {Traits::Count {Real(1)}}
-               .SetRate(1)
+      const Many required = Verbs::Add {Real(8)}.SetSource(
+            Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
          );
 
       WHEN("Parsed") {
@@ -162,10 +149,8 @@ SCENARIO("Parsing scripts", "[code]") {
       const Many exponent = Verbs::Exponent {Real(2)}
          .SetSource(Real(14));
       const Many addition = Verbs::Add {exponent}
-         .SetMass(-1)
-         .SetSource(
-            Verbs::Multiply {Real(8.75)}
-               .SetSource(Real(2))
+         .SetMass(-1).SetSource(
+            Verbs::Multiply {Real(8.75)}.SetSource(Real(2))
          );
       const Many required = Verbs::Add {addition}
          .SetMass(-1);
