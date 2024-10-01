@@ -26,7 +26,6 @@ using namespace ::Langulus::Math;
 /// A mockup of a fraction                                                    
 struct Fraction : public Flow::Resolvable {
    LANGULUS(ABSTRACT) false;
-   LANGULUS(UNINSERTABLE) false;
    LANGULUS_BASES(Resolvable);
    Fraction() : Resolvable {this} {}
 };
