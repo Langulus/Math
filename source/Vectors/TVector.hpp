@@ -669,8 +669,7 @@ namespace Langulus::Math
       ///                                                                     
       template<TARGS(V) = 0, Offset...I>
       struct TProxyArray : TVector<VT, sizeof...(I), VD> {
-         LANGULUS(UNINSERTABLE) true;
-         LANGULUS(REFLECTABLE) false;
+         LANGULUS(ACT_AS) void;
          static_assert(sizeof...(I) > 1, "Invalid proxy array size");
          static constexpr bool CTTI_VectorTrait = false;
          static constexpr bool CTTI_ProxyArray = true;
