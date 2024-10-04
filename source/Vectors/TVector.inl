@@ -1683,13 +1683,13 @@ LANGULUS_DEFINE_CONSTANT(Left, ::Langulus::Axes::Left<>,
    "Axes::Left", "A canonical left vector")
 
 LANGULUS_DEFINE_CONSTANT(X, ::Langulus::Axes::X<>,
-   "Axes::XAxis", "A canonical X axis")
+   "Axes::X", "A canonical X axis")
 LANGULUS_DEFINE_CONSTANT(Y, ::Langulus::Axes::Y<>,
-   "Axes::YAxis", "A canonical Y axis")
+   "Axes::Y", "A canonical Y axis")
 LANGULUS_DEFINE_CONSTANT(Z, ::Langulus::Axes::Z<>,
-   "Axes::ZAxis", "A canonical Z axis")
+   "Axes::Z", "A canonical Z axis")
 LANGULUS_DEFINE_CONSTANT(W, ::Langulus::Axes::W<>,
-   "Axes::WAxis", "A canonical W axis")
+   "Axes::W", "A canonical W axis")
 
 LANGULUS_DEFINE_CONSTANT(Origin, ::Langulus::Axes::Origin<>,
    "Origin", "A canonical zero vector")

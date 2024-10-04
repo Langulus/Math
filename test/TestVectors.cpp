@@ -224,17 +224,17 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
          }
          else if constexpr (CountOf<T> == 2) {
             const auto serialized = static_cast<Anyness::Text>(x);
-            const Anyness::Text required = MetaDataOf<T>()->mToken + "(0, 5)"_text;
+            const Anyness::Text required = MetaDataOf<T>() + "(0, 5)"_text;
             REQUIRE(serialized == required);
          }
          else if constexpr (CountOf<T> == 3) {
             const auto serialized = static_cast<Anyness::Text>(x);
-            const Anyness::Text required = MetaDataOf<T>()->mToken + "(0, 5, 12)"_text;
+            const Anyness::Text required = MetaDataOf<T>() + "(0, 5, 12)"_text;
             REQUIRE(serialized == required);
          }
          else if constexpr (CountOf<T> == 4) {
             const auto serialized = static_cast<Anyness::Text>(x);
-            const Anyness::Text required = MetaDataOf<T>()->mToken + "(0, 5, 12, 1)"_text;
+            const Anyness::Text required = MetaDataOf<T>() + "(0, 5, 12, 1)"_text;
             REQUIRE(serialized == required);
          }
       }
@@ -246,17 +246,17 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
          }
          else if constexpr (CountOf<T> == 2) {
             const auto serialized = static_cast<Flow::Code>(x);
-            const Flow::Code required = MetaDataOf<T>()->mToken + "(0, 5)"_text;
+            const Flow::Code required = MetaDataOf<T>() + "(0, 5)"_text;
             REQUIRE(serialized == required);
          }
          else if constexpr (CountOf<T> == 3) {
             const auto serialized = static_cast<Flow::Code>(x);
-            const Flow::Code required = MetaDataOf<T>()->mToken + "(0, 5, 12)"_text;
+            const Flow::Code required = MetaDataOf<T>() + "(0, 5, 12)"_text;
             REQUIRE(serialized == required);
          }
          else if constexpr (CountOf<T> == 4) {
             const auto serialized = static_cast<Flow::Code>(x);
-            const Flow::Code required = MetaDataOf<T>()->mToken + "(0, 5, 12, 1)"_text;
+            const Flow::Code required = MetaDataOf<T>() + "(0, 5, 12, 1)"_text;
             REQUIRE(serialized == required);
          }
       }
@@ -279,17 +279,17 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
             }
             else if constexpr (CountOf<T> == 2) {
                const auto serialized = static_cast<Anyness::Text>(x);
-               const Anyness::Text required = MetaDataOf<T>()->mToken + "(0, ~5)"_text;
+               const Anyness::Text required = MetaDataOf<T>() + "(0, ~5)"_text;
                REQUIRE(serialized == required);
             }
             else if constexpr (CountOf<T> == 3) {
                const auto serialized = static_cast<Anyness::Text>(x);
-               const Anyness::Text required = MetaDataOf<T>()->mToken + "(0, ~5, ~-12.53)"_text;
+               const Anyness::Text required = MetaDataOf<T>() + "(0, ~5, ~-12.53)"_text;
                REQUIRE(serialized == required);
             }
             else if constexpr (CountOf<T> == 4) {
                const auto serialized = static_cast<Anyness::Text>(x);
-               const Anyness::Text required = MetaDataOf<T>()->mToken + "(0, ~5, ~-12.53, 6666.1)"_text;
+               const Anyness::Text required = MetaDataOf<T>() + "(0, ~5, ~-12.53, 6666.1)"_text;
                REQUIRE(serialized == required);
             }
          }
@@ -301,17 +301,17 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
             }
             else if constexpr (CountOf<T> == 2) {
                const auto serialized = static_cast<Flow::Code>(x);
-               const Flow::Code required = MetaDataOf<T>()->mToken + "(0, 5.00001)"_text;
+               const Flow::Code required = MetaDataOf<T>() + "(0, 5.00001)"_text;
                REQUIRE(serialized == required);
             }
             else if constexpr (CountOf<T> == 3) {
                const auto serialized = static_cast<Flow::Code>(x);
-               const Flow::Code required = MetaDataOf<T>()->mToken + "(0, 5.00001, -12.532)"_text;
+               const Flow::Code required = MetaDataOf<T>() + "(0, 5.00001, -12.532)"_text;
                REQUIRE(serialized == required);
             }
             else if constexpr (CountOf<T> == 4) {
                const auto serialized = static_cast<Flow::Code>(x);
-               const Flow::Code required = MetaDataOf<T>()->mToken + "(0, 5.00001, -12.532, 6666.1)"_text;
+               const Flow::Code required = MetaDataOf<T>() + "(0, 5.00001, -12.532, 6666.1)"_text;
                REQUIRE(serialized == required);
             }
          }
