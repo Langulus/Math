@@ -187,8 +187,10 @@ namespace Langulus
    template<CT::Angle T, CT::Dimension D>
    constexpr auto CustomName(Of<Math::TAngle<T,D>>&&) noexcept {
       constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TAngle<T, D>>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
+      // Provision a bit more in case default class name turns out to   
+      // be too small (g++-14 complains for some reason)                
+      ::std::array<char, defaultClassName.size() + 16> name {};
+      ::std::size_t offset = 0;
 
       // Write dimension name                                           
       if constexpr (D::Index == 0) {
