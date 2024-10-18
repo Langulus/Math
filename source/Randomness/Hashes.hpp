@@ -127,7 +127,7 @@ namespace Langulus::Math
                   return Frac((p4.xxyz() + p4.yzzw()) * p4.zywx());
                }
             }
-            else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 1");
+            else static_assert(false, "Hash function with this output doesn't exist, for input 1");
          }
          else if constexpr (DIN == 2) {
             if constexpr (DOUT == 1) {
@@ -213,7 +213,7 @@ namespace Langulus::Math
                   return Frac((p4.xxyz() + p4.yzzw()) * p4.zywx());
                }
             }
-            else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 2");
+            else static_assert(false, "Hash function with this output doesn't exist, for input 2");
          }
          else if constexpr (DIN == 3) {
             if constexpr (DOUT == 1) {
@@ -298,7 +298,7 @@ namespace Langulus::Math
                   return Frac((p4.xxyz() + p4.yzzw()) * p4.zywx());
                }
             }
-            else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 3");
+            else static_assert(false, "Hash function with this output doesn't exist, for input 3");
          }
          else if constexpr (DIN == 4) {
             if constexpr (DOUT == 1) {
@@ -383,9 +383,9 @@ namespace Langulus::Math
                   return Frac((p.xxyz() + p.yzzw()) * p.zywx());
                }
             }
-            else LANGULUS_ERROR("Hash function with this output doesn't exist, for input 4");
+            else static_assert(false, "Hash function with this output doesn't exist, for input 4");
          }
-         else LANGULUS_ERROR("Hash function with this input doesn't exist");
+         else static_assert(false, "Hash function with this input doesn't exist");
       }
    };
 

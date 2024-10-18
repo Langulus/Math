@@ -155,7 +155,7 @@ namespace Langulus::Math
       else if constexpr (CT::Same<D, Traits::Z>)
          return FromAxis(TVector<T, 4>{0, 0, 1, 0}, angle);
       else
-         LANGULUS_ERROR("Unsupported dimension");
+         static_assert(false, "Unsupported dimension");
    }
 
    /// Constructor from axii and angles                                       
