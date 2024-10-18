@@ -205,7 +205,7 @@ namespace Langulus
          for (auto i : "Roll")
             name[offset++] = i;
       }
-      else LANGULUS_ERROR("Unsupported dimension");
+      else static_assert(false, "Unsupported dimension");
 
       // Write angle suffix if degrees                                  
       // Radians have no suffix by default                              

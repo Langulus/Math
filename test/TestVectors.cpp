@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
          else if constexpr (C == 4)
             REQUIRE(x.HSum() == (1 + 5 + 12 + 1));
          else
-            LANGULUS_ERROR("TODO");
+            static_assert(false, "TODO");
       }
 
 		WHEN("Horizontally multiplying a vector") {
@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
          else if constexpr (C == 4)
             REQUIRE(x.HMul() == (1 * 5 * 12 * 1));
          else
-            LANGULUS_ERROR("TODO");
+            static_assert(false, "TODO");
 		}
 
 		WHEN("Testing swizzling (const)") {
@@ -115,7 +115,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
             REQUIRE(cx.zyxw() == TVector<E, 4> {12, 5,  1, 1});
             REQUIRE(cx.wyzx() == TVector<E, 4> { 1, 5, 12, 1});
          }
-         else LANGULUS_ERROR("TODO");
+         else static_assert(false, "TODO");
       }
 
 		WHEN("Testing swizzling (mutable, using proxy arrays)") {
@@ -145,7 +145,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
             REQUIRE(x.zyxw() == TVector<E, 4> {12, 5,  1, 1});
             REQUIRE(x.wyzx() == TVector<E, 4> { 1, 5, 12, 1});
          }
-         else LANGULUS_ERROR("TODO");
+         else static_assert(false, "TODO");
       }
 	}
 

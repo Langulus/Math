@@ -39,7 +39,7 @@ namespace Langulus::Math
             ::std::uniform_real_distribution<T> dist(-1, 1);
             return dist(mStdGenerator);
          }
-         else LANGULUS_ERROR("Unsupported number type");
+         else static_assert(false, "Unsupported number type");
       }
 
       /// Provide random numbers for different number types, in a range       
@@ -73,7 +73,7 @@ namespace Langulus::Math
             ::std::uniform_real_distribution<T> dist(min, max);
             result = dist(mStdGenerator);
          }
-         else LANGULUS_ERROR("Unsupported number type");
+         else static_assert(false, "Unsupported number type");
 
          if constexpr (!MIN_INCLUSIVE) {
             // Offset from lower limit                                  

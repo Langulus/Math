@@ -27,7 +27,8 @@ namespace Langulus::Math
          mValue = a.mValue;
       else if constexpr (CT::Convertible<ALT, T>)
          mValue = static_cast<T>(a);
-      else LANGULUS_ERROR("Bad number construction");
+      else
+         static_assert(false, "Bad number construction");
    }
 
    /// Assign any number-convertible thing                                    
@@ -42,7 +43,8 @@ namespace Langulus::Math
          mValue = a.mValue;
       else if constexpr (CT::Convertible<ALT, T>)
          mValue = static_cast<T>(a);
-      else LANGULUS_ERROR("Bad number assignment");
+      else
+         static_assert(false, "Bad number assignment");
       return *this;
    }
 
@@ -243,7 +245,7 @@ namespace Langulus::Math
                * ::std::floor(FundamentalCast(lhs) / FundamentalCast(rhs))};
          }
       }
-      else LANGULUS_ERROR("Incompatible custom numbers for modulation");
+      else static_assert(false, "Incompatible custom numbers for modulation");
    }
 
    template<CT::NumberBased LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
@@ -271,7 +273,7 @@ namespace Langulus::Math
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) << FundamentalCast(rhs)};
       else
-         LANGULUS_ERROR("Incompatible custom numbers for left bitshift");
+         static_assert(false, "Incompatible custom numbers for left bitshift");
    }
 
    template<CT::NumberBased LHS, CT::BuiltinNumber N>
@@ -295,7 +297,7 @@ namespace Langulus::Math
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) >> FundamentalCast(rhs)};
       else
-         LANGULUS_ERROR("Incompatible custom numbers for right bitshift");
+         static_assert(false, "Incompatible custom numbers for right bitshift");
    }
 
    template<CT::NumberBased LHS, CT::BuiltinNumber N>
@@ -319,7 +321,7 @@ namespace Langulus::Math
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) ^ FundamentalCast(rhs)};
       else
-         LANGULUS_ERROR("Incompatible custom numbers for xor");
+         static_assert(false, "Incompatible custom numbers for xor");
    }
 
    template<CT::NumberBased LHS, CT::BuiltinNumber N>

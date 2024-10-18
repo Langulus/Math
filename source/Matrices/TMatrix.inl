@@ -480,7 +480,7 @@ namespace Langulus::Math
    constexpr auto TME()::GetRight() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][0], mColumns[1][0], mColumns[2][0]};
-      else LANGULUS_ERROR("Can't get right axis of this matrix");
+      else static_assert(false, "Can't get right axis of this matrix");
    }
 
    /// Get up axis                                                            
@@ -488,7 +488,7 @@ namespace Langulus::Math
    constexpr auto TME()::GetUp() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][1], mColumns[1][1], mColumns[2][1]};
-      else LANGULUS_ERROR("Can't get up axis of this matrix");
+      else static_assert(false, "Can't get up axis of this matrix");
    }
 
    /// Get view axis                                                          
@@ -496,7 +496,7 @@ namespace Langulus::Math
    constexpr auto TME()::GetView() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {mColumns[0][2], mColumns[1][2], mColumns[2][2]};
-      else LANGULUS_ERROR("Can't get view axis of this matrix");
+      else static_assert(false, "Can't get view axis of this matrix");
    }
 
    /// Get translation                                                        
@@ -504,7 +504,7 @@ namespace Langulus::Math
    constexpr auto TME()::GetScale() const noexcept -> TVector<T, 3> {
       if constexpr (IsSquare and Rows > 2)
          return {GetRight().Length(), GetUp().Length(), GetView().Length()};
-      else LANGULUS_ERROR("Can't get translation of this matrix");
+      else static_assert(false, "Can't get translation of this matrix");
    }
 
    /// Get translation                                                        
@@ -797,7 +797,7 @@ namespace Langulus::Math
             (n12 * n23 * n31 - n13 * n22 * n31 + n13 * n21 * n32 - n11 * n23 * n32 - n12 * n21 * n33 + n11 * n22 * n33)* detInv,
          };
       }
-      else LANGULUS_ERROR("Matrix inversion code not implemented");
+      else static_assert(false, "Matrix inversion code not implemented");
    }
 
    
