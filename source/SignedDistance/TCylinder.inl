@@ -25,7 +25,7 @@ namespace Langulus::Math
       else if constexpr (CT::Same<D, Traits::Z>)
          return Length(point.xy()) - cylinder.mRadius;
       else
-         LANGULUS_ERROR("Unsupported dimension");
+         static_assert(false, "Unsupported dimension");
    };
 
 } // namespace Langulus::Math

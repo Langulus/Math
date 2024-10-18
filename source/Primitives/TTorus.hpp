@@ -58,7 +58,7 @@ namespace Langulus::Math
             const auto q = TVector<TypeOf<T>, 2>(point.xy().Length() - mOuterRadius, point[2]);
             return q.Length() - mInnerRadius;
          }
-         else LANGULUS_ERROR("Unsupported dimension");
+         else static_assert(false, "Unsupported dimension");
       }
    };
 

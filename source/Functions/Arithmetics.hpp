@@ -161,7 +161,7 @@ namespace Langulus::Math
       else if constexpr (CT::Signed<T>)
          return a < T {0} ? -a : a;
       else
-         LANGULUS_ERROR("T must either have Abs() method, or be a number");
+         static_assert(false, "T must either have Abs() method, or be a number");
    }
 
    /// Signed unit                                                            
@@ -179,7 +179,7 @@ namespace Langulus::Math
       else if constexpr (CT::Signed<T>)
          return a < T {0} ? T {-1} : T {1};
       else
-         LANGULUS_ERROR("T must either have Sign() method, or be a number");
+         static_assert(false, "T must either have Sign() method, or be a number");
    }
 
    /// Calculate base to the power of the exponent                            
@@ -211,7 +211,7 @@ namespace Langulus::Math
       else if constexpr (CT::Real<B, E>)
          return ::std::pow(FundamentalCast(base), FundamentalCast(exponent));
       else
-         LANGULUS_ERROR("T must either have Pow(exponent) method, or be a number");
+         static_assert(false, "T must either have Pow(exponent) method, or be a number");
    }
 
    /// Get the smallest of the provided                                       
@@ -224,7 +224,7 @@ namespace Langulus::Math
          else if constexpr (CT::Sortable<T1, T2>)
             return t1 < t2 ? Forward<T1>(t1) : Forward<T2>(t2);
          else
-            LANGULUS_ERROR("T must either have Min(t2) method, or be sortable");
+            static_assert(false, "T must either have Min(t2) method, or be sortable");
       }
       else return Min(Min(Forward<T1>(t1), Forward<T2>(t2)), Forward<TAIL>(tail)...);
    }
@@ -239,7 +239,7 @@ namespace Langulus::Math
          else if constexpr (CT::Sortable<T1, T2>)
             return t1 > t2 ? Forward<T1>(t1) : Forward<T2>(t2);
          else
-            LANGULUS_ERROR("T must either have Max(t2) method, or be sortable");
+            static_assert(false, "T must either have Max(t2) method, or be sortable");
       }
       else return Max(Max(Forward<T1>(t1), Forward<T2>(t2)), Forward<TAIL>(tail)...);
    }
@@ -255,7 +255,7 @@ namespace Langulus::Math
       else if constexpr (CT::Real<T>)
          return ::std::round(a);
       else
-         LANGULUS_ERROR("T must either have Round() method, or be a number");
+         static_assert(false, "T must either have Round() method, or be a number");
    }
 
    /// Round and return an integer                                            
@@ -274,7 +274,7 @@ namespace Langulus::Math
          const auto aa = static_cast<Double>(a) + Double {6755399441055744.0};
          return int {reinterpret_cast<const int&>(aa)};
       }
-      else LANGULUS_ERROR("T must either have Round() method, or be a number");
+      else static_assert(false, "T must either have Round() method, or be a number");
    }*/
 
    /// Floor                                                                  
@@ -289,7 +289,7 @@ namespace Langulus::Math
          const auto round_a = Round<T>(a);
          return round_a <= a ? round_a : round_a - T {1};
       }
-      else LANGULUS_ERROR("T must either have Floor() method, or be a number");
+      else static_assert(false, "T must either have Floor() method, or be a number");
    }
 
    /// Floor and return an integer                                            
@@ -311,7 +311,7 @@ namespace Langulus::Math
          const auto round_a = Round<T>(a);
          return round_a >= a ? round_a : round_a + T(1);
       }
-      else LANGULUS_ERROR("T must either have Ceil() method, or be a number");
+      else static_assert(false, "T must either have Ceil() method, or be a number");
    }
 
    /// Ceil and return an integer                                             
@@ -328,7 +328,7 @@ namespace Langulus::Math
       if constexpr (CT::Multipliable<T, T>)
          return n * n;
       else
-         LANGULUS_ERROR("T must be CT::Multipliable");
+         static_assert(false, "T must be CT::Multipliable");
    }
 
    namespace Detail
@@ -379,7 +379,7 @@ namespace Langulus::Math
          } while (r < p);
          return p;
       }
-      else LANGULUS_ERROR("T must either have Sqrt() method, or be a number");
+      else static_assert(false, "T must either have Sqrt() method, or be a number");
    }
    
    /// Get a fractional part                                                  
@@ -393,7 +393,7 @@ namespace Langulus::Math
       else if constexpr (CT::Integer<T>)
          return T {0};
       else
-         LANGULUS_ERROR("T must either have Frac() method, or be a number");
+         static_assert(false, "T must either have Frac() method, or be a number");
    }
 
    /// Modulate                                                               
@@ -405,7 +405,7 @@ namespace Langulus::Math
       else if constexpr (CT::Number<T1, T2>)
          return x - y * Floor(x / y);
       else
-         LANGULUS_ERROR("T must either have Mod(y) method, or be a number");
+         static_assert(false, "T must either have Mod(y) method, or be a number");
    }
 
    /// Remaps a [0; 1] range to a [-1; 1] range                               
@@ -424,7 +424,7 @@ namespace Langulus::Math
       else if constexpr (CT::Number<T, MIN, MAX>)
          return v < min ? min : (v > max ? max : v);
       else
-         LANGULUS_ERROR("T must either have Clamp(min, max) method, or be a number");
+         static_assert(false, "T must either have Clamp(min, max) method, or be a number");
    }
 
    /// Clamp a value inside the interval [0:1]                                
@@ -447,7 +447,7 @@ namespace Langulus::Math
             return v - min > halfd ? max : min;
          return v;
       }
-      else LANGULUS_ERROR("T must either have ClampRev(min, max) method, or be a number");
+      else static_assert(false, "T must either have ClampRev(min, max) method, or be a number");
    }
 
    /// Dot product                                                            
@@ -456,7 +456,8 @@ namespace Langulus::Math
    constexpr auto Dot(const T1& a, const T2& b) noexcept {
       if constexpr (CT::HasDot<T1, T2>)
          return a.Dot(b);
-      else LANGULUS_ERROR("T must have Dot(b) method");
+      else
+         static_assert(false, "T must have Dot(b) method");
    }
 
    /// Self dot product                                                       
@@ -472,7 +473,8 @@ namespace Langulus::Math
    constexpr auto Cross(const T1& a, const T2& b) noexcept {
       if constexpr (CT::HasCross<T1, T2>)
          return a.Cross(b);
-      else LANGULUS_ERROR("T must have Cross(b) method");
+      else
+         static_assert(false, "T must have Cross(b) method");
    }
 
    /// Get length (as in magnitude)                                           
@@ -486,7 +488,7 @@ namespace Langulus::Math
       else if constexpr (CT::Character<T>)
          return Abs(v);
       else
-         LANGULUS_ERROR("T must either have Length() method, or be a number");
+         static_assert(false, "T must either have Length() method, or be a number");
    }
 
    /// Distance                                                               
@@ -503,7 +505,7 @@ namespace Langulus::Math
       if constexpr (CT::HasNormalize<T>)
          return v.Normalize();
       else
-         LANGULUS_ERROR("T must have Normalize() method");
+         static_assert(false, "T must have Normalize() method");
    }
 
    /// Step function                                                          
@@ -515,7 +517,7 @@ namespace Langulus::Math
       else if constexpr (CT::Number<T, EDGE>)
          return x < edge ? T {0} : T {1};
       else
-         LANGULUS_ERROR("T must either have Step(edge) method, or be a number");
+         static_assert(false, "T must either have Step(edge) method, or be a number");
    }
 
    /// Smooth step (Hermite) interpolation, analogous to the GLSL function    
@@ -537,7 +539,7 @@ namespace Langulus::Math
       else if constexpr (CT::Number<T>)
          return ::std::exp(x);
       else
-         LANGULUS_ERROR("T must either have Exp() method, or be a number");
+         static_assert(false, "T must either have Exp() method, or be a number");
    }
 
    /// Solve 2^x                                                              
@@ -557,7 +559,7 @@ namespace Langulus::Math
          LANGULUS_ASSUME(UserAssumes, n >= 0, "Can't get sum of non-positive integers");
          return (n * (n + T {1})) / T {2};
       }
-      else LANGULUS_ERROR("T must either have Sum() method, or be a number");
+      else static_assert(false, "T must either have Sum() method, or be a number");
    }
 
    /// A Kahan summation used to minimize floating-point math error           

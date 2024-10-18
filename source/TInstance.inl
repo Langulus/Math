@@ -303,7 +303,7 @@ namespace Langulus::Math
          else if constexpr (CT::Same<D, Traits::Z>)
             mAim *= QuatType::FromAxis(GetForward(), angle * sign);
          else
-            LANGULUS_ERROR("Unsupported dimension");
+            static_assert(false, "Unsupported dimension");
       }
    }
 

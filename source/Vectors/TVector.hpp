@@ -192,25 +192,25 @@ namespace Langulus::Math
       // This is necessary to work around the dependent names in TVector
       // This will also error out, when missing (), but if you happen to
       // call them by accident, you will get a proper compile error     
-      void y()       { LANGULUS_ERROR("1D vector doesn't have 'y' component"); }
-      void second()  { LANGULUS_ERROR("1D vector doesn't have 'second' component"); }
-      void g()       { LANGULUS_ERROR("1D vector doesn't have 'g' component"); }
-      void green()   { LANGULUS_ERROR("1D vector doesn't have 'green' component"); }
-      void v()       { LANGULUS_ERROR("1D vector doesn't have 'v' component"); }
+      void y()       { static_assert(false, "1D vector doesn't have 'y' component"); }
+      void second()  { static_assert(false, "1D vector doesn't have 'second' component"); }
+      void g()       { static_assert(false, "1D vector doesn't have 'g' component"); }
+      void green()   { static_assert(false, "1D vector doesn't have 'green' component"); }
+      void v()       { static_assert(false, "1D vector doesn't have 'v' component"); }
 
-      void z()       { LANGULUS_ERROR("1D vector doesn't have 'z' component"); }
-      void third()   { LANGULUS_ERROR("1D vector doesn't have 'third' component"); }
-      void b()       { LANGULUS_ERROR("1D vector doesn't have 'b' component"); }
-      void blue()    { LANGULUS_ERROR("1D vector doesn't have 'blue' component"); }
-      void s()       { LANGULUS_ERROR("1D vector doesn't have 's' component"); }
+      void z()       { static_assert(false, "1D vector doesn't have 'z' component"); }
+      void third()   { static_assert(false, "1D vector doesn't have 'third' component"); }
+      void b()       { static_assert(false, "1D vector doesn't have 'b' component"); }
+      void blue()    { static_assert(false, "1D vector doesn't have 'blue' component"); }
+      void s()       { static_assert(false, "1D vector doesn't have 's' component"); }
 
-      void w()       { LANGULUS_ERROR("1D vector doesn't have 'w' component"); }
-      void fourth()  { LANGULUS_ERROR("1D vector doesn't have 'fourth' component"); }
-      void a()       { LANGULUS_ERROR("1D vector doesn't have 'a' component"); }
-      void alpha()   { LANGULUS_ERROR("1D vector doesn't have 'alpha' component"); }
-      void t()       { LANGULUS_ERROR("1D vector doesn't have 't' component"); }
+      void w()       { static_assert(false, "1D vector doesn't have 'w' component"); }
+      void fourth()  { static_assert(false, "1D vector doesn't have 'fourth' component"); }
+      void a()       { static_assert(false, "1D vector doesn't have 'a' component"); }
+      void alpha()   { static_assert(false, "1D vector doesn't have 'alpha' component"); }
+      void t()       { static_assert(false, "1D vector doesn't have 't' component"); }
 
-      void tail()    { LANGULUS_ERROR("1D vector doesn't have a tail"); }
+      void tail()    { static_assert(false, "1D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x);
 
@@ -250,19 +250,19 @@ namespace Langulus::Math
       // This is necessary to work around the dependent names in TVector
       // This will also error out, when missing (), but if you happen to
       // call them by accident, you will get a proper compile error     
-      void z()       { LANGULUS_ERROR("2D vector doesn't have 'z' component"); }
-      void third()   { LANGULUS_ERROR("2D vector doesn't have 'third' component"); }
-      void b()       { LANGULUS_ERROR("2D vector doesn't have 'b' component"); }
-      void blue()    { LANGULUS_ERROR("2D vector doesn't have 'blue' component"); }
-      void s()       { LANGULUS_ERROR("2D vector doesn't have 's' component"); }
+      void z()       { static_assert(false, "2D vector doesn't have 'z' component"); }
+      void third()   { static_assert(false, "2D vector doesn't have 'third' component"); }
+      void b()       { static_assert(false, "2D vector doesn't have 'b' component"); }
+      void blue()    { static_assert(false, "2D vector doesn't have 'blue' component"); }
+      void s()       { static_assert(false, "2D vector doesn't have 's' component"); }
 
-      void w()       { LANGULUS_ERROR("2D vector doesn't have 'w' component"); }
-      void fourth()  { LANGULUS_ERROR("2D vector doesn't have 'fourth' component"); }
-      void a()       { LANGULUS_ERROR("2D vector doesn't have 'a' component"); }
-      void alpha()   { LANGULUS_ERROR("2D vector doesn't have 'alpha' component"); }
-      void t()       { LANGULUS_ERROR("2D vector doesn't have 't' component"); }
+      void w()       { static_assert(false, "2D vector doesn't have 'w' component"); }
+      void fourth()  { static_assert(false, "2D vector doesn't have 'fourth' component"); }
+      void a()       { static_assert(false, "2D vector doesn't have 'a' component"); }
+      void alpha()   { static_assert(false, "2D vector doesn't have 'alpha' component"); }
+      void t()       { static_assert(false, "2D vector doesn't have 't' component"); }
 
-      void tail()    { LANGULUS_ERROR("2D vector doesn't have a tail"); }
+      void tail()    { static_assert(false, "2D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y);
 
@@ -305,13 +305,13 @@ namespace Langulus::Math
       // This is necessary to work around the dependent names in TVector
       // This will also error out, when missing (), but if you happen to
       // call them by accident, you will get a proper compile error     
-      void w()       { LANGULUS_ERROR("3D vector doesn't have 'w' component"); }
-      void fourth()  { LANGULUS_ERROR("3D vector doesn't have 'fourth' component"); }
-      void a()       { LANGULUS_ERROR("3D vector doesn't have 'a' component"); }
-      void alpha()   { LANGULUS_ERROR("3D vector doesn't have 'alpha' component"); }
-      void t()       { LANGULUS_ERROR("3D vector doesn't have 't' component"); }
+      void w()       { static_assert(false, "3D vector doesn't have 'w' component"); }
+      void fourth()  { static_assert(false, "3D vector doesn't have 'fourth' component"); }
+      void a()       { static_assert(false, "3D vector doesn't have 'a' component"); }
+      void alpha()   { static_assert(false, "3D vector doesn't have 'alpha' component"); }
+      void t()       { static_assert(false, "3D vector doesn't have 't' component"); }
 
-      void tail()    { LANGULUS_ERROR("3D vector doesn't have a tail"); }
+      void tail()    { static_assert(false, "3D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z);
 
@@ -351,7 +351,7 @@ namespace Langulus::Math
          };
       };
 
-      void tail()    { LANGULUS_ERROR("4D vector doesn't have a tail"); }
+      void tail()    { static_assert(false, "4D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
 
