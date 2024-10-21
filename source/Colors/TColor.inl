@@ -180,10 +180,10 @@ namespace Langulus::Math
    /// Copy a channel                                                         
    TEMPLATE()
    template<CT::Number ALTT, CT::Dimension D>
-   constexpr TColor<T>& TColor<T>::operator = (const TColorComponent<ALTT, D>& com) noexcept {
+   constexpr auto TColor<T>::operator = (const TColorComponent<ALTT, D>& com) noexcept -> TColor& {
       static_assert(D::Index < MemberCount, "Index out of bounds");
       Get(D::Index) = Adapt(com.mValue);
-      return *this;
+      return *this; 
    }
 
    /// Serialize the color to flow code                                       
@@ -202,7 +202,8 @@ namespace Langulus::Math
          result += Code::Operator::CloseScope;
          return Abandon(result);
       }
-      else return T::template Serialize<TColor>();
+      else return T::template Serialize<Flow::Code, TColor>();
+
    }
 
    /// Covert to a console color                                              
@@ -289,3 +290,33 @@ namespace Langulus
    } // namespace Langulus::Colors
 
 } // namespace Langulus
+
+
+LANGULUS_DEFINE_CONSTANT(White, ::Langulus::Colors::White,
+   "Colors::White", "An opaque white color")
+LANGULUS_DEFINE_CONSTANT(Black, ::Langulus::Colors::Black,
+   "Colors::Black", "An opaque black color")
+LANGULUS_DEFINE_CONSTANT(Grey, ::Langulus::Colors::Grey,
+   "Colors::Grey", "An opaque gray color")
+LANGULUS_DEFINE_CONSTANT(Red, ::Langulus::Colors::Red,
+   "Colors::Red", "An opaque red color")
+LANGULUS_DEFINE_CONSTANT(Green, ::Langulus::Colors::Green,
+   "Colors::Green", "An opaque green color")
+LANGULUS_DEFINE_CONSTANT(DarkGreen, ::Langulus::Colors::DarkGreen,
+   "Colors::DarkGreen", "An opaque dark green color")
+LANGULUS_DEFINE_CONSTANT(Blue, ::Langulus::Colors::Blue,
+   "Colors::Blue", "An opaque blue color")
+LANGULUS_DEFINE_CONSTANT(DarkBlue, ::Langulus::Colors::DarkBlue,
+   "Colors::DarkBlue", "An opaque dark blue color")
+LANGULUS_DEFINE_CONSTANT(Cyan, ::Langulus::Colors::Cyan,
+   "Colors::Cyan", "An opaque cyan color")
+LANGULUS_DEFINE_CONSTANT(DarkCyan, ::Langulus::Colors::DarkCyan,
+   "Colors::DarkCyan", "An opaque dark cyan color")
+LANGULUS_DEFINE_CONSTANT(Orange, ::Langulus::Colors::Orange,
+   "Colors::Orange", "An opaque orange color")
+LANGULUS_DEFINE_CONSTANT(Yellow, ::Langulus::Colors::Yellow,
+   "Colors::Yellow", "An opaque yellow color")
+LANGULUS_DEFINE_CONSTANT(Purple, ::Langulus::Colors::Purple,
+   "Colors::Purple", "An opaque purple color")
+LANGULUS_DEFINE_CONSTANT(DarkPurple, ::Langulus::Colors::DarkPurple,
+   "Colors::DarkPurple", "An opaque dark purple color")
