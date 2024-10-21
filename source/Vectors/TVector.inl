@@ -1669,27 +1669,27 @@ namespace Langulus::Axes
 } // Langulus::Axes
 
 
-LANGULUS_DEFINE_CONSTANT(Forward, ::Langulus::Axes::Forward<>,
+LANGULUS_DEFINE_CONSTANT(AxisForward, ::Langulus::Axes::Forward<>,
    "Axes::Forward", "A canonical forward vector")
-LANGULUS_DEFINE_CONSTANT(Backward, ::Langulus::Axes::Backward<>,
+LANGULUS_DEFINE_CONSTANT(AxisBackward, ::Langulus::Axes::Backward<>,
    "Axes::Backward", "A canonical backward vector")
-LANGULUS_DEFINE_CONSTANT(Up, ::Langulus::Axes::Up<>,
+LANGULUS_DEFINE_CONSTANT(AxisUp, ::Langulus::Axes::Up<>,
    "Axes::Up", "A canonical up vector")
-LANGULUS_DEFINE_CONSTANT(Down, ::Langulus::Axes::Down<>,
+LANGULUS_DEFINE_CONSTANT(AxisDown, ::Langulus::Axes::Down<>,
    "Axes::Down", "A canonical down vector")
-LANGULUS_DEFINE_CONSTANT(Right, ::Langulus::Axes::Right<>, 
+LANGULUS_DEFINE_CONSTANT(AxisRight, ::Langulus::Axes::Right<>,
    "Axes::Right", "A canonical right vector")
-LANGULUS_DEFINE_CONSTANT(Left, ::Langulus::Axes::Left<>,
+LANGULUS_DEFINE_CONSTANT(AxisLeft, ::Langulus::Axes::Left<>,
    "Axes::Left", "A canonical left vector")
 
-LANGULUS_DEFINE_CONSTANT(X, ::Langulus::Axes::X<>,
+LANGULUS_DEFINE_CONSTANT(AxisX, ::Langulus::Axes::X<>,
    "Axes::X", "A canonical X axis")
-LANGULUS_DEFINE_CONSTANT(Y, ::Langulus::Axes::Y<>,
+LANGULUS_DEFINE_CONSTANT(AxisY, ::Langulus::Axes::Y<>,
    "Axes::Y", "A canonical Y axis")
-LANGULUS_DEFINE_CONSTANT(Z, ::Langulus::Axes::Z<>,
+LANGULUS_DEFINE_CONSTANT(AxisZ, ::Langulus::Axes::Z<>,
    "Axes::Z", "A canonical Z axis")
-LANGULUS_DEFINE_CONSTANT(W, ::Langulus::Axes::W<>,
+LANGULUS_DEFINE_CONSTANT(AxisW, ::Langulus::Axes::W<>,
    "Axes::W", "A canonical W axis")
 
-LANGULUS_DEFINE_CONSTANT(Origin, ::Langulus::Axes::Origin<>,
+LANGULUS_DEFINE_CONSTANT(AxisOrigin, ::Langulus::Axes::Origin<>,
    "Origin", "A canonical zero vector")
