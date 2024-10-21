@@ -129,34 +129,30 @@ namespace Langulus::Math
    public:
       /// Custom name generator at compile-time for ranges                    
       static consteval auto GenerateToken() {
-         static constexpr auto intermediate = []() {
-            constexpr auto defaultClassName = RTTI::LastCppNameOf<TRange>();
-            ::std::array<char, defaultClassName.size() + 1> name {};
-            ::std::size_t offset = 0;
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TRange>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset = 0;
 
-            constexpr auto S = CountOf<T>;
-            if constexpr (S > 4) {
-               for (auto i : defaultClassName)
-                  name[offset++] = i;
-               return name;
-            }
-
-            // Write prefix                                             
-            for (auto i : "Range")
+         constexpr auto S = CountOf<T>;
+         if constexpr (S > 4) {
+            for (auto i : defaultClassName)
                name[offset++] = i;
-
-            // Write size                                               
-            --offset;
-            name[offset++] = '0' + S;
-
-            // Write suffix                                             
-            for (auto i : SuffixOf<TypeOf<T>>())
-               name[offset++] = i;
-
             return name;
-         }();
+         }
 
-         return Token {intermediate.data()};
+         // Write prefix                                                
+         for (auto i : "Range")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + S;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+
+         return name;
       }
 
       LANGULUS(NAME)  GenerateToken();
