@@ -102,39 +102,6 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
-namespace Langulus
-{
-
-   /// Custom name generator at compile-time for ranges                       
-   TEMPLATE()
-   consteval auto CustomName(Of<Math::TME()>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      constexpr auto S = CountOf<T>;
-      if constexpr (S > 4) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Range")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + S;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-
-      return name;
-   }
-}
-
 namespace Langulus::Math
 {
 
@@ -160,7 +127,39 @@ namespace Langulus::Math
       };
 
    public:
-      LANGULUS(NAME)  CustomNameOf<TRange>::Generate();
+      /// Custom name generator at compile-time for ranges                    
+      static consteval auto GenerateToken() {
+         static constexpr auto intermediate = []() {
+            constexpr auto defaultClassName = RTTI::LastCppNameOf<TRange>();
+            ::std::array<char, defaultClassName.size() + 1> name {};
+            ::std::size_t offset = 0;
+
+            constexpr auto S = CountOf<T>;
+            if constexpr (S > 4) {
+               for (auto i : defaultClassName)
+                  name[offset++] = i;
+               return name;
+            }
+
+            // Write prefix                                             
+            for (auto i : "Range")
+               name[offset++] = i;
+
+            // Write size                                               
+            --offset;
+            name[offset++] = '0' + S;
+
+            // Write suffix                                             
+            for (auto i : SuffixOf<TypeOf<T>>())
+               name[offset++] = i;
+
+            return name;
+         }();
+
+         return Token {intermediate.data()};
+      }
+
+      LANGULUS(NAME)  GenerateToken();
       LANGULUS(TYPED) MemberType;
       LANGULUS(POD)   CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;

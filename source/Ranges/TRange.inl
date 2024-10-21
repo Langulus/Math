@@ -422,3 +422,53 @@ namespace Langulus::Math
 
 #undef TEMPLATE
 #undef TME
+
+
+namespace Langulus::Ranges
+{
+
+   using Math::Range3;
+
+   //TODO use infinities instead of big numbers
+   constexpr Range3 In      { {-1},            {+1} };
+   constexpr Range3 On      { {+1},            {+1} };
+   constexpr Range3 Under   { {-1, -1, -1},    {+1, -1, +1} };
+   constexpr Range3 Above   { {-1, +1, -1},    {+1, +1000, +1} };
+   constexpr Range3 Below   { {-1, -1000, -1}, {+1, -1, +1} };
+   constexpr Range3 Center  { {0},             {0} };
+   constexpr Range3 Middle  { {-0.5},          {+0.5} };
+   constexpr Range3 Rear    { {-1, -1, -1}, {+1, +1, -1} };
+   constexpr Range3 Behind  { {-1, -1, -1000}, {+1, +1, -1} };
+   constexpr Range3 Front   { {-1, -1, 1},     {+1, +1, 1} };
+   constexpr Range3 Ahead   { {-1, -1, 1},     {+1, +1, 1000} };
+   constexpr Range3 Left    { {-1000, -1, -1}, {-1, +1, +1} };
+   constexpr Range3 Right   { {1, -1, -1},     {1000, +1, +1} };
+
+} // namespace Langulus::Ranges
+
+LANGULUS_DEFINE_CONSTANT(RangeIn, ::Langulus::Ranges::In,
+   "Ranges::In", "A canonical 'in' range")
+LANGULUS_DEFINE_CONSTANT(RangeOn, ::Langulus::Ranges::On,
+   "Ranges::On", "A canonical 'on the surface' range")
+LANGULUS_DEFINE_CONSTANT(RangeUnder, ::Langulus::Ranges::Under,
+   "Ranges::Under", "A canonical 'on the underside' range")
+LANGULUS_DEFINE_CONSTANT(RangeAbove, ::Langulus::Ranges::Above,
+   "Ranges::Above", "A canonical 'above and beyond' range")
+LANGULUS_DEFINE_CONSTANT(RangeBelow, ::Langulus::Ranges::Below,
+   "Ranges::Below", "A canonical 'below and beyond' range")
+LANGULUS_DEFINE_CONSTANT(RangeCenter, ::Langulus::Ranges::Center,
+   "Ranges::Center", "A canonical center range (not really a range)")
+LANGULUS_DEFINE_CONSTANT(RangeMiddle, ::Langulus::Ranges::Middle,
+   "Ranges::Middle", "A canonical 'middle' range")
+LANGULUS_DEFINE_CONSTANT(RangeRear, ::Langulus::Ranges::Rear,
+   "Ranges::Rear", "A canonical 'on the rear surface' range")
+LANGULUS_DEFINE_CONSTANT(RangeBehind, ::Langulus::Ranges::Behind,
+   "Ranges::Behind", "A canonical 'behind and beyond' range")
+LANGULUS_DEFINE_CONSTANT(RangeFront, ::Langulus::Ranges::Front,
+   "Ranges::Front", "A canonical 'on the front surface' range")
+LANGULUS_DEFINE_CONSTANT(RangeAhead, ::Langulus::Ranges::Ahead,
+   "Ranges::Ahead", "A canonical 'ahead and beyond' range")
+LANGULUS_DEFINE_CONSTANT(RangeLeft, ::Langulus::Ranges::Left,
+   "Ranges::Left", "A canonical 'on the left and beyond' range")
+LANGULUS_DEFINE_CONSTANT(RangeRight, ::Langulus::Ranges::Right,
+   "Ranges::Right", "A canonical 'on the right and beyond' range")
