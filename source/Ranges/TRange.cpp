@@ -34,6 +34,22 @@ namespace Langulus::Math
       RangeTypeGenerator<2>::Register(AllTypes {});
       RangeTypeGenerator<3>::Register(AllTypes {});
       RangeTypeGenerator<4>::Register(AllTypes {});
+
+      
+      // Constants                                                      
+      (void) MetaOf<Constants::RangeIn>();
+      (void) MetaOf<Constants::RangeOn>();
+      (void) MetaOf<Constants::RangeUnder>();
+      (void) MetaOf<Constants::RangeAbove>();
+      (void) MetaOf<Constants::RangeBelow>();
+      (void) MetaOf<Constants::RangeCenter>();
+      (void) MetaOf<Constants::RangeMiddle>();
+      (void) MetaOf<Constants::RangeRear>();
+      (void) MetaOf<Constants::RangeBehind>();
+      (void) MetaOf<Constants::RangeFront>();
+      (void) MetaOf<Constants::RangeAhead>();
+      (void) MetaOf<Constants::RangeLeft>();
+      (void) MetaOf<Constants::RangeRight>();
    }
 
 } // namespace Langulus::Math

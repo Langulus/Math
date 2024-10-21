@@ -265,58 +265,54 @@ namespace Langulus::Math
 
 } // namespace Langulus::Math
 
-namespace Langulus
+namespace Langulus::Colors
 {
-   namespace Colors
-   {
 
-      using ::Langulus::Math::RGBA;
+   using ::Langulus::Math::RGBA;
 
-      constexpr RGBA White       { 255, 255, 255, 255 };
-      constexpr RGBA Black       {   0,   0,   0, 255 };
-      constexpr RGBA Grey        { 127, 127, 127, 255 };
-      constexpr RGBA Red         { 255,   0,   0, 255 };
-      constexpr RGBA Green       {   0, 255,   0, 255 };
-      constexpr RGBA DarkGreen   {   0, 128,   0, 255 };
-      constexpr RGBA Blue        {   0,   0, 255, 255 };
-      constexpr RGBA DarkBlue    {   0,   0, 128, 255 };
-      constexpr RGBA Cyan        { 128, 128, 255, 255 };
-      constexpr RGBA DarkCyan    {  80,  80, 128, 255 };
-      constexpr RGBA Orange      { 128, 128,   0, 255 };
-      constexpr RGBA Yellow      { 255, 255,   0, 255 };
-      constexpr RGBA Purple      { 255,   0, 255, 255 };
-      constexpr RGBA DarkPurple  { 128,   0, 128, 255 };
+   constexpr RGBA White       { 255, 255, 255, 255 };
+   constexpr RGBA Black       {   0,   0,   0, 255 };
+   constexpr RGBA Grey        { 127, 127, 127, 255 };
+   constexpr RGBA Red         { 255,   0,   0, 255 };
+   constexpr RGBA Green       {   0, 255,   0, 255 };
+   constexpr RGBA DarkGreen   {   0, 128,   0, 255 };
+   constexpr RGBA Blue        {   0,   0, 255, 255 };
+   constexpr RGBA DarkBlue    {   0,   0, 128, 255 };
+   constexpr RGBA Cyan        { 128, 128, 255, 255 };
+   constexpr RGBA DarkCyan    {  80,  80, 128, 255 };
+   constexpr RGBA Orange      { 128, 128,   0, 255 };
+   constexpr RGBA Yellow      { 255, 255,   0, 255 };
+   constexpr RGBA Purple      { 255,   0, 255, 255 };
+   constexpr RGBA DarkPurple  { 128,   0, 128, 255 };
 
-   } // namespace Langulus::Colors
-
-} // namespace Langulus
+} // namespace Langulus::Colors
 
 
-LANGULUS_DEFINE_CONSTANT(White, ::Langulus::Colors::White,
+LANGULUS_DEFINE_CONSTANT(ColorWhite, ::Langulus::Colors::White,
    "Colors::White", "An opaque white color")
-LANGULUS_DEFINE_CONSTANT(Black, ::Langulus::Colors::Black,
+LANGULUS_DEFINE_CONSTANT(ColorBlack, ::Langulus::Colors::Black,
    "Colors::Black", "An opaque black color")
-LANGULUS_DEFINE_CONSTANT(Grey, ::Langulus::Colors::Grey,
+LANGULUS_DEFINE_CONSTANT(ColorGrey, ::Langulus::Colors::Grey,
    "Colors::Grey", "An opaque gray color")
-LANGULUS_DEFINE_CONSTANT(Red, ::Langulus::Colors::Red,
+LANGULUS_DEFINE_CONSTANT(ColorRed, ::Langulus::Colors::Red,
    "Colors::Red", "An opaque red color")
-LANGULUS_DEFINE_CONSTANT(Green, ::Langulus::Colors::Green,
+LANGULUS_DEFINE_CONSTANT(ColorGreen, ::Langulus::Colors::Green,
    "Colors::Green", "An opaque green color")
-LANGULUS_DEFINE_CONSTANT(DarkGreen, ::Langulus::Colors::DarkGreen,
+LANGULUS_DEFINE_CONSTANT(ColorDarkGreen, ::Langulus::Colors::DarkGreen,
    "Colors::DarkGreen", "An opaque dark green color")
-LANGULUS_DEFINE_CONSTANT(Blue, ::Langulus::Colors::Blue,
+LANGULUS_DEFINE_CONSTANT(ColorBlue, ::Langulus::Colors::Blue,
    "Colors::Blue", "An opaque blue color")
-LANGULUS_DEFINE_CONSTANT(DarkBlue, ::Langulus::Colors::DarkBlue,
+LANGULUS_DEFINE_CONSTANT(ColorDarkBlue, ::Langulus::Colors::DarkBlue,
    "Colors::DarkBlue", "An opaque dark blue color")
-LANGULUS_DEFINE_CONSTANT(Cyan, ::Langulus::Colors::Cyan,
+LANGULUS_DEFINE_CONSTANT(ColorCyan, ::Langulus::Colors::Cyan,
    "Colors::Cyan", "An opaque cyan color")
-LANGULUS_DEFINE_CONSTANT(DarkCyan, ::Langulus::Colors::DarkCyan,
+LANGULUS_DEFINE_CONSTANT(ColorDarkCyan, ::Langulus::Colors::DarkCyan,
    "Colors::DarkCyan", "An opaque dark cyan color")
-LANGULUS_DEFINE_CONSTANT(Orange, ::Langulus::Colors::Orange,
+LANGULUS_DEFINE_CONSTANT(ColorOrange, ::Langulus::Colors::Orange,
    "Colors::Orange", "An opaque orange color")
-LANGULUS_DEFINE_CONSTANT(Yellow, ::Langulus::Colors::Yellow,
+LANGULUS_DEFINE_CONSTANT(ColorYellow, ::Langulus::Colors::Yellow,
    "Colors::Yellow", "An opaque yellow color")
-LANGULUS_DEFINE_CONSTANT(Purple, ::Langulus::Colors::Purple,
+LANGULUS_DEFINE_CONSTANT(ColorPurple, ::Langulus::Colors::Purple,
    "Colors::Purple", "An opaque purple color")
-LANGULUS_DEFINE_CONSTANT(DarkPurple, ::Langulus::Colors::DarkPurple,
+LANGULUS_DEFINE_CONSTANT(ColorDarkPurple, ::Langulus::Colors::DarkPurple,
    "Colors::DarkPurple", "An opaque dark purple color")

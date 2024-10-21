@@ -34,20 +34,20 @@ namespace Langulus::Math
       (void) MetaOf<Depth32>();
 
       // Constants                                                      
-      (void) MetaOf<Constants::White>();
-      (void) MetaOf<Constants::Black>();
-      (void) MetaOf<Constants::Grey>();
-      (void) MetaOf<Constants::Red>();
-      (void) MetaOf<Constants::Green>();
-      (void) MetaOf<Constants::DarkGreen>();
-      (void) MetaOf<Constants::Blue>();
-      (void) MetaOf<Constants::DarkBlue>();
-      (void) MetaOf<Constants::Cyan>();
-      (void) MetaOf<Constants::DarkCyan>();
-      (void) MetaOf<Constants::Orange>();
-      (void) MetaOf<Constants::Yellow>();
-      (void) MetaOf<Constants::Purple>();
-      (void) MetaOf<Constants::DarkPurple>();
+      (void) MetaOf<Constants::ColorWhite>();
+      (void) MetaOf<Constants::ColorBlack>();
+      (void) MetaOf<Constants::ColorGrey>();
+      (void) MetaOf<Constants::ColorRed>();
+      (void) MetaOf<Constants::ColorGreen>();
+      (void) MetaOf<Constants::ColorDarkGreen>();
+      (void) MetaOf<Constants::ColorBlue>();
+      (void) MetaOf<Constants::ColorDarkBlue>();
+      (void) MetaOf<Constants::ColorCyan>();
+      (void) MetaOf<Constants::ColorDarkCyan>();
+      (void) MetaOf<Constants::ColorOrange>();
+      (void) MetaOf<Constants::ColorYellow>();
+      (void) MetaOf<Constants::ColorPurple>();
+      (void) MetaOf<Constants::ColorDarkPurple>();
    }
 
 } // namespace Langulus::Math

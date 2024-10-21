@@ -35,19 +35,19 @@ namespace Langulus::Math
       VectorTypeGenerator<3>::Register(AllTypes {});
       VectorTypeGenerator<4>::Register(AllTypes {});
 
-      (void) MetaOf<Constants::Backward>();
-      (void) MetaOf<Constants::Forward>();
-      (void) MetaOf<Constants::Left>();
-      (void) MetaOf<Constants::Right>();
-      (void) MetaOf<Constants::Up>();
-      (void) MetaOf<Constants::Down>();
+      (void) MetaOf<Constants::AxisBackward>();
+      (void) MetaOf<Constants::AxisForward>();
+      (void) MetaOf<Constants::AxisLeft>();
+      (void) MetaOf<Constants::AxisRight>();
+      (void) MetaOf<Constants::AxisUp>();
+      (void) MetaOf<Constants::AxisDown>();
 
-      (void) MetaOf<Constants::X>();
-      (void) MetaOf<Constants::Y>();
-      (void) MetaOf<Constants::Z>();
-      (void) MetaOf<Constants::W>();
+      (void) MetaOf<Constants::AxisX>();
+      (void) MetaOf<Constants::AxisY>();
+      (void) MetaOf<Constants::AxisZ>();
+      (void) MetaOf<Constants::AxisW>();
 
-      (void) MetaOf<Constants::Origin>();
+      (void) MetaOf<Constants::AxisOrigin>();
    }
 
 } // namespace Langulus::Math
