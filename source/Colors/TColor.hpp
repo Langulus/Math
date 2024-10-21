@@ -13,6 +13,9 @@ namespace Langulus
 {
    namespace Math
    {
+
+      LANGULUS_API(MATH) extern void RegisterColors();
+
       template<CT::VectorBased>
       struct TColor;
 
@@ -155,10 +158,10 @@ namespace Langulus
          constexpr TColor(Logger::Color);
 
          using T::Get;
-
          using T::operator =;
+
          template<CT::Number ALTT, CT::Dimension D>
-         constexpr TColor<T>& operator = (const TColorComponent<ALTT, D>&) noexcept;
+         constexpr auto operator = (const TColorComponent<ALTT, D>&) noexcept -> TColor&;
 
          operator Flow::Code() const;
          operator Logger::Color() const;

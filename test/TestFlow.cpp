@@ -42,8 +42,8 @@ SCENARIO("Parsing scripts", "[code]") {
       }
    }
 
-   GIVEN("The script: - .Sampler.y ^ 2") {
-      const auto code = "- .Sampler.y ^ 2"_code;
+   GIVEN("The script: - .sampler.y ^ 2") {
+      const auto code = "- .sampler.y ^ 2"_code;
 
       WHEN("Parsed without optimization") {
          Many required = Verbs::Add {Many {
@@ -60,8 +60,8 @@ SCENARIO("Parsing scripts", "[code]") {
       }
    }
 
-   GIVEN("The script: Vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))") {
-      const auto code = "Vec2(.Sampler.x, -(.Time * 8.75 - .Sampler.y ^ 2))"_code;
+   GIVEN("The script: Vec2(.sampler.x, -(.time * 8.75 - .sampler.y ^ 2))") {
+      const auto code = "Vec2(.sampler.x, -(.time * 8.75 - .sampler.y ^ 2))"_code;
 
       WHEN("Parsed without optimization") {
          Many required = Construct::From<Vec2>(Many::Wrap<Verb>(
