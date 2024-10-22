@@ -123,7 +123,7 @@ namespace Langulus::Math
          };
 
          // Useful representation for directly feeding to SIMD          
-         MemberType mArray[MemberCount] = {};
+         MemberType mArray[MemberCount];
       };
 
    public:
