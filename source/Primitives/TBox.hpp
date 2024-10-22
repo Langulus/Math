@@ -52,62 +52,6 @@ namespace Langulus
 
    } // namespace Langulus::CT
 
-   /// Custom name generator at compile-time for boxes                        
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TBox<T>>&&) noexcept {
-      using CLASS = Math::TBox<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Box")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-
-   /// Custom name generator at compile-time for rounded boxes                
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TBoxRounded<T>>&&) noexcept {
-      using CLASS = Math::TBoxRounded<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "BoxRounded")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-
 } // namespace Langulus
 
 namespace Langulus::Math
@@ -129,7 +73,34 @@ namespace Langulus::Math
    ///                                                                     |  
    template<CT::Vector T>
    struct TBox : A::Box {
-      LANGULUS(NAME) CustomNameOf<TBox>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TBox>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "Box")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + T::MemberCount;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -166,7 +137,34 @@ namespace Langulus::Math
    ///                                                                     |  
    template<CT::Vector T>
    struct TBoxRounded : TBox<T> {
-      LANGULUS(NAME) CustomNameOf<TBoxRounded>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TBoxRounded>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "BoxRounded")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + T::MemberCount;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
 
       using Base = TBox<T>;

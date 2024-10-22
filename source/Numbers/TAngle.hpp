@@ -183,41 +183,6 @@ namespace Langulus
 
    } // namespace Langulus::A
    
-   /// Custom name generator at compile-time for angles                       
-   template<CT::Angle T, CT::Dimension D>
-   constexpr auto CustomName(Of<Math::TAngle<T,D>>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TAngle<T, D>>();
-      // Provision a bit more in case default class name turns out to   
-      // be too small (g++-14 complains for some reason)                
-      ::std::array<char, defaultClassName.size() + 16> name {};
-      ::std::size_t offset = 0;
-
-      // Write dimension name                                           
-      if constexpr (D::Index == 0) {
-         for (auto i : "Pitch")
-            name[offset++] = i;
-      }
-      else if constexpr (D::Index == 1) {
-         for (auto i : "Yaw")
-            name[offset++] = i;
-      }
-      else if constexpr (D::Index == 2) {
-         for (auto i : "Roll")
-            name[offset++] = i;
-      }
-      else static_assert(false, "Unsupported dimension");
-
-      // Write angle suffix if degrees                                  
-      // Radians have no suffix by default                              
-      if constexpr (CT::Degrees<T>)
-         name[offset++] = 'd';
-
-      // Write type suffix                                              
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
-      return name;
-   }
-
    namespace Math
    {
 
@@ -226,13 +191,47 @@ namespace Langulus
       ///                                                                     
       template<CT::Angle T, CT::Dimension D>
       struct TAngle : T {
-         LANGULUS(NAME) CustomNameOf<TAngle>::Generate();
+      private:
+         static constexpr auto GenerateToken() {
+            constexpr auto defaultClassName = RTTI::LastCppNameOf<TAngle>();
+            // Provision a bit more in case default class name turns out
+            // to be too small (g++-14 complains for some reason)       
+            ::std::array<char, defaultClassName.size() + 16> name {};
+            ::std::size_t offset = 0;
+
+            // Write dimension name                                     
+            if constexpr (D::Index == 0) {
+               for (auto i : "Pitch")
+                  name[offset++] = i;
+            }
+            else if constexpr (D::Index == 1) {
+               for (auto i : "Yaw")
+                  name[offset++] = i;
+            }
+            else if constexpr (D::Index == 2) {
+               for (auto i : "Roll")
+                  name[offset++] = i;
+            }
+            else static_assert(false, "Unsupported dimension");
+
+            // Write angle suffix if degrees                            
+            // Radians have no suffix by default                        
+            if constexpr (CT::Degrees<T>)
+               name[offset++] = 'd';
+
+            // Write type suffix                                        
+            for (auto i : SuffixOf<T>())
+               name[offset++] = i;
+            return name;
+         }
+
+      public:
+         LANGULUS(NAME) GenerateToken();
          LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
          LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+
          using Dimension = D;
-
          using T::mValue;
-
          using T::T;
          using T::operator =;
          TAngle(Describe&&);

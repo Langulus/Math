@@ -84,43 +84,6 @@ namespace Langulus
 
    } // namespace Langulus::A
 
-   
-   /// Custom name generator at compile-time for colors                       
-   template<CT::VectorBased T>
-   constexpr auto CustomName(Of<Math::TColor<T>>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TColor<T>>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      // Write prefix                                                   
-      switch (T::MemberCount) {
-      case 2:
-         for (auto i : "Grayscale")
-            name[offset++] = i;
-         break;
-      case 3:
-         for (auto i : "RGB")
-            name[offset++] = i;
-         break;
-      case 4:
-         for (auto i : "RGBA")
-            name[offset++] = i;
-         break;
-      }
-
-      // Write suffix                                                   
-      --offset;
-      if constexpr (not CT::Same<TypeOf<T>, ::std::uint8_t>) {
-         if constexpr (CT::Same<TypeOf<T>, float>)
-            name[offset++] = 'f';
-         else if constexpr (CT::Same<TypeOf<T>, double>)
-            name[offset++] = 'd';
-         else for (auto i : SuffixOf<TypeOf<T>>())
-            name[offset++] = i;
-      }
-      return name;
-   }
-   
    namespace Math
    {
 
@@ -146,13 +109,51 @@ namespace Langulus
             "Invalid number of channels");
          static constexpr bool CTTI_ColorTrait = true;
 
-         LANGULUS(NAME) CustomNameOf<TColor>::Generate();
+      private:
+         /// Custom name generator at compile-time for colors                 
+         static constexpr auto GenerateToken() {
+            constexpr auto defaultClassName = RTTI::LastCppNameOf<TColor>();
+            ::std::array<char, defaultClassName.size() + 1> name {};
+            ::std::size_t offset {};
+
+            // Write prefix                                             
+            switch (T::MemberCount) {
+            case 2:
+               for (auto i : "Grayscale")
+                  name[offset++] = i;
+               break;
+            case 3:
+               for (auto i : "RGB")
+                  name[offset++] = i;
+               break;
+            case 4:
+               for (auto i : "RGBA")
+                  name[offset++] = i;
+               break;
+            }
+
+            // Write suffix                                             
+            --offset;
+            if constexpr (not CT::Same<TypeOf<T>, ::std::uint8_t>) {
+               if constexpr (CT::Same<TypeOf<T>, float>)
+                  name[offset++] = 'f';
+               else if constexpr (CT::Same<TypeOf<T>, double>)
+                  name[offset++] = 'd';
+               else for (auto i : SuffixOf<TypeOf<T>>())
+                  name[offset++] = i;
+            }
+            return name;
+         }
+
+      public:
+         LANGULUS(NAME) GenerateToken();
          LANGULUS_BASES(
             A::ColorOfSize<MemberCount>, 
             A::ColorOfType<TypeOf<T>>,
             T
          );
 
+      public:
          using T::T;
          constexpr TColor(const CT::Vector auto&) noexcept;
          constexpr TColor(Logger::Color);
