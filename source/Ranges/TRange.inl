@@ -431,19 +431,19 @@ namespace Langulus::Ranges
    using Math::Vec3;
 
    //TODO use infinities instead of big numbers
-   constexpr Range3 In      { -1, +1 };
-   constexpr Range3 On      { +1, +1 };
-   constexpr Range3 Under   { Vec3(-1, -1, -1),    Vec3(+1, -1, +1) };
-   constexpr Range3 Above   { Vec3(-1, +1, -1),    Vec3(+1, +1000, +1) };
-   constexpr Range3 Below   { Vec3(-1, -1000, -1), Vec3(+1, -1, +1) };
-   constexpr Range3 Center  { 0, 0 };
-   constexpr Range3 Middle  { -0.5, +0.5 };
-   constexpr Range3 Rear    { Vec3(-1, -1, -1),    Vec3(+1, +1, -1) };
-   constexpr Range3 Behind  { Vec3(-1, -1, -1000), Vec3(+1, +1, -1) };
-   constexpr Range3 Front   { Vec3(-1, -1, 1),     Vec3(+1, +1, 1) };
-   constexpr Range3 Ahead   { Vec3(-1, -1, 1),     Vec3(+1, +1, 1000) };
-   constexpr Range3 Left    { Vec3(-1000, -1, -1), Vec3(-1, +1, +1) };
-   constexpr Range3 Right   { Vec3(1, -1, -1),     Vec3(1000, +1, +1) };
+   constexpr Range3 In      (-1, +1 );
+   constexpr Range3 On      (+1, +1 );
+   constexpr Range3 Under   (Vec3(-1, -1, -1),    Vec3(+1, -1, +1) );
+   constexpr Range3 Above   (Vec3(-1, +1, -1),    Vec3(+1, +1000, +1) );
+   constexpr Range3 Below   (Vec3(-1, -1000, -1), Vec3(+1, -1, +1) );
+   constexpr Range3 Center  (0, 0 );
+   constexpr Range3 Middle  (-0.5, +0.5 );
+   constexpr Range3 Rear    (Vec3(-1, -1, -1),    Vec3(+1, +1, -1) );
+   constexpr Range3 Behind  (Vec3(-1, -1, -1000), Vec3(+1, +1, -1) );
+   constexpr Range3 Front   (Vec3(-1, -1, 1),     Vec3(+1, +1, 1) );
+   constexpr Range3 Ahead   (Vec3(-1, -1, 1),     Vec3(+1, +1, 1000) );
+   constexpr Range3 Left    (Vec3(-1000, -1, -1), Vec3(-1, +1, +1) );
+   constexpr Range3 Right   (Vec3(1, -1, -1),     Vec3(1000, +1, +1) );
 
 } // namespace Langulus::Ranges
 
