@@ -50,63 +50,6 @@ namespace Langulus
 
    } // namespace Langulus::CT
 
-
-   /// Custom name generator at compile-time for boxes                        
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TSphere<T>>&&) noexcept {
-      using CLASS = Math::TSphere<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-      else if constexpr (T::MemberCount == 3) {
-         for (auto i : "Sphere")
-            name[offset++] = i;
-      }
-      else if constexpr (T::MemberCount == 2) {
-         for (auto i : "Circle")
-            name[offset++] = i;
-      }
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-
-   /// Custom name generator at compile-time for rounded boxes                
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TEllipsoid<T>>&&) noexcept {
-      using CLASS = Math::TEllipsoid<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Ellipsoid")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-
 } // namespace Langulus
 
 namespace Langulus::Math
@@ -117,7 +60,34 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TSphere {
-      LANGULUS(NAME) CustomNameOf<TSphere>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TSphere>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+         else if constexpr (T::MemberCount == 3) {
+            for (auto i : "Sphere")
+               name[offset++] = i;
+         }
+         else if constexpr (T::MemberCount == 2) {
+            for (auto i : "Circle")
+               name[offset++] = i;
+         }
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -156,8 +126,34 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TEllipsoid {
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TEllipsoid>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "Ellipsoid")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + T::MemberCount;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
    public:
-      LANGULUS(NAME) CustomNameOf<TEllipsoid>::Generate();
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;

@@ -73,35 +73,6 @@ namespace Langulus
 
    } // namespace Langulus::A
    
-   /// Custom name generator at compile-time for normals                      
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TNormal<T>>&&) noexcept {
-      using CLASS = Math::TNormal<T>;
-      constexpr auto MemberCount = CLASS::MemberCount;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (MemberCount > 4) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Normal")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-
    namespace Math
    {
 
@@ -121,7 +92,34 @@ namespace Langulus
          static_assert(CT::Real<TypeOf<T>>,
             "Normal can be only made of real numbers");
 
-         LANGULUS(NAME)  CustomNameOf<TNormal>::Generate();
+      private:
+         static consteval auto GenerateToken() {
+            constexpr auto defaultClassName = RTTI::LastCppNameOf<TNormal>();
+            ::std::array<char, defaultClassName.size() + 1> name {};
+            ::std::size_t offset {};
+
+            if constexpr (MemberCount > 4) {
+               for (auto i : defaultClassName)
+                  name[offset++] = i;
+               return name;
+            }
+
+            // Write prefix                                             
+            for (auto i : "Normal")
+               name[offset++] = i;
+
+            // Write size                                               
+            --offset;
+            name[offset++] = '0' + MemberCount;
+
+            // Write suffix                                             
+            for (auto i : SuffixOf<TypeOf<T>>())
+               name[offset++] = i;
+            return name;
+         }
+
+      public:
+         LANGULUS(NAME)  GenerateToken();
          LANGULUS(TYPED) TypeOf<T>;
          LANGULUS_BASES(
             A::NormalOfSize<MemberCount>,

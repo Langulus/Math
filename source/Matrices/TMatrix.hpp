@@ -120,41 +120,6 @@ namespace Langulus
    } // namespace Langulus::A
 
 
-   /// Custom name generator at compile-time for matrices                     
-   TEMPLATE()
-   consteval auto CustomName(Of<Math::TME()>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (COLUMNS > 4 or ROWS > 4) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      constexpr Token prefix = "Matrix";
-      for (auto i : prefix)
-         name[offset++] = i;
-
-      // Write columns and rows                                         
-      if constexpr (COLUMNS == ROWS) {
-         name[offset++] = '0' + COLUMNS;
-      }
-      else {
-         name[offset++] = '0' + COLUMNS;
-         name[offset++] = 'x';
-         name[offset++] = '0' + ROWS;
-      }
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
-      return name;
-   }
-
-
    namespace Math
    {
 
@@ -185,8 +150,42 @@ namespace Langulus
             T mArray[MemberCount];
          };
 
+      private:
+         /// Custom name generator at compile-time for matrices               
+         static consteval auto GenerateToken() {
+            constexpr auto defaultClassName = RTTI::LastCppNameOf<TMatrix>();
+            ::std::array<char, defaultClassName.size() + 1> name {};
+            ::std::size_t offset {};
+
+            if constexpr (COLUMNS > 4 or ROWS > 4) {
+               for (auto i : defaultClassName)
+                  name[offset++] = i;
+               return name;
+            }
+
+            // Write prefix                                             
+            constexpr Token prefix = "Matrix";
+            for (auto i : prefix)
+               name[offset++] = i;
+
+            // Write columns and rows                                   
+            if constexpr (COLUMNS == ROWS) {
+               name[offset++] = '0' + COLUMNS;
+            }
+            else {
+               name[offset++] = '0' + COLUMNS;
+               name[offset++] = 'x';
+               name[offset++] = '0' + ROWS;
+            }
+
+            // Write suffix                                             
+            for (auto i : SuffixOf<T>())
+               name[offset++] = i;
+            return name;
+         }
+
       public:
-         LANGULUS(NAME) CustomNameOf<TMatrix>::Generate();
+         LANGULUS(NAME) GenerateToken();
          LANGULUS(POD) CT::POD<T>;
          LANGULUS(NULLIFIABLE) false;
          LANGULUS(TYPED) T;

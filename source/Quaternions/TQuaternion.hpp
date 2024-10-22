@@ -49,29 +49,6 @@ namespace Langulus::A
 
 } // namespace Langulus::A
 
-namespace Langulus
-{
-
-   /// Custom name generator at compile-time for vectors                      
-   template<CT::ScalarBased T>
-   consteval auto CustomName(Of<Math::TQuaternion<T>>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TQuaternion<T>>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      // Write prefix                                                   
-      for (auto i : "Quat")
-         name[offset++] = i;
-
-      // Write suffix                                                   
-      --offset;
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
-
-      return name;
-   }
-}
-
 namespace Langulus::Math
 {
 
@@ -94,8 +71,26 @@ namespace Langulus::Math
 
       using Base::all;
 
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TQuaternion>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         // Write prefix                                                
+         for (auto i : "Quat")
+            name[offset++] = i;
+
+         // Write suffix                                                
+         --offset;
+         for (auto i : SuffixOf<T>())
+            name[offset++] = i;
+
+         return name;
+      }
+
    public:
-      LANGULUS(NAME) CustomNameOf<TQuaternion>::Generate();
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(NULLIFIABLE) false;
       LANGULUS_BASES(Base, A::QuaternionOfType<T>);
 

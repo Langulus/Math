@@ -41,25 +41,6 @@ namespace Langulus
       concept NotAdaptive = ((not Adaptive<T>) and ...);
    }
 
-   /// Custom name generator at compile-time for adaptive types               
-   template<class T>
-   consteval auto CustomName(Of<Math::Adaptive<T>>&&) noexcept {
-      using CLASS = Math::Adaptive<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset = 0;
-
-      // Write prefix                                                   
-      for (auto i : "Adaptive")
-         name[offset++] = i;
-      --offset;
-
-      // Write the rest                                                 
-      for (auto i : NameOf<T>())
-         name[offset++] = i;
-      return name;
-   }
-
    namespace Math
    {
 
@@ -69,8 +50,26 @@ namespace Langulus
       ///                                                                     
       template<class T>
       struct Adaptive : A::Adaptive {
+      private:
+         static consteval auto GenerateToken() {
+            constexpr auto defaultClassName = RTTI::LastCppNameOf<Adaptive>();
+            ::std::array<char, defaultClassName.size() + 1> name {};
+            ::std::size_t offset = 0;
+
+            // Write prefix                                             
+            for (auto i : "Adaptive")
+               name[offset++] = i;
+            --offset;
+
+            // Write the rest                                           
+            for (auto i : NameOf<T>())
+               name[offset++] = i;
+            return name;
+         }
+
+      public:
+         LANGULUS(NAME) GenerateToken();
          LANGULUS(ABSTRACT) false;
-         LANGULUS(NAME)  CustomNameOf<Adaptive>::Generate();
          LANGULUS(TYPED) T;
          LANGULUS_BASES(A::Adaptive);
          LANGULUS_CONVERTS_TO(Flow::Code);
@@ -80,6 +79,7 @@ namespace Langulus
          // The level in which the data is adapted to                   
          Level mLevel {};
 
+      public:
          constexpr Adaptive() noexcept = default;
          constexpr Adaptive(const T& data, Level level = {}) noexcept
             : mValue {data}

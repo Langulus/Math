@@ -140,35 +140,6 @@ namespace Langulus
 
    } // namespace Langulus::A
 
-
-   /// Custom name generator at compile-time for vectors                      
-   TEMPLATE()
-   consteval auto CustomName(Of<Math::TME()>&&) noexcept {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<Math::TME()>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (S > 4) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Vec")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + S;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<T>())
-         name[offset++] = i;
-
-      return name;
-   }
-
 } // namespace Langulus
 
 namespace Langulus::Math
@@ -436,7 +407,35 @@ namespace Langulus::Math
       using ArrayType = T[S];
       using Base = TVectorBase<S, T>;
 
-      LANGULUS(NAME) CustomNameOf<TVector>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TVector>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (S > 4) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "Vec")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + S;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<T>())
+            name[offset++] = i;
+
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) DEFAULT == 0;
