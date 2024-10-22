@@ -117,14 +117,12 @@ namespace Langulus::Math
       static constexpr auto Default = T::Default;
 
       union {
-         struct {
-            struct { PointType mMin; };
-            struct { PointType mMax; };
-         };
+         // Useful representation for directly feeding to SIMD          
+         MemberType mArray[MemberCount] {};
 
          struct {
-            // Useful representation for directly feeding to SIMD       
-            MemberType mArray[MemberCount];
+            PointType mMin;
+            PointType mMax;
          };
       };
 
@@ -172,7 +170,7 @@ namespace Langulus::Math
       static constexpr bool CTTI_RangeTrait = true;
 
    public:
-      constexpr TRange() noexcept;
+      constexpr TRange() noexcept = default;
       constexpr TRange(const TRange&) noexcept;
       constexpr TRange(const CT::Vector auto&) noexcept;
       constexpr TRange(const CT::Scalar auto&) noexcept;
