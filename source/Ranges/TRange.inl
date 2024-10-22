@@ -38,7 +38,7 @@ namespace Langulus::Math
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept {
-      for (int i = 0; i < CountOf<T>; ++i) {
+      for (Count i = 0; i < CountOf<T>; ++i) {
          mArray[i] = min.all[i];
          mArray[i + CountOf<T>] = max.all[i];
       }
@@ -47,7 +47,7 @@ namespace Langulus::Math
    /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const MemberType& min, const MemberType& max) noexcept {
-      for (int i = 0; i < CountOf<T>; ++i) {
+      for (Count i = 0; i < CountOf<T>; ++i) {
          mArray[i] = min;
          mArray[i + CountOf<T>] = max;
       }

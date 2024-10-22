@@ -81,90 +81,6 @@ namespace Langulus
       concept TriangleFan = (DerivedFrom<T, A::TriangleFan> and ...);
 
    } // namespace Langulus::CT
-   
-   /// Custom name generator at compile-time for triangles                    
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TTriangle<T>>&&) noexcept {
-      using CLASS = Math::TTriangle<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Tri")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-   
-   /// Custom name generator at compile-time for triangle strips              
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TTriangleStrip<T>>&&) noexcept {
-      using CLASS = Math::TTriangleStrip<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "TriStrip")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-   
-   /// Custom name generator at compile-time for triangle fans                
-   template<CT::Vector T>
-   consteval auto CustomName(Of<Math::TTriangleFan<T>>&&) noexcept {
-      using CLASS = Math::TTriangleFan<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "TriFan")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
 
 } // namespace Langulus
 
@@ -177,7 +93,34 @@ namespace Langulus::Math
    #pragma pack(push, 1)
    template<CT::Vector T>
    struct TTriangle : A::Triangle {
-      LANGULUS(NAME) CustomNameOf<TTriangle>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TTriangle>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "Tri")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + T::MemberCount;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(ABSTRACT) false;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
@@ -329,7 +272,34 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TTriangleStrip : A::TriangleStrip {
-      LANGULUS(NAME) CustomNameOf<TTriangleStrip>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TTriangleStrip>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "TriStrip")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + T::MemberCount;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleStrip);
 
@@ -360,7 +330,34 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T>
    struct TTriangleFan : A::TriangleFan {
-      LANGULUS(NAME) CustomNameOf<TTriangleFan>::Generate();
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TTriangleFan>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
+
+         if constexpr (T::MemberCount > 3) {
+            for (auto i : defaultClassName)
+               name[offset++] = i;
+            return name;
+         }
+
+         // Write prefix                                                
+         for (auto i : "TriFan")
+            name[offset++] = i;
+
+         // Write size                                                  
+         --offset;
+         name[offset++] = '0' + T::MemberCount;
+
+         // Write suffix                                                
+         for (auto i : SuffixOf<TypeOf<T>>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME) GenerateToken();
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::TriangleFan);
 
