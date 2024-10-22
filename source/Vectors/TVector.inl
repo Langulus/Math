@@ -49,14 +49,16 @@ namespace Langulus::Math
    /// Construct from any vector (with conversion)                            
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Vector auto& source) noexcept {
+   constexpr TME()::TVector(const CT::Vector auto& source) noexcept
+      : TVector {} {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
    /// Construct from any scalar (with conversion)                            
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Scalar auto& source) noexcept {
+   constexpr TME()::TVector(const CT::Scalar auto& source) noexcept
+      : TVector {} {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
