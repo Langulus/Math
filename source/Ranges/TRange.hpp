@@ -118,12 +118,14 @@ namespace Langulus::Math
 
       union {
          struct {
-            PointType mMin;
-            PointType mMax;
+            struct { PointType mMin; };
+            struct { PointType mMax; };
          };
 
-         // Useful representation for directly feeding to SIMD          
-         MemberType mArray[MemberCount];
+         struct {
+            // Useful representation for directly feeding to SIMD       
+            MemberType mArray[MemberCount];
+         };
       };
 
    public:
