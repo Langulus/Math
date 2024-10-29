@@ -31,7 +31,7 @@ file(GLOB_RECURSE
 )
 
 # Build and install Math library                                            
-add_library(LangulusMath ${LANGULUS_LIBRARY_TYPE}
+add_langulus_library(LangulusMath
     $<TARGET_OBJECTS:LangulusLogger>
     $<TARGET_OBJECTS:LangulusRTTI>
     $<$<BOOL:${LANGULUS_FEATURE_MANAGED_MEMORY}>:$<TARGET_OBJECTS:LangulusFractalloc>>
