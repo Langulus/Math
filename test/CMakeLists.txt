@@ -4,14 +4,7 @@ file(GLOB_RECURSE
 	*.cpp
 )
 
-add_executable(LangulusMathTest ${LANGULUS_MATH_TEST_SOURCES})
-
-target_link_libraries(LangulusMathTest
-    PRIVATE     LangulusMath
-                Catch2
-)
-
-add_test(
-	NAME		LangulusMathTest
-	COMMAND		LangulusMathTest
+add_langulus_test(LangulusMathTest
+	SOURCES		${LANGULUS_MATH_TEST_SOURCES}
+	LIBRARIES	LangulusMath
 )
