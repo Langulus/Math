@@ -139,17 +139,17 @@ namespace Langulus::Math
       template<CT::Vector ALT_T = T, CT::Integer IDX>
       constexpr TLine(const ALT_T*, const IDX(&)[2]) noexcept;
 
-      NOD() bool IsDegenerate() const noexcept;
+      bool IsDegenerate() const noexcept;
 
-      NOD() ::std::array<TLine, 2> Subdivide() const noexcept;
+      ::std::array<TLine, 2> Subdivide() const noexcept;
 
-      NOD() auto SignedDistance(const PointType&) const;
+      auto SignedDistance(const PointType&) const;
 
-      NOD() auto& operator [] (Offset) const noexcept;
-      NOD() auto& operator [] (Offset) noexcept;
+      auto& operator [] (Offset) const noexcept;
+      auto& operator [] (Offset) noexcept;
 
       template<CT::Vector ALT>
-      NOD() explicit operator TLine<ALT>() const noexcept;
+      explicit operator TLine<ALT>() const noexcept;
    };
    #pragma pack(pop)
 

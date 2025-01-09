@@ -113,12 +113,12 @@ namespace Langulus::Math
 
       T mOffsets {.5};
 
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
 
-      NOD() explicit operator Anyness::Text() const;
-      NOD() explicit operator Flow::Code() const;
+      explicit operator Anyness::Text() const;
+      explicit operator Flow::Code() const;
    };
 
 
@@ -174,12 +174,12 @@ namespace Langulus::Math
 
       TypeOf<T> mRadius;
 
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
 
-      NOD() explicit operator Anyness::Text() const;
-      NOD() explicit operator Flow::Code() const;
+      explicit operator Anyness::Text() const;
+      explicit operator Flow::Code() const;
    };
 
 } // namespace Langulus::Math

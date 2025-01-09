@@ -42,19 +42,31 @@ namespace Langulus::Math
       using QuatType   = TQuaternion<ScalarType>;
       using SizeType   = TScale<TVector<ScalarType, T::MemberCount, 1>>;
       
-      // Optional parent for inheriting transformations                 
-      Anyness::Ref<TInstance<T>> mParent;
-
-      // Position in space                                              
-      PointType mPosition;
+      //                                                                
+      // The following properties are reset on each Update()            
+      // Single-tick movement incurred by simulation                    
+      PointType mSimImpulse;
+      // Single-tick movement incurred by user interaction              
+      PointType mUseImpulse;
+      // Single-tick movement                                           
+      PointType mImpulse;
 
       // Velocity incurred by simulation                                
-      Adaptive<PointType> mSimVelocity;
+      PointType mSimVelocity;
       // Velocity incurred by user interaction                          
-      Adaptive<PointType> mUseVelocity;
-      // Total velocity                                                 
-      Adaptive<PointType> mVelocity;
+      PointType mUseVelocity;
 
+      // Octave change incurred by simulation                           
+      Level mSimLevelChange = 0;
+      // Octave change incurred by user interaction                     
+      Level mUseLevelChange = 0;
+
+      //                                                                
+      // The following properties are persistent                        
+      // Total velocity                                                 
+      PointType mVelocity;
+      // Position in space                                              
+      PointType mPosition;
       // Acceleration                                                   
       PointType mAcceleration;
       // The current orientation                                        
@@ -76,7 +88,7 @@ namespace Langulus::Math
       // Excessive use-boundness essentially directs energy to the      
       // physical system, so care must be taken to balance it out       
       // against the rest of energy applied from simulation. It's best  
-      // to design a controller that relies on 1 SB, and 0 UB, so that  
+      // to design a controller that relies on 1 SB:0 UB, so that       
       // physical movement is completely dependent on the simulation    
       // energy transfer. However, sometimes that is not an option, and 
       // involves quite elaborate tweeking and testing to behave well.  
@@ -103,68 +115,64 @@ namespace Langulus::Math
       // Static instances are never updated (optimization only)         
       bool mStatic = false;
 
-      // Octave change incurred by simulation                           
-      Level mSimLevelChange = 0;
-      // Octave change incurred by user interaction                     
-      Level mUseLevelChange = 0;
       // Octave for scaling, position, acceleration and velocity        
       Level mLevel = 0;
+
+      // Optional parent for inheriting transformations and forces      
+      Ref<TInstance> mParent;
 
    public:
       LANGULUS_VERBS(Verbs::Move);
 
       TInstance() noexcept = default;
 
-      NOD() auto GetRange(Level) const -> RangeType;
-      NOD() auto GetRangeRotated(Level) const -> RangeType;
+      auto GetRange(Level) const -> RangeType;
+      auto GetRangeRotated(Level) const -> RangeType;
 
-      NOD() auto GetPositionNext(const ScalarType&) const noexcept -> PointType;
-      NOD() auto GetPositionPrev(const ScalarType&) const noexcept -> PointType;
-      NOD() auto GetVelocityNext(const ScalarType&) const noexcept -> PointType;
-      NOD() auto GetVelocityPrev(const ScalarType&) const noexcept -> PointType;
+      auto GetPositionNext(const ScalarType&) const noexcept -> PointType;
+      auto GetPositionPrev(const ScalarType&) const noexcept -> PointType;
+      auto GetVelocityNext(const ScalarType&) const noexcept -> PointType;
+      auto GetVelocityPrev(const ScalarType&) const noexcept -> PointType;
 
-      NOD() auto GetRight() const noexcept -> PointType;
-      NOD() auto GetUp() const noexcept -> PointType;
-      NOD() auto GetForward() const noexcept -> PointType;
-      NOD() auto GetScale(Level) const -> SizeType;
-      NOD() auto GetScale() const noexcept -> SizeType;
-      NOD() auto GetAim() const noexcept -> QuatType;
-      NOD() auto GetPosition(Level) const -> PointType;
-      NOD() auto GetPosition() const noexcept -> PointType;
-      NOD() auto GetLevel() const noexcept -> Level;
+      auto GetRight() const noexcept -> PointType;
+      auto GetUp() const noexcept -> PointType;
+      auto GetForward() const noexcept -> PointType;
+      auto GetScale(Level) const -> SizeType;
+      auto GetScale() const noexcept -> SizeType;
+      auto GetAim() const noexcept -> QuatType;
+      auto GetPosition(Level) const -> PointType;
+      auto GetPosition() const noexcept -> PointType;
+      auto GetLevel() const noexcept -> Level;
 
-      NOD() auto GetModelTransform(Level) const -> MatrixType;
-      NOD() auto GetModelTransform() const -> MatrixType;
+      auto GetModelTransform(Level) const -> MatrixType;
+      auto GetModelTransform() const -> MatrixType;
 
-      NOD() auto GetViewTransform(Level) const -> MatrixType;
-      NOD() auto GetViewTransform() const -> MatrixType;
+      auto GetViewTransform(Level) const -> MatrixType;
+      auto GetViewTransform() const -> MatrixType;
 
-      void ConstrainPosition(const TInstance<T>&, const RangeType&);
+      void ConstrainPosition(const TInstance&, const RangeType&);
 
       template<bool RELATIVE = false>
       void SetScale(const SizeType&);
       template<bool RELATIVE = false>
       void SetPosition(const PointType&);
 
-      NOD() auto RandomPosition(RNG&, const RangeType&) const -> PointType;
+      auto RandomPosition(RNG&, const RangeType&) const -> PointType;
 
       void Move(Flow::Verb&);
 
       template<CT::Angle A, CT::Dimension D>
-      void Rotate(ScalarType, const TAngle<A, D>&, bool relative = false);
+      void Rotate(const TAngle<A, D>&, bool relative = false);
 
       template<class K>
-      void Move(ScalarType, const TNormal<K>&, bool relative = false);
+      void Move(const TScale<K>&, bool relative = false);
+
+      void Move(const CT::VectorBased auto&, bool relative = false);
 
       template<class K>
-      void Move(ScalarType, const TScale<K>&, bool relative = false);
+      void Move(const TForce<K>&, bool relative = false);
 
-      void Move(ScalarType, const CT::VectorBased auto&, bool relative = false);
-
-      template<class K>
-      void Move(ScalarType, const TForce<K>&, bool relative = false);
-
-      void ChangeLevel(ScalarType, const Level&, bool relative = false);
+      void ChangeLevel(const Level&, bool relative = false);
 
       bool operator == (const TInstance&) const noexcept = default;
    };

@@ -86,7 +86,7 @@ namespace Langulus::Math
    /// Get LOD index in the range [0;IndexCount)                              
    ///   @return the absolute index                                           
    LANGULUS(INLINED)
-   AbsoluteLODIndex LOD::GetAbsoluteIndex() const noexcept {
+   auto LOD::GetAbsoluteIndex() const noexcept -> AbsoluteLODIndex {
       return static_cast<AbsoluteLODIndex>(
          static_cast<LODIndex>(mLODIndex) - MinIndex
       );

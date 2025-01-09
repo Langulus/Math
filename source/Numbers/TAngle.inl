@@ -134,8 +134,7 @@ namespace Langulus::Math
    }
 
    /// Add two similar angles                                                 
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D> operator + (
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
@@ -149,8 +148,7 @@ namespace Langulus::Math
    }
 
    /// Subtract two similar angles                                            
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D> operator - (
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
@@ -164,8 +162,7 @@ namespace Langulus::Math
    }
 
    /// Multiply two similar angles                                            
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D> operator * (
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
@@ -179,8 +176,7 @@ namespace Langulus::Math
    }
       
    /// Divide two similar angles                                              
-   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D>
-   NOD() LANGULUS(INLINED)
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
    constexpr TAngle<LHST, D> operator / (
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs

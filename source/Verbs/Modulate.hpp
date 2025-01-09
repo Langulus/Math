@@ -17,7 +17,7 @@ namespace Langulus::Verbs
    /// Performs arithmetic modulation                                         
    struct Modulate : ArithmeticVerb<Modulate, false> {
       LANGULUS(VERB) "Modulate";
-      LANGULUS(OPERATOR) "%";
+      LANGULUS(OPERATOR) " % ";
       LANGULUS(PRECEDENCE) 8;
       LANGULUS(INFO) "Performs arithmetic modulation";
 

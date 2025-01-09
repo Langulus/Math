@@ -19,7 +19,7 @@ namespace Langulus::Verbs
    ///                                                                        
    struct Randomize : ArithmeticVerb<Randomize, false> {
       LANGULUS(VERB) "Randomize";
-      LANGULUS(OPERATOR) "Rand";
+      LANGULUS(OPERATOR) " rand ";
       LANGULUS(PRECEDENCE) 9;
       LANGULUS(INFO) "Performs randomization";
 

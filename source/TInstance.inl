@@ -17,9 +17,9 @@
 namespace Langulus::Math
 {
 
-   /// Get the range of the instance (aka AABB) from a ref octave             
+   /// Get the range of the instance (aka AABB) from a ref level              
    /// This doesn't take rotation into account, only scaling                  
-   ///   @param reference - the reference octave                              
+   ///   @param level - the reference level                                   
    ///   @return the AABB range                                               
    TEMPLATE()
    auto TME()::GetRange(Level level) const -> RangeType {
@@ -29,14 +29,14 @@ namespace Langulus::Math
       return (RangeType {-halfSize, halfSize} + position) * factor;
    }
 
-   /// Get the range of the instance (aka AABB) from a ref octave             
+   /// Get the range of the instance (aka AABB) from a ref level              
    /// This takes rotation and scale into account                             
-   ///   @param reference - the reference octave                              
+   ///   @param level - the reference level                                   
    ///   @return the AABB range                                               
    TEMPLATE()
-   auto TME()::GetRangeRotated(Level reference) const -> RangeType {
+   auto TME()::GetRangeRotated(Level level) const -> RangeType {
       // AABB before rotation                                           
-      const auto aabb = GetRange(reference);
+      const auto aabb = GetRange(level);
       if (aabb.IsDegenerate())
          return {};
 
@@ -211,7 +211,7 @@ namespace Langulus::Math
    ///   @param limits - instance representing the possible volume            
    ///   @param range - symoblic range that transforms the limits             
    TEMPLATE()
-   void TME()::ConstrainPosition(const TME()& limits, const RangeType& range) {
+   void TME()::ConstrainPosition(const TInstance& limits, const RangeType& range) {
       // Clamp inside object                                            
       constexpr ScalarType half {.5};
       const auto thisscale = GetScale() * half;
@@ -285,100 +285,99 @@ namespace Langulus::Math
    }
 
    /// Rotate by euler angles                                                 
-   ///   @param sign - the sign of the rotation                               
    ///   @param angle - the oriented angle                                    
    ///   @param relative - whether or not the angle is relative to current    
    TEMPLATE() template<CT::Angle A, CT::Dimension D>
-   void TME()::Rotate(ScalarType sign, const TAngle<A, D>& angle, bool relative) {
+   void TME()::Rotate(const TAngle<A, D>& angle, bool relative) {
       if (relative) {
          // The rotation axis is relative                               
-         mAim *= QuatType::FromAngle(angle * sign);
+         mAim *= QuatType::FromAngle(angle);
       }
       else {
          // The rotation axis is absolute                               
          if constexpr (CT::Same<D, Traits::X>)
-            mAim *= QuatType::FromAxis(GetRight(), angle * sign);
+            mAim *= QuatType::FromAxis(GetRight(), angle);
          else if constexpr (CT::Same<D, Traits::Y>)
-            mAim *= QuatType::FromAxis(GetUp(), angle * sign);
+            mAim *= QuatType::FromAxis(GetUp(), angle);
          else if constexpr (CT::Same<D, Traits::Z>)
-            mAim *= QuatType::FromAxis(GetForward(), angle * sign);
+            mAim *= QuatType::FromAxis(GetForward(), angle);
          else
             static_assert(false, "Unsupported dimension");
       }
    }
 
-   /// Move along a direction                                                 
-   ///   @param sign - the sign of the movement                               
-   ///   @param normal - the normalized direction                             
-   ///   @param relative - whether or not normal is relative to current       
-   TEMPLATE() template<class K>
-   void TME()::Move(ScalarType sign, const TNormal<K>& normal, bool relative) {
-      if (relative)
-         mUseVelocity += -mAim * (normal * sign);
-      else
-         mUseVelocity += normal * sign;
-   }
-
    /// Resize instance (movement inwards/outwards)                            
-   ///   @param sign - the sign of the movement                               
    ///   @param sizer - the new size                                          
    ///   @param relative - whether or not size is relative to current         
    TEMPLATE() template<class K>
-   void TME()::Move(ScalarType sign, const TScale<K>& sizer, bool relative) {
+   void TME()::Move(const TScale<K>& sizer, bool relative) {
       if (relative)
-         mScale += sizer * sign;
+         mScale += sizer;
       else
-         mScale = sizer * sign;
+         mScale = sizer;
    }
 
-   /// Sets a new position                                                    
-   ///   @param sign - the sign of the movement                               
-   ///   @param position - the new position                                   
-   ///   @param relative - whether or not position is relative to current     
+   /// Sets a new position or move along a direction - applies one-time       
+   /// impulse, that can be counter-acted only by collision                   
+   ///   @param position - the new position or direction (depending if Normal 
+   ///      or not)                                                           
+   ///   @param relative - whether or not position/normal is relative to      
+   ///      current orientation                                               
    TEMPLATE()
-   void TME()::Move(ScalarType sign, const CT::VectorBased auto& position, bool relative) {
-      if (relative)
-         mPosition = -mAim * (sign * static_cast<PointType>(position));
-      else
-         mPosition = position;
+   void TME()::Move(const CT::VectorBased auto& position, bool relative) {
+      using P = decltype(position);
+      if constexpr (CT::Normalized<P>) {
+         if (relative)
+            mUseImpulse += mAim * (position * PointType {1,1,-1});
+         else
+            mUseImpulse += position;
+      }
+      else {
+         if (relative)
+            mPosition = mAim * (static_cast<PointType>(position) * PointType {1,1,-1});
+         else
+            mPosition = position;
+      }
    }
 
-   /// Add a multioctave force                                                
-   ///   @param sign - the sign of the movement                               
+   /// Add a multioctave force - changes velocity in a persistent way, that   
+   /// can be counter-acted by other forces only                              
    ///   @param force - the force to apply                                    
    ///   @param relative - whether or not force is relative to current        
    TEMPLATE() template<class K>
-   void TME()::Move(ScalarType sign, const TForce<K>& force, bool relative) {
+   void TME()::Move(const TForce<K>& force, bool relative) {
       if (relative)
-         mUseVelocity += -mAim * (force * sign);
+         mUseVelocity += mAim * (force.GetMidref(mLevel) * PointType {1,1,-1});
       else
-         mUseVelocity += force * sign;
+         mUseVelocity += force.GetMidref(mLevel);
    }
 
    /// Execute a move/rotate/scale verb                                       
    ///   @param verb - movement verb                                          
    TEMPLATE()
    void TME()::Move(Flow::Verb& verb) {
-      const auto sign = Sign(verb.GetMass());
-      bool relative = false;
-
       using Anyness::Block;
       using Anyness::Trait;
+      bool relative = false;
+
+      // Read relativity first                                          
+      verb.ForEachDeep([&relative](const Trait& trait) {
+         if (trait.IsTrait<Traits::Relative>())
+            relative = trait.AsCast<bool>();
+      });
+      verb.ForEachDeep([&relative](const TMeta& trait) {
+         if (trait == MetaTraitOf<Traits::Relative>())
+            relative = true;
+      });
 
       verb.ForEachDeep([&](const Many& part) {
-         // Read relativity first                                       
-         part.ForEach([&relative](const Trait& trait) {
-            if (trait.IsTrait<Traits::Relative>())
-               relative = trait.AsCast<bool>();
-         });
-
          Count done = part.ForEach(
             [&](const Normal& normal) {
                // Move towards normalized direction                     
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving along normal: " << normal 
                   << (relative ? " (relatively)" : ""));
-               Move(sign, normal, relative);
+               Move(Normal {normal * verb.GetMass()}, relative);
                verb.Done();
             },
             [&](const Vec2& point) {
@@ -386,7 +385,7 @@ namespace Langulus::Math
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point2: " << point
                   << (relative ? " (relatively)" : ""));
-               Move(sign, point, relative);
+               Move(point * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Vec3& point) {
@@ -394,7 +393,7 @@ namespace Langulus::Math
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point3: " << point
                   << (relative ? " (relatively)" : ""));
-               Move(sign, point, relative);
+               Move(point * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Force2& force) {
@@ -402,7 +401,7 @@ namespace Langulus::Math
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Applying a force2: " << force
                   << (relative ? " (relatively)" : ""));
-               Move(sign, force, relative);
+               Move(force * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Force3& force) {
@@ -410,7 +409,7 @@ namespace Langulus::Math
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Applying a force3: " << force
                   << (relative ? " (relatively)" : ""));
-               Move(sign, force, relative);
+               Move(force * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Level& octave) {
@@ -418,7 +417,7 @@ namespace Langulus::Math
                // All points of a physical object move to/from center   
                VERBOSE_TINSTANCE("Applying an octave: " << octave
                   << (relative ? " (relatively)" : ""));
-               ChangeLevel(sign, octave, relative);
+               ChangeLevel(octave * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Size& size) {
@@ -427,9 +426,9 @@ namespace Langulus::Math
                VERBOSE_TINSTANCE("Applying a size: " << size
                   << (relative ? " (relatively)" : ""));
                if (relative)
-                  SetScale<true >(size * sign);
+                  SetScale<true >(size * verb.GetMass());
                else
-                  SetScale<false>(size * sign);
+                  SetScale<false>(size * verb.GetMass());
                verb.Done();
             }
          );
@@ -445,7 +444,7 @@ namespace Langulus::Math
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Yaw (degrees): " << angle 
                      << (relative ? " (relatively)" : ""));
-                  Rotate(sign, angle, relative);
+                  Rotate(angle * verb.GetMass(), relative);
                   verb.Done();
                },
                [&](const Yawr& angle) {
@@ -453,7 +452,7 @@ namespace Langulus::Math
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Yaw (radians): " << angle
                      << (relative ? " (relatively)" : ""));
-                  Rotate(sign, angle, relative);
+                  Rotate(angle * verb.GetMass(), relative);
                   verb.Done();
                },
                [&](const Pitchd& angle) {
@@ -461,7 +460,7 @@ namespace Langulus::Math
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Pitch (degrees): " << angle 
                      << (relative ? " (relatively)" : ""));
-                  Rotate(sign, angle, relative);
+                  Rotate(angle * verb.GetMass(), relative);
                   verb.Done();
                },
                [&](const Pitchr& angle) {
@@ -469,7 +468,7 @@ namespace Langulus::Math
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Pitch (radians): " << angle
                      << (relative ? " (relatively)" : ""));
-                  Rotate(sign, angle, relative);
+                  Rotate(angle* verb.GetMass(), relative);
                   verb.Done();
                }
             );
@@ -484,7 +483,7 @@ namespace Langulus::Math
                // All points of a physical object move around the center
                VERBOSE_TINSTANCE("Roll (degrees): " << angle 
                   << (relative ? " (relatively)" : ""));
-               Rotate(sign, angle, relative);
+               Rotate(angle * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Rollr& angle) {
@@ -492,22 +491,22 @@ namespace Langulus::Math
                // All points of a physical object move around the center
                VERBOSE_TINSTANCE("Roll (radians): " << angle
                   << (relative ? " (relatively)" : ""));
-               Rotate(sign, angle, relative);
+               Rotate(angle * verb.GetMass(), relative);
                verb.Done();
             }
          );
       });
    }
 
-   /// Add/subtract an octave, essentially resizing the instance              
-   ///   @param sign - the sign for the change                                
-   ///   @param octave - the octave offset                                    
+   /// Add/subtract a level, essentially resizing the instance                
+   ///   @param level - the level offset                                      
+   ///   @param relative - whether or not level is relative to current        
    TEMPLATE()
-   void TME()::ChangeLevel(ScalarType sign, const Level& octave, bool relative) {
+   void TME()::ChangeLevel(const Level& level, bool relative) {
       if (relative)
-         mUseLevelChange += octave * sign;
+         mUseLevelChange += level;
       else
-         mUseLevelChange  = octave * sign;
+         mUseLevelChange  = level;
    }
 
 } // namespace Langulus::Math

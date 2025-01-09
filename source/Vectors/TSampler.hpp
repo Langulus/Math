@@ -174,12 +174,12 @@ namespace Langulus
             : T {other} {}
 
          /// Convert from any sampler to code                                 
-         NOD() explicit operator Flow::Code() const {
+         explicit operator Flow::Code() const {
             return T::template Serialize<Flow::Code, TSampler>();
          }
 
          /// Convert from any sampler to text                                 
-         NOD() explicit operator Anyness::Text() const {
+         explicit operator Anyness::Text() const {
             return T::template Serialize<Anyness::Text, TSampler>();
          }
       };

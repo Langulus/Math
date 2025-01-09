@@ -160,7 +160,7 @@ namespace Langulus::Math
 
       /// Check if triangle is degenerate                                     
       ///   @return true if any of the points overlap                         
-      NOD() constexpr bool IsDegenerate() const noexcept {
+      constexpr bool IsDegenerate() const noexcept {
          return mABC[0] == mABC[1]
              or mABC[0] == mABC[2]
              or mABC[1] == mABC[2];
@@ -168,7 +168,7 @@ namespace Langulus::Math
 
       /// Subdivide triangle                                                  
       ///   @return the four new triangles                                    
-      NOD() ::std::array<TTriangle, 4> Subdivide() const noexcept {
+      ::std::array<TTriangle, 4> Subdivide() const noexcept {
          constexpr TypeOf<T> two {2};
          const T m01 = mABC[0] + (mABC[1] - mABC[0]) / two;
          const T m12 = mABC[1] + (mABC[2] - mABC[1]) / two;
@@ -184,7 +184,7 @@ namespace Langulus::Math
       /// Calculate signed distance                                           
       ///   @param point - the point from which distance is calculated        
       ///   @return the distance                                              
-      NOD() auto SignedDistance(const T& point) const {
+      auto SignedDistance(const T& point) const {
          const auto e0 = mABC[1] - mABC[0];
          const auto e1 = mABC[2] - mABC[1];
          const auto e2 = mABC[0] - mABC[2];
@@ -224,16 +224,16 @@ namespace Langulus::Math
       }
 
       ///   Access points                                                     
-      NOD() auto& operator [] (Offset index) const noexcept {
+      auto& operator [] (Offset index) const noexcept {
          return mABC[index];
       }
-      NOD() auto& operator [] (Offset index) noexcept {
+      auto& operator [] (Offset index) noexcept {
          return mABC[index];
       }
 
       /// Convert to other kinds of triangles                                 
       template<CT::Vector ALT>
-      NOD() explicit operator TTriangle<ALT>() const noexcept {
+      explicit operator TTriangle<ALT>() const noexcept {
          return { 
             static_cast<ALT>(mABC[0]),
             static_cast<ALT>(mABC[1]),

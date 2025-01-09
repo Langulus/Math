@@ -191,28 +191,28 @@ namespace Langulus::Math
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-      NOD() explicit operator Anyness::Text() const;
-      NOD() explicit operator Flow::Code() const;
+      explicit operator Anyness::Text() const;
+      explicit operator Flow::Code() const;
 
       constexpr auto Embrace(const auto&) noexcept -> TRange&;
       constexpr auto ConstrainBy(const auto&) noexcept -> TRange&;
 
-      NOD() auto GetMin() const noexcept -> const PointType&;
-      NOD() auto GetMax() const noexcept -> const PointType&;
-      NOD() auto Length() const noexcept -> PointType;
-      NOD() auto Center() const noexcept -> PointType;
+      auto GetMin() const noexcept -> PointType const&;
+      auto GetMax() const noexcept -> PointType const&;
+      auto Length() const noexcept -> PointType;
+      auto Center() const noexcept -> PointType;
 
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool Inside(const PointType&) const noexcept;
-      NOD() constexpr bool IsInsideHalfClosed(const PointType&) const noexcept;
-      NOD() constexpr auto ClampRev(const PointType&) const noexcept -> PointType;
-      NOD() constexpr auto Clamp(const PointType&) const noexcept -> PointType;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool Inside(const PointType&) const noexcept;
+      constexpr bool IsInsideHalfClosed(const PointType&) const noexcept;
+      constexpr auto ClampRev(const PointType&) const noexcept -> PointType;
+      constexpr auto Clamp(const PointType&) const noexcept -> PointType;
 
-      NOD() constexpr auto operator |  (const TRange&) const noexcept -> TRange ;
-            constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
+      constexpr auto operator |  (const TRange&) const noexcept -> TRange;
+      constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
 
-      NOD() constexpr auto operator [] (Offset)       noexcept ->       MemberType&;
-      NOD() constexpr auto operator [] (Offset) const noexcept -> const MemberType&;
+      constexpr auto operator [] (Offset)       noexcept -> MemberType&;
+      constexpr auto operator [] (Offset) const noexcept -> MemberType const&;
    };
    #pragma pack(pop)
 
@@ -252,35 +252,35 @@ namespace Langulus::Math
    ///   Operations                                                           
    ///                                                                        
    /// Returns an inverted range                                              
-   NOD() constexpr auto operator - (const CT::RangeBased auto&) noexcept;
+   constexpr auto operator - (const CT::RangeBased auto&) noexcept;
 
    /// Returns the sum of two ranges                                          
-   NOD() constexpr auto operator + (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator + (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator + (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator + (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator + (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto operator + (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Returns the difference of two ranges                                   
-   NOD() constexpr auto operator - (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator - (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator - (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator - (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator - (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto operator - (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Returns the product of two ranges                                      
-   NOD() constexpr auto operator * (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator * (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator * (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator * (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator * (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto operator * (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Returns the division of two ranges                                     
-   NOD() constexpr auto operator / (const CT::RangeBased  auto&, const CT::RangeBased  auto&);
-   NOD() constexpr auto operator / (const CT::RangeBased  auto&, const CT::ScalarBased auto&);
-   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::RangeBased  auto&);
-   NOD() constexpr auto operator / (const CT::RangeBased  auto&, const CT::VectorBased auto&);
-   NOD() constexpr auto operator / (const CT::VectorBased auto&, const CT::RangeBased  auto&);
+   constexpr auto operator / (const CT::RangeBased  auto&, const CT::RangeBased  auto&);
+   constexpr auto operator / (const CT::RangeBased  auto&, const CT::ScalarBased auto&);
+   constexpr auto operator / (const CT::ScalarBased auto&, const CT::RangeBased  auto&);
+   constexpr auto operator / (const CT::RangeBased  auto&, const CT::VectorBased auto&);
+   constexpr auto operator / (const CT::VectorBased auto&, const CT::RangeBased  auto&);
 
 
    ///                                                                        
@@ -311,33 +311,33 @@ namespace Langulus::Math
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator <  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Bigger                                                                 
-   NOD() constexpr auto operator >  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator >  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator >  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator >  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator >  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Bigger or equal                                                        
-   NOD() constexpr auto operator >= (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator >= (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator >= (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator >= (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator >= (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Smaller or equal                                                       
-   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator <  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator <  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Equal                                                                  
-   NOD() constexpr auto operator == (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator == (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator == (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator == (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
-   NOD() constexpr auto operator != (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator != (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator != (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator != (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator != (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
 } // namespace Langulus::Math
 

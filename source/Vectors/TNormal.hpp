@@ -85,12 +85,14 @@ namespace Langulus
       struct TNormal : T {
          using PointType = T;
          using T::MemberCount;
-         using T::T;
 
          static_assert(MemberCount > 1,
             "Normal size must be greater than one");
          static_assert(CT::Real<TypeOf<T>>,
             "Normal can be only made of real numbers");
+
+         // Make TNormal match the CT::Normalized concept               
+         static constexpr bool CTTI_NormalizedTrait = true;
 
       private:
          static consteval auto GenerateToken() {
@@ -127,26 +129,22 @@ namespace Langulus
             T
          );
 
-         /// Construct a normal from a vector                                 
-         ///   @param other - the vector to normalize                         
-         LANGULUS(INLINED)
-         constexpr TNormal(const T& other)
-            : T {other.Normalize()} {}
+         /// A default normal doesn't make sense - it will be degenerate      
+         TNormal() = delete;
 
-         /// Manual construction via a variadic head-tail                     
-         /// Excessive elements are ignored, missing elements are defaulted   
-         template<class T1, class T2, class...TN> LANGULUS(INLINED)
-         constexpr TNormal(const T1& t1, const T2& t2, const TN&...tn)
-            : T {T {t1, t2, tn...}.Normalize()} {}
+         /// Any single-parameter constructor for a vector should go through  
+         /// this constructor, so that the vector is later normalized         
+         template<class T1>
+         requires ::std::constructible_from<T, T1> LANGULUS(INLINED)
+         constexpr TNormal(T1&& t1)
+            : T {T {Forward<T1>(t1)}.Normalize()} {}
 
-         /// Descriptor constructor                                           
-         ///   @param describe - the descriptor                               
-         TNormal(Describe&& describe)
-            : T {::std::forward<Describe>(describe)} {
-            const auto l = T::Length();
-            LANGULUS_ASSERT(l != TypeOf<T> {0}, Arithmetic, "Degenerate normal");
-            *this /= l;
-         }
+         /// Any multi-parameter constructor for a vector should go through   
+         /// this constructor, so that the vector is later normalized         
+         template<class T1, class...TN>
+         requires ::std::constructible_from<T, T1, TN...> LANGULUS(INLINED)
+         constexpr TNormal(T1&& t1, TN&&...tn)
+            : T {T {Forward<T1>(t1), Forward<TN>(tn)...}.Normalize()} {}
 
          /// Convert from any normal to code                                  
          LANGULUS(INLINED)
@@ -158,6 +156,14 @@ namespace Langulus
          LANGULUS(INLINED)
          explicit operator Anyness::Text() const {
             return T::template Serialize<Anyness::Text, TNormal>();
+         }
+
+         /// Check if all components are zero                                 
+         LANGULUS(INLINED)
+         constexpr bool IsDegenerate() const noexcept {
+            bool result;
+            SIMD::Equals(PointType::all, TypeOf<T> {0}, result);
+            return result;
          }
       };
 

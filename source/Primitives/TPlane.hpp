@@ -38,12 +38,12 @@ namespace Langulus::Math
       constexpr TPlane(const TVector<TypeOf<T>, MemberCount + 1>& column) noexcept;
       constexpr TPlane(const T& offset) noexcept;
 
-      TPlane& Flip() noexcept;
-      TPlane& Normalize() noexcept;
+      auto Flip() noexcept -> TPlane&;
+      auto Normalize() noexcept -> TPlane&;
 
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
    };
 
 } // namespace Langulus::Math

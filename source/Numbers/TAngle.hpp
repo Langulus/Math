@@ -66,11 +66,11 @@ namespace Langulus
          TDegrees& operator = (const TDegrees&) noexcept = default;
          TDegrees& operator = (TDegrees&&) noexcept = default;
 
-         NOD() constexpr T GetRadians() const noexcept;
-         NOD() constexpr T GetDegrees() const noexcept;
+         constexpr T GetRadians() const noexcept;
+         constexpr T GetDegrees() const noexcept;
 
-         NOD() Lossless<Real, T> Cos() const noexcept;
-         NOD() Lossless<Real, T> Sin() const noexcept;
+         Lossless<Real, T> Cos() const noexcept;
+         Lossless<Real, T> Sin() const noexcept;
 
          using Base::operator bool;
       };
@@ -99,11 +99,11 @@ namespace Langulus
          TRadians& operator = (const TRadians&) noexcept = default;
          TRadians& operator = (TRadians&&) noexcept = default;
 
-         NOD() constexpr T GetRadians() const noexcept;
-         NOD() constexpr T GetDegrees() const noexcept;
+         constexpr T GetRadians() const noexcept;
+         constexpr T GetDegrees() const noexcept;
 
-         NOD() Lossless<Real, T> Cos() const noexcept;
-         NOD() Lossless<Real, T> Sin() const noexcept;
+         Lossless<Real, T> Cos() const noexcept;
+         Lossless<Real, T> Sin() const noexcept;
 
          using Base::operator bool;
       };
@@ -236,8 +236,8 @@ namespace Langulus
          using T::operator =;
          TAngle(Describe&&);
 
-         NOD() explicit operator Anyness::Text() const;
-         NOD() explicit operator Flow::Code() const;
+         explicit operator Anyness::Text() const;
+         explicit operator Flow::Code() const;
       };
 
    } // namespace Langulus::Math

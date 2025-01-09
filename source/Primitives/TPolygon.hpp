@@ -55,7 +55,7 @@ namespace Langulus
          static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
 
          /// Calculate signed distance                                        
-         NOD() LANGULUS(INLINED)
+         LANGULUS(INLINED)
          auto SignedDistance(const T&) const {
             TODO();
          }

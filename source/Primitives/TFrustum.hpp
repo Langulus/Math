@@ -78,10 +78,10 @@ namespace Langulus::Math
       constexpr TFrustum(S<TFrustum>&&) noexcept;
       constexpr TFrustum(const MatrixType&) noexcept;
 
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
-      NOD() bool Intersects(const TRange<T>&) const noexcept;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
+      bool Intersects(const TRange<T>&) const noexcept;
    };
 
 } // namespace Langulus::Math

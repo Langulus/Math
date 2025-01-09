@@ -91,30 +91,30 @@ namespace Langulus::Math
       template<class T1, class T2, class... TAIL>
       constexpr TGradient(const T1&, const T2&, const TAIL&...) noexcept;
 
-      NOD() constexpr auto& operator [](const Offset&) const noexcept;
-      NOD() constexpr auto& operator [](const Offset&) noexcept;
+      constexpr auto& operator [](const Offset&) const noexcept;
+      constexpr auto& operator [](const Offset&) noexcept;
 
-      NOD() constexpr bool operator == (const TGradient&) const noexcept;
+      constexpr bool operator == (const TGradient&) const noexcept;
 
       constexpr T& Revert() noexcept;
       constexpr T& Update() noexcept;
 
-      NOD() constexpr const T& Current() const noexcept;
-      NOD() constexpr T& Current() noexcept;
+      constexpr auto Current() const noexcept -> T const&;
+      constexpr auto Current()       noexcept -> T&;
 
-      NOD() constexpr const T& Previous() const noexcept;
-      NOD() constexpr T& Previous() noexcept;
+      constexpr auto Previous() const noexcept -> T const&;
+      constexpr auto Previous()       noexcept -> T&;
 
-      NOD() constexpr T Delta() const;
-      NOD() constexpr T Project(const T&) const;
+      constexpr T Delta() const;
+      constexpr T Project(const T&) const;
 
       constexpr void Reset(const T&) noexcept;
 
-      NOD() constexpr T Sum() const noexcept;
+      constexpr T Sum() const noexcept;
 
       void Integrate(Flow::Verb&);
 
-      NOD() explicit operator Flow::Code() const;
+      explicit operator Flow::Code() const;
    };
 #pragma pack(pop)
 

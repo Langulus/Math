@@ -107,30 +107,30 @@ namespace Langulus::Math
       constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>&)
          noexcept requires (COLUMNS >= 3 and ROWS >= 3);
 
-      NOD() explicit operator Anyness::Text() const;
-      NOD() explicit operator Flow::Code() const;
+      explicit operator Anyness::Text() const;
+      explicit operator Flow::Code() const;
 
-      NOD() static constexpr TQuaternion FromAxis(const Base3&, const CT::Angle auto&) noexcept;
+      static constexpr TQuaternion FromAxis(const Base3&, const CT::Angle auto&) noexcept;
 
       template<CT::Angle A, CT::Dimension D>
-      NOD() static constexpr TQuaternion FromAngle(const TAngle<A, D>&) noexcept;
+      static constexpr TQuaternion FromAngle(const TAngle<A, D>&) noexcept;
 
       constexpr TQuaternion& LookAt(const Base3&) noexcept;
 
-      NOD() constexpr auto GetForward() const noexcept;
-      NOD() constexpr auto GetBackward() const noexcept;
-      NOD() constexpr auto GetRight() const noexcept;
-      NOD() constexpr auto GetLeft() const noexcept;
-      NOD() constexpr auto GetUp() const noexcept;
-      NOD() constexpr auto GetDown() const noexcept;
+      constexpr auto GetForward() const noexcept;
+      constexpr auto GetBackward() const noexcept;
+      constexpr auto GetRight() const noexcept;
+      constexpr auto GetLeft() const noexcept;
+      constexpr auto GetUp() const noexcept;
+      constexpr auto GetDown() const noexcept;
 
-      NOD() constexpr TQuaternion Conjugate() const noexcept;
-      NOD() constexpr TQuaternion Normalize() const;
+      constexpr TQuaternion Conjugate() const noexcept;
+      constexpr TQuaternion Normalize() const;
 
-      NOD() constexpr TQuaternion operator - () const noexcept;
+      constexpr TQuaternion operator - () const noexcept;
 
       template<CT::ScalarBased K = T, Count COLUMNS, Count ROWS>
-      NOD() explicit constexpr operator TMatrix<K, COLUMNS, ROWS>() const noexcept
+      explicit constexpr operator TMatrix<K, COLUMNS, ROWS>() const noexcept
       requires (COLUMNS >= 3 and ROWS >= 3);
    };
 
@@ -144,22 +144,22 @@ namespace Langulus::Math
    ///                                                                        
    ///   Operators that involve quaternions                                   
    ///                                                                        
-   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::VectorBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (const CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (const CT::QuaternionBased auto&, const CT::VectorBased auto&) noexcept;
+   constexpr auto operator * (const CT::VectorBased auto&, const CT::QuaternionBased auto&) noexcept;
 
    constexpr void operator *= (CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator + (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator + (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator + (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator - (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator - (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator - (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator - (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator * (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
-   NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (const CT::QuaternionBased auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator * (const CT::ScalarBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   NOD() constexpr auto operator / (const CT::QuaternionBased auto&, const CT::ScalarBased auto&);
-   NOD() constexpr auto operator / (const CT::ScalarBased auto&, const CT::QuaternionBased auto&);
+   constexpr auto operator / (const CT::QuaternionBased auto&, const CT::ScalarBased auto&);
+   constexpr auto operator / (const CT::ScalarBased auto&, const CT::QuaternionBased auto&);
 
 } // namespace Langulus::Math

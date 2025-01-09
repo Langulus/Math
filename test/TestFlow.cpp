@@ -7,9 +7,11 @@
 ///                                                                           
 #include <Math/Config.hpp>
 #include <Math/Vector.hpp>
+#include <Math/Normal.hpp>
 #include <Flow/Verbs/Create.hpp>
 #include <Flow/Verbs/Select.hpp>
 #include <Flow/Verbs/Conjunct.hpp>
+#include <Math/Verbs/Move.hpp>
 #include "Common.hpp"
 
 
@@ -88,6 +90,35 @@ SCENARIO("Parsing scripts", "[code]") {
          REQUIRE(parsed == required);
       }
    }
+
+   GIVEN("The script: Vec2(.sampler.x, -(.time * (-8.75) - .sampler.y ^ 2))") {
+      const auto code = "Vec2(.sampler.x, -(.time * (-8.75) - .sampler.y ^ 2))"_code;
+
+      WHEN("Parsed without optimization") {
+         Many required = Construct::From<Vec2>(Many::Wrap<Verb>(
+            Verbs::Select {MetaOf<Traits::X>()}.SetSource(
+               Verbs::Select {MetaOf<Traits::Sampler>()}
+            ),
+            Verbs::Add {Many {
+               Verbs::Add {Many {
+                  Verbs::Exponent {Real(2)}.SetSource(
+                     Verbs::Select {MetaOf<Traits::Y>()}.SetSource(
+                        Verbs::Select {MetaOf<Traits::Sampler>()}
+                     )
+                  )
+               }}.SetSource(
+                  Verbs::Multiply {Real(-8.75)}.SetSource(
+                     Verbs::Select {MetaOf<Traits::Time>()}
+                  )
+               ).SetMass(-1)
+            }}.SetMass(-1)
+         ));
+
+         const auto parsed = code.Parse();
+         DumpResults(code, parsed, required);
+         REQUIRE(parsed == required);
+      }
+   }
    
    GIVEN("The script: Create^1(Count(1)) Add^3 2") {
       const Code code = "Create^1(Count(1)) Add^3 2";
@@ -105,6 +136,19 @@ SCENARIO("Parsing scripts", "[code]") {
    GIVEN("The script: Create^1(Count(1)) Add^3(2)") {
       const Code code = "Create^1(Count(1)) Add^3(2)";
       const Many required = Verbs::Add {Real(2)}.SetSource(
+            Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
+         ).SetRate(3);
+
+      WHEN("Parsed") {
+         const auto parsed = code.Parse();
+         DumpResults(code, parsed, required);
+         REQUIRE(parsed == required);
+      }
+   }
+
+   GIVEN("The script: Create^1(Count(1)) Add^3(-2)") {
+      const Code code = "Create^1(Count(1)) Add^3(-2)";
+      const Many required = Verbs::Add {Real(-2)}.SetSource(
             Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
          ).SetRate(3);
 
@@ -134,6 +178,19 @@ SCENARIO("Parsing scripts", "[code]") {
    GIVEN("The script: Create^1(Count(1)) + 2 * 4") {
       const Code code = "Create^1(Count(1)) + 2 * 4";
       const Many required = Verbs::Add {Real(8)}.SetSource(
+            Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
+         );
+
+      WHEN("Parsed") {
+         const auto parsed = code.Parse();
+         DumpResults(code, parsed, required);
+         REQUIRE(parsed == required);
+      }
+   }
+
+   GIVEN("The script: Create^1(Count(1)) + 2 * (-4)") {
+      const Code code = "Create^1(Count(1)) + 2 * (-4)";
+      const Many required = Verbs::Add {Real(-8)}.SetSource(
             Verbs::Create {Traits::Count {Real(1)}}.SetRate(1)
          );
 
@@ -207,6 +264,20 @@ SCENARIO("Parsing scripts", "[code]") {
 
       Many required = Many::Wrap<Verb>(add, conjunct);
       required.MakeOr();
+
+      WHEN("Parsed") {
+         const auto parsed = code.Parse();
+         DumpResults(code, parsed, required);
+         REQUIRE(parsed == required);
+      }
+   }
+
+   GIVEN("The script: move (Normal3(0, 0, 1), relative)") {
+      const Code code = "move (Normal3(0, 0, 1), relative)";
+      Many required = Verbs::Move {
+         Math::Normal {0, 0, 1},
+         MetaTraitOf<Traits::Relative>()
+      };
 
       WHEN("Parsed") {
          const auto parsed = code.Parse();

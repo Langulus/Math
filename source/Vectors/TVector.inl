@@ -89,9 +89,9 @@ namespace Langulus::Math
 
          // Combine all the rest of the arguments in a vector           
          if constexpr (sizeof...(TN)) {
-            constexpr auto C3 = Math::Min(CountOf<TN...>, MemberCount - (C1 + C2));
+            constexpr auto C3 = MemberCount - (C1 + C2);
             if constexpr (C3) {
-               const TVector<T, C3> theRest {tn...};
+               const TVector<T, C3 + 1> theRest {tn..., DEFAULT};
                for (Offset i = C1 + C2; i < MemberCount; ++i)
                   all[i] = theRest[i - (C1 + C2)];
             }
@@ -127,6 +127,37 @@ namespace Langulus::Math
       if (not initialized) {
          // Attempt converting anything to T                            
          initialized = describe->ExtractDataAs(all);
+      }
+
+      if (not initialized) {
+         // Attempt converting from any other kinds of numbers          
+         const auto extractor = [&]<class AS>{
+            AS all_as[S];
+            initialized = describe->ExtractData(all_as);
+            if (initialized)
+               SIMD::Convert<DEFAULT>(all_as, all);
+         };
+
+         if      constexpr (not CT::Similar<T, float>)
+            extractor.template operator()<float>();
+         else if constexpr (not CT::Similar<T, double>)
+            extractor.template operator()<double>();
+         else if constexpr (not CT::Similar<T, uint8_t>)
+            extractor.template operator()<uint8_t>();
+         else if constexpr (not CT::Similar<T, uint16_t>)
+            extractor.template operator()<uint16_t>();
+         else if constexpr (not CT::Similar<T, uint32_t>)
+            extractor.template operator()<uint32_t>();
+         else if constexpr (not CT::Similar<T, uint64_t>)
+            extractor.template operator()<uint64_t>();
+         else if constexpr (not CT::Similar<T, int8_t>)
+            extractor.template operator()<int8_t>();
+         else if constexpr (not CT::Similar<T, int16_t>)
+            extractor.template operator()<int16_t>();
+         else if constexpr (not CT::Similar<T, int32_t>)
+            extractor.template operator()<int32_t>();
+         else if constexpr (not CT::Similar<T, int64_t>)
+            extractor.template operator()<int64_t>();
       }
 
       switch (initialized) {
@@ -382,10 +413,10 @@ namespace Langulus::Math
    /// Normalize                                                              
    ///   @return the normalized vector                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Normalize() const -> TVector requires (S > 1) {
+   constexpr auto TME()::Normalize() const noexcept -> TVector requires (S > 1) {
       const auto l = Length();
-      if (l == T {})
-         LANGULUS_THROW(Arithmetic, "Degenerate vector");
+      if (l == T {0})
+         return TME() {};
       return *this * (T {1} / l);
    }
 
@@ -754,7 +785,6 @@ namespace Langulus::Math
    }
 
 
-
    ///                                                                        
    ///   Operations                                                           
    ///                                                                        
@@ -778,13 +808,21 @@ namespace Langulus::Math
    /// Inversion (unary subtraction)                                          
    /// Returns an inverted vector                                             
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::VectorBased auto& rhs) noexcept {
-      return rhs * Decay<TypeOf<decltype(rhs)>> {-1};
+   constexpr decltype(auto) operator - (const CT::VectorBased auto& rhs) noexcept {
+      using E = Decay<TypeOf<decltype(rhs)>>;
+      if constexpr (CT::Signed<E>)
+         return rhs * E {-1};
+      else
+         return (rhs);
    }
 
    LANGULUS(INLINED)
    constexpr auto operator - (const CT::ProxyArray auto& rhs) noexcept {
-      return rhs.GetBase() * Decay<TypeOf<decltype(rhs)>> {-1};
+      using E = Decay<TypeOf<decltype(rhs)>>;
+      if constexpr (CT::Signed<E>)
+         return rhs.GetBase() * E {-1};
+      else
+         return rhs.GetBase();
    }
 
    ///                                                                        
