@@ -14,9 +14,6 @@
 namespace Langulus::Math
 {
 
-   using LODIndex = int32_t;
-   using AbsoluteLODIndex = uint32_t;
-
    ///                                                                        
    ///   Level of detail state                                                
    ///                                                                        
@@ -41,6 +38,9 @@ namespace Langulus::Math
    ///    object appears         object goes outside the screen               
    ///    as a dot                                                            
    struct LOD {
+      using LODIndex = int32_t;
+      using AbsoluteLODIndex = uint32_t;
+
       Level mLevel;
       Mat4 mView;
       Mat4 mViewInverted;
@@ -64,9 +64,9 @@ namespace Langulus::Math
 
       void Transform();
       void Transform(const Mat4&);
-      NOD() Real GetNormalizedDistance() const noexcept;
-      NOD() Real GetIndex() const noexcept;
-      NOD() AbsoluteLODIndex GetAbsoluteIndex() const noexcept;
+      Real GetNormalizedDistance() const noexcept;
+      Real GetIndex() const noexcept;
+      auto GetAbsoluteIndex() const noexcept -> AbsoluteLODIndex;
    };
 
 } // namespace Langulus::Math

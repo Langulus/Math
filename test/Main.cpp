@@ -16,6 +16,7 @@
 
 #include <Math/Config.hpp>
 #include <Math/Vector.hpp>
+#include <Math/Normal.hpp>
 #include <Math/Range.hpp>
 #include <Math/Number.hpp>
 
@@ -29,6 +30,7 @@ int main(int argc, char* argv[]) {
    Math::RegisterTraits();
    Math::RegisterVerbs();
    Math::RegisterVectors();
+   Math::RegisterNormals();
    Math::RegisterRanges();
 
 	Catch::Session session;

@@ -60,18 +60,18 @@ namespace Langulus
          LANGULUS(ABSTRACT) true;
          LANGULUS(CONCRETE) Math::Matrix;
 
-         template<CT::VectorBased V> NOD() static constexpr auto
+         template<CT::VectorBased V> static constexpr auto
          From(const Math::TQuaternion<TypeOf<V>>&, const V& = 0, const V& = 1) noexcept
          -> Math::TMatrix<TypeOf<V>, V::MemberCount + 1>;
 
-         NOD() static constexpr auto
+         static constexpr auto
          PerspectiveFOV(const CT::Angle auto&, CT::ScalarBased auto, CT::ScalarBased auto, CT::ScalarBased auto);
 
-         template<CT::ScalarBased T> NOD() static constexpr auto
+         template<CT::ScalarBased T> static constexpr auto
          PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&)
          -> Math::TMatrix<T, 4>;
 
-         template<CT::ScalarBased T> NOD() static constexpr auto
+         template<CT::ScalarBased T> static constexpr auto
          Orthographic(const T&, const T&, const T&, const T&)
          -> Math::TMatrix<T, 4>;
       };
@@ -132,8 +132,8 @@ namespace Langulus
          static_assert(COLUMNS > 0, "Column count must be greater than zero");
          static_assert(ROWS > 0, "Row count must be greater than zero");
 
-         using ColumnType = TVector<T, ROWS>;
-         using RowType = TVector<T, COLUMNS>;
+         using ColumnType    = TVector<T, ROWS>;
+         using RowType       = TVector<T, COLUMNS>;
          using TransposeType = TMatrix<T, ROWS, COLUMNS>;
 
          static constexpr Count Columns = COLUMNS;
@@ -215,29 +215,29 @@ namespace Langulus
 
          explicit TMatrix(Describe&&);
 
-         NOD() static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>)
+         static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>)
          requires (ROWS >= 2 and COLUMNS >= 2);
 
-         NOD() static constexpr TMatrix Rotate(const CT::Angle auto&) noexcept
+         static constexpr TMatrix Rotate(const CT::Angle auto&) noexcept
          requires (ROWS >= 2 and COLUMNS >= 2);
 
-         NOD() static constexpr TMatrix RotateAxis(const TVector<T, 3>&, const CT::Angle auto&) noexcept
+         static constexpr TMatrix RotateAxis(const TVector<T, 3>&, const CT::Angle auto&) noexcept
          requires (ROWS >= 3 and COLUMNS >= 3);
 
-         NOD() static constexpr TMatrix Rotate(const CT::Angle auto& pitch, const CT::Angle auto& yaw) noexcept
+         static constexpr TMatrix Rotate(const CT::Angle auto& pitch, const CT::Angle auto& yaw) noexcept
          requires (ROWS >= 3 and COLUMNS >= 3);
 
-         NOD() static constexpr TMatrix Rotate(
+         static constexpr TMatrix Rotate(
             const CT::Angle auto& pitch,
             const CT::Angle auto& yaw,
             const CT::Angle auto& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :(
          ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
 
-         NOD() static constexpr auto Translate(const CT::VectorBased auto&) noexcept -> TMatrix;
-         NOD() static constexpr auto Scale(const CT::ScalarBased auto&) noexcept -> TMatrix;
-         NOD() static constexpr auto Scale(const CT::VectorBased auto&) noexcept -> TMatrix;
-         NOD() static constexpr auto Identity() noexcept -> TMatrix;
-         NOD() static constexpr auto Null() noexcept -> TMatrix;
+         static constexpr auto Translate(const CT::VectorBased auto&) noexcept -> TMatrix;
+         static constexpr auto Scale(const CT::ScalarBased auto&) noexcept -> TMatrix;
+         static constexpr auto Scale(const CT::VectorBased auto&) noexcept -> TMatrix;
+         static constexpr auto Identity() noexcept -> TMatrix;
+         static constexpr auto Null() noexcept -> TMatrix;
 
          ///                                                                  
          ///   Assignment                                                     
@@ -257,64 +257,64 @@ namespace Langulus
          template<CT::Serial AS, class TOKEN>
          AS Serialize() const;
 
-         NOD() explicit operator Anyness::Text() const;
-         NOD() explicit operator Flow::Code() const;
+         explicit operator Anyness::Text() const;
+         explicit operator Flow::Code() const;
 
-         NOD() static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;
+         static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;
 
          ///                                                                  
          ///   Access                                                         
          ///                                                                  
-         NOD() constexpr auto operator [] (Offset)       noexcept -> ColumnType&;
-         NOD() constexpr auto operator [] (Offset) const noexcept -> ColumnType const&;
-         NOD() constexpr auto GetRaw()       noexcept -> T*;
-         NOD() constexpr auto GetRaw() const noexcept -> T const*;
+         constexpr auto operator [] (Offset)       noexcept -> ColumnType&;
+         constexpr auto operator [] (Offset) const noexcept -> ColumnType const&;
+         constexpr auto GetRaw()       noexcept -> T*;
+         constexpr auto GetRaw() const noexcept -> T const*;
 
          template<Offset>
-         NOD() auto GetRow() const noexcept -> RowType;
+         auto GetRow() const noexcept -> RowType;
          template<Offset>
-         NOD() auto GetRow() noexcept;
+         auto GetRow() noexcept;
 
       protected:
          template<Offset, Offset...C>
-         NOD() auto GetRowInner(::std::integer_sequence<Offset, C...>&&) noexcept;
+         auto GetRowInner(::std::integer_sequence<Offset, C...>&&) noexcept;
 
       public:
          template<Offset>
-         NOD() auto GetColumn() const noexcept -> ColumnType const&;
+         auto GetColumn() const noexcept -> ColumnType const&;
          template<Offset>
-         NOD() auto GetColumn() noexcept -> ColumnType&;
+         auto GetColumn()       noexcept -> ColumnType&;
 
-         NOD() constexpr auto GetRight() const noexcept -> TVector<T, 3>;
-         NOD() constexpr auto GetUp() const noexcept -> TVector<T, 3>;
-         NOD() constexpr auto GetView() const noexcept -> TVector<T, 3>;
-         NOD() constexpr auto GetScale() const noexcept -> TVector<T, 3>;
+         constexpr auto GetRight() const noexcept -> TVector<T, 3>;
+         constexpr auto GetUp() const noexcept -> TVector<T, 3>;
+         constexpr auto GetView() const noexcept -> TVector<T, 3>;
+         constexpr auto GetScale() const noexcept -> TVector<T, 3>;
 
-         NOD() constexpr auto GetPosition() const noexcept
+         constexpr auto GetPosition() const noexcept
          -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLUMNS > 2);
 
          constexpr auto SetPosition(const CT::Vector auto&) noexcept
          -> TMatrix& requires (ROWS > 2 and COLUMNS > 2);
 
-         NOD() constexpr bool IsIdentity() const noexcept;
-         NOD() constexpr bool IsNull() const noexcept;
+         constexpr bool IsIdentity() const noexcept;
+         constexpr bool IsNull() const noexcept;
 
-         NOD() constexpr auto Determinant() const noexcept -> T;
-         NOD() constexpr auto Transpose() const noexcept -> TMatrix;
-         NOD() constexpr auto Cofactor(int, int, int) const noexcept -> TMatrix;
-         NOD() constexpr auto Determinant(int) const noexcept -> T;
-         NOD() constexpr auto Adjoint() const noexcept -> TMatrix;
-         NOD() auto Invert() const -> TMatrix;
+         constexpr auto Determinant() const noexcept -> T;
+         constexpr auto Transpose() const noexcept -> TMatrix;
+         constexpr auto Cofactor(int, int, int) const noexcept -> TMatrix;
+         constexpr auto Determinant(int) const noexcept -> T;
+         constexpr auto Adjoint() const noexcept -> TMatrix;
+         auto Invert() const -> TMatrix;
 
          ///                                                                  
          ///   Iteration                                                      
          ///                                                                  
-         NOD() constexpr auto begin()       noexcept -> ColumnType*;
-         NOD() constexpr auto end()         noexcept -> ColumnType*;
-         NOD() constexpr auto last()        noexcept -> ColumnType*;
-         NOD() constexpr auto begin() const noexcept -> ColumnType const*;
-         NOD() constexpr auto end()   const noexcept -> ColumnType const*;
-         NOD() constexpr auto last()  const noexcept -> ColumnType const*;
+         constexpr auto begin()       noexcept -> ColumnType*;
+         constexpr auto end()         noexcept -> ColumnType*;
+         constexpr auto last()        noexcept -> ColumnType*;
+         constexpr auto begin() const noexcept -> ColumnType const*;
+         constexpr auto end()   const noexcept -> ColumnType const*;
+         constexpr auto last()  const noexcept -> ColumnType const*;
 
       private:
          template<Count SIZE, Count NEXT_SIZE = SIZE - 1>
@@ -337,25 +337,25 @@ namespace Langulus
       ///                                                                     
       ///   Operations                                                        
       ///                                                                     
-      NOD() constexpr auto operator * (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      NOD() constexpr auto operator + (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      NOD() constexpr auto operator - (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator * (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator + (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator - (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
 
-      NOD() constexpr auto operator * (const CT::VectorBased auto&, const CT::MatrixBased auto&) noexcept;
-      NOD() constexpr auto operator + (const CT::VectorBased auto&, const CT::MatrixBased auto&) noexcept;
-      NOD() constexpr auto operator - (const CT::VectorBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator * (const CT::VectorBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator + (const CT::VectorBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator - (const CT::VectorBased auto&, const CT::MatrixBased auto&) noexcept;
 
-      NOD() constexpr auto operator * (const CT::MatrixBased auto&, const CT::VectorBased auto&) noexcept;
-      NOD() constexpr auto operator + (const CT::MatrixBased auto&, const CT::VectorBased auto&) noexcept;
-      NOD() constexpr auto operator - (const CT::MatrixBased auto&, const CT::VectorBased auto&) noexcept;
+      constexpr auto operator * (const CT::MatrixBased auto&, const CT::VectorBased auto&) noexcept;
+      constexpr auto operator + (const CT::MatrixBased auto&, const CT::VectorBased auto&) noexcept;
+      constexpr auto operator - (const CT::MatrixBased auto&, const CT::VectorBased auto&) noexcept;
 
-      NOD() constexpr auto operator * (const CT::ScalarBased auto&, const CT::MatrixBased auto&) noexcept;
-      NOD() constexpr auto operator + (const CT::ScalarBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator * (const CT::ScalarBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator + (const CT::ScalarBased auto&, const CT::MatrixBased auto&) noexcept;
 
-      NOD() constexpr auto operator * (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
-      NOD() constexpr auto operator / (const CT::MatrixBased auto&, const CT::ScalarBased auto&);
-      NOD() constexpr auto operator + (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
-      NOD() constexpr auto operator - (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
+      constexpr auto operator * (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
+      constexpr auto operator / (const CT::MatrixBased auto&, const CT::ScalarBased auto&);
+      constexpr auto operator + (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
+      constexpr auto operator - (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
 
 
       ///                                                                     
@@ -382,9 +382,9 @@ namespace Langulus
       ///                                                                     
       ///   Comparison                                                        
       ///                                                                     
-      NOD() constexpr auto operator == (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      NOD() constexpr auto operator == (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
-      NOD() constexpr auto operator == (const CT::ScalarBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator == (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator == (const CT::MatrixBased auto&, const CT::ScalarBased auto&) noexcept;
+      constexpr auto operator == (const CT::ScalarBased auto&, const CT::MatrixBased auto&) noexcept;
 
    } // namespace Langulus::Math
 

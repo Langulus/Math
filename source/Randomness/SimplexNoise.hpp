@@ -34,7 +34,7 @@ namespace Langulus::Math
       /// Perform the noise function, or get an equivalent shader code        
       ///   @tparam GET_GLSL - true to get shader code equivalent to function 
       template<bool GET_GLSL = false>
-      NOD() static auto Hash(V p = {}) noexcept(not GET_GLSL) {
+      static auto Hash(V p = {}) noexcept(not GET_GLSL) {
          (void)p;
 
          if constexpr (DIN == 1) {

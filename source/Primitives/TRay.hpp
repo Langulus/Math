@@ -63,28 +63,28 @@ namespace Langulus
             , mNormal {normal.Normalize()} {}
 
          /// Check if ray is degenerate                                       
-         NOD() constexpr bool IsDegenerate() const noexcept {
+         constexpr bool IsDegenerate() const noexcept {
             return mNormal.Length() == 0;
          }
 
          /// Get a point along the ray                                        
-         NOD() constexpr T Point(const TypeOf<T>& distance) const noexcept {
+         constexpr T Point(const TypeOf<T>& distance) const noexcept {
             return mOrigin + mNormal * distance;
          }
 
          /// Move the ray origin                                              
-         NOD() constexpr TRay& Step(const TypeOf<T>& distance) noexcept {
+         constexpr TRay& Step(const TypeOf<T>& distance) noexcept {
             mOrigin += mNormal * distance;
             return *this;
          }
 
-         NOD() constexpr TRay Stepped(const TypeOf<T>& distance) const noexcept {
+         constexpr TRay Stepped(const TypeOf<T>& distance) const noexcept {
             TRay copy = *this;
             return copy.Step(distance);
          }
 
          /// Self-dot the ray                                                 
-         NOD() constexpr TypeOf<T> Dot() const noexcept {
+         constexpr TypeOf<T> Dot() const noexcept {
             return Dot(mOrigin, mNormal);
          }
       };

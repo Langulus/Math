@@ -124,7 +124,7 @@ namespace Langulus::Math
    ///   @return the sum, by picking the most concrete number                 
    template<CT::NumberBased LHS, CT::NumberBased RHS> LANGULUS(INLINED)
    constexpr auto operator + (const LHS& lhs, const RHS& rhs) noexcept {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) + FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) + FundamentalCast(rhs)};
@@ -150,7 +150,7 @@ namespace Langulus::Math
    ///   @return the difference, picking a lossless type between the two      
    template<CT::NumberBased LHS, CT::NumberBased RHS> LANGULUS(INLINED)
    constexpr auto operator - (const LHS& lhs, const RHS& rhs) noexcept {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) - FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) - FundamentalCast(rhs)};
@@ -176,7 +176,7 @@ namespace Langulus::Math
    ///   @return the product, picking a lossless type between the two         
    template<CT::NumberBased LHS, CT::NumberBased RHS> LANGULUS(INLINED)
    constexpr auto operator * (const LHS& lhs, const RHS& rhs) noexcept {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) * FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) * FundamentalCast(rhs)};
@@ -202,7 +202,7 @@ namespace Langulus::Math
    ///   @return the division, picking a lossless type between the two        
    template<CT::NumberBased LHS, CT::NumberBased RHS> LANGULUS(INLINED)
    constexpr auto operator / (const LHS& lhs, const RHS& rhs) {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) / FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) / FundamentalCast(rhs)};
@@ -229,7 +229,7 @@ namespace Langulus::Math
    ///   @return the modulo, picking a lossless type between the two          
    template<CT::NumberBased LHS, CT::NumberBased RHS> LANGULUS(INLINED)
    constexpr auto operator % (const LHS& lhs, const RHS& rhs) {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>) {
+      if constexpr (CT::DerivedFrom<LHS, RHS>) {
          if constexpr (CT::Integer<TypeOf<LHS>, TypeOf<RHS>>)
             return LHS {FundamentalCast(lhs) % FundamentalCast(rhs)};
          else {
@@ -268,7 +268,7 @@ namespace Langulus::Math
    template<CT::NumberBased LHS, CT::NumberBased RHS>
    requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> LANGULUS(INLINED)
    constexpr auto operator << (const LHS& lhs, const RHS& rhs) noexcept {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) << FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) << FundamentalCast(rhs)};
@@ -292,7 +292,7 @@ namespace Langulus::Math
    template<CT::NumberBased LHS, CT::NumberBased RHS>
    requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> LANGULUS(INLINED)
    constexpr auto operator >> (const LHS& lhs, const RHS& rhs) noexcept {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) >> FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) >> FundamentalCast(rhs)};
@@ -316,7 +316,7 @@ namespace Langulus::Math
    template<CT::NumberBased LHS, CT::NumberBased RHS>
    requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>> LANGULUS(INLINED)
    constexpr auto operator ^ (const LHS& lhs, const RHS& rhs) noexcept {
-      if constexpr (CT::Same<LHS, RHS> or CT::DerivedFrom<LHS, RHS>)
+      if constexpr (CT::DerivedFrom<LHS, RHS>)
          return LHS {FundamentalCast(lhs) ^ FundamentalCast(rhs)};
       else if constexpr (CT::DerivedFrom<RHS, LHS>)
          return RHS {FundamentalCast(lhs) ^ FundamentalCast(rhs)};

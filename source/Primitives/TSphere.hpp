@@ -102,20 +102,20 @@ namespace Langulus::Math
    public:
       /// Check if sphere is degenerate                                       
       ///   @return true if radius is zero                                    
-      NOD() constexpr bool IsDegenerate() const noexcept {
+      constexpr bool IsDegenerate() const noexcept {
          return mRadius == 0;
       }
 
       /// Check if sphere is hollow                                           
       ///   @return true if radius is negative                                
-      NOD() constexpr bool IsHollow() const noexcept {
+      constexpr bool IsHollow() const noexcept {
          return mRadius < 0;
       }
 
       /// Calculate signed distance                                           
       ///   @param point - point to check distance from                       
       ///   @return the distance to the primitive                             
-      NOD() auto SignedDistance(const T& point) const {
+      auto SignedDistance(const T& point) const {
          return point.Length() - mRadius;
       }
    };
@@ -169,20 +169,20 @@ namespace Langulus::Math
    public:
       /// Check if ellipsoid is degenerate                                    
       ///   @return true if any radius is zero                                
-      NOD() constexpr bool IsDegenerate() const noexcept {
+      constexpr bool IsDegenerate() const noexcept {
          return mRadii == 0;
       }
 
       /// Check if ellipsoid is hollow                                        
       ///   @return true if any radius is negative                            
-      NOD() constexpr bool IsHollow() const noexcept {
+      constexpr bool IsHollow() const noexcept {
          return mRadii < 0;
       }
 
       /// Calculate signed distance                                           
       ///   @param point - point to check distance from                       
       ///   @return the distance to the primitive                             
-      NOD() auto SignedDistance(const T& point) const {
+      auto SignedDistance(const T& point) const {
          const auto k0 = (point / mRadii).Length();
          const auto k1 = (point / (mRadii * mRadii)).Length();
          return k0 * (k0 - TypeOf<T> {1}) / k1;

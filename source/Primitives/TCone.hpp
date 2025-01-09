@@ -36,9 +36,9 @@ namespace Langulus::Math
       TRadians<TypeOf<T>> mAngle {HALFPI<TypeOf<T>>};
 
    public:
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
    };
 
 } // namespace Langulus::Math

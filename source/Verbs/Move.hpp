@@ -20,6 +20,9 @@ namespace Langulus::Verbs
       LANGULUS(VERB) "Move";
       LANGULUS(INFO) "Performs spatial movement/scale/rotation on physical instances";
 
+      using TVerb::TVerb;
+      using TVerb::operator ==;
+
       template<CT::Dense, CT::Data...>
       static constexpr bool AvailableFor() noexcept;
       template<CT::Dense, CT::Data...>

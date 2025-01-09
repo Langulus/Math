@@ -170,12 +170,12 @@ namespace Langulus
             "Scaling type does not default to 1");
 
          /// Convert from any size to code                                    
-         NOD() explicit operator Flow::Code() const {
+         explicit operator Flow::Code() const {
             return T::template Serialize<Flow::Code, TScale>();
          }
 
          /// Convert from any size to text                                    
-         NOD() explicit operator Anyness::Text() const {
+         explicit operator Anyness::Text() const {
             return T::template Serialize<Anyness::Text, TScale>();
          }
       };

@@ -423,8 +423,7 @@ namespace Langulus::A
    ///   @param p - the position vector                                       
    ///   @param s - the scale vector                                          
    ///   @return the composed matrix                                          
-   template<CT::VectorBased T>
-   NOD() constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
+   template<CT::VectorBased T> constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
    Matrix::From(const Math::TQuaternion<TypeOf<T>>& q, const T& p, const T& s) noexcept {
       using K = TypeOf<T>;
       Math::TMatrix<K, T::MemberCount + 1> result;

@@ -40,7 +40,7 @@ namespace Langulus::Math
 
       /// Perform the hashing function, or get an equivalent shader code      
       template<bool GET_GLSL = false>
-      NOD() static auto Hash(V p = {}) noexcept(!GET_GLSL) {
+      static auto Hash(V p = {}) noexcept(!GET_GLSL) {
          if constexpr (DIN == 1) {
             if constexpr (DOUT == 1) {
                ///  1 out, 1 in...                                            
@@ -400,7 +400,7 @@ namespace Langulus::Math
    ///   @tparam T - real type to use (deducible)                             
    ///   @param n - the number to hash                                        
    template<CT::Real T>
-   NOD() T SinHash(const T& n) noexcept {
+   T SinHash(const T& n) noexcept {
       return Frac(Sin(n) * T {43758.5453123});
    }
 
@@ -408,7 +408,7 @@ namespace Langulus::Math
    ///   @tparam T - real type to use (deducible)                             
    ///   @param n - the number to hash                                        
    template<CT::Real T>
-   NOD() T SinHash(const TVector<T, 2>& p) noexcept {
+   T SinHash(const TVector<T, 2>& p) noexcept {
       T h = Dot(p, TVector<T, 2>(T {127.1}, T {311.7}));
       return Frac(Sin(h) * T {43758.5453123});
    }
@@ -417,7 +417,7 @@ namespace Langulus::Math
    ///   @tparam T - real type to use (deducible)                             
    ///   @param n - the number to hash                                        
    template<CT::Real T>
-   NOD() T SinHash(const TVector<T, 3>& p) noexcept {
+   T SinHash(const TVector<T, 3>& p) noexcept {
       T h = Dot(p, TVector<T, 3>(T {127.1}, T {311.7}, T {758.5453123}));
       return Frac(Sin(h) * T {43758.5453123});
    }
@@ -426,7 +426,7 @@ namespace Langulus::Math
    ///   @tparam T - integer type to use (deducible)                          
    ///   @param n - the number to hash                                        
    template<CT::Integer T>
-   NOD() auto IntHash(const T& n) noexcept {
+   auto IntHash(const T& n) noexcept {
       return n * (n ^ (n >> 15));
    }
 

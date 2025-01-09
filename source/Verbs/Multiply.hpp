@@ -23,7 +23,7 @@ namespace Langulus::Verbs
       LANGULUS(POSITIVE_VERB) "Multiply";
       LANGULUS(NEGATIVE_VERB) "Divide";
       LANGULUS(POSITIVE_OPERATOR) "*";
-      LANGULUS(NEGATIVE_OPERATOR) "/";
+      LANGULUS(NEGATIVE_OPERATOR) " / ";
       LANGULUS(PRECEDENCE) 5;
       LANGULUS(INFO)
          "Performs arithmetic multiplication or division. "

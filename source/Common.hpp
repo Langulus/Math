@@ -111,13 +111,23 @@ namespace Langulus::Verbs
 namespace Langulus::CT
 {
 
+   /// Anything that is adaptive                                              
+   template<class...T>
+   concept Adaptive = ((Decay<Deint<T>>::CTTI_AdaptiveTrait) and ...);
+   template<class...T>
+   concept NotAdaptive = ((not Adaptive<T>) and ...);
+
+   /// Anything that has the normalized trait                                 
+   template<class...T>
+   concept Normalized = ((Decay<Deint<T>>::CTTI_NormalizedTrait) and ...);
+
    /// Anything that has the quaternion trait                                 
    template<class...T>
-   concept QuaternionBased = ((Deint<T>::CTTI_QuaternionTrait) and ...);
+   concept QuaternionBased = ((Decay<Deint<T>>::CTTI_QuaternionTrait) and ...);
 
    /// Anything that has the vector trait                                     
    template<class...T>
-   concept VectorBased = ((Deint<T>::CTTI_VectorTrait) and ...);
+   concept VectorBased = ((Decay<Deint<T>>::CTTI_VectorTrait) and ...);
    
    /// Anything that has the vector trait and contains integers               
    template<class...T>
@@ -125,23 +135,23 @@ namespace Langulus::CT
    
    /// Anything that has the color trait                                      
    template<class...T>
-   concept ColorBased = ((Deint<T>::CTTI_ColorTrait) and ...);
+   concept ColorBased = ((Decay<Deint<T>>::CTTI_ColorTrait) and ...);
 
    /// Anything that has the range trait                                      
    template<class...T>
-   concept RangeBased = ((Deint<T>::CTTI_RangeTrait) and ...);
+   concept RangeBased = ((Decay<Deint<T>>::CTTI_RangeTrait) and ...);
 
    /// Anything that has the matrix trait                                     
    template<class...T>
-   concept MatrixBased = ((Deint<T>::CTTI_MatrixTrait) and ...);
+   concept MatrixBased = ((Decay<Deint<T>>::CTTI_MatrixTrait) and ...);
 
    /// Anything that has the gradient trait                                   
    template<class...T>
-   concept GradientBased = ((Deint<T>::CTTI_GradientTrait) and ...);
+   concept GradientBased = ((Decay<Deint<T>>::CTTI_GradientTrait) and ...);
 
    /// For recognizing proxy-arrays (intermediate vectors after swizzling)    
    template<class...T>
-   concept ProxyArray = ((Deint<T>::CTTI_ProxyArray) and ...);
+   concept ProxyArray = ((Decay<Deint<T>>::CTTI_ProxyArray) and ...);
 
    /// For recognizing proxy-arrays that contain integers                     
    template<class...T>
@@ -157,6 +167,7 @@ namespace Langulus::CT
         or MatrixBased<T>
         or GradientBased<T>
         or ProxyArray<T>
+        or Adaptive<T>
       ) and ...);
 
    /// Anything ScalarBased that contains integers                            
@@ -168,7 +179,7 @@ namespace Langulus::CT
    /// iterators and other irrelevant stuff                                   
    template<class...T>
    concept NumberBased = CustomNumber<T...> and CastsToFundamental<T...>
-       and ((not VectorBased<T>) and ...);
+       and ((not VectorBased<T> and not Adaptive<T>) and ...);
 
 } // namespace Langulus::CT
 

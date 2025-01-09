@@ -9,258 +9,191 @@
 #include "Numbers/Level.hpp"
 
 
-namespace Langulus
-{
-   namespace Math
-   {
-
-      template<class T>
-      struct Adaptive;
-
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// adaptive                                                            
-      struct Adaptive {
-         LANGULUS(ABSTRACT) true;
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-      /// Concept for detecting adaptive data                                 
-      template<class...T>
-      concept Adaptive = (DerivedFrom<T, A::Adaptive> and ...);
-
-      /// Concept for detecting nonadaptive data                              
-      template<class...T>
-      concept NotAdaptive = ((not Adaptive<T>) and ...);
-   }
-
-   namespace Math
-   {
-
-      ///                                                                     
-      ///   Make any type adaptive, by sticking a Level member at the back    
-      /// and scale properly by it on arithmetic operations.                  
-      ///                                                                     
-      template<class T>
-      struct Adaptive : A::Adaptive {
-      private:
-         static consteval auto GenerateToken() {
-            constexpr auto defaultClassName = RTTI::LastCppNameOf<Adaptive>();
-            ::std::array<char, defaultClassName.size() + 1> name {};
-            ::std::size_t offset = 0;
-
-            // Write prefix                                             
-            for (auto i : "Adaptive")
-               name[offset++] = i;
-            --offset;
-
-            // Write the rest                                           
-            for (auto i : NameOf<T>())
-               name[offset++] = i;
-            return name;
-         }
-
-      public:
-         LANGULUS(NAME) GenerateToken();
-         LANGULUS(ABSTRACT) false;
-         LANGULUS(TYPED) T;
-         LANGULUS_BASES(A::Adaptive);
-         LANGULUS_CONVERTS_TO(Flow::Code);
-
-         // The data                                                    
-         T mValue {};
-         // The level in which the data is adapted to                   
-         Level mLevel {};
-
-      public:
-         constexpr Adaptive() noexcept = default;
-         constexpr Adaptive(const T& data, Level level = {}) noexcept
-            : mValue {data}
-            , mLevel {level} {}
-
-         constexpr Adaptive& operator = (const CT::Adaptive auto& rhs) noexcept {
-            mValue = rhs.mValue;
-            mLevel = rhs.mLevel;
-            return *this;
-         }
-
-         template<CT::NoIntent RHS> requires CT::NotAdaptive<RHS>
-         constexpr Adaptive& operator = (const RHS& rhs) noexcept {
-            mValue = rhs;
-            return *this;
-         }
-
-         /// Convert from any force to text                                   
-         NOD() explicit operator Flow::Code() const {
-            return static_cast<Flow::Code>(mValue);
-         }
-
-         constexpr operator T& () const noexcept {
-            return const_cast<T&>(mValue);
-         }
-      };
-
-      template<class T>
-      Adaptive(const T& data, Level level) -> Adaptive<Deint<T>>;
-
-   } // namespace Langulus::Math
-
-} // namespace Langulus
-
 namespace Langulus::Math
 {
-   
+
+   ///                                                                        
+   ///   Make any type adaptive, by sticking a Level member at the back and   
+   /// scale properly by it on arithmetic operations.                         
+   ///                                                                        
+   template<class T>
+   struct Adaptive {
+   private:
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<Adaptive>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset = 0;
+
+         // Write prefix                                                
+         for (auto i : "Adaptive")
+            name[offset++] = i;
+         --offset;
+
+         // Write the rest                                              
+         for (auto i : NameOf<T>())
+            name[offset++] = i;
+         return name;
+      }
+
+   public:
+      LANGULUS(NAME)     GenerateToken();
+      LANGULUS(ABSTRACT) false;
+      LANGULUS(TYPED)    T;
+      LANGULUS_CONVERTS_TO(Flow::Code);
+      static constexpr bool CTTI_AdaptiveTrait = true;
+
+      // The data                                                       
+      T mValue {};
+      // The level in which the data is adapted to                      
+      Level mLevel {};
+
+   public:
+      constexpr Adaptive() noexcept = default;
+      constexpr Adaptive(const T& data, Level level = {}) noexcept
+         : mValue {data}
+         , mLevel {level} {}
+
+      constexpr Adaptive& operator = (const CT::Adaptive auto& rhs) noexcept {
+         mValue = DeintCast(rhs).mValue;
+         mLevel = DeintCast(rhs).mLevel;
+         return *this;
+      }
+
+      constexpr Adaptive& operator = (const CT::NotAdaptive auto& rhs) noexcept {
+         mValue = DeintCast(rhs);
+         return *this;
+      }
+
+      /// Convert from any force to text                                      
+      explicit operator Flow::Code() const {
+         return static_cast<Flow::Code>(mValue);
+      }
+
+      constexpr operator T& () const noexcept {
+         return const_cast<T&>(mValue);
+      }
+
+      constexpr T GetMidref(Level) const noexcept;
+   };
+
+   template<class T>
+   Adaptive(const T&, Level) -> Adaptive<Deint<T>>;
+
+
    ///                                                                        
    ///   Operations on adaptives                                              
    ///                                                                        
 
    /// Returns an inverted number                                             
    template<CT::Adaptive T> requires CT::Signed<T>
-   NOD() constexpr T operator - (const T&) noexcept;
+   constexpr T operator - (const T&) noexcept;
 
    /// Returns the sum of two numbers                                         
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr auto operator + (const LHS&, const RHS&) noexcept;
+   constexpr auto operator + (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr LHS operator + (const LHS&, const N&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS operator + (const LHS&, const CT::NotAdaptive auto&) noexcept;
 
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr RHS operator + (const N&, const RHS&) noexcept;
+   template<CT::Adaptive RHS>
+   constexpr RHS operator + (const CT::NotAdaptive auto&, const RHS&) noexcept;
 
    /// Returns the difference of two numbers                                  
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr auto operator - (const LHS&, const RHS&) noexcept;
-    
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr LHS operator - (const LHS&, const N&) noexcept;
+   constexpr auto operator - (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
 
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr RHS operator - (const N&, const RHS&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS operator - (const LHS&, const CT::NotAdaptive auto&) noexcept;
+
+   template<CT::Adaptive RHS>
+   constexpr RHS operator - (const CT::NotAdaptive auto&, const RHS&) noexcept;
 
    /// Returns the product of two numbers                                     
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr auto operator * (const LHS&, const RHS&) noexcept;
+   constexpr auto operator * (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr LHS operator * (const LHS&, const N&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS operator * (const LHS&, const CT::NotAdaptive auto&) noexcept;
 
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr RHS operator * (const N&, const RHS&) noexcept;
+   template<CT::Adaptive RHS>
+   constexpr RHS operator * (const CT::NotAdaptive auto&, const RHS&) noexcept;
 
    /// Returns the division of two numbers                                    
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr auto operator / (const LHS&, const RHS&);
+   constexpr auto operator / (const CT::Adaptive auto&, const CT::Adaptive auto&);
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr LHS operator / (const LHS&, const N&);
+   template<CT::Adaptive LHS>
+   constexpr LHS operator / (const LHS&, const CT::NotAdaptive auto&);
 
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr RHS operator / (const N&, const RHS&);
+   template<CT::Adaptive RHS>
+   constexpr RHS operator / (const CT::NotAdaptive auto&, const RHS&);
    
    /// Returns the remainder (a.k.a. modulation) of a division                
    /// We augment c++ builtin types, by providing % operators for Real, too   
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr auto operator % (const LHS&, const RHS&);
+   constexpr auto operator % (const CT::Adaptive auto&, const CT::Adaptive auto&);
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr LHS operator % (const LHS&, const N&);
+   template<CT::Adaptive LHS>
+   constexpr LHS operator % (const LHS&, const CT::NotAdaptive auto&);
 
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr RHS operator % (const N&, const RHS&);
+   template<CT::Adaptive RHS>
+   constexpr RHS operator % (const CT::NotAdaptive auto&, const RHS&);
 
 
    ///                                                                        
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   constexpr LHS& operator += (LHS&, const RHS&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator += (LHS&, const CT::Adaptive auto&) noexcept;
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   constexpr LHS& operator += (LHS&, const N&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator += (LHS&, const CT::NotAdaptive auto&) noexcept;
 
    /// Subtract                                                               
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   constexpr LHS& operator -= (LHS&, const RHS&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator -= (LHS&, const CT::Adaptive auto&) noexcept;
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   constexpr LHS& operator -= (LHS&, const N&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator -= (LHS&, const CT::NotAdaptive auto&) noexcept;
 
    /// Multiply                                                               
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   constexpr LHS& operator *= (LHS&, const RHS&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator *= (LHS&, const CT::Adaptive auto&) noexcept;
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   constexpr LHS& operator *= (LHS&, const N&) noexcept;
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator *= (LHS&, const CT::NotAdaptive auto&) noexcept;
 
    /// Divide                                                                 
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   constexpr LHS& operator /= (LHS&, const RHS&);
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator /= (LHS&, const CT::Adaptive auto&);
 
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   constexpr LHS& operator /= (LHS&, const N&);
+   template<CT::Adaptive LHS>
+   constexpr LHS& operator /= (LHS&, const CT::NotAdaptive auto&);
 
 
    ///                                                                        
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr bool operator < (const LHS&, const RHS&) noexcept;
-
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator < (const LHS&, const N&) noexcept;
-
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator < (const N&, const RHS&) noexcept;
+   constexpr bool operator <  (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator <  (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
+   constexpr bool operator <  (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
 
    /// Bigger                                                                 
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr bool operator > (const LHS&, const RHS&) noexcept;
-
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator > (const LHS&, const N&) noexcept;
-
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator > (const N&, const RHS&) noexcept;
+   constexpr bool operator >  (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator >  (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
+   constexpr bool operator >  (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
 
    /// Bigger or equal                                                        
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr bool operator >= (const LHS&, const RHS&) noexcept;
-
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator >= (const LHS&, const N&) noexcept;
-
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator >= (const N&, const RHS&) noexcept;
+   constexpr bool operator >= (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator >= (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
+   constexpr bool operator >= (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
 
    /// Smaller or equal                                                       
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr bool operator <= (const LHS&, const RHS&) noexcept;
-
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator <= (const LHS&, const N&) noexcept;
-
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator <= (const N&, const RHS&) noexcept;
+   constexpr bool operator <= (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator <= (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
+   constexpr bool operator <= (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
 
    /// Equal                                                                  
-   template<CT::Adaptive LHS, CT::Adaptive RHS>
-   NOD() constexpr bool operator == (const LHS&, const RHS&) noexcept;
-
-   template<CT::Adaptive LHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator == (const LHS&, const N&) noexcept;
-
-   template<CT::Adaptive RHS, CT::NotAdaptive N>
-   NOD() constexpr bool operator == (const N&, const RHS&) noexcept;
+   constexpr bool operator == (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator == (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
+   constexpr bool operator == (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
 
 } // namespace Langulus::Math
 

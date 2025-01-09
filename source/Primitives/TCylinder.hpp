@@ -93,9 +93,9 @@ namespace Langulus::Math
       TypeOf<T> mRadius {.5};
 
    public:
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
    };
 
 
@@ -131,9 +131,9 @@ namespace Langulus::Math
       TypeOf<T> mHeight {.5};
 
    public:
-      NOD() constexpr bool IsDegenerate() const noexcept;
-      NOD() constexpr bool IsHollow() const noexcept;
-      NOD() auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept;
+      constexpr bool IsHollow() const noexcept;
+      auto SignedDistance(const T&) const;
    };
 
 } // namespace Langulus::Math

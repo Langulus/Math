@@ -32,20 +32,20 @@ namespace Langulus::Math
    public:
       /// Check if torus is degenerate                                        
       ///   @return true if at least one radius is zero                       
-      NOD() constexpr bool IsDegenerate() const noexcept {
+      constexpr bool IsDegenerate() const noexcept {
          return mInnerRadius == 0 || mOuterRadius == 0;
       }
 
       /// Check if torus is hollow                                            
       ///   @return true if at least one of the radii is negative             
-      NOD() constexpr bool IsHollow() const noexcept {
+      constexpr bool IsHollow() const noexcept {
          return mInnerRadius * mOuterRadius < 0;
       }
 
       /// Calculate signed distance                                           
       ///   @param point - point to check distance from                       
       ///   @return the distance to the primitive                             
-      NOD() auto SignedDistance(const T& point) const {
+      auto SignedDistance(const T& point) const {
          if constexpr (CT::Same<D, Traits::X>) {
             const auto q = TVector<TypeOf<T>, 2>(point.yz().Length() - mOuterRadius, point[0]);
             return q.Length() - mInnerRadius;

@@ -31,6 +31,7 @@ namespace Langulus::Flow
       >;
 
       using TVerb<VERB>::TVerb;
+      using TVerb<VERB>::operator ==;
 
       template<CT::Data T>
       static bool Vector(const Many&, const Many&, Verb&, Operator<T>) noexcept(NOEXCEPT);
