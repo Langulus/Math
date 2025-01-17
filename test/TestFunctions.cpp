@@ -39,19 +39,6 @@ TEMPLATE_TEST_CASE("Sign - Unsigned", "[arithmetics]", UNSIGNED_TYPES) {
 	REQUIRE(Sign(T(0)) == T(1));
 }
 
-/*TEMPLATE_TEST_CASE("Roundi - Real", "[arithmetics]", REAL_TYPES) {
-	using T = TestType;
-	REQUIRE(Roundi(T(5.488)) == 5);
-	REQUIRE(Roundi(T(5.666)) == 6);
-	REQUIRE(Roundi(T(-5.488)) == -5);
-	REQUIRE(Roundi(T(-5.666)) == -6);
-	REQUIRE(Roundi(T(0)) == 0);
-	REQUIRE(Roundi(T(235266.52)) == 235267);
-	REQUIRE(Roundi(T(235266.49)) == 235266);
-	REQUIRE(Roundi(T(-235266.52)) == -235267);
-	REQUIRE(Roundi(T(-235266.49)) == -235266);
-}*/
-
 TEMPLATE_TEST_CASE("Round - Real", "[arithmetics]", REAL_TYPES) {
 	using T = TestType;
 	REQUIRE(Round(T(5.488)) == T(5));

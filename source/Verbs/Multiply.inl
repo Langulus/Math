@@ -23,21 +23,23 @@ namespace Langulus::Verbs
    ///   @return true if verb is available                                    
    template<CT::Dense T, CT::Data...A>
    constexpr bool Multiply::AvailableFor() noexcept {
+      /*using DT = Decay<T>;
       if constexpr (sizeof...(A) == 0) {
-         return requires (T& t, Verb& v) { t.Multiply(v); }
-             or requires (T& t) { t *= t; }
-             or requires (T& t) { t /= t; }
-             or requires (const T& t) { {t * t} -> CT::Same<T>; }
-             or requires (const T& t) { {t / t} -> CT::Same<T>; };
+         return requires (DT& t, Verb& v) { t.Multiply(v, a...); }
+             or requires (DT& t) { t *= t; }
+             or requires (DT& t) { t /= t; }
+             or requires (DT& t) { {t * t} -> CT::Same<T>; }
+             or requires (DT& t) { {t / t} -> CT::Same<T>; };
       }
       else if constexpr (sizeof...(A) == 1) {
-         return requires (T& t, Verb& v, A... a) { t.Multiply(v, a...); }
-             or requires (T& t, A... a) { t *= (a + ...); }
-             or requires (T& t, A... a) { t /= (a - ...); }
-             or requires (const T& t, A... a) { {t * (a * ...)} -> CT::Same<T>; }
-             or requires (const T& t, A... a) { {t / (a / ...)} -> CT::Same<T>; };
+         return requires (DT& t, Verb& v, A... a) { t.Multiply(v, a...); }
+             or requires (DT& t, A... a) { t *= (a + ...); }
+             or requires (DT& t, A... a) { t /= (a - ...); }
+             or requires (DT& t, A... a) { {t * (a * ...)} -> CT::Same<T>; }
+             or requires (DT& t, A... a) { {t / (a / ...)} -> CT::Same<T>; };
       }
-      else return requires (T& t, Verb& v, A... a) { t.Multiply(v, a...); };
+      else*/
+      return requires (T& t, Verb& v, A... a) { t.Multiply(v, a...); };
    }
 
    /// Get the verb functor for the given type and arguments                  

@@ -8,6 +8,8 @@
 #pragma once
 #include "TVector.hpp"
 #include "../Numbers/TNumber.inl"
+#include "../Verbs/Multiply.inl"
+
 #include <type_traits>
 
 #define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
@@ -181,6 +183,20 @@ namespace Langulus::Math
             all[initialized] = Default;
          break;
       }
+   }
+
+   TEMPLATE()
+   void TME()::Multiply(Verb& verb) {
+      if (verb.GetArgument()) {
+         TVector rhs {Describe(verb.GetArgument())};
+         verb << (*this * rhs);
+      }
+   }
+
+   TEMPLATE()
+   void TME()::Multiply(Verb& verb) const {
+      // Assumes this never changes                                     
+      const_cast<TVector*>(this)->Multiply(verb);
    }
 
    /// Write the body of the vector (reused in vector specializations)        
@@ -426,18 +442,7 @@ namespace Langulus::Math
    ///   @return the clamped equivalent of this vector                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Clamp(const auto& min, const auto& max) const noexcept -> TVector {
-      TVector result {*this};
-      auto minp = min.all;
-      auto maxp = max.all;
-      auto start = result.all;
-      const auto end = start
-         + Math::Min(S, CountOf<decltype(min)>, CountOf<decltype(max)>);
-
-      while (start != end) {
-         *start = Math::Clamp(*start, *(minp++), *(maxp++));
-         ++start;
-      }
-      return result;
+      return this->Min(TVector {min}).Max(TVector {max});
    }
 
    /// Clamp outide a minimum and maximum                                     

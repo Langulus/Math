@@ -325,19 +325,10 @@ namespace Langulus::Math
    ///      current orientation                                               
    TEMPLATE()
    void TME()::Move(const CT::VectorBased auto& position, bool relative) {
-      using P = decltype(position);
-      if constexpr (CT::Normalized<P>) {
-         if (relative)
-            mUseImpulse += mAim * (position * PointType {1,1,-1});
-         else
-            mUseImpulse += position;
-      }
-      else {
-         if (relative)
-            mPosition = mAim * (static_cast<PointType>(position) * PointType {1,1,-1});
-         else
-            mPosition = position;
-      }
+      if (relative)
+         mUseImpulse += mAim * (position * PointType {1,1,-1});
+      else
+         mUseImpulse += position;
    }
 
    /// Add a multioctave force - changes velocity in a persistent way, that   
@@ -394,6 +385,14 @@ namespace Langulus::Math
                VERBOSE_TINSTANCE("Moving to a point3: " << point
                   << (relative ? " (relatively)" : ""));
                Move(point * verb.GetMass(), relative);
+               verb.Done();
+            },
+            [&](const Vec4& point) {
+               // Move towards a point in space                         
+               // All points move in the same direction                 
+               VERBOSE_TINSTANCE("Moving to a point3: " << point
+                  << (relative ? " (relatively)" : ""));
+               Move(point.xyz() * verb.GetMass(), relative);
                verb.Done();
             },
             [&](const Force2& force) {

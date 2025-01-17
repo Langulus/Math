@@ -855,14 +855,14 @@ namespace Langulus::A
    ) {
       using T = Lossless<decltype(aspect), decltype(near), decltype(far)>;
       auto result = Math::TMatrix<T, 4>::Null();
-      const auto fd =  T {1} / ::std::tan(T {fieldOfView.GetRadians()} * T {0.5});
-      const auto id = -T {1} / (far - near);
+      const T t = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5});
+      const T r = far - near;
 
-      result.mArray[0] = fd;
-      result.mArray[5] = fd * aspect;
-      result.mArray[10] = far * id;
+      result.mArray[0] = T {1} / t;
+      result.mArray[5] = aspect / t;
+      result.mArray[10] = -(far + near) / r;
       result.mArray[11] = T {-1};
-      result.mArray[14] = far * near * id;
+      result.mArray[14] = T {-2} * far * near / r;
       return result;
    }
 
