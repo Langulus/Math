@@ -252,24 +252,6 @@ namespace Langulus::Math
          static_assert(false, "T must either have Round() method, or be a number");
    }
 
-   /// Round and return an integer                                            
-   /*template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Roundi(const T& a) noexcept {
-      if constexpr (CT::HasRound<T>)
-         return static_cast<int>(a.Round());
-      else if constexpr (CT::Integer<T>)
-         return a;
-      else if constexpr (CT::Real<T> and sizeof(T) == 8 and sizeof(Float) == 4) {
-         const auto aa = a + T {6755399441055744.0};
-         return int {reinterpret_cast<const int&>(aa)};
-      }
-      else if constexpr (CT::Real<T> and sizeof(T) == 4 and sizeof(Double) == 8) {
-         const auto aa = static_cast<Double>(a) + Double {6755399441055744.0};
-         return int {reinterpret_cast<const int&>(aa)};
-      }
-      else static_assert(false, "T must either have Round() method, or be a number");
-   }*/
-
    /// Floor                                                                  
    template<CT::Dense T> LANGULUS(INLINED)
    constexpr decltype(auto) Floor(const T& a) noexcept {
@@ -401,13 +383,21 @@ namespace Langulus::Math
 
    /// Clamp a value inside the interval [min;max]                            
    template<CT::Dense T, CT::Dense MIN, CT::Dense MAX> LANGULUS(INLINED)
-   constexpr decltype(auto) Clamp(const T& v, const MIN& min, const MAX& max) noexcept {
+   constexpr auto Clamp(const T& v, const MIN& min, const MAX& max) noexcept {
       if constexpr (CT::HasClamp<T, MIN, MAX>)
          return v.Clamp(min, max);
-      else if constexpr (CT::Number<T, MIN, MAX>)
-         return v < min ? min : (v > max ? max : v);
-      else
-         static_assert(false, "T must either have Clamp(min, max) method, or be a number");
+      else if constexpr (CT::Number<T, MIN, MAX>) {
+         const auto mint = static_cast<T>(min);
+         if (v < mint)
+            return mint;
+         else {
+            const auto maxt = static_cast<T>(max);
+            if (v > maxt)
+               return maxt;
+            return v;
+         }
+      }
+      else static_assert(false, "T must either have Clamp(min, max) method, or be a number");
    }
 
    /// Clamp a value inside the interval [0:1]                                

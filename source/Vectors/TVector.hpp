@@ -10,6 +10,8 @@
 #include "../Functions/Arithmetics.hpp"
 #include "../Numbers/TNumber.hpp"
 #include "../Dimensions.hpp"
+#include "../Verbs/Multiply.hpp"
+
 #include <SIMD/SIMD.hpp>
 #include <Core/Sequences.hpp>
 
@@ -446,6 +448,7 @@ namespace Langulus::Math
          Base, T
       );
       LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+      LANGULUS_VERBS(Verbs::Multiply);
 
       // Make TVector match the CT::VectorBased concept                 
       static constexpr bool CTTI_VectorTrait = true;
@@ -475,6 +478,12 @@ namespace Langulus::Math
 
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr auto operator = (const TVectorComponent<N, D>&) noexcept -> TVector&;
+
+      ///                                                                     
+      ///   Verbs                                                             
+      ///                                                                     
+      void Multiply(Verb&) const;
+      void Multiply(Verb&);
 
       ///                                                                     
       ///   Interpretation                                                    
