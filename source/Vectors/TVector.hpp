@@ -9,7 +9,6 @@
 #include "../Functions/Trigonometry.hpp"
 #include "../Functions/Arithmetics.hpp"
 #include "../Numbers/TNumber.hpp"
-#include "../Dimensions.hpp"
 #include "../Verbs/Multiply.hpp"
 
 #include <SIMD/SIMD.hpp>
@@ -403,7 +402,7 @@ namespace Langulus::Math
    ///                                                                        
    TEMPLATE()
    struct TVector : TVectorBase<S, T> {
-      static_assert(S >= 1, "Can't have a vector of zero size");
+      static_assert(S > 0, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
       static constexpr T Default = static_cast<T>(DEFAULT);
       using ArrayType = T[S];

@@ -101,6 +101,7 @@ namespace Langulus::Verbs
    struct Multiply;
    struct Modulate;
    struct Randomize;
+   struct Move;
    struct Add;
    struct Lerp;
    struct Cerp;
@@ -110,6 +111,16 @@ namespace Langulus::Verbs
 
 namespace Langulus::CT
 {
+   namespace Inner
+   {
+      template<class T>
+      concept Dimension = Trait<T> and requires { {T::Index} -> CT::Same<Offset>; };
+   }
+
+   /// Dimension is any trait, defined with an Index property                 
+   /// Used for accessing individual vector components, for example           
+   template<class... T>
+   concept Dimension = (Inner::Dimension<T> and ...);
 
    /// Anything that is adaptive                                              
    template<class...T>
