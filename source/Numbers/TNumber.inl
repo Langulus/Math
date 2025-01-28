@@ -463,17 +463,20 @@ namespace Langulus::Math
    /// Equal                                                                  
    template<CT::NumberBased LHS, CT::NumberBased RHS> LANGULUS(INLINED)
    constexpr bool operator == (const LHS& lhs, const RHS& rhs) noexcept {
-      return FundamentalCast(lhs) == FundamentalCast(rhs);
+      using T = Lossless<decltype(FundamentalCast(lhs)), decltype(FundamentalCast(rhs))>;
+      return static_cast<T>(FundamentalCast(lhs)) == static_cast<T>(FundamentalCast(rhs));
    }
 
    template<CT::NumberBased LHS, CT::BuiltinNumber N> LANGULUS(INLINED)
    constexpr bool operator == (const LHS& lhs, const N& rhs) noexcept {
-      return FundamentalCast(lhs) == rhs;
+      using T = Lossless<decltype(FundamentalCast(lhs)), N>;
+      return static_cast<T>(FundamentalCast(lhs)) == static_cast<T>(rhs);
    }
 
    template<CT::NumberBased RHS, CT::BuiltinNumber N> LANGULUS(INLINED)
    constexpr bool operator == (const N& lhs, const RHS& rhs) noexcept {
-      return lhs == FundamentalCast(rhs);
+      using T = Lossless<decltype(FundamentalCast(rhs)), N>;
+      return static_cast<T>(lhs) == static_cast<T>(FundamentalCast(rhs));
    }
 
 } // namespace Langulus::Math

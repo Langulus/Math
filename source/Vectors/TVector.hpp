@@ -371,12 +371,12 @@ namespace Langulus::Math
       constexpr TVectorBase() noexcept = default;
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
-         for (int i = 0; i < S; ++i)
+         for (Count i = 0; i < S; ++i)
             all[i] = other.all[i];
       }
 
       constexpr TVectorBase(TVectorBase&& other) noexcept {
-         for (int i = 0; i < S; ++i)
+         for (Count i = 0; i < S; ++i)
             all[i] = other.all[i];
       }
 
