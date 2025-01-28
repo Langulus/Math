@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Common.hpp"
-#include <Flow/Verb.hpp>
+#include <Langulus/Flow/Verb.hpp>
 
 
 namespace Langulus::Flow

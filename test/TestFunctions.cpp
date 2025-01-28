@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Math/Number.hpp>
+#include <Langulus/Math/Number.hpp>
 #include "Common.hpp"
 
 

@@ -5,8 +5,8 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Math/Vector.hpp>
-#include <Math/Color.hpp>
+#include <Langulus/Math/Vector.hpp>
+#include <Langulus/Math/Color.hpp>
 #include "Common.hpp"
 
 

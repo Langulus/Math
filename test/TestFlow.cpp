@@ -5,13 +5,13 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Math/Config.hpp>
-#include <Math/Vector.hpp>
-#include <Math/Normal.hpp>
-#include <Flow/Verbs/Create.hpp>
-#include <Flow/Verbs/Select.hpp>
-#include <Flow/Verbs/Conjunct.hpp>
-#include <Math/Verbs/Move.hpp>
+#include <Langulus/Math/Config.hpp>
+#include <Langulus/Math/Vector.hpp>
+#include <Langulus/Math/Normal.hpp>
+#include <Langulus/Verbs/Create.hpp>
+#include <Langulus/Verbs/Select.hpp>
+#include <Langulus/Verbs/Conjunct.hpp>
+#include <Langulus/Verbs/Move.hpp>
 #include "Common.hpp"
 
 

@@ -6,9 +6,9 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Core/Exceptions.hpp>
-#include <Anyness/Trait.hpp>
-#include <Flow/Code.hpp>
+#include <Langulus/Core/Exceptions.hpp>
+#include <Langulus/Anyness/Trait.hpp>
+#include <Langulus/Flow/Code.hpp>
 
 /// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1

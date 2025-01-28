@@ -6,4 +6,4 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../../source/Primitives/TTriangle.hpp"
+#include "../../../source/Mapping.hpp"

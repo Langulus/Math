@@ -6,19 +6,19 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include "Main.hpp"
-#include <Flow/Verbs/Associate.hpp>
-#include <Flow/Verbs/Catenate.hpp>
-#include <Flow/Verbs/Conjunct.hpp>
-#include <Flow/Verbs/Create.hpp>
-#include <Flow/Verbs/Do.hpp>
-#include <Flow/Verbs/Interpret.hpp>
-#include <Flow/Verbs/Select.hpp>
+#include <Langulus/Verbs/Associate.hpp>
+#include <Langulus/Verbs/Catenate.hpp>
+#include <Langulus/Verbs/Conjunct.hpp>
+#include <Langulus/Verbs/Create.hpp>
+#include <Langulus/Verbs/Do.hpp>
+#include <Langulus/Verbs/Interpret.hpp>
+#include <Langulus/Verbs/Select.hpp>
 
-#include <Math/Config.hpp>
-#include <Math/Vector.hpp>
-#include <Math/Normal.hpp>
-#include <Math/Range.hpp>
-#include <Math/Number.hpp>
+#include <Langulus/Math/Config.hpp>
+#include <Langulus/Math/Vector.hpp>
+#include <Langulus/Math/Normal.hpp>
+#include <Langulus/Math/Range.hpp>
+#include <Langulus/Math/Number.hpp>
 
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
