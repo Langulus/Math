@@ -6,5 +6,4 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../source/Vectors/TVector.inl"
-#include "../../source/Vectors/TSampler.hpp"
+#include "../../../../source/Primitives/TLine.inl"

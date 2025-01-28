@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Math/Matrix.hpp>
+#include <Langulus/Math/Matrix.hpp>
 #include "Common.hpp"
 
 

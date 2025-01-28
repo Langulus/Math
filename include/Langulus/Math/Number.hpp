@@ -6,4 +6,5 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../../source/Primitives/TLine.inl"
+#include "../../../source/Numbers/TNumber.inl"
+#include "../../../source/Numbers/Infinity.hpp"

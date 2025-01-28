@@ -8,7 +8,7 @@
 #pragma once
 #include "TGradient.hpp"
 #include "Vectors/TVector.inl"
-#include <Flow/Code.hpp>
+#include <Langulus/Flow/Code.hpp>
 
 #define TEMPLATE()   template<CT::Dense T, Count S>
 #define TME()        TGradient<T, S>

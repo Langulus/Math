@@ -11,8 +11,8 @@
 #include "../Numbers/TNumber.hpp"
 #include "../Verbs/Multiply.hpp"
 
-#include <SIMD/SIMD.hpp>
-#include <Core/Sequences.hpp>
+#include <Langulus/SIMD/SIMD.hpp>
+#include <Langulus/Core/Sequences.hpp>
 
 #define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>

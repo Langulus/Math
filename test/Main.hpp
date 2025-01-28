@@ -6,8 +6,8 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Math/Config.hpp>
-#include <Flow/Resolvable.hpp>
+#include <Langulus/Math/Config.hpp>
+#include <Langulus/Flow/Resolvable.hpp>
 
 using namespace ::Langulus;
 using namespace ::Langulus::Anyness;

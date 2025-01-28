@@ -90,7 +90,10 @@ namespace Langulus
       ///                                                                     
       ///   Templated color                                                   
       ///                                                                     
-      #pragma pack(push, 1)
+      /// Unlike conventional vectors, color vectors that are based on        
+      /// integer types utilize saturation arithmetics                        
+      ///                                                                     
+   #pragma pack(push, 1)
       template<CT::VectorBased T>
       struct TColor : T {
          using T::r;

@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Math/Quaternion.hpp>
+#include <Langulus/Math/Quaternion.hpp>
 #include "Common.hpp"
 
 

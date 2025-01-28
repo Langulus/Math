@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Math/Range.hpp>
+#include <Langulus/Math/Range.hpp>
 #include "Common.hpp"
 
 

@@ -6,4 +6,5 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../../source/Primitives/TSphere.hpp"
+#include "../../../source/Vectors/TVector.inl"
+#include "../../../source/Vectors/TScale.hpp"

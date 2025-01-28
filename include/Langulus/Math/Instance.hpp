@@ -6,4 +6,4 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../source/Mapping.hpp"
+#include "../../../source/TInstance.inl"

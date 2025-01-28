@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "TNumber.hpp"
-#include <Flow/Verbs/Interpret.hpp>
+#include <Langulus/Verbs/Interpret.hpp>
 
 #define TEMPLATE()   template<CT::Dense T, CT::Dense W>
 #define TME()        TNumber<T, W>
