@@ -124,7 +124,10 @@ namespace Langulus::Math
                   else if constexpr (not IsReal and CT::Real<AS>) {
                      // If we're initializing integer color using reals,
                      // we have to multiply by 255 and saturate         
-                     SIMD::Multiply<true>(all_as, AS {255}, all);
+                     SIMD::Multiply(all_as, AS {255}, all_as);
+                     SIMD::Min(all_as, InnerT {255}, all_as);
+                     SIMD::Max(all_as, InnerT {0}, all_as);
+                     SIMD::Convert<Default>(all_as, all);
                   }
                   else SIMD::Convert<Default>(all_as, all);
                }
