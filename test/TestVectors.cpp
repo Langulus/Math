@@ -514,7 +514,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
             }
             else if constexpr (C == 3) {
                if constexpr (CT::Normalized<T>) {
-                  const auto required = MetaDataOf<T>() + "(0, ~0.37, ~-0.92)"_text;
+                  const auto required = MetaDataOf<T>() + "(0, ~0.37, ~-0.93)"_text;
                   REQUIRE(serialized == required);
                }
                else {
@@ -524,7 +524,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
             }
             else if constexpr (C == 4) {
                if constexpr (CT::Normalized<T>) {
-                  const auto required = MetaDataOf<T>() + "(0, ~0, ~-0, ~0.99)"_text;
+                  const auto required = MetaDataOf<T>() + "(0, ~0, ~-0, ~1)"_text;
                   REQUIRE(serialized == required);
                }
                else {

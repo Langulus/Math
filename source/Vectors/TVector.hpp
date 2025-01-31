@@ -197,11 +197,13 @@ namespace Langulus::Math
       }
 
       constexpr auto& operator = (const TVectorBase& other) noexcept {
-         return *new (this) TVectorBase {other};
+         all[0] = other.all[0];
+         return *this;
       }
 
       constexpr auto& operator = (TVectorBase&& other) noexcept {
-         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+         all[0] = other.all[0];
+         return *this;
       }
    };
 
@@ -251,11 +253,15 @@ namespace Langulus::Math
       }
 
       constexpr auto& operator = (const TVectorBase& other) noexcept {
-         return *new (this) TVectorBase {other};
+         for (int i = 0; i < 2; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
 
       constexpr auto& operator = (TVectorBase&& other) noexcept {
-         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+         for (int i = 0; i < 2; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
    };
 
@@ -300,11 +306,15 @@ namespace Langulus::Math
       }
 
       constexpr auto& operator = (const TVectorBase& other) noexcept {
-         return *new (this) TVectorBase {other};
+         for (int i = 0; i < 3; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
 
       constexpr auto& operator = (TVectorBase&& other) noexcept {
-         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+         for (int i = 0; i < 3; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
    };
 
@@ -340,11 +350,15 @@ namespace Langulus::Math
       }
 
       constexpr auto& operator = (const TVectorBase& other) noexcept {
-         return *new (this) TVectorBase {other};
+         for (int i = 0; i < 4; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
 
       constexpr auto& operator = (TVectorBase&& other) noexcept {
-         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+         for (int i = 0; i < 4; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
    };
 
@@ -381,11 +395,15 @@ namespace Langulus::Math
       }
 
       constexpr auto& operator = (const TVectorBase& other) noexcept {
-         return *new (this) TVectorBase {other};
+         for (Count i = 0; i < S; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
 
       constexpr auto& operator = (TVectorBase&& other) noexcept {
-         return *new (this) TVectorBase {Forward<TVectorBase>(other)};
+         for (Count i = 0; i < S; ++i)
+            all[i] = other.all[i];
+         return *this;
       }
    };
 
@@ -451,6 +469,7 @@ namespace Langulus::Math
 
       // Make TVector match the CT::VectorBased concept                 
       static constexpr bool CTTI_VectorTrait = true;
+      static constexpr bool IsReal = CT::Real<T>;
 
    public:
       ///                                                                     
