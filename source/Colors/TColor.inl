@@ -112,24 +112,24 @@ namespace Langulus::Math
          // Attempt converting from any other kinds of numbers          
          Typelists::Arithmetic::ForEachOr([&]<class AS>{
             if constexpr (not CT::Similar<InnerT, AS>) {
-               AS all_as[MemberCount];
+               AS all_as[TColor::MemberCount];
                initialized = describe->ExtractData(all_as);
                if (initialized) {
-                  if constexpr (IsReal and CT::Integer<AS>) {
+                  if constexpr (TColor::IsReal and CT::Integer<AS>) {
                      // If we're initializing real color using integers,
                      // we have to divide by 255 and saturate (TODO)    
-                     SIMD::Convert<Default>(all_as, all);
+                     SIMD::Convert<TColor::Default>(all_as, this->all);
                      *this /= InnerT {255};
                   }
-                  else if constexpr (not IsReal and CT::Real<AS>) {
+                  else if constexpr (not TColor::IsReal and CT::Real<AS>) {
                      // If we're initializing integer color using reals,
                      // we have to multiply by 255 and saturate         
                      SIMD::Multiply(all_as, AS {255}, all_as);
                      SIMD::Min(all_as, InnerT {255}, all_as);
                      SIMD::Max(all_as, InnerT {0}, all_as);
-                     SIMD::Convert<Default>(all_as, all);
+                     SIMD::Convert<TColor::Default>(all_as, this->all);
                   }
-                  else SIMD::Convert<Default>(all_as, all);
+                  else SIMD::Convert<TColor::Default>(all_as, this->all);
                }
                return initialized > 0;
             }

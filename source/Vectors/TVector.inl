@@ -135,10 +135,10 @@ namespace Langulus::Math
          // Attempt converting from any other kinds of numbers          
          Typelists::Arithmetic::ForEachOr([&]<class AS>{
             if constexpr (not CT::Similar<T, AS>) {
-               AS all_as[S];
+               AS all_as[TVector::MemberCount];
                initialized = describe->ExtractData(all_as);
                if (initialized)
-                  SIMD::Convert<Default>(all_as, all);
+                  SIMD::Convert<TVector::Default>(all_as, this->all);
                return initialized > 0;
             }
             else return false;
