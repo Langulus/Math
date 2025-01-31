@@ -22,34 +22,34 @@ namespace Langulus
       template<CT::Number, CT::Dimension>
       struct TColorComponent;
 
-      using RGB24 = TColor<Vec3u8>;
-      using RGBA32 = TColor<Vec4u8>;
-      using RGBA = RGBA32;
-      using RGB = RGB24;
+      using RGB24   = TColor<Vec3u8>;
+      using RGBA32  = TColor<Vec4u8>;
+      using RGBA    = RGBA32;
+      using RGB     = RGB24;
 
-      using RGB96 = TColor<Vec3f>;
+      using RGB96   = TColor<Vec3f>;
       using RGBA128 = TColor<Vec4f>;
-      using RGBAf = RGBA128;
-      using RGBf = RGB96;
+      using RGBAf   = RGBA128;
+      using RGBf    = RGB96;
 
-      using Red8 = TColorComponent<::std::uint8_t, Traits::R>;
-      using Green8 = TColorComponent<::std::uint8_t, Traits::G>;
-      using Blue8 = TColorComponent<::std::uint8_t, Traits::B>;
-      using Alpha8 = TColorComponent<::std::uint8_t, Traits::A>;
+      using Red8    = TColorComponent<::std::uint8_t, Traits::R>;
+      using Green8  = TColorComponent<::std::uint8_t, Traits::G>;
+      using Blue8   = TColorComponent<::std::uint8_t, Traits::B>;
+      using Alpha8  = TColorComponent<::std::uint8_t, Traits::A>;
 
-      using Red32 = TColorComponent<Float, Traits::R>;
+      using Red32   = TColorComponent<Float, Traits::R>;
       using Green32 = TColorComponent<Float, Traits::G>;
-      using Blue32 = TColorComponent<Float, Traits::B>;
+      using Blue32  = TColorComponent<Float, Traits::B>;
       using Alpha32 = TColorComponent<Float, Traits::A>;
 
       using Depth16 = TColorComponent<::std::uint16_t, Traits::D>;
       using Depth32 = TColorComponent<Float, Traits::D>;
 
-      using Red = Red8;
-      using Green = Green8;
-      using Blue = Blue8;
-      using Alpha = Alpha8;
-      using Depth = Depth32;
+      using Red     = Red8;
+      using Green   = Green8;
+      using Blue    = Blue8;
+      using Alpha   = Alpha8;
+      using Depth   = Depth32;
 
    } // namespace Langulus::Math
 
@@ -96,6 +96,8 @@ namespace Langulus
    #pragma pack(push, 1)
       template<CT::VectorBased T>
       struct TColor : T {
+         using InnerT = TypeOf<T>;
+
          using T::r;
          using T::red;
          using T::g;
@@ -107,10 +109,13 @@ namespace Langulus
 
          using T::all;
 
+         using T::Default;
          using T::MemberCount;
+         using T::IsReal;
          static_assert(MemberCount > 1 and MemberCount < 5,
             "Invalid number of channels");
          static constexpr bool CTTI_ColorTrait = true;
+         static constexpr bool CTTI_SaturatedTrait = true;
 
       private:
          /// Custom name generator at compile-time for colors                 
@@ -120,7 +125,7 @@ namespace Langulus
             ::std::size_t offset {};
 
             // Write prefix                                             
-            switch (T::MemberCount) {
+            switch (MemberCount) {
             case 2:
                for (auto i : "Grayscale")
                   name[offset++] = i;
@@ -137,12 +142,13 @@ namespace Langulus
 
             // Write suffix                                             
             --offset;
-            if constexpr (not CT::Same<TypeOf<T>, ::std::uint8_t>) {
-               if constexpr (CT::Same<TypeOf<T>, float>)
+
+            if constexpr (not CT::Same<InnerT, ::std::uint8_t>) {
+               if constexpr (CT::Same<InnerT, float>)
                   name[offset++] = 'f';
-               else if constexpr (CT::Same<TypeOf<T>, double>)
+               else if constexpr (CT::Same<InnerT, double>)
                   name[offset++] = 'd';
-               else for (auto i : SuffixOf<TypeOf<T>>())
+               else for (auto i : SuffixOf<InnerT>())
                   name[offset++] = i;
             }
             return name;
@@ -152,14 +158,23 @@ namespace Langulus
          LANGULUS(NAME) GenerateToken();
          LANGULUS_BASES(
             A::ColorOfSize<MemberCount>, 
-            A::ColorOfType<TypeOf<T>>,
+            A::ColorOfType<InnerT>,
             T
          );
 
       public:
-         using T::T;
-         constexpr TColor(const CT::Vector auto&) noexcept;
-         constexpr TColor(Logger::Color);
+         constexpr TColor() noexcept;
+
+         template<class T1>
+         requires ::std::constructible_from<T, T1>
+         constexpr TColor(T1&&) noexcept;
+
+         template<class T1, class...TN>
+         requires ::std::constructible_from<T, T1, TN...>
+         constexpr TColor(T1&&, TN&&...) noexcept;
+
+         constexpr TColor(Logger::Color) noexcept;
+         TColor(Describe&&);
 
          using T::Get;
          using T::operator =;
@@ -167,8 +182,11 @@ namespace Langulus
          template<CT::Number ALTT, CT::Dimension D>
          constexpr auto operator = (const TColorComponent<ALTT, D>&) noexcept -> TColor&;
 
-         operator Flow::Code() const;
-         operator Logger::Color() const;
+         explicit operator Flow::Code() const;
+         explicit operator Anyness::Text() const;
+         explicit operator Logger::Color() const;
+
+         constexpr void MakeOpaque() noexcept;
       };
       #pragma pack(pop)
 

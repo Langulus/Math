@@ -133,33 +133,16 @@ namespace Langulus::Math
 
       if (not initialized) {
          // Attempt converting from any other kinds of numbers          
-         const auto extractor = [&]<class AS>{
-            AS all_as[S];
-            initialized = describe->ExtractData(all_as);
-            if (initialized)
-               SIMD::Convert<DEFAULT>(all_as, all);
-         };
-
-         if      constexpr (not CT::Similar<T, float>)
-            extractor.template operator()<float>();
-         else if constexpr (not CT::Similar<T, double>)
-            extractor.template operator()<double>();
-         else if constexpr (not CT::Similar<T, uint8_t>)
-            extractor.template operator()<uint8_t>();
-         else if constexpr (not CT::Similar<T, uint16_t>)
-            extractor.template operator()<uint16_t>();
-         else if constexpr (not CT::Similar<T, uint32_t>)
-            extractor.template operator()<uint32_t>();
-         else if constexpr (not CT::Similar<T, uint64_t>)
-            extractor.template operator()<uint64_t>();
-         else if constexpr (not CT::Similar<T, int8_t>)
-            extractor.template operator()<int8_t>();
-         else if constexpr (not CT::Similar<T, int16_t>)
-            extractor.template operator()<int16_t>();
-         else if constexpr (not CT::Similar<T, int32_t>)
-            extractor.template operator()<int32_t>();
-         else if constexpr (not CT::Similar<T, int64_t>)
-            extractor.template operator()<int64_t>();
+         Typelists::Arithmetic::ForEachOr([&]<class AS>{
+            if constexpr (not CT::Similar<T, AS>) {
+               AS all_as[S];
+               initialized = describe->ExtractData(all_as);
+               if (initialized)
+                  SIMD::Convert<Default>(all_as, all);
+               return initialized > 0;
+            }
+            else return false;
+         });
       }
 
       switch (initialized) {

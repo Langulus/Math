@@ -201,4 +201,16 @@ namespace Langulus::Math
    LANGULUS_API(MATH) extern void RegisterTraits();
    LANGULUS_API(MATH) extern void RegisterVerbs();
 
+   namespace Typelists
+   {
+
+      using Arithmetic = Types<
+         float, double,
+         uint8_t, uint16_t, uint32_t, uint64_t,
+         int8_t, int16_t, int32_t, int64_t
+      >;
+
+      using Fundamental = typename Arithmetic::Cat<bool>;
+   }
+
 } // namespace Langulus::Math

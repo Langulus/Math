@@ -19,6 +19,7 @@
 #include <Langulus/Math/Normal.hpp>
 #include <Langulus/Math/Range.hpp>
 #include <Langulus/Math/Number.hpp>
+#include <Langulus/Math/Color.hpp>
 
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
@@ -32,6 +33,7 @@ int main(int argc, char* argv[]) {
    Math::RegisterVectors();
    Math::RegisterNormals();
    Math::RegisterRanges();
+   Math::RegisterColors();
 
 	Catch::Session session;
 	return session.run(argc, argv);

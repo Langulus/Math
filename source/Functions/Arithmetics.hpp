@@ -239,6 +239,18 @@ namespace Langulus::Math
       else return Max(Max(Forward<T1>(t1), Forward<T2>(t2)), Forward<TN>(tn)...);
    }
 
+   /// Positive value or zero                                                 
+   ///   @param a - the number/class to get positive value of                 
+   ///   @return the positive value, or clamps to zero if negative            
+   LANGULUS(INLINED)
+   constexpr decltype(auto) Positive(const auto& a) noexcept {
+      using T = TypeOf<Deint<decltype(a)>>;
+      if constexpr (CT::Unsigned<T>)
+         return (a);
+      else
+         return Max(a, 0);
+   }
+
    /// Round                                                                  
    template<CT::Dense T> LANGULUS(INLINED)
    constexpr decltype(auto) Round(const T& a) noexcept {
@@ -400,8 +412,8 @@ namespace Langulus::Math
       else static_assert(false, "T must either have Clamp(min, max) method, or be a number");
    }
 
-   /// Clamp a value inside the interval [0:1]                                
-   template<CT::Dense T> LANGULUS(INLINED)
+   /// Clamp a real value inside the interval [0:1]                           
+   template<CT::Real T> LANGULUS(INLINED)
    constexpr decltype(auto) Saturate(const T& v) noexcept {
       return Clamp(v, T {0}, T {1});
    }
