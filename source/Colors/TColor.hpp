@@ -109,13 +109,14 @@ namespace Langulus
 
          using T::all;
 
-         using T::Default;
-         using T::MemberCount;
-         using T::IsReal;
-         static_assert(MemberCount > 1 and MemberCount < 5,
-            "Invalid number of channels");
+         static constexpr InnerT Default = T::Default;
+         static constexpr Count MemberCount = T::MemberCount;
+         static constexpr bool IsReal = T::IsReal;
          static constexpr bool CTTI_ColorTrait = true;
          static constexpr bool CTTI_SaturatedTrait = true;
+
+         static_assert(MemberCount > 1 and MemberCount < 5,
+            "Invalid number of channels");
 
       private:
          /// Custom name generator at compile-time for colors                 
