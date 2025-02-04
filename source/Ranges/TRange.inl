@@ -100,6 +100,14 @@ namespace Langulus::Math
    ///   @param r - the range to copy                                         
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
+   constexpr auto TME()::operator = (const TRange& r) noexcept -> TRange& {
+      return *new (this) TRange {r};
+   }
+
+   /// Copy range                                                             
+   ///   @param r - the range to copy                                         
+   ///   @return a reference to this range                                    
+   TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (const CT::RangeBased auto& r) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(r)};
    }
@@ -148,9 +156,9 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Embrace(const auto& other) noexcept -> TRange& {
-      mMin = Min(mMin, other);
-      mMax = Max(mMax, other);
+   constexpr auto TME()::Embrace(const auto&...other) noexcept -> TRange& {
+      ((mMin = Min(mMin, other)),...);
+      ((mMax = Max(mMax, other)),...);
       return *this;
    }
 

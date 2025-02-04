@@ -317,9 +317,9 @@ namespace Langulus::Math
    constexpr void TColor<T>::MakeOpaque() noexcept {
       if constexpr (MemberCount >= 4) {
          if constexpr (IsReal)
-            alpha = 1;
+            alpha = InnerT {1};
          else
-            alpha = 255;
+            alpha = InnerT {255};
       }
       else LANGULUS(NOOP);
    }

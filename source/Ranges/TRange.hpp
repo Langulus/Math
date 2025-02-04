@@ -183,8 +183,8 @@ namespace Langulus::Math
       ///                                                                     
       ///   Assignment                                                        
       ///                                                                     
-      constexpr auto operator = (const TRange&) noexcept -> TRange& = default;
-      constexpr auto operator = (const CT::RangeBased auto&) noexcept -> TRange&;
+      constexpr auto operator = (const TRange&) noexcept -> TRange&;
+      constexpr auto operator = (const CT::RangeBased  auto&) noexcept -> TRange&;
       constexpr auto operator = (const CT::VectorBased auto&) noexcept -> TRange&;
       constexpr auto operator = (const CT::ScalarBased auto&) noexcept -> TRange&;
 
@@ -194,7 +194,7 @@ namespace Langulus::Math
       explicit operator Anyness::Text() const;
       explicit operator Flow::Code() const;
 
-      constexpr auto Embrace(const auto&) noexcept -> TRange&;
+      constexpr auto Embrace(const auto&...) noexcept -> TRange&;
       constexpr auto ConstrainBy(const auto&) noexcept -> TRange&;
 
       auto GetMin() const noexcept -> PointType const&;
