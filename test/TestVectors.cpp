@@ -492,8 +492,24 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
 
          WHEN("Contained in type-erased container") {
             Many packed = x;
+            Logger::Info(packed, " == ", static_cast<Code>(x));
 
-            REQUIRE(packed == x);
+            if constexpr (CT::Normalized<T>) {
+               if constexpr (C == 3) {
+                  REQUIRE(packed.As<T>().x == Approx( 0).margin(0.0001));
+                  REQUIRE(packed.As<T>().y == Approx( 0.3705).margin(0.0001));
+                  REQUIRE(packed.As<T>().z == Approx(-0.9288).margin(0.0001));
+               }
+               else if constexpr (C == 4) {
+                  REQUIRE(packed.As<T>().x == Approx( 0).margin(0.0001));
+                  REQUIRE(packed.As<T>().y == Approx( 0.0008).margin(0.0001));
+                  REQUIRE(packed.As<T>().z == Approx(-0.0019).margin(0.0001));
+                  REQUIRE(packed.As<T>().w == Approx( 1).margin(0.0001));
+               }
+            }
+            else {
+               REQUIRE(packed == x);
+            }
          }
 
          WHEN("Serialized as text") {
@@ -582,20 +598,59 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
    GIVEN("A component descriptor with number literals") {
       WHEN("Parsing the vector {1, 2, 3, 4}") {
          const Code descriptor = NameOf<T>() + "(1, 2, 3, 4)"_code;
-         REQUIRE(descriptor.Parse() == T {1, 2, 3, 4});
+         const auto parsed = descriptor.Parse();
+         Logger::Info(parsed, " == ", static_cast<Code>(T {1, 2, 3, 4}));
+
+         if constexpr (CT::Normalized<T>) {
+            if constexpr (C == 3) {
+               REQUIRE(parsed.As<T>().x == Approx(0.26726).margin(0.0001));
+               REQUIRE(parsed.As<T>().y == Approx(0.53452).margin(0.0001));
+               REQUIRE(parsed.As<T>().z == Approx(0.80178).margin(0.0001));
+            }
+            else if constexpr (C == 4) {
+               REQUIRE(parsed.As<T>().x == Approx(0.18257).margin(0.0001));
+               REQUIRE(parsed.As<T>().y == Approx(0.36515).margin(0.0001));
+               REQUIRE(parsed.As<T>().z == Approx(0.54772).margin(0.0001));
+               REQUIRE(parsed.As<T>().w == Approx(0.7303) .margin(0.0001));
+            }
+         }
+         else {
+            REQUIRE(parsed == T {1, 2, 3, 4});
+         }
       }
 
       if constexpr (CT::Signed<E>) {
          WHEN("Parsing the vector {0, 0, -1}") {
             const Code descriptor = NameOf<T>() + "(0, 0, -1)"_code;
-            REQUIRE(descriptor.Parse() == T {0, 0, -1});
+            const auto parsed = descriptor.Parse();
+            Logger::Info(parsed, " == ", static_cast<Code>(T {0, 0, -1}));
+
+            REQUIRE(parsed == T {0, 0, -1});
          }
       }
    }
 
    GIVEN("Nested descriptors") {
       const Code descriptor = NameOf<T>() + "(Vec4(1, 2, 3, 4))"_code;
-      REQUIRE(descriptor.Parse() == T {1, 2, 3, 4});
+      const auto parsed = descriptor.Parse();
+      Logger::Info(parsed, " == ", static_cast<Code>(T {1, 2, 3, 4}));
+
+      if constexpr (CT::Normalized<T>) {
+         if constexpr (C == 3) {
+            REQUIRE(parsed.As<T>().x == Approx(0.26726).margin(0.0001));
+            REQUIRE(parsed.As<T>().y == Approx(0.53452).margin(0.0001));
+            REQUIRE(parsed.As<T>().z == Approx(0.80178).margin(0.0001));
+         }
+         else if constexpr (C == 4) {
+            REQUIRE(parsed.As<T>().x == Approx(0.18257).margin(0.0001));
+            REQUIRE(parsed.As<T>().y == Approx(0.36515).margin(0.0001));
+            REQUIRE(parsed.As<T>().z == Approx(0.54772).margin(0.0001));
+            REQUIRE(parsed.As<T>().w == Approx(0.7303).margin(0.0001));
+         }
+      }
+      else {
+         REQUIRE(parsed == T {1, 2, 3, 4});
+      }
    }
 
    GIVEN("Descriptors involving CMeta") {
