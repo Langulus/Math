@@ -740,7 +740,7 @@ namespace Langulus::Math
 
          const auto det = n11 * t11 + n21 * t12 + n31 * t13;
          if (det == 0)
-            throw Except::DivisionByZero("Degenerate 3x3 matrix");
+            throw Except::ZeroDivision("Degenerate 3x3 matrix");
 
          const auto detInv = 1 / det;
 
@@ -771,7 +771,7 @@ namespace Langulus::Math
 
          const auto det = n11 * t11 + n21 * t12 + n31 * t13 + n41 * t14;
          if (det == 0)
-            throw Except::DivisionByZero("Degenerate 4x4 matrix");
+            throw Except::ZeroDivision("Degenerate 4x4 matrix");
 
          const auto detInv = 1 / det;
 
@@ -901,7 +901,7 @@ namespace Langulus::A
    ) -> Math::TMatrix<T, 4> {
       const auto range = far - near;
       if (range == 0 or width == 0 or height == 0)
-         throw Except::DivisionByZero();
+         throw Except::ZeroDivision();
 
       auto result = Math::TMatrix<T, 4>::Null();
       result.mArray[ 0] = T { 2} / width;

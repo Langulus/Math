@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Common.hpp"
+#include <Langulus/Flow/Code.hpp>
 
 
 namespace Langulus::Math

@@ -5,6 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
+#include <Langulus/Anyness/Many.hpp>
 #include <Langulus/Math/Config.hpp>
 #include <Langulus/Math/Vector.hpp>
 #include <Langulus/Math/Normal.hpp>
@@ -16,6 +17,8 @@
 
 
 SCENARIO("Parsing scripts", "[code]") {
+   using Anyness::Many;
+
    Many pastMissing;
    pastMissing.MakePast();
 
