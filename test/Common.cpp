@@ -5,7 +5,6 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "Main.hpp"
 #include <Langulus/Verbs/Associate.hpp>
 #include <Langulus/Verbs/Catenate.hpp>
 #include <Langulus/Verbs/Conjunct.hpp>
@@ -22,7 +21,7 @@
 #include <Langulus/Math/Color.hpp>
 
 #define CATCH_CONFIG_RUNNER
-#include <catch2/catch.hpp>
+#include "Common.hpp"
 
 LANGULUS_RTTI_BOUNDARY(RTTI::MainBoundary)
 

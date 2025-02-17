@@ -6,9 +6,9 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Langulus/Core/Exceptions.hpp>
+#include <Langulus/Core/Except.hpp>
+#include <Langulus/Core/Lossless.hpp>
 #include <Langulus/Anyness/Trait.hpp>
-#include <Langulus/Flow/Code.hpp>
 
 /// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1
@@ -171,8 +171,8 @@ namespace Langulus::CT
    /// Anything that doesn't have any of the above traits                     
    ///   @maintenance keep this one up to date, if adding new math traits     
    template<class...T>
-   concept ScalarBased = Scalar<T...> and
-     not ((QuaternionBased<T>
+   concept ScalarBased = Scalar<T...> and not ((
+           QuaternionBased<T>
         or VectorBased<T>
         or RangeBased<T>
         or MatrixBased<T>
