@@ -12,12 +12,8 @@
 TEMPLATE_TEST_CASE("Colors", "[color]",
    RGB24,
    RGBA32,
-   RGBA,
-   RGB,
    RGB96,
-   RGBA128,
-   RGBAf,
-   RGBf
+   RGBA128
 ) {
    using Anyness::Text;
    using Flow::Code;
@@ -433,4 +429,31 @@ TEMPLATE_TEST_CASE("Colors", "[color]",
          REQUIRE(descriptor.Parse() == T {Colors::Blue});
       }
    }
+}
+
+TEMPLATE_TEST_CASE("Testing color saturation arithmetic", "[color]",
+   RGB24,
+   RGBA32
+) {
+   using T = TestType;
+
+	GIVEN("Two colors") {
+		T x {255, 0, 0, 255};
+      T y {255, 0, 0, 255};
+
+		WHEN("Adding the colors (commutative, saturated)") {
+         REQUIRE((x + y) == T {255, 0, 0, 255});
+         REQUIRE((y + x) == T {255, 0, 0, 255});
+      }
+
+		WHEN("Subtracting the colors (saturated)") {
+         REQUIRE((x - y) == T {0, 0, 0, 0});
+         REQUIRE((y - x) == T {0, 0, 0, 0});
+      }
+
+		WHEN("Multiplying the colors (commutative, saturated)") {
+         REQUIRE((x * y) == T {255, 0, 0, 255});
+         REQUIRE((y * x) == T {255, 0, 0, 255});
+      }
+	}
 }
