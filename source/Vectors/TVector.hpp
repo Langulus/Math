@@ -147,14 +147,14 @@ namespace Langulus::Math
 {
 
    #pragma pack(push, 1)
-   template<Count, CT::ScalarBased>
+   template<Count, CT::ScalarBased, int DEFAULT>
    struct TVectorBase;
 
 
    ///                                                                        
    /// 1D vector base                                                         
-   template<CT::ScalarBased TYPE>
-   struct TVectorBase<1, TYPE> {
+   template<CT::ScalarBased TYPE, int DEFAULT>
+   struct TVectorBase<1, TYPE, DEFAULT> {
       union {
          TYPE all[1] {};
          union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first, r, red, u; };
@@ -164,7 +164,7 @@ namespace Langulus::Math
       // This is necessary to work around the dependent names in TVector
       // This will also error out, when missing (), but if you happen to
       // call them by accident, you will get a proper compile error     
-      void y()       { static_assert(false, "1D vector doesn't have 'y' component"); }
+      /*void y()       { static_assert(false, "1D vector doesn't have 'y' component"); }
       void second()  { static_assert(false, "1D vector doesn't have 'second' component"); }
       void g()       { static_assert(false, "1D vector doesn't have 'g' component"); }
       void green()   { static_assert(false, "1D vector doesn't have 'green' component"); }
@@ -180,13 +180,32 @@ namespace Langulus::Math
       void fourth()  { static_assert(false, "1D vector doesn't have 'fourth' component"); }
       void a()       { static_assert(false, "1D vector doesn't have 'a' component"); }
       void alpha()   { static_assert(false, "1D vector doesn't have 'alpha' component"); }
-      void t()       { static_assert(false, "1D vector doesn't have 't' component"); }
+      void t()       { static_assert(false, "1D vector doesn't have 't' component"); }*/
+      static constexpr TYPE y       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE second  = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE g       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE green   = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE v       = static_cast<TYPE>(DEFAULT);
 
-      void tail()    { static_assert(false, "1D vector doesn't have a tail"); }
+      static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE blue    = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE s       = static_cast<TYPE>(DEFAULT);
+
+      static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
+
+      void tail() { static_assert(false, "1D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x);
 
-      constexpr TVectorBase() noexcept = default;
+      constexpr TVectorBase() noexcept {
+         all[0] = static_cast<TYPE>(DEFAULT);
+      }
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
          all[0] = other.all[0];
@@ -210,8 +229,8 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 2D vector base                                                         
-   template<CT::ScalarBased TYPE>
-   struct TVectorBase<2, TYPE> {
+   template<CT::ScalarBased TYPE, int DEFAULT>
+   struct TVectorBase<2, TYPE, DEFAULT> {
       union {
          TYPE all[2] {};
          struct {
@@ -224,7 +243,7 @@ namespace Langulus::Math
       // This is necessary to work around the dependent names in TVector
       // This will also error out, when missing (), but if you happen to
       // call them by accident, you will get a proper compile error     
-      void z()       { static_assert(false, "2D vector doesn't have 'z' component"); }
+      /*void z()       { static_assert(false, "2D vector doesn't have 'z' component"); }
       void third()   { static_assert(false, "2D vector doesn't have 'third' component"); }
       void b()       { static_assert(false, "2D vector doesn't have 'b' component"); }
       void blue()    { static_assert(false, "2D vector doesn't have 'blue' component"); }
@@ -234,13 +253,27 @@ namespace Langulus::Math
       void fourth()  { static_assert(false, "2D vector doesn't have 'fourth' component"); }
       void a()       { static_assert(false, "2D vector doesn't have 'a' component"); }
       void alpha()   { static_assert(false, "2D vector doesn't have 'alpha' component"); }
-      void t()       { static_assert(false, "2D vector doesn't have 't' component"); }
+      void t()       { static_assert(false, "2D vector doesn't have 't' component"); }*/
+      static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE blue    = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE s       = static_cast<TYPE>(DEFAULT);
 
-      void tail()    { static_assert(false, "2D vector doesn't have a tail"); }
+      static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
+
+      void tail() { static_assert(false, "2D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y);
 
-      constexpr TVectorBase() noexcept = default;
+      constexpr TVectorBase() noexcept {
+         for (int i = 0; i < 2; ++i)
+            all[i] = static_cast<TYPE>(DEFAULT);
+      }
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
          for (int i = 0; i < 2; ++i)
@@ -268,8 +301,8 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 3D vector base                                                         
-   template<CT::ScalarBased TYPE>
-   struct TVectorBase<3, TYPE> {
+   template<CT::ScalarBased TYPE, int DEFAULT>
+   struct TVectorBase<3, TYPE, DEFAULT> {
       union {
          TYPE all[3] {};
          struct {
@@ -283,17 +316,25 @@ namespace Langulus::Math
       // This is necessary to work around the dependent names in TVector
       // This will also error out, when missing (), but if you happen to
       // call them by accident, you will get a proper compile error     
-      void w()       { static_assert(false, "3D vector doesn't have 'w' component"); }
+      /*void w()       { static_assert(false, "3D vector doesn't have 'w' component"); }
       void fourth()  { static_assert(false, "3D vector doesn't have 'fourth' component"); }
       void a()       { static_assert(false, "3D vector doesn't have 'a' component"); }
       void alpha()   { static_assert(false, "3D vector doesn't have 'alpha' component"); }
-      void t()       { static_assert(false, "3D vector doesn't have 't' component"); }
+      void t()       { static_assert(false, "3D vector doesn't have 't' component"); }*/
+      static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
+      static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
-      void tail()    { static_assert(false, "3D vector doesn't have a tail"); }
+      void tail() { static_assert(false, "3D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z);
 
-      constexpr TVectorBase() noexcept = default;
+      constexpr TVectorBase() noexcept {
+         for (int i = 0; i < 3; ++i)
+            all[i] = static_cast<TYPE>(DEFAULT);
+      }
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
          for (int i = 0; i < 3; ++i)
@@ -321,8 +362,8 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 4D vector base                                                         
-   template<CT::ScalarBased TYPE>
-   struct TVectorBase<4, TYPE> {
+   template<CT::ScalarBased TYPE, int DEFAULT>
+   struct TVectorBase<4, TYPE, DEFAULT> {
       union {
          TYPE all[4] {};
          struct {
@@ -333,11 +374,14 @@ namespace Langulus::Math
          };
       };
 
-      void tail()    { static_assert(false, "4D vector doesn't have a tail"); }
+      void tail() { static_assert(false, "4D vector doesn't have a tail"); }
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
 
-      constexpr TVectorBase() noexcept = default;
+      constexpr TVectorBase() noexcept {
+         for (int i = 0; i < 4; ++i)
+            all[i] = static_cast<TYPE>(DEFAULT);
+      }
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
          for (int i = 0; i < 4; ++i)
@@ -365,8 +409,8 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 5+D vector base                                                        
-   template<Count S, CT::ScalarBased TYPE> requires (S > 4)
-   struct TVectorBase<S, TYPE> {
+   template<Count S, CT::ScalarBased TYPE, int DEFAULT> requires (S > 4)
+   struct TVectorBase<S, TYPE, DEFAULT> {
       union {
          TYPE all[S] {};
          struct {
@@ -382,7 +426,10 @@ namespace Langulus::Math
 
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
 
-      constexpr TVectorBase() noexcept = default;
+      constexpr TVectorBase() noexcept {
+         for (Count i = 0; i < S; ++i)
+            all[i] = static_cast<TYPE>(DEFAULT);
+      }
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
          for (Count i = 0; i < S; ++i)
@@ -419,12 +466,12 @@ namespace Langulus::Math
    /// swizzling. Proxy vectors eventually decay into conventional vectors.   
    ///                                                                        
    TEMPLATE()
-   struct TVector : TVectorBase<S, T> {
+   struct TVector : TVectorBase<S, T, DEFAULT> {
       static_assert(S > 0, "Can't have a vector of zero size");
       static constexpr Count MemberCount = S;
       static constexpr T Default = static_cast<T>(DEFAULT);
       using ArrayType = T[S];
-      using Base = TVectorBase<S, T>;
+      using Base = TVectorBase<S, T, DEFAULT>;
 
    private:
       static consteval auto GenerateToken() {
@@ -517,31 +564,31 @@ namespace Langulus::Math
       ///                                                                     
       ///   Access                                                            
       ///                                                                     
-      using TVectorBase<S, T>::x;
-      using TVectorBase<S, T>::first;
-      using TVectorBase<S, T>::r;
-      using TVectorBase<S, T>::red;
-      using TVectorBase<S, T>::u;
+      using Base::x;
+      using Base::first;
+      using Base::r;
+      using Base::red;
+      using Base::u;
 
-      using TVectorBase<S, T>::y;
-      using TVectorBase<S, T>::second;
-      using TVectorBase<S, T>::g;
-      using TVectorBase<S, T>::green;
-      using TVectorBase<S, T>::v;
+      using Base::y;
+      using Base::second;
+      using Base::g;
+      using Base::green;
+      using Base::v;
 
-      using TVectorBase<S, T>::z;
-      using TVectorBase<S, T>::third;
-      using TVectorBase<S, T>::b;
-      using TVectorBase<S, T>::blue;
-      using TVectorBase<S, T>::s;
+      using Base::z;
+      using Base::third;
+      using Base::b;
+      using Base::blue;
+      using Base::s;
 
-      using TVectorBase<S, T>::w;
-      using TVectorBase<S, T>::fourth;
-      using TVectorBase<S, T>::a;
-      using TVectorBase<S, T>::alpha;
-      using TVectorBase<S, T>::t;
+      using Base::w;
+      using Base::fourth;
+      using Base::a;
+      using Base::alpha;
+      using Base::t;
 
-      using TVectorBase<S, T>::all;
+      using Base::all;
 
       constexpr auto Get(Offset) const noexcept -> const T&;
       constexpr auto Get(Offset)       noexcept ->       T&;
@@ -756,7 +803,7 @@ namespace Langulus::Math
    ///   Operations                                                           
    ///                                                                        
    /// Returns an inverted vector                                             
-   constexpr decltype(auto) operator - (const CT::VectorBased auto&) noexcept;
+   /*constexpr decltype(auto) operator - (const CT::VectorBased auto&) noexcept;
    constexpr decltype(auto) operator - (const CT::ProxyArray  auto&) noexcept;
 
    /// Returns the sum of two vectors                                         
@@ -927,7 +974,7 @@ namespace Langulus::Math
    constexpr auto operator != (const CT::ProxyArray  auto&, const CT::VectorBased auto&) noexcept;
    constexpr auto operator != (const CT::VectorBased auto&, const CT::ProxyArray  auto&) noexcept;
    constexpr auto operator != (const CT::ProxyArray  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator != (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;
+   constexpr auto operator != (const CT::ScalarBased auto&, const CT::ProxyArray  auto&) noexcept;*/
 
 } // namespace Langulus::Math
 

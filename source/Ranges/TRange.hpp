@@ -115,10 +115,11 @@ namespace Langulus::Math
       using MemberType = TypeOf<T>;
       static constexpr Count MemberCount = CountOf<T> * 2;
       static constexpr auto Default = T::Default;
+      using CoalescedType = TVector<MemberType, MemberCount, static_cast<int>(Default)>;
 
       union {
          // Useful representation for directly feeding to SIMD          
-         MemberType mArray[MemberCount] {};
+         CoalescedType mMinMax {};
 
          struct {
             PointType mMin;
@@ -195,7 +196,7 @@ namespace Langulus::Math
       explicit operator Flow::Code() const;
 
       constexpr auto Embrace(const auto&...) noexcept -> TRange&;
-      constexpr auto ConstrainBy(const auto&) noexcept -> TRange&;
+      constexpr auto Intersect(const CT::RangeBased auto&) const noexcept -> TRange;
 
       auto GetMin() const noexcept -> PointType const&;
       auto GetMax() const noexcept -> PointType const&;
@@ -203,8 +204,8 @@ namespace Langulus::Math
       auto Center() const noexcept -> PointType;
 
       constexpr bool IsDegenerate() const noexcept;
-      constexpr bool Inside(const PointType&) const noexcept;
-      constexpr bool IsInsideHalfClosed(const PointType&) const noexcept;
+      constexpr bool Contains(const PointType&) const noexcept;
+      constexpr bool ContainsHalfClosed(const PointType&) const noexcept;
       constexpr auto ClampRev(const PointType&) const noexcept -> PointType;
       constexpr auto Clamp(const PointType&) const noexcept -> PointType;
 
@@ -252,7 +253,7 @@ namespace Langulus::Math
    ///   Operations                                                           
    ///                                                                        
    /// Returns an inverted range                                              
-   constexpr auto operator - (const CT::RangeBased auto&) noexcept;
+   /*constexpr auto operator - (const CT::RangeBased auto&) noexcept;
 
    /// Returns the sum of two ranges                                          
    constexpr auto operator + (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
@@ -326,9 +327,9 @@ namespace Langulus::Math
    constexpr auto operator >= (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Smaller or equal                                                       
-   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator <  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator <= (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator <= (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
+   constexpr auto operator <= (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
 
    /// Equal                                                                  
    constexpr auto operator == (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
@@ -337,7 +338,7 @@ namespace Langulus::Math
 
    constexpr auto operator != (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
    constexpr auto operator != (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator != (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
+   constexpr auto operator != (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;*/
 
 } // namespace Langulus::Math
 
