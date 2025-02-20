@@ -44,8 +44,8 @@ namespace Langulus::Math
       static_assert(CT::Exact<TypeOf<TVector>, T>,
          "Vectors should have type");
 
-      for (auto& e : all)
-         e = Default;
+      /*for (auto& e : all)
+         e = Default;*/
    }
    
    /// Construct from any vector (with conversion)                            
@@ -1559,7 +1559,7 @@ namespace Langulus::Math
    /// Scalar == Vector                                                       
    LANGULUS(INLINED)
    constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
-      return SIMD::Equals(lhs, rhs);
+      return SIMD::Equals(rhs, lhs);
    }
 
 
@@ -1584,7 +1584,7 @@ namespace Langulus::Math
    /// Scalar == Proxy                                                        
    LANGULUS(INLINED)
    constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
-      return SIMD::Equals(lhs, rhs.GetBase());
+      return SIMD::Equals(rhs.GetBase(), lhs);
    }
 
 
