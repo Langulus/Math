@@ -10,7 +10,7 @@ if(PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
     include(LangulusUtilities.cmake)
-    fetch_langulus_module(Flow GIT_TAG c4b30fa95ed8ede28ba88f998eec6e99df2b6fff)
+    fetch_langulus_module(Flow GIT_TAG f160a527c907647532de0befb606911b1c5c0d49)
 endif()
 
 file(GLOB_RECURSE
