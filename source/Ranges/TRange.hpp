@@ -116,6 +116,10 @@ namespace Langulus::Math
       static constexpr Count MemberCount = CountOf<T> * 2;
       static constexpr auto Default = T::Default;
       using CoalescedType = TVector<MemberType, MemberCount, static_cast<int>(Default)>;
+      using PointTypeNotNormalized = TVector<MemberType, CountOf<T>>;
+
+      // Make TRange match the CT::Normalized concept                   
+      static constexpr bool CTTI_NormalizedTrait = CT::Normalized<T>;
 
       union {
          // Useful representation for directly feeding to SIMD          
@@ -166,6 +170,7 @@ namespace Langulus::Math
          MemberType
       );
       LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+      LANGULUS_MEMBERS(&TRange::mMin, &TRange::mMax);
 
       // Make TRange match the CT::RangeBased concept                   
       static constexpr bool CTTI_RangeTrait = true;
@@ -200,7 +205,7 @@ namespace Langulus::Math
 
       auto GetMin() const noexcept -> PointType const&;
       auto GetMax() const noexcept -> PointType const&;
-      auto Length() const noexcept -> PointType;
+      auto Length() const noexcept -> PointTypeNotNormalized;
       auto Center() const noexcept -> PointType;
 
       constexpr bool IsDegenerate() const noexcept;
@@ -247,98 +252,6 @@ namespace Langulus::Math
    ///   @tparam RHS - right hand side, can be scalar/array/vector/range      
    template<class LHS, class RHS>
    using LosslessRange = Deptr<decltype(Inner::LosslessRange<LHS, RHS>())>;
-
-
-   ///                                                                        
-   ///   Operations                                                           
-   ///                                                                        
-   /// Returns an inverted range                                              
-   /*constexpr auto operator - (const CT::RangeBased auto&) noexcept;
-
-   /// Returns the sum of two ranges                                          
-   constexpr auto operator + (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator + (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator + (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator + (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto operator + (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Returns the difference of two ranges                                   
-   constexpr auto operator - (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator - (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator - (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator - (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto operator - (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Returns the product of two ranges                                      
-   constexpr auto operator * (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator * (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator * (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator * (const CT::RangeBased  auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto operator * (const CT::VectorBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Returns the division of two ranges                                     
-   constexpr auto operator / (const CT::RangeBased  auto&, const CT::RangeBased  auto&);
-   constexpr auto operator / (const CT::RangeBased  auto&, const CT::ScalarBased auto&);
-   constexpr auto operator / (const CT::ScalarBased auto&, const CT::RangeBased  auto&);
-   constexpr auto operator / (const CT::RangeBased  auto&, const CT::VectorBased auto&);
-   constexpr auto operator / (const CT::VectorBased auto&, const CT::RangeBased  auto&);
-
-
-   ///                                                                        
-   ///   Mutators                                                             
-   ///                                                                        
-   /// Add                                                                    
-   constexpr auto& operator += (CT::RangeBased auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto& operator += (CT::RangeBased auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto& operator += (CT::RangeBased auto&, const CT::ScalarBased auto&) noexcept;
-
-   /// Subtract                                                               
-   constexpr auto& operator -= (CT::RangeBased auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto& operator -= (CT::RangeBased auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto& operator -= (CT::RangeBased auto&, const CT::ScalarBased auto&) noexcept;
-
-   /// Multiply                                                               
-   constexpr auto& operator *= (CT::RangeBased auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto& operator *= (CT::RangeBased auto&, const CT::VectorBased auto&) noexcept;
-   constexpr auto& operator *= (CT::RangeBased auto&, const CT::ScalarBased auto&) noexcept;
-
-   /// Divide                                                                 
-   constexpr auto& operator /= (CT::RangeBased auto&, const CT::RangeBased  auto&);
-   constexpr auto& operator /= (CT::RangeBased auto&, const CT::VectorBased auto&);
-   constexpr auto& operator /= (CT::RangeBased auto&, const CT::ScalarBased auto&);
-
-
-   ///                                                                        
-   ///   Comparing                                                            
-   ///                                                                        
-   /// Smaller                                                                
-   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator <  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator <  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Bigger                                                                 
-   constexpr auto operator >  (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator >  (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator >  (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Bigger or equal                                                        
-   constexpr auto operator >= (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator >= (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator >= (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Smaller or equal                                                       
-   constexpr auto operator <= (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator <= (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator <= (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   /// Equal                                                                  
-   constexpr auto operator == (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator == (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator == (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;
-
-   constexpr auto operator != (const CT::RangeBased  auto&, const CT::RangeBased  auto&) noexcept;
-   constexpr auto operator != (const CT::RangeBased  auto&, const CT::ScalarBased auto&) noexcept;
-   constexpr auto operator != (const CT::ScalarBased auto&, const CT::RangeBased  auto&) noexcept;*/
 
 } // namespace Langulus::Math
 

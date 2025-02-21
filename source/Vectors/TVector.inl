@@ -62,6 +62,20 @@ namespace Langulus::Math
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
+   /// Adapt a component to the vector's internal type                        
+   ///   @param x - the component to adapt                                    
+   ///   @return the adapted component                                        
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) noexcept {
+      using N = Deref<decltype(x)>;
+      static_assert(CT::Convertible<N, T>, "Incompatible number");
+
+      if constexpr (not CT::Same<N, T>)
+         return static_cast<T>(x);
+      else
+         return x;
+   }
+
    /// Manual construction via a variadic head-tail                           
    /// Excessive elements are ignored, while missing elements are defaulted   
    TEMPLATE() template<class T1, class T2, class...TN> LANGULUS(INLINED)
@@ -210,20 +224,6 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       return Serialize<Flow::Code, TVector>();
-   }
-
-   /// Adapt a component to the vector's internal type                        
-   ///   @param x - the component to adapt                                    
-   ///   @return the adapted component                                        
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) noexcept {
-      using N = Deref<decltype(x)>;
-      static_assert(CT::Convertible<N, T>, "Incompatible number");
-
-      if constexpr (not CT::Same<N, T>)
-         return static_cast<T>(x);
-      else
-         return x;
    }
 
 
