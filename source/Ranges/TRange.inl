@@ -23,14 +23,14 @@ namespace Langulus::Math
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const TRange& a) noexcept {
-      SIMD::Convert<0>(a.mMinMax, mMinMax);
+      SIMD::Convert<Default>(a.mMinMax, mMinMax);
    }
 
    /// Construct the range sequentially, like so:                             
    /// minX, minY, minZ..., maxX, maxY, maxZ...                               
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::Vector auto& other) noexcept {
-      SIMD::Convert<0>(DeintCast(other), mMinMax);
+      SIMD::Convert<Default>(DeintCast(other), mMinMax);
 
       if constexpr (CT::Normalized<T>) {
          mMin = mMin.Normalize();
@@ -41,7 +41,7 @@ namespace Langulus::Math
    /// Construct the range from scalar                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::Scalar auto& other) noexcept {
-      SIMD::Convert<0>(DeintCast(other), mMinMax);
+      SIMD::Convert<Default>(DeintCast(other), mMinMax);
 
       if constexpr (CT::Normalized<T>) {
          mMin = mMin.Normalize();
