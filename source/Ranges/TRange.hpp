@@ -176,7 +176,7 @@ namespace Langulus::Math
       static constexpr bool CTTI_RangeTrait = true;
 
    public:
-      constexpr TRange() noexcept = default;
+      constexpr TRange() noexcept requires CT::Defaultable<T>;
       constexpr TRange(const TRange&) noexcept;
       constexpr TRange(const CT::Vector auto&) noexcept;
       constexpr TRange(const CT::Scalar auto&) noexcept;
