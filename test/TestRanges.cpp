@@ -73,6 +73,7 @@ TEMPLATE_TEST_CASE("Ranges", "[range]",
    using Flow::Code;
    using T = TestType;
    using P = typename T::PointType;
+   using P2 = typename T::CoalescedType;
    using E = TypeOf<T>;
    constexpr auto C = CountOf<T>;
    static_assert(CT::Exact<E, TypeOf<P>>);
@@ -135,25 +136,125 @@ TEMPLATE_TEST_CASE("Ranges", "[range]",
       }
 
 		WHEN("Assigning a range manually") {
-         T x {P {1, 2, 3, 4}};
+         T x {P {1, 2, 3, 4}, P {1, 2, 3, 4}};
          x = T {P {0, 5, 12, 1}, P {1, 7, 19, 100}};
+         
+         if constexpr (not CT::Normalized<T>) {
+            if constexpr (C == 8) {
+               REQUIRE(x == T {P {0, 5, 12, 1}, P {1, 7, 19, 100}});
+               REQUIRE(x == P2 {0, 5, 12, 1, 1, 7, 19, 100});
+               REQUIRE(x.mMin == P {0, 5, 12, 1});
+               REQUIRE(x.mMax == P {1, 7, 19, 100});
+            }
+            else if constexpr (C == 6) {
+               REQUIRE(x == T {P {0, 5, 12}, P {1, 7, 19}});
+               REQUIRE(x == P2 {0, 5, 12, 1, 7, 19});
+               REQUIRE(x.mMin == P {0, 5, 12});
+               REQUIRE(x.mMax == P {1, 7, 19});
+            }
+            else if constexpr (C == 4) {
+               REQUIRE(x == T {P {0, 5}, P {1, 7}});
+               REQUIRE(x == P2 {0, 5, 1, 7});
+               REQUIRE(x.mMin == P {0, 5});
+               REQUIRE(x.mMax == P {1, 7});
+            }
+            else if constexpr (C == 2) {
+               REQUIRE(x == T {P {0}, P {1}});
+               REQUIRE(x == P2 {0, 1});
+               REQUIRE(x.mMin == 0);
+               REQUIRE(x.mMax == 1);
+            }
+            else static_assert(false, "TODO");
+         }
+         else if constexpr (C == 8) {
+            REQUIRE(x.mMin.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMin.y == Approx(0.3835).margin(0.0001));
+            REQUIRE(x.mMin.z == Approx(0.9204).margin(0.0001));
+            REQUIRE(x.mMin.w == Approx(0.0767).margin(0.0001));
 
-         REQUIRE(x == T {P {0, 5, 12, 1}, P {1, 7, 19, 100}});
-         REQUIRE(x != P {0, 5, 12, 1});
-         REQUIRE(x.mMin     == P {0, 5, 12, 1});
-         REQUIRE(x.GetMin() == P {0, 5, 12, 1});
-         REQUIRE(x.mMax     == P {1, 7, 19, 100});
-         REQUIRE(x.GetMax() == P {1, 7, 19, 100});
+            REQUIRE(x.mMax.x == Approx(0.0098).margin(0.0001));
+            REQUIRE(x.mMax.y == Approx(0.0686).margin(0.0001));
+            REQUIRE(x.mMax.z == Approx(0.1862).margin(0.0001));
+            REQUIRE(x.mMax.w == Approx(0.9801).margin(0.0001));
+         }
+         else if constexpr (C == 6) {
+            REQUIRE(x.mMin.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMin.y == Approx(0.3846).margin(0.0001));
+            REQUIRE(x.mMin.z == Approx(0.9231).margin(0.0001));
+
+            REQUIRE(x.mMax.x == Approx(0.0493).margin(0.0001));
+            REQUIRE(x.mMax.y == Approx(0.3453).margin(0.0001));
+            REQUIRE(x.mMax.z == Approx(0.9372).margin(0.0001));
+         }
+         else if constexpr (C == 4) {
+            REQUIRE(x.mMin.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMin.y == Approx(1).margin(0.0001));
+
+            REQUIRE(x.mMax.x == Approx(0.1414).margin(0.0001));
+            REQUIRE(x.mMax.y == Approx(0.9899).margin(0.0001));
+         }
+         else static_assert(false, "TODO");
 		}
 
 		WHEN("Assigning a vector manually") {
-         T x {P {1, 2, 3, 4}};
-         x = P {0, 5, 12, 1};
+         T x {P2 {1, 2, 3, 4}};
+         x = P2 {0, 5, 12, 1};
 
-         REQUIRE(x == T {P {0, 5, 12, 1}, P {0, 0, 0, 0}});
-         REQUIRE(x == P {0, 5, 12, 1});
-         REQUIRE(x.mMin     == P {0, 5, 12, 1});
-         REQUIRE(x.mMax     == P {0, 0, 0, 0});
+         if constexpr (not CT::Normalized<T>) {
+            if constexpr (C == 8) {
+               REQUIRE(x == T {P {0, 5, 12, 1}, P {0, 0, 0, 0}});
+               REQUIRE(x == P2 {0, 5, 12, 1});
+               REQUIRE(x.mMin == P {0, 5, 12, 1});
+               REQUIRE(x.mMax == P {0, 0, 0, 0});
+            }
+            else if constexpr (C == 6) {
+               REQUIRE(x == T {P {0, 5, 12}, P {1, 0, 0}});
+               REQUIRE(x == P2 {0, 5, 12, 1});
+               REQUIRE(x.mMin == P {0, 5, 12});
+               REQUIRE(x.mMax == P {1, 0, 0});
+            }
+            else if constexpr (C == 4) {
+               REQUIRE(x == T {P {0, 5}, P {12, 1}});
+               REQUIRE(x == P2 {0, 5, 12, 1});
+               REQUIRE(x.mMin == P {0, 5});
+               REQUIRE(x.mMax == P {12, 1});
+            }
+            else if constexpr (C == 2) {
+               REQUIRE(x == T {P {0}, P {5}});
+               REQUIRE(x == P2 {0, 5});
+               REQUIRE(x.mMin == 0);
+               REQUIRE(x.mMax == 5);
+            }
+            else static_assert(false, "TODO");
+         }
+         else if constexpr (C == 8) {
+            REQUIRE(x.mMin.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMin.y == Approx(0.3835).margin(0.0001));
+            REQUIRE(x.mMin.z == Approx(0.9204).margin(0.0001));
+            REQUIRE(x.mMin.w == Approx(0.0767).margin(0.0001));
+
+            REQUIRE(x.mMax.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMax.y == Approx(0).margin(0.0001));
+            REQUIRE(x.mMax.z == Approx(0).margin(0.0001));
+            REQUIRE(x.mMax.w == Approx(0).margin(0.0001));
+         }
+         else if constexpr (C == 6) {
+            REQUIRE(x.mMin.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMin.y == Approx(0.3846).margin(0.0001));
+            REQUIRE(x.mMin.z == Approx(0.9231).margin(0.0001));
+
+            REQUIRE(x.mMax.x == Approx(1).margin(0.0001));
+            REQUIRE(x.mMax.y == Approx(0).margin(0.0001));
+            REQUIRE(x.mMax.z == Approx(0).margin(0.0001));
+         }
+         else if constexpr (C == 4) {
+            REQUIRE(x.mMin.x == Approx(0).margin(0.0001));
+            REQUIRE(x.mMin.y == Approx(1).margin(0.0001));
+
+            REQUIRE(x.mMax.x == Approx(0.9965).margin(0.0001));
+            REQUIRE(x.mMax.y == Approx(0.0830).margin(0.0001));
+         }
+         else static_assert(false, "TODO");
 		}
 
 		WHEN("Assigning a scalar manually") {
