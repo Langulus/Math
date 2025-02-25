@@ -17,6 +17,9 @@
 namespace Langulus::Math
 {
 
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TRange() noexcept requires CT::Defaultable<T> {}
+
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const TRange& a) noexcept {
