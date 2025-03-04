@@ -207,10 +207,8 @@ namespace Langulus::Math
    /// Get the intersection with another range                                
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Intersect(const CT::RangeBased auto& limits) const noexcept -> TRange {
-      return {
-         Math::Clamp(mMin, limits.mMin, limits.mMax),
-         Math::Clamp(mMax, limits.mMin, limits.mMax)
-      };
+      TRange temp {Math::Max(mMin, limits.mMin), Math::Min(mMax, limits.mMax)};
+      return temp.Length() < 0 ? TRange {} : temp;
    }
 
    /// Get the minimum value                                                  
