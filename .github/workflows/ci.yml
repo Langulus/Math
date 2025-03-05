@@ -88,14 +88,30 @@ jobs:
           # see https://github.com/Langulus/SIMD/issues/22 for more info and updates on the situation
           - arch: x86
             cxx: v143
+            feature: [SSE2, 16, '-msse2', '/arch:SSE2']
+          - arch: x86
+            cxx: v143
+            feature: [SSE3, 16, '-msse3', '<not available on msvc>']
+          - arch: x86
+            cxx: v143
+            feature: [SSSE3, 16, '-mssse3', '<not available on msvc>']
+          - arch: x86
+            cxx: v143
+            feature: [SSE4.1, 16, '-msse4.1', '<not available on msvc>']
+          - arch: x86
+            cxx: v143
+            feature: [SSE4.2, 16, '-msse4.2', '<not available on msvc>']
+          - arch: x86
+            cxx: v143
+            feature: [AVX, 32, '-mavx', '/arch:AVX']
+          - arch: x86
+            cxx: v143
+            feature: [AVX2, 32, '-mavx2', '/arch:AVX2']
 
           # Seems the cloud at github doesn't have the avx512 extensions
           - feature: [AVX512, 64, '-mavx512f', '/arch:AVX512']
             
         include:
-          - arch: x86
-            cxx: v143
-            feature: [NoSIMD, 16, ' ', '/arch:IA32']
           - cxx: g++-14
             c: gcc-14
           - cxx: clang++-19
