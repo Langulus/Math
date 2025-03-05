@@ -89,6 +89,9 @@ jobs:
           - arch: x86
             cxx: v143
 
+          # Seems the cloud at github doesn't have the avx512 extensions
+          - feature: [AVX512, 64, '-mavx512f', '/arch:AVX512']
+  
         include:
           - arch: x86
             cxx: v143
