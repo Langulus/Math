@@ -854,15 +854,23 @@ namespace Langulus::A
       CT::ScalarBased auto far
    ) {
       using T = Lossless<decltype(aspect), decltype(near), decltype(far)>;
-      auto result = Math::TMatrix<T, 4>::Null();
-      const T t = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5});
-      const T r = far - near;
+      // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix.html
+      const T scale = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5}) * near;
+      const T r = scale;
+      const T l = -r;
+      const T t = scale / aspect;
+      const T b = -t;
 
-      result.mArray[0] = T {1} / t;
-      result.mArray[5] = aspect / t;
-      result.mArray[10] = -(far + near) / r;
+      auto result = Math::TMatrix<T, 4>::Null();
+      result.mArray[0]  = T {2} * near / (r - l);
+      result.mArray[5]  = T {2} * near / (t - b);
+
+      result.mArray[8]  =   (r + l) / (r - l);
+      result.mArray[9]  =   (t + b) / (t - b);
+      result.mArray[10] = - (far + near) / (far - near);
       result.mArray[11] = T {-1};
-      result.mArray[14] = T {-2} * far * near / r;
+
+      result.mArray[14] = T {-2} * far * near / (far - near);
       return result;
    }
 
@@ -884,12 +892,12 @@ namespace Langulus::A
       const auto d = T {-2} * far * near / (far - near);
 
       result[ 0] = x;
-      result[ 8] = a;
       result[ 5] = y;
+      result[ 8] = a;
       result[ 9] = b;
       result[10] = c;
-      result[14] = d;
       result[11] = -1;
+      result[14] = d;
       return result;
    }
 
