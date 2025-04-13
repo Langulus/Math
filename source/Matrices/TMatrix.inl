@@ -847,13 +847,11 @@ namespace Langulus::A
    ///   @param near - the distance to the near clipping plane                
    ///   @param far - the distance to the far clipping plane                  
    ///   @return the projection matrix                                        
+   template<CT::ScalarBased T>
    constexpr auto A::Matrix::PerspectiveFOV(
-      const CT::Angle auto& fieldOfView,
-      CT::ScalarBased auto aspect,
-      CT::ScalarBased auto near,
-      CT::ScalarBased auto far
-   ) {
-      using T = Lossless<decltype(aspect), decltype(near), decltype(far)>;
+      const CT::Angle auto& fieldOfView, const T& aspect,
+      const T& near, const T& far
+   ) -> Math::TMatrix<T, 4> {
       // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix.html
       const T scale = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5}) * near;
       const T r = scale;

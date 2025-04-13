@@ -62,18 +62,19 @@ namespace Langulus
 
          template<CT::VectorBased V> static constexpr auto
          From(const Math::TQuaternion<TypeOf<V>>&, const V& = 0, const V& = 1) noexcept
-         -> Math::TMatrix<TypeOf<V>, V::MemberCount + 1>;
-
-         static constexpr auto
-         PerspectiveFOV(const CT::Angle auto&, CT::ScalarBased auto, CT::ScalarBased auto, CT::ScalarBased auto);
+            -> Math::TMatrix<TypeOf<V>, V::MemberCount + 1>;
 
          template<CT::ScalarBased T> static constexpr auto
-         PerspectiveRegion(const T&, const T&, const T&, const T&, const T&, const T&)
-         -> Math::TMatrix<T, 4>;
+         PerspectiveFOV(const CT::Angle auto&, const T& aspect, const T& near, const T& far)
+            -> Math::TMatrix<T, 4>;
 
          template<CT::ScalarBased T> static constexpr auto
-         Orthographic(const T&, const T&, const T&, const T&)
-         -> Math::TMatrix<T, 4>;
+         PerspectiveRegion(const T& left, const T& right, const T& top, const T& bottom, const T& near, const T& far)
+            -> Math::TMatrix<T, 4>;
+
+         template<CT::ScalarBased T> static constexpr auto
+         Orthographic(const T& width, const T& height, const T& near, const T& far)
+            -> Math::TMatrix<T, 4>;
       };
 
       /// Used as an imposed base for any type that can be interpretable as a 
