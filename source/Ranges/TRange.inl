@@ -71,6 +71,29 @@ namespace Langulus::Math
          mMax = mMax.Normalize();
       }
    }
+
+   /// Create range from a min and a max vectors                              
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TRange(const CT::VectorBased auto& min, const CT::VectorBased auto& max) noexcept {
+      for (Count i = 0; i < CountOf<T>; ++i) {
+         mMinMax[i] = min.all[i];
+         mMinMax[i + CountOf<T>] = max.all[i];
+      }
+   }
+
+   /// Create range from a min and a max scalars                              
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TRange(const CT::ScalarBased auto& min, const CT::ScalarBased auto& max) noexcept {
+      for (Count i = 0; i < CountOf<T>; ++i) {
+         mMinMax[i] = min;
+         mMinMax[i + CountOf<T>] = max;
+      }
+
+      if constexpr (CT::Normalized<T>) {
+         mMin = mMin.Normalize();
+         mMax = mMax.Normalize();
+      }
+   }
    
    /// Create from registers                                                  
    TEMPLATE() LANGULUS(INLINED)

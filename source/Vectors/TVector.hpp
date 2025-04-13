@@ -160,27 +160,6 @@ namespace Langulus::Math
          union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first, r, red, u; };
       };
 
-      // Declare the rest as functions, so that they don't take up space
-      // This is necessary to work around the dependent names in TVector
-      // This will also error out, when missing (), but if you happen to
-      // call them by accident, you will get a proper compile error     
-      /*void y()       { static_assert(false, "1D vector doesn't have 'y' component"); }
-      void second()  { static_assert(false, "1D vector doesn't have 'second' component"); }
-      void g()       { static_assert(false, "1D vector doesn't have 'g' component"); }
-      void green()   { static_assert(false, "1D vector doesn't have 'green' component"); }
-      void v()       { static_assert(false, "1D vector doesn't have 'v' component"); }
-
-      void z()       { static_assert(false, "1D vector doesn't have 'z' component"); }
-      void third()   { static_assert(false, "1D vector doesn't have 'third' component"); }
-      void b()       { static_assert(false, "1D vector doesn't have 'b' component"); }
-      void blue()    { static_assert(false, "1D vector doesn't have 'blue' component"); }
-      void s()       { static_assert(false, "1D vector doesn't have 's' component"); }
-
-      void w()       { static_assert(false, "1D vector doesn't have 'w' component"); }
-      void fourth()  { static_assert(false, "1D vector doesn't have 'fourth' component"); }
-      void a()       { static_assert(false, "1D vector doesn't have 'a' component"); }
-      void alpha()   { static_assert(false, "1D vector doesn't have 'alpha' component"); }
-      void t()       { static_assert(false, "1D vector doesn't have 't' component"); }*/
       static constexpr TYPE y       = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE second  = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE g       = static_cast<TYPE>(DEFAULT);
@@ -239,21 +218,6 @@ namespace Langulus::Math
          };
       };
 
-      // Declare the rest as functions, so that they don't take up space
-      // This is necessary to work around the dependent names in TVector
-      // This will also error out, when missing (), but if you happen to
-      // call them by accident, you will get a proper compile error     
-      /*void z()       { static_assert(false, "2D vector doesn't have 'z' component"); }
-      void third()   { static_assert(false, "2D vector doesn't have 'third' component"); }
-      void b()       { static_assert(false, "2D vector doesn't have 'b' component"); }
-      void blue()    { static_assert(false, "2D vector doesn't have 'blue' component"); }
-      void s()       { static_assert(false, "2D vector doesn't have 's' component"); }
-
-      void w()       { static_assert(false, "2D vector doesn't have 'w' component"); }
-      void fourth()  { static_assert(false, "2D vector doesn't have 'fourth' component"); }
-      void a()       { static_assert(false, "2D vector doesn't have 'a' component"); }
-      void alpha()   { static_assert(false, "2D vector doesn't have 'alpha' component"); }
-      void t()       { static_assert(false, "2D vector doesn't have 't' component"); }*/
       static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
@@ -312,15 +276,6 @@ namespace Langulus::Math
          };
       };
 
-      // Declare the rest as functions, so that they don't take up space
-      // This is necessary to work around the dependent names in TVector
-      // This will also error out, when missing (), but if you happen to
-      // call them by accident, you will get a proper compile error     
-      /*void w()       { static_assert(false, "3D vector doesn't have 'w' component"); }
-      void fourth()  { static_assert(false, "3D vector doesn't have 'fourth' component"); }
-      void a()       { static_assert(false, "3D vector doesn't have 'a' component"); }
-      void alpha()   { static_assert(false, "3D vector doesn't have 'alpha' component"); }
-      void t()       { static_assert(false, "3D vector doesn't have 't' component"); }*/
       static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
@@ -713,7 +668,7 @@ namespace Langulus::Math
       constexpr explicit operator bool () const noexcept;
 
       template<CT::ScalarBased N> requires (S == 1 and CT::Convertible<N, T>)
-      explicit constexpr operator N () const noexcept;
+      /*explicit*/ constexpr operator N () const noexcept;
       
       template<Count ALTS> requires (ALTS < S)
       operator TVector<T, ALTS>& () const noexcept;

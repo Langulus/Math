@@ -182,6 +182,8 @@ namespace Langulus::Math
       constexpr TRange(const CT::Scalar auto&) noexcept;
       constexpr TRange(const PointType&, const PointType&) noexcept;
       constexpr TRange(const MemberType&, const MemberType&) noexcept;
+      constexpr TRange(const CT::ScalarBased auto&, const CT::ScalarBased auto&) noexcept;
+      constexpr TRange(const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
 
       TRange(const CT::SIMD auto&) noexcept;
       TRange(Describe&&);
