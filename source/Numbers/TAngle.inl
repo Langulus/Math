@@ -113,11 +113,11 @@ namespace Langulus::Math
 
    /// Convert from any angle to text                                         
    template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
-   TAngle<T, D>::operator Anyness::Text() const {
-      Anyness::Text result;
+   TAngle<T, D>::operator Annies::Text() const {
+      Annies::Text result;
       result += NameOf<TAngle>();
       result += Flow::Code::Operator::OpenScope;
-      result += static_cast<Anyness::Text>(mValue);
+      result += static_cast<Annies::Text>(mValue);
       result += Flow::Code::Operator::CloseScope;
       return result;
    }

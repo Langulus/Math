@@ -169,7 +169,7 @@ namespace Langulus::Math
          A::RangeOfType<MemberType>,
          MemberType
       );
-      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
       LANGULUS_MEMBERS(&TRange::mMin, &TRange::mMax);
 
       // Make TRange match the CT::RangeBased concept                   
@@ -199,7 +199,7 @@ namespace Langulus::Math
       template<CT::ScalarBased N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-      explicit operator Anyness::Text() const;
+      explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;
 
       constexpr auto Embrace(const auto&...) noexcept -> TRange&;

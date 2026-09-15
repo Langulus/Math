@@ -161,7 +161,7 @@ namespace Langulus::Math
       result += NameOf<TGradient>();
       result += Code::Operator::OpenScope;
       for (Offset i = 0; i < S; ++i) {
-         result += Anyness::Text {(*this)[i]};
+         result += Annies::Text {(*this)[i]};
          if (i < S - 1)
             result += ", ";
       }

@@ -175,8 +175,8 @@ namespace Langulus
          }
 
          /// Convert from any size to text                                    
-         explicit operator Anyness::Text() const {
-            return T::template Serialize<Anyness::Text, TScale>();
+         explicit operator Annies::Text() const {
+            return T::template Serialize<Annies::Text, TScale>();
          }
       };
 

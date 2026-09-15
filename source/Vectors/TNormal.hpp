@@ -154,8 +154,8 @@ namespace Langulus
 
          /// Convert from any normal to text                                  
          LANGULUS(INLINED)
-         explicit operator Anyness::Text() const {
-            return T::template Serialize<Anyness::Text, TNormal>();
+         explicit operator Annies::Text() const {
+            return T::template Serialize<Annies::Text, TNormal>();
          }
 
          /// Check if all components are zero                                 

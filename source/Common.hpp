@@ -8,7 +8,7 @@
 #pragma once
 #include <Langulus/Core/Except.hpp>
 #include <Langulus/Core/Lossless.hpp>
-#include <Langulus/Anyness/Trait.hpp>
+#include <Langulus/Annies/Trait.hpp>
 
 /// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1

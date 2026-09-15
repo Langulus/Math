@@ -41,8 +41,8 @@ namespace Langulus::Math
 
    /// Stringify box for debugging                                            
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Anyness::Text() const {
-      return mOffsets.template Serialize<Anyness::Text, TME()>();
+   TME()::operator Annies::Text() const {
+      return mOffsets.template Serialize<Annies::Text, TME()>();
    }
 
    /// Serialize box as code                                                  
@@ -84,14 +84,14 @@ namespace Langulus::Math
 
    /// Stringify box for debugging                                            
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Anyness::Text() const {
+   TME()::operator Annies::Text() const {
       using Flow::Code;
       Code result;
       result += MetaDataOf<TME()>();
       result += Code::Operator::OpenScope;
-      Anyness::MakeBlock(mOffsets.all).Serialize(result);
+      Annies::MakeBlock(mOffsets.all).Serialize(result);
       result += ", ";
-      Anyness::MakeBlock(&mRadius, 1).Serialize(result);
+      Annies::MakeBlock(&mRadius, 1).Serialize(result);
       result += Code::Operator::CloseScope;
       return Abandon(result);
    }
@@ -99,7 +99,7 @@ namespace Langulus::Math
    /// Serialize box as code                                                  
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
-      return operator Anyness::Text();
+      return operator Annies::Text();
    }
 
 } // namespace Langulus::Math

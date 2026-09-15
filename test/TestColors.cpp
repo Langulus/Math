@@ -15,7 +15,7 @@ TEMPLATE_TEST_CASE("Colors", "[color]",
    RGB96,
    RGBA128
 ) {
-   using Anyness::Text;
+   using Annies::Text;
    using Flow::Code;
    using T = TestType;
    using E = TypeOf<T>;

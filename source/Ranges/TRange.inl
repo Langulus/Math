@@ -8,7 +8,7 @@
 #pragma once
 #include "TRange.hpp"
 #include "../Vectors/TVector.inl"
-#include <Langulus/Anyness/Construct.hpp>
+#include <Langulus/Annies/Construct.hpp>
 
 #define TEMPLATE()   template<CT::Dense T>
 #define TME()        TRange<T>
@@ -198,21 +198,21 @@ namespace Langulus::Math
 
    /// Serialize to text                                                      
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Anyness::Text() const {
-      using Anyness::Text;
+   TME()::operator Annies::Text() const {
+      using Annies::Text;
       Text result;
       result += NameOf<TRange>();
       result += "(";
       if constexpr (MemberCount == 2) {
-         Anyness::MakeBlock(mMin.all).Serialize(result);
+         Annies::MakeBlock(mMin.all).Serialize(result);
          result += "; ";
-         Anyness::MakeBlock(mMax.all).Serialize(result);
+         Annies::MakeBlock(mMax.all).Serialize(result);
       }
       else {
          result += "(";
-            Anyness::MakeBlock(mMin.all).Serialize(result);
+            Annies::MakeBlock(mMin.all).Serialize(result);
          result += "); (";
-            Anyness::MakeBlock(mMax.all).Serialize(result);
+            Annies::MakeBlock(mMax.all).Serialize(result);
          result += ")";
       }
       result += ")";

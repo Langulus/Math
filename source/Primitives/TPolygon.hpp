@@ -45,11 +45,11 @@ namespace Langulus
       /// A list of coplanar points that form a surface with a complex edge   
       ///                                                                     
       template<CT::Vector T>
-      struct TPolygon : Anyness::TMany<T> {
+      struct TPolygon : Annies::TMany<T> {
          LANGULUS(DEEP) false;
          LANGULUS_BASES(A::Polygon);
 
-         using Base = Anyness::TMany<T>;
+         using Base = Annies::TMany<T>;
          using PointType = T;
          static constexpr auto MemberCount = T::MemberCount;
          static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");

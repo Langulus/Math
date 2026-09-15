@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE("Ranges", "[range]",
    TRange<Normal4f>,
    TRange<Normal4d>
 ) {
-   using Anyness::Text;
+   using Annies::Text;
    using Flow::Code;
    using T = TestType;
    using P = typename T::PointType;

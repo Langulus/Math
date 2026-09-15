@@ -184,7 +184,7 @@ namespace Langulus
          constexpr auto operator = (const TColorComponent<ALTT, D>&) noexcept -> TColor&;
 
          explicit operator Flow::Code() const;
-         explicit operator Anyness::Text() const;
+         explicit operator Annies::Text() const;
          explicit operator Logger::Color() const;
 
          constexpr void MakeOpaque() noexcept;

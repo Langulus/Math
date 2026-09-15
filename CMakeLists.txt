@@ -25,9 +25,9 @@ add_langulus_library(LangulusMath
    SOURCES  $<$<BOOL:${LANGULUS_OPTION_LOGGING}>:$<TARGET_OBJECTS:LangulusLogger>>
             $<TARGET_OBJECTS:LangulusRTTI>
             $<$<BOOL:${LANGULUS_OPTION_MANAGED_MEMORY}>:$<TARGET_OBJECTS:LangulusFractalloc>>
-            $<$<BOOL:${LANGULUS_OPTION_PROFILING}>:$<TARGET_OBJECTS:LangulusProfiler>>
+            $<$<BOOL:${LANGULUS_OPTION_PROFILING}>:$<TARGET_OBJECTS:LangulusPercist>>
             $<TARGET_OBJECTS:LangulusSIMD>
-            $<TARGET_OBJECTS:LangulusAnyness>
+            $<TARGET_OBJECTS:LangulusAnnies>
             $<TARGET_OBJECTS:LangulusFlow>
             ${LANGULUS_MATH_SOURCES}
 )
@@ -36,9 +36,9 @@ target_include_directories(LangulusMath
    PUBLIC	$<$<BOOL:${LANGULUS_OPTION_LOGGING}>:$<TARGET_PROPERTY:LangulusLogger,INTERFACE_INCLUDE_DIRECTORIES>>
             $<TARGET_PROPERTY:LangulusRTTI,INTERFACE_INCLUDE_DIRECTORIES>
             $<$<BOOL:${LANGULUS_OPTION_MANAGED_MEMORY}>:$<TARGET_PROPERTY:LangulusFractalloc,INTERFACE_INCLUDE_DIRECTORIES>>
-            $<$<BOOL:${LANGULUS_OPTION_PROFILING}>:$<TARGET_PROPERTY:LangulusProfiler,INTERFACE_INCLUDE_DIRECTORIES>>
+            $<$<BOOL:${LANGULUS_OPTION_PROFILING}>:$<TARGET_PROPERTY:LangulusPercist,INTERFACE_INCLUDE_DIRECTORIES>>
             $<TARGET_PROPERTY:LangulusSIMD,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusAnyness,INTERFACE_INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:LangulusAnnies,INTERFACE_INCLUDE_DIRECTORIES>
             $<TARGET_PROPERTY:LangulusFlow,INTERFACE_INCLUDE_DIRECTORIES>
             include
 )
@@ -52,7 +52,7 @@ target_compile_definitions(LangulusMath
    PRIVATE  LANGULUS_EXPORT_ALL
 )
 
-if(LANGULUS_TESTING)
+if(LANGULUS_OPTION_TESTING)
    enable_testing()
    add_subdirectory(test)
 endif()

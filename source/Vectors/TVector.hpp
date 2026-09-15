@@ -466,7 +466,7 @@ namespace Langulus::Math
          A::VectorOfType<T>,
          Base, T
       );
-      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
       LANGULUS_VERBS(Verbs::Multiply);
 
       // Make TVector match the CT::VectorBased concept                 
@@ -511,7 +511,7 @@ namespace Langulus::Math
       template<CT::Serial AS, class TOKEN>
       AS Serialize() const;
 
-      explicit operator Anyness::Text() const;
+      explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;
 
       static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;

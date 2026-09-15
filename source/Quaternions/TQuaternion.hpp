@@ -107,7 +107,7 @@ namespace Langulus::Math
       constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>&)
          noexcept requires (COLUMNS >= 3 and ROWS >= 3);
 
-      explicit operator Anyness::Text() const;
+      explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;
 
       static constexpr TQuaternion FromAxis(const Base3&, const CT::Angle auto&) noexcept;

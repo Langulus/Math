@@ -422,7 +422,7 @@ namespace Langulus::Math
          result += "(";
       }
 
-      Anyness::MakeBlock(GetRaw(), MemberCount).Serialize(result);
+      Annies::MakeBlock(GetRaw(), MemberCount).Serialize(result);
 
       if constexpr (SCOPED)
          result += ")";
@@ -431,8 +431,8 @@ namespace Langulus::Math
 
    /// Stringify vector for debugging                                         
    TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Anyness::Text() const {
-      return Serialize<Anyness::Text, TME()>();
+   TME()::operator Annies::Text() const {
+      return Serialize<Annies::Text, TME()>();
    }
 
    /// Serialize vector as code                                               

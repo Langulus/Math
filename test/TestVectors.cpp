@@ -67,7 +67,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
    Normal4f,
    Normal4d
 ) {
-   using Anyness::Text;
+   using Annies::Text;
    using Flow::Code;
    using T = TestType;
    using E = TypeOf<T>;

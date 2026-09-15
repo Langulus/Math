@@ -340,8 +340,8 @@ namespace Langulus::Math
 
    /// Convert from any color to text                                         
    TEMPLATE() LANGULUS(INLINED)
-   TColor<T>::operator Anyness::Text() const {
-      return T::template Serialize<Anyness::Text, TColor>();
+   TColor<T>::operator Annies::Text() const {
+      return T::template Serialize<Annies::Text, TColor>();
    }
 
    /// Covert to a console color                                              

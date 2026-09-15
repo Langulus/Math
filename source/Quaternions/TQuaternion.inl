@@ -115,8 +115,8 @@ namespace Langulus::Math
 
    /// Serialize quaternion to text                                           
    TEMPLATE() LANGULUS(INLINED)
-   QUAT()::operator Anyness::Text() const {
-      return Base::template Serialize<Anyness::Text, TQuaternion>();
+   QUAT()::operator Annies::Text() const {
+      return Base::template Serialize<Annies::Text, TQuaternion>();
    }
 
    /// Serialize quaternion to code                                           

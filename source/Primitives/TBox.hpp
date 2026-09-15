@@ -105,7 +105,7 @@ namespace Langulus::Math
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Box);
-      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
 
       using PointType = T;
       static constexpr Count MemberCount = T::MemberCount;
@@ -117,7 +117,7 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(const T&) const;
 
-      explicit operator Anyness::Text() const;
+      explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;
    };
 
@@ -165,7 +165,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
 
       using Base = TBox<T>;
       using typename Base::PointType;
@@ -178,7 +178,7 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(const T&) const;
 
-      explicit operator Anyness::Text() const;
+      explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;
    };
 

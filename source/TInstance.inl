@@ -347,8 +347,8 @@ namespace Langulus::Math
    ///   @param verb - movement verb                                          
    TEMPLATE()
    void TME()::Move(Flow::Verb& verb) {
-      using Anyness::Block;
-      using Anyness::Trait;
+      using Annies::Block;
+      using Annies::Trait;
       bool relative = false;
 
       // Read relativity first                                          

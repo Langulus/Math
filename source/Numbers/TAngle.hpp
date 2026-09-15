@@ -228,7 +228,7 @@ namespace Langulus
       public:
          LANGULUS(NAME) GenerateToken();
          LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
-         LANGULUS_CONVERTS_TO(Anyness::Text, Flow::Code);
+         LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
 
          using Dimension = D;
          using T::mValue;
@@ -236,7 +236,7 @@ namespace Langulus
          using T::operator =;
          TAngle(Describe&&);
 
-         explicit operator Anyness::Text() const;
+         explicit operator Annies::Text() const;
          explicit operator Flow::Code() const;
       };
 
