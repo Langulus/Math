@@ -7,46 +7,12 @@
 ///                                                                           
 #pragma once
 #include <Langulus/Core.hpp>
-
-namespace Langulus::CT
-{
-
-   ///                                                                        
-   /// All Langulus::Math arithmetic types have these properties              
-   ///                                                                        
-
-   /// Checks for a Cos() method                                              
-   template<class T>
-   concept HasCos = requires (const Decay<T> a) {
-      {a.Cos()} -> CT::Data;
-   };
-
-   /// Checks for a Sin() method                                              
-   template<class T>
-   concept HasSin = requires (const Decay<T> a) {
-      {a.Sin()} -> CT::Data;
-   };
-
-   /// Checks for a Atan() method                                             
-   template<class T>
-   concept HasAtan = requires (const Decay<T> a) {
-      {a.Atan()} -> CT::Data;
-   };
-
-   /// Checks for a Atan2() method                                            
-   template<class T1, class T2>
-   concept HasAtan2 = requires (const Decay<T1> a, const Decay<T2> b) {
-      {a.Atan2(b)} -> CT::Data;
-   };
-
-} // namespace Langulus::CT
+#include <Langulus/CT/Real.hpp>
 
 
 namespace Langulus::Math
 {
-
-   ///                                                                        
-   ///   Constants                                                            
+   /// MARK: Constants                                                        
    ///                                                                        
    template<CT::Real T = Real>
    constexpr T PI {static_cast<T>(3.1415926535897932385L)};
@@ -84,7 +50,10 @@ namespace Langulus::Math
    template<CT::Real T = Real>
    constexpr T GOLDEN_ANGLE {(T {3} - Sqrt(T {5})) * PI<T>};
    
-   /// Degree to radian conversion                                            
+
+   /// MARK: Functions                                                        
+   ///                                                                        
+   /// Degrees to radians conversion                                          
    ///   @param degrees - degrees to convert to radians                       
    template<CT::Dense T> LANGULUS(INLINED)
    constexpr auto DegToRad(const T& degrees) noexcept {
@@ -109,7 +78,7 @@ namespace Langulus::Math
    ///   @param a - the angle                                                 
    template<CT::Dense T> LANGULUS(INLINED)
    auto Cos(const T& a) noexcept {
-      if constexpr (CT::HasCos<T>)
+      if constexpr (requires (T a) { {a.Cos()} -> CT::Data; })
          return a.Cos();
       else if constexpr (CT::Real<T>)
          return ::std::cos(FundamentalCast(a));
@@ -122,7 +91,7 @@ namespace Langulus::Math
    ///   @param a - the angle                                                 
    template<CT::Dense T> LANGULUS(INLINED)
    auto Sin(const T& a) noexcept {
-      if constexpr (CT::HasSin<T>)
+      if constexpr (requires (T a) { {a.Sin()} -> CT::Data; })
          return a.Sin();
       else if constexpr (CT::Real<T>)
          return ::std::sin(FundamentalCast(a));
@@ -135,7 +104,7 @@ namespace Langulus::Math
    ///   @param a - the angle                                                 
    template<CT::Dense T> LANGULUS(INLINED)
    auto Atan(const T& a) noexcept {
-      if constexpr (CT::HasAtan<T>)
+      if constexpr (requires (T a) { {a.Atan()} -> CT::Data; })
          return a.Atan();
       else if constexpr (CT::Real<T>)
          return ::std::atan(a);
@@ -148,12 +117,11 @@ namespace Langulus::Math
    ///   @param a - the angle                                                 
    template<CT::Dense T1, CT::Dense T2> LANGULUS(INLINED)
    auto Atan2(const T1& a, const T2& b) noexcept {
-      if constexpr (CT::HasAtan2<T1, T2>)
+      if constexpr (requires (T1 a, T2 b) { {a.Atan2(b)} -> CT::Data; })
          return a.Atan2(b);
       else if constexpr (CT::Real<T1, T2>)
          return ::std::atan2(b, a);
       else
          return ::std::atan2(static_cast<Real>(b), static_cast<Real>(a));
    }
-
-} // namespace Langulus::Math
+}

@@ -7,11 +7,11 @@
 ///                                                                           
 #pragma once
 #include <Langulus/Core.hpp>
+#include <Langulus/CT/Signed.hpp>
 
 
 namespace Langulus::CT
 {
-
    ///                                                                        
    /// All Langulus::Math arithmetic types have these properties              
    ///                                                                        
@@ -596,5 +596,4 @@ namespace Langulus::Math
       const auto p = (n3 - n2) - (n0 - n1);
       return p * t3 + ((n0 - n1) - p) * t2 + (n2 - n0) * a + n1;
    }
-
-} // namespace Langulus::Math
+}

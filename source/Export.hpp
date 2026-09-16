@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include <Langulus/Core.hpp>
-#include <Langulus/Lossless.hpp>
+//#include <Langulus/CT/Lossless.hpp>
 #include <Langulus/Annies/Trait.hpp>
 
 
