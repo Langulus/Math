@@ -6,8 +6,9 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../Common.hpp"
+//#include "../Common.hpp"
 #include <Langulus/Flow/Code.hpp>
+#include "../Export.hpp"
 
 
 namespace Langulus::Math

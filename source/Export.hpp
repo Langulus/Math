@@ -6,12 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Langulus/Core/Except.hpp>
-#include <Langulus/Core/Lossless.hpp>
+#include <Langulus/Core.hpp>
+#include <Langulus/Lossless.hpp>
 #include <Langulus/Annies/Trait.hpp>
 
-/// Make the rest of the code aware, that Langulus::Math has been included    
-#define LANGULUS_LIBRARY_MATH() 1
 
 #if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
    #define LANGULUS_API_MATH() LANGULUS_EXPORT()
@@ -19,7 +17,9 @@
    #define LANGULUS_API_MATH() LANGULUS_IMPORT()
 #endif
 
+#define LANGULUS_LIBRARY_MATH() 1
 
+/// Make the rest of the code aware, that Langulus::Math has been included    
 LANGULUS_EXCEPTION(Arithmetic);
 
 /// Built-in math traits                                                      
