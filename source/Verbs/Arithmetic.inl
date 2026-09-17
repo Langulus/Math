@@ -18,7 +18,7 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   template<class VERB, bool NOEXCEPT> template<CT::NotVoid T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
       const Many& original, const Many& lhs, Verb& rhs, Operator<T> op
    ) noexcept (NOEXCEPT) {
@@ -46,7 +46,7 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   template<class VERB, bool NOEXCEPT> template<CT::NotVoid T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Vector(
       const Many& original, Many& lhs, Verb& rhs, OperatorMutable<T> o
    ) noexcept (NOEXCEPT) {
@@ -72,7 +72,7 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   template<class VERB, bool NOEXCEPT> template<CT::NotVoid T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
       const Many& original, const Many& lhs, Verb& rhs, Operator<T> o
    ) noexcept (NOEXCEPT) {
@@ -101,7 +101,7 @@ namespace Langulus::Flow
    ///   @tparam T - type to interpret as                                     
    ///   @param lhs - left operand                                            
    ///   @param rhs - right operand                                           
-   template<class VERB, bool NOEXCEPT> template<CT::Data T> LANGULUS(INLINED)
+   template<class VERB, bool NOEXCEPT> template<CT::NotVoid T> LANGULUS(INLINED)
    bool ArithmeticVerb<VERB, NOEXCEPT>::Scalar(
       const Many& original, Many& lhs, Verb& rhs, OperatorMutable<T> o
    ) noexcept (NOEXCEPT) {

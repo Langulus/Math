@@ -135,7 +135,7 @@ namespace Langulus::Math
    ///   @param describe - the descriptor to scan                             
    TEMPLATE()
    TME()::TVector(Describe&& describe) {
-      LANGULUS_ASSUME(UserAssumes, *describe,
+      LglsAssumeUser(*describe,
          "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    

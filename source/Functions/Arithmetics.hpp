@@ -8,6 +8,7 @@
 #pragma once
 #include <Langulus/Core.hpp>
 #include <Langulus/CT/Signed.hpp>
+#include <Langulus/CT/Scalar.hpp>
 
 
 namespace Langulus::CT
@@ -340,13 +341,13 @@ namespace Langulus::Math
       else if constexpr (CT::Unsigned<T>)
          return Detail::SqrtHelper<T>(x, 0, x / 2u + 1u);
       else if constexpr (CT::Integer<T>) {
-         LANGULUS_ASSUME(UserAssumes, x >= 0,
+         LglsAssumeUser(x >= 0,
             "Square root of negative signed integer");
          return static_cast<T>(
             Sqrt(static_cast<::std::make_unsigned_t<T>>(x)));
       }
       else if constexpr (CT::Real<T>) {
-         LANGULUS_ASSUME(UserAssumes, x >= 0,
+         LglsAssumeUser(x >= 0,
             "Square root of negative real");
 
          T p {1};
@@ -530,7 +531,7 @@ namespace Langulus::Math
       if constexpr (CT::HasSum<T>)
          return n.Sum();
       else if constexpr (CT::Number<T>) {
-         LANGULUS_ASSUME(UserAssumes, n >= 0, "Can't get sum of non-positive integers");
+         LglsAssumeUser(n >= 0, "Can't get sum of non-positive integers");
          return (n * (n + T {1})) / T {2};
       }
       else static_assert(false, "T must either have Sum() method, or be a number");

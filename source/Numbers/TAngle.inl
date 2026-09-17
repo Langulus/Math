@@ -93,7 +93,7 @@ namespace Langulus::Math
    ///   @param describe - the descriptor to scan                             
    template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
    TAngle<T, D>::TAngle(Describe&& describe) {
-      LANGULUS_ASSUME(UserAssumes, *describe,
+      LglsAssumeUser(*describe,
          "Empty descriptor for TAngle");
 
       // Attempt initializing without any conversion                    

@@ -110,7 +110,7 @@ namespace Langulus::Math
    ///   @param describe - the descriptor to scan                             
    TEMPLATE()
    TME()::TRange(Describe&& describe) {
-      LANGULUS_ASSUME(UserAssumes, *describe,
+      LglsAssumeUser(*describe,
          "Empty descriptor for TRange");
 
       if (describe->CastsTo<A::Range>()) {

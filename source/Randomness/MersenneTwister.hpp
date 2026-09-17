@@ -56,9 +56,9 @@ namespace Langulus::Math
       ///   @return the newly generated number                                
       template<CT::Number T, bool MIN_INCLUSIVE = true, bool MAX_INCLUSIVE = true>
       T Get(const T& min, const T& max) noexcept {
-         LANGULUS_ASSUME(UserAssumes, min < max,
+         LglsAssumeUser(min < max,
             "Lower limit is not below higher limit");
-         LANGULUS_ASSUME(UserAssumes, 
+         LglsAssumeUser(
             (MIN_INCLUSIVE && MAX_INCLUSIVE)
             || CT::Real<T> || max - min >= T {4},
             "Non-inclusive range can't be uniform - range too small"

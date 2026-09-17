@@ -151,7 +151,7 @@ namespace Langulus::Math
    ///   @param describe - the descriptor to scan                             
    TEMPLATE()
    TME()::TMatrix(Describe&& describe) {
-      LANGULUS_ASSUME(UserAssumes, *describe,
+      LglsAssumeUser(*describe,
          "Empty descriptor for TMatrix");
 
       // Attempt initializing without any conversion                    

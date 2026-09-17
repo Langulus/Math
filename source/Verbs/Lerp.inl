@@ -21,7 +21,7 @@ namespace Langulus::Verbs
 
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
-   template<CT::Dense T, CT::Data...A>
+   template<CT::Dense T, CT::NotVoid...A>
    constexpr bool Lerp::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 1) {
          using A0 = FirstOf<A...>;
@@ -32,7 +32,7 @@ namespace Langulus::Verbs
 
    /// Get the verb functor for the given type and arguments                  
    ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::Data...A>
+   template<CT::Dense T, CT::NotVoid...A>
    constexpr auto Lerp::Of() noexcept {
       if constexpr (CT::Constant<T>) {
          return [](const void* context, Flow::Verb& verb, A...args) {
@@ -67,7 +67,7 @@ namespace Langulus::Verbs
    ///   @param common - the base to operate on                               
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
-   template<CT::Data... T>
+   template<CT::NotVoid... T>
    bool Lerp::OperateOnTypes(const Many& context, const Many& common, Verb& verb) {
       return ((common.template CastsTo<T, true>()
          and ArithmeticVerb::Vector<T>(context, common, verb,
@@ -84,7 +84,7 @@ namespace Langulus::Verbs
    ///   @param common - the base to operate on                               
    ///   @param verb - the original verb                                      
    ///   @return if at least one of the types matched verb                    
-   template<CT::Data... T>
+   template<CT::NotVoid... T>
    bool Lerp::OperateOnTypes(const Many& context, Many& common, Verb& verb) {
       return ((common.template CastsTo<T, true>()
          and ArithmeticVerb::Vector<T>(context, common, verb,
