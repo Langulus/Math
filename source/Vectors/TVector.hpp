@@ -12,7 +12,7 @@
 #include "../Verbs/Multiply.hpp"
 
 #include <Langulus/SIMD/SIMD.hpp>
-#include <Langulus/Sequences.hpp>
+#include <Langulus/Utils/Sequences.hpp>
 
 #define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
