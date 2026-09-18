@@ -24,34 +24,34 @@ LANGULUS_EXCEPTION(Arithmetic);
 
 /// Built-in math traits                                                      
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(X, "X (first) vector component",
-   static constexpr Offset Index = 0);
+   static constexpr size_t Index = 0);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(Y, "Y (second) vector component",
-   static constexpr Offset Index = 1);
+   static constexpr size_t Index = 1);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(Z, "Z (third) vector component",
-   static constexpr Offset Index = 2);
+   static constexpr size_t Index = 2);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(W, "W (fourth) vector component",
-   static constexpr Offset Index = 3);
+   static constexpr size_t Index = 3);
 
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(U, "U (first) vector component",
-   static constexpr Offset Index = 0);
+   static constexpr size_t Index = 0);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(V, "V (second) vector component",
-   static constexpr Offset Index = 1);
+   static constexpr size_t Index = 1);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(S, "S (third) vector component",
-   static constexpr Offset Index = 2);
+   static constexpr size_t Index = 2);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(T, "T (fourth) vector component",
-   static constexpr Offset Index = 3);
+   static constexpr size_t Index = 3);
 
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(R, "Red (first) color component",
-   static constexpr Offset Index = 0);
+   static constexpr size_t Index = 0);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(G, "Green (second) color component",
-   static constexpr Offset Index = 1);
+   static constexpr size_t Index = 1);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(B, "Blue (third) color component",
-   static constexpr Offset Index = 2);
+   static constexpr size_t Index = 2);
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(A, "Alpha (fourth) color component",
-   static constexpr Offset Index = 3);
+   static constexpr size_t Index = 3);
 
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(D, "Depth (first) component",
-   static constexpr Offset Index = 0);
+   static constexpr size_t Index = 0);
 
 LANGULUS_DEFINE_TRAIT(Transform,
    "Model transformation trait");
@@ -114,7 +114,7 @@ namespace Langulus::CT
    namespace Inner
    {
       template<class T>
-      concept Dimension = Trait<T> and requires { {T::Index} -> CT::Same<Offset>; };
+      concept Dimension = Trait<T> and requires { {T::Index} -> CT::Same<size_t>; };
    }
 
    /// Dimension is any trait, defined with an Index property                 

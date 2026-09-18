@@ -16,7 +16,7 @@ namespace Langulus::Math
 {
 
    /// Signed distance function for a centered 2D/3D rounded box              
-   template<CT::Number T, Count C>
+   template<CT::Number T, size_t C>
    T SignedDistance(const TVector<T, C>& point, const TBoxRounded<TVector<T, C>>& box) {
       const TVector<T, C> d = Abs(point) - box.mOffsets;
       if constexpr (C == 3)

@@ -84,7 +84,7 @@ namespace Langulus::Math
 
       using PointType = T;
       using Dimension = D;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount >= 3, 
          "Can't have a cylinder with lower than 3 dimensions");
       static_assert(D::Index < 3, 

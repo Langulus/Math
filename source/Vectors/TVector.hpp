@@ -14,9 +14,9 @@
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequences.hpp>
 
-#define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
+#define TARGS(a)     CT::ScalarBased a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
-#define TEMPLATE()   template<CT::ScalarBased T, Count S, int DEFAULT>
+#define TEMPLATE()   template<CT::ScalarBased T, size_t S, int DEFAULT>
 #define TME()        TVector<T, S, DEFAULT>
 
 
@@ -28,10 +28,10 @@ namespace Langulus::Math
    template<CT::ScalarBased T, CT::Dimension D>
    struct TVectorComponent;
 
-   template<CT::ScalarBased T, Count S, int DEFAULT = 0>
+   template<CT::ScalarBased T, size_t S, int DEFAULT = 0>
    struct TVector;
 
-   template<CT::ScalarBased T, Count S, int DEFAULT = 0>
+   template<CT::ScalarBased T, size_t S, int DEFAULT = 0>
    using TVec = TME();
 
    using Vec1     = TVector<Real, 1>;
@@ -120,11 +120,11 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// vector of the same size                                             
-      template<Count S>
+      template<size_t S>
       struct VectorOfSize : Vector {
          LANGULUS(CONCRETE) Math::TVector<::Langulus::Real, S>;
          LANGULUS_BASES(Vector);
-         static constexpr Count MemberCount {S};
+         static constexpr size_t MemberCount {S};
          static_assert(S > 0, "Vector size must be greater than zero");
       };
 
@@ -147,7 +147,7 @@ namespace Langulus::Math
 {
 
    #pragma pack(push, 1)
-   template<Count, CT::ScalarBased, int DEFAULT>
+   template<size_t, CT::ScalarBased, int DEFAULT>
    struct TVectorBase;
 
 
@@ -364,7 +364,7 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 5+D vector base                                                        
-   template<Count S, CT::ScalarBased TYPE, int DEFAULT> requires (S > 4)
+   template<size_t S, CT::ScalarBased TYPE, int DEFAULT> requires (S > 4)
    struct TVectorBase<S, TYPE, DEFAULT> {
       union {
          TYPE all[S] {};
@@ -382,28 +382,28 @@ namespace Langulus::Math
       LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
 
       constexpr TVectorBase() noexcept {
-         for (Count i = 0; i < S; ++i)
+         for (size_t i = 0; i < S; ++i)
             all[i] = static_cast<TYPE>(DEFAULT);
       }
 
       constexpr TVectorBase(const TVectorBase& other) noexcept {
-         for (Count i = 0; i < S; ++i)
+         for (size_t i = 0; i < S; ++i)
             all[i] = other.all[i];
       }
 
       constexpr TVectorBase(TVectorBase&& other) noexcept {
-         for (Count i = 0; i < S; ++i)
+         for (size_t i = 0; i < S; ++i)
             all[i] = other.all[i];
       }
 
       constexpr auto& operator = (const TVectorBase& other) noexcept {
-         for (Count i = 0; i < S; ++i)
+         for (size_t i = 0; i < S; ++i)
             all[i] = other.all[i];
          return *this;
       }
 
       constexpr auto& operator = (TVectorBase&& other) noexcept {
-         for (Count i = 0; i < S; ++i)
+         for (size_t i = 0; i < S; ++i)
             all[i] = other.all[i];
          return *this;
       }
@@ -423,7 +423,7 @@ namespace Langulus::Math
    TEMPLATE()
    struct TVector : TVectorBase<S, T, DEFAULT> {
       static_assert(S > 0, "Can't have a vector of zero size");
-      static constexpr Count MemberCount = S;
+      static constexpr size_t MemberCount = S;
       static constexpr T Default = static_cast<T>(DEFAULT);
       using ArrayType = T[S];
       using Base = TVectorBase<S, T, DEFAULT>;
@@ -545,26 +545,26 @@ namespace Langulus::Math
 
       using Base::all;
 
-      constexpr auto Get(Offset) const noexcept -> const T&;
-      constexpr auto Get(Offset)       noexcept ->       T&;
+      constexpr auto Get(size_t) const noexcept -> const T&;
+      constexpr auto Get(size_t)       noexcept ->       T&;
 
-      template<Offset I>
+      template<size_t I>
       constexpr auto GetIdx() const noexcept -> const T&;
 
-      constexpr auto operator [] (Offset)       noexcept ->       T&;
-      constexpr auto operator [] (Offset) const noexcept -> const T&;
+      constexpr auto operator [] (size_t)       noexcept ->       T&;
+      constexpr auto operator [] (size_t) const noexcept -> const T&;
 
-      constexpr auto GetCount() const noexcept -> Count;
+      constexpr auto GetCount() const noexcept -> size_t;
       constexpr auto LengthSquared() const noexcept -> T;
       constexpr auto Length() const noexcept -> T;
       constexpr bool IsDegenerate() const noexcept;
 
-      template<Offset HEAD, Offset...TAIL>
+      template<size_t HEAD, size_t...TAIL>
       decltype(auto) Swz() noexcept;
-      template<Offset HEAD, Offset...TAIL>
+      template<size_t HEAD, size_t...TAIL>
       constexpr decltype(auto) Swz() const noexcept;
 
-      template<Offset...I>
+      template<size_t...I>
       static constexpr bool SwzRequirements = ((S > I) and ...);
 
       /// Generate all combinations of all swizzle functions up to 4D         
@@ -622,7 +622,7 @@ namespace Langulus::Math
       template<class AS, bool NORMALIZE = CT::Real<AS> and not CT::Real<T>>
       constexpr auto AsCast() const noexcept -> TVector<AS, S>;
 
-      template<Count = Math::Min(S, 3u)>
+      template<size_t = Math::Min(S, 3u)>
       constexpr auto Volume() const noexcept;
 
       constexpr auto Dot(const CT::VectorBased auto&) const noexcept -> T;
@@ -670,7 +670,7 @@ namespace Langulus::Math
       template<CT::ScalarBased N> requires (S == 1 and CT::Convertible<N, T>)
       /*explicit*/ constexpr operator N () const noexcept;
       
-      template<Count ALTS> requires (ALTS < S)
+      template<size_t ALTS> requires (ALTS < S)
       operator TVector<T, ALTS>& () const noexcept;
 
       ///                                                                     
@@ -695,7 +695,7 @@ namespace Langulus::Math
       /// Creates a shuffled representation of a source vector, and commits   
       /// any changes to it upon destruction                                  
       ///                                                                     
-      template<TARGS(V) = 0, Offset...I>
+      template<TARGS(V) = 0, size_t...I>
       struct TProxyArray : TVector<VT, sizeof...(I), VD> {
          LANGULUS(ACT_AS) void;
          static_assert(sizeof...(I) > 1, "Invalid proxy array size");
@@ -708,7 +708,7 @@ namespace Langulus::Math
          VT (&mSource)[VS];
 
          /// Commit the changes                                               
-         template<Offset...I2>
+         template<size_t...I2>
          constexpr void CommitInner(ExpandedSequence<I2...>) noexcept {
             static_assert(sizeof...(I) == sizeof...(I2));
             ((mSource[I] = Base::all[I2]), ...);

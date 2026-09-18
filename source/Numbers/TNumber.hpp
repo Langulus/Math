@@ -55,7 +55,7 @@ namespace Langulus::Math
       );
       LANGULUS_CONVERTS_TO(Flow::Code);
 
-      static constexpr Count MemberCount = 1;
+      static constexpr size_t MemberCount = 1;
 
       T mValue {};
 

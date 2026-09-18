@@ -84,11 +84,11 @@ namespace Langulus::A
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// range of the same size                                                 
-   template<Count S>
+   template<size_t S>
    struct RangeOfSize : Range {
       LANGULUS(CONCRETE) Math::TRange<Math::TVector<Langulus::Real, S>>;
       LANGULUS_BASES(Range);
-      static constexpr Count MemberCount {S};
+      static constexpr size_t MemberCount {S};
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    
@@ -113,7 +113,7 @@ namespace Langulus::Math
    struct TRange {
       using PointType = T;
       using MemberType = TypeOf<T>;
-      static constexpr Count MemberCount = CountOf<T> * 2;
+      static constexpr size_t MemberCount = CountOf<T> * 2;
       static constexpr auto Default = T::Default;
       using CoalescedType = TVector<MemberType, MemberCount, static_cast<int>(Default)>;
       using PointTypeNotNormalized = TVector<MemberType, CountOf<T>>;
@@ -219,8 +219,8 @@ namespace Langulus::Math
       constexpr auto operator |  (const TRange&) const noexcept -> TRange;
       constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
 
-      constexpr auto operator [] (Offset)       noexcept -> MemberType&;
-      constexpr auto operator [] (Offset) const noexcept -> MemberType const&;
+      constexpr auto operator [] (size_t)       noexcept -> MemberType&;
+      constexpr auto operator [] (size_t) const noexcept -> MemberType const&;
    };
    #pragma pack(pop)
 

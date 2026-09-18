@@ -77,7 +77,7 @@ namespace Langulus::Math
    ///   @param index - index of the point                                 
    ///   @return a reference to the point                                  
    TEMPLATE() LANGULUS(INLINED)
-   auto& TLine<T>::operator [] (Offset index) const noexcept {
+   auto& TLine<T>::operator [] (size_t index) const noexcept {
       return mAB[index];
    }
 
@@ -85,7 +85,7 @@ namespace Langulus::Math
    ///   @param index - index of the point                                 
    ///   @return a reference to the point                                  
    TEMPLATE() LANGULUS(INLINED)
-   auto& TLine<T>::operator [] (Offset index) noexcept {
+   auto& TLine<T>::operator [] (size_t index) noexcept {
       return mAB[index];
    }
 

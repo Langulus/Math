@@ -65,11 +65,11 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// color of the same size                                              
-      template<Count S>
+      template<size_t S>
       struct ColorOfSize : Color {
          LANGULUS(CONCRETE) Math::TColor<Math::TVector<::std::uint8_t, S>>;
          LANGULUS_BASES(Color);
-         static constexpr Count MemberCount {S};
+         static constexpr size_t MemberCount {S};
          static_assert(S > 0, "Color size must be greater than zero");
       };
 
@@ -110,7 +110,7 @@ namespace Langulus
          using T::all;
 
          static constexpr InnerT Default = T::Default;
-         static constexpr Count MemberCount = T::MemberCount;
+         static constexpr size_t MemberCount = T::MemberCount;
          static constexpr bool IsReal = T::IsReal;
          static constexpr bool CTTI_ColorTrait = true;
          static constexpr bool CTTI_SaturatedTrait = true;

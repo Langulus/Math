@@ -55,7 +55,7 @@ namespace Langulus::Math
 
    /// Constructor from 3x3 matrix                                            
    ///   @param matrix - 3x3 matrix to convert to a quaternion                
-   TEMPLATE() template<Count COLUMNS, Count ROWS>
+   TEMPLATE() template<size_t COLUMNS, size_t ROWS>
    constexpr QUAT()::TQuaternion(
       const TMatrix<T, COLUMNS, ROWS>& m
    ) noexcept requires (COLUMNS >= 3 and ROWS >= 3) {
@@ -64,7 +64,7 @@ namespace Langulus::Math
       const T fourZSquaredMinus1 = m[2][2] - m[0][0] - m[1][1];
       const T fourWSquaredMinus1 = m[0][0] + m[1][1] + m[2][2];
 
-      Offset biggestIndex = 3;
+      size_t biggestIndex = 3;
       T fourBiggestSquaredMinus1 = fourWSquaredMinus1;
 
       if (fourXSquaredMinus1 > fourBiggestSquaredMinus1) {
@@ -242,7 +242,7 @@ namespace Langulus::Math
    }
 
    /// Convert to a matrix                                                    
-   TEMPLATE() template<CT::ScalarBased K, Count COLUMNS, Count ROWS>
+   TEMPLATE() template<CT::ScalarBased K, size_t COLUMNS, size_t ROWS>
    constexpr QUAT()::operator TMatrix<K, COLUMNS, ROWS>()
    const noexcept requires (COLUMNS >= 3 and ROWS >= 3) {
       const K qxx = x * x;

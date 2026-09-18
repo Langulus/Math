@@ -52,7 +52,7 @@ namespace Langulus::Math
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept {
-      for (Count i = 0; i < CountOf<T>; ++i) {
+      for (size_t i = 0; i < CountOf<T>; ++i) {
          mMinMax[i] = min.all[i];
          mMinMax[i + CountOf<T>] = max.all[i];
       }
@@ -61,7 +61,7 @@ namespace Langulus::Math
    /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const MemberType& min, const MemberType& max) noexcept {
-      for (Count i = 0; i < CountOf<T>; ++i) {
+      for (size_t i = 0; i < CountOf<T>; ++i) {
          mMinMax[i] = min;
          mMinMax[i + CountOf<T>] = max;
       }
@@ -75,7 +75,7 @@ namespace Langulus::Math
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::VectorBased auto& min, const CT::VectorBased auto& max) noexcept {
-      for (Count i = 0; i < CountOf<T>; ++i) {
+      for (size_t i = 0; i < CountOf<T>; ++i) {
          mMinMax[i] = min.all[i];
          mMinMax[i + CountOf<T>] = max.all[i];
       }
@@ -84,7 +84,7 @@ namespace Langulus::Math
    /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const CT::ScalarBased auto& min, const CT::ScalarBased auto& max) noexcept {
-      for (Count i = 0; i < CountOf<T>; ++i) {
+      for (size_t i = 0; i < CountOf<T>; ++i) {
          mMinMax[i] = min;
          mMinMax[i + CountOf<T>] = max;
       }
@@ -309,12 +309,12 @@ namespace Langulus::Math
    ///      minX minY minZ ... maxX            maxY            maxZ ...       
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const Offset a) noexcept -> MemberType& {
+   constexpr auto TME()::operator [] (const size_t a) noexcept -> MemberType& {
       return mMinMax[a];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const Offset a) const noexcept -> const MemberType& {
+   constexpr auto TME()::operator [] (const size_t a) const noexcept -> const MemberType& {
       return mMinMax[a];
    }
 

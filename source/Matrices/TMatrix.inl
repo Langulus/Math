@@ -11,9 +11,9 @@
 #include "../Numbers/TAngle.inl"
 #include <Langulus/Utils/Sequences.hpp>
 
-#define TARGS(a)     CT::ScalarBased a##T, Count a##C, Count a##R
+#define TARGS(a)     CT::ScalarBased a##T, size_t a##C, size_t a##R
 #define TMAT(a)      TMatrix<a##T, a##C, a##R>
-#define TEMPLATE()   template<CT::ScalarBased T, Count COLUMNS, Count ROWS>
+#define TEMPLATE()   template<CT::ScalarBased T, size_t COLUMNS, size_t ROWS>
 #define TME()        TMatrix<T, COLUMNS, ROWS>
 
 
@@ -23,21 +23,21 @@ namespace Langulus::Math
    /// Default constructor (identity)                                         
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix() noexcept {
-      for (Offset i = 0; i < Diagonal; ++i)
+      for (size_t i = 0; i < Diagonal; ++i)
          mColumns[i][i] = T {1};
    }
 
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const TMatrix& other) noexcept {
-      for (Count i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Columns; ++i)
          mColumns[i] = other.mColumns[i];
    }
 
    /// Move constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(TMatrix&& other) noexcept {
-      for (Count i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Columns; ++i)
          mColumns[i] = ::std::move(other.mColumns[i]);
    }
 
@@ -52,8 +52,8 @@ namespace Langulus::Math
             *this = Identity();
          }
 
-         for (Offset col = 0; col < Math::Min(Columns, M::Columns); ++col) {
-            for (Offset row = 0; row < Math::Min(Rows, M::Rows); ++row) {
+         for (size_t col = 0; col < Math::Min(Columns, M::Columns); ++col) {
+            for (size_t row = 0; row < Math::Min(Rows, M::Rows); ++row) {
                mColumns[col][row] = Adapt(DeintCast(a).mColumns[col][row]);
             }
          }
@@ -75,7 +75,7 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(const CT::ScalarBased auto& x) noexcept {
       const T xx = Adapt(DeintCast(x));
-      for (Offset i = 0; i < Diagonal; ++i)
+      for (size_t i = 0; i < Diagonal; ++i)
          mColumns[i][i] = xx;
    }
 
@@ -89,7 +89,7 @@ namespace Langulus::Math
    constexpr TME()::TMatrix(const CT::VectorBased auto& x) noexcept {
       using V = Deref<Deint<decltype(x)>>;
       constexpr auto D = Math::Min(Diagonal, CountOf<V>);
-      for (Offset i = 0; i < D; ++i)
+      for (size_t i = 0; i < D; ++i)
          mColumns[i][i] = Adapt(x[i]);
    }
 
@@ -115,7 +115,7 @@ namespace Langulus::Math
       constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
       if constexpr (CT::Vector<T1>) {
          // First element is vector/array, copy its elements            
-         for (Offset i = 0; i < C1; ++i)
+         for (size_t i = 0; i < C1; ++i)
             mArray[i] = Adapt(t1[i]);
       }
       else {
@@ -127,7 +127,7 @@ namespace Langulus::Math
       if constexpr (C2) {
          if constexpr (CT::Vector<T2>) {
             // Second element is vector/array, copy its elements        
-            for (Offset i = C1; i < C1 + C2; ++i)
+            for (size_t i = C1; i < C1 + C2; ++i)
                mArray[i] = Adapt(t2[i - C1]);
          }
          else {
@@ -140,7 +140,7 @@ namespace Langulus::Math
             constexpr auto C3 = Math::Min(CountOf<TN...>, MemberCount - (C1 + C2));
             if constexpr (C3) {
                const TVector<T, C3> theRest {tn...};
-               for (Offset i = C1 + C2; i < MemberCount; ++i)
+               for (size_t i = C1 + C2; i < MemberCount; ++i)
                   mArray[i] = theRest[i - (C1 + C2)];
             }
          }
@@ -174,7 +174,7 @@ namespace Langulus::Math
       else if (initialized <= Diagonal) {
          // If number of values is below number of columns, create a    
          // scale matrix                                                
-         for (Offset i = 0; i < initialized; ++i)
+         for (size_t i = 0; i < initialized; ++i)
             mColumns[i][i] = all[i];
       }
       else {
@@ -337,7 +337,7 @@ namespace Langulus::Math
    constexpr auto TME()::Scale(const CT::ScalarBased auto& x) noexcept -> TMatrix {
       TMatrix temp {x};
       if constexpr (Diagonal >= 4) {
-         for (Count i = 3; i < Diagonal; ++i)
+         for (size_t i = 3; i < Diagonal; ++i)
             temp[i][i] = T {1};
       }
       return temp;
@@ -370,14 +370,14 @@ namespace Langulus::Math
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (const TMatrix& other) noexcept -> TMatrix& {
-      for (Count i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Columns; ++i)
          mColumns[i] = other.mColumns[i];
       return *this;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (TMatrix&& other) noexcept -> TMatrix& {
-      for (Count i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Columns; ++i)
          mColumns[i] = ::std::move(other.mColumns[i]);
       return *this;
    }
@@ -449,7 +449,7 @@ namespace Langulus::Math
    ///   @param i - index [0; MemberCount)                                    
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const Offset i) noexcept -> ColumnType& {
+   constexpr auto TME()::operator [] (const size_t i) noexcept -> ColumnType& {
       return mColumns[i];
    }
 
@@ -457,7 +457,7 @@ namespace Langulus::Math
    ///   @param i - index [0; COLS*ROWS)                                      
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const Offset i) const noexcept -> ColumnType const& {
+   constexpr auto TME()::operator [] (const size_t i) const noexcept -> ColumnType const& {
       return mColumns[i];
    }
 
@@ -531,7 +531,7 @@ namespace Langulus::Math
    /// Get a whole row                                                        
    ///   @param idx - row index                                               
    ///   @return a row                                                        
-   TEMPLATE() template<Offset ROW> LANGULUS(INLINED)
+   TEMPLATE() template<size_t ROW> LANGULUS(INLINED)
    auto TME()::GetRow() const noexcept -> RowType {
       static_assert(ROW < Rows, "Row index out if range");
       T r[Columns];
@@ -540,27 +540,27 @@ namespace Langulus::Math
       return r;
    }
 
-   TEMPLATE() template<Offset ROW> LANGULUS(INLINED)
+   TEMPLATE() template<size_t ROW> LANGULUS(INLINED)
    auto TME()::GetRow() noexcept {
       static_assert(ROW < Rows, "Row index out if range");
-      return GetRowInner<ROW>(::std::make_integer_sequence<Offset, Columns>());
+      return GetRowInner<ROW>(::std::make_integer_sequence<size_t, Columns>());
    }
 
-   TEMPLATE() template<Offset ROW, Offset...C> LANGULUS(INLINED)
-   auto TME()::GetRowInner(::std::integer_sequence<Offset, C...>&&) noexcept {
+   TEMPLATE() template<size_t ROW, size_t...C> LANGULUS(INLINED)
+   auto TME()::GetRowInner(::std::integer_sequence<size_t, C...>&&) noexcept {
       return Inner::TProxyArray<T, COLUMNS, 0, (C * Rows + ROW)...>(mArray);
    }
 
    /// Get a whole column                                                     
    ///   @param idx - column index                                            
    ///   @return a column                                                     
-   TEMPLATE() template<Offset COL> LANGULUS(INLINED)
+   TEMPLATE() template<size_t COL> LANGULUS(INLINED)
    auto TME()::GetColumn() const noexcept -> ColumnType const& {
       static_assert(COL < Columns, "Column index out if range");
       return mColumns[COL];
    }
 
-   TEMPLATE() template<Offset COL> LANGULUS(INLINED)
+   TEMPLATE() template<size_t COL> LANGULUS(INLINED)
    auto TME()::GetColumn() noexcept -> ColumnType& {
       static_assert(COL < Columns, "Column index out if range");
       return mColumns[COL];
@@ -579,7 +579,7 @@ namespace Langulus::Math
    }
 
    /// Inner static function for nested determinant calculation               
-   TEMPLATE() template<Count SIZE, Count NEXT_SIZE>
+   TEMPLATE() template<size_t SIZE, size_t NEXT_SIZE>
    constexpr T TME()::InnerDeterminant(const T(&a)[SIZE * SIZE]) noexcept {
       if constexpr (SIZE == 0)
          return T(0);
@@ -588,7 +588,7 @@ namespace Langulus::Math
       else if constexpr (SIZE == 2)
          return a[0] * a[3] - a[2] * a[1];
       else {
-         Count p, h, k, i, j;
+         size_t p, h, k, i, j;
          T det = 0;
          T temp[NEXT_SIZE * NEXT_SIZE];
          for (p = 0; p < SIZE; p++) {
@@ -946,11 +946,11 @@ namespace Langulus::Math
       using Ret = LosslessMatrix<LHS, RHS>;
 
       Ret r = Ret::Null();
-      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
          auto& rc = r.template GetColumn<COL>();
          auto& rhsc = rhs.template GetColumn<COL>();
 
-         Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
+         Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
             //TODO make this more elegant somehow...
             IF_CONSTEXPR() {
                SIMD::Add(rc,
@@ -984,7 +984,7 @@ namespace Langulus::Math
    ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Add(
             lhs.template GetColumn<COL>(),
             rhs.template GetColumn<COL>(),
@@ -1005,7 +1005,7 @@ namespace Langulus::Math
    ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Subtract(
             lhs.template GetColumn<COL>(),
             rhs.template GetColumn<COL>(),
@@ -1027,7 +1027,7 @@ namespace Langulus::Math
       using Ret = Deref<decltype(lhs)>;
       constexpr auto C = CountOf<Ret>;
       TypeOf<Ret> r[C];
-      Sequence<C>::ForEach([&]<Offset COL>() noexcept {
+      Sequence<C>::ForEach([&]<size_t COL>() noexcept {
          r[COL] = (rhs.template GetColumn<COL>() * lhs).HSum();
       });
       return Ret {r};
@@ -1044,7 +1044,7 @@ namespace Langulus::Math
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Add(rhs.template GetColumn<COL>(), lhs, result[COL]);
       });
       return Ret {result};
@@ -1061,7 +1061,7 @@ namespace Langulus::Math
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<Offset COL>() noexcept {
+      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Subtract(lhs, rhs.template GetColumn<COL>(), result[COL]);
       });
       return Ret {result};
@@ -1079,7 +1079,7 @@ namespace Langulus::Math
       using Ret = Deref<decltype(rhs)>;
       constexpr auto C = CountOf<Ret>;
       TypeOf<Ret> r[C];
-      Sequence<C>::ForEach([&]<Offset ROW>() noexcept {
+      Sequence<C>::ForEach([&]<size_t ROW>() noexcept {
          r[ROW] = (lhs.template GetRow<ROW>() * rhs).HSum();
       });
       return Ret {r};
@@ -1096,7 +1096,7 @@ namespace Langulus::Math
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
+      Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
          SIMD::Add(lhs.template GetRow<ROW>(), rhs, result[ROW]);
       });
       return Ret {result};
@@ -1113,7 +1113,7 @@ namespace Langulus::Math
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Rows>::ForEach([&]<Offset ROW>() noexcept {
+      Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
          SIMD::Subtract(lhs.template GetRow<ROW>(), rhs, result[ROW]);
       });
       return Ret {result};

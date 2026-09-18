@@ -100,11 +100,11 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// size of the same size                                               
-      template<Count S>
+      template<size_t S>
       struct ScaleOfSize : Scale {
          LANGULUS(CONCRETE) Math::TScale<Math::TVector<::Langulus::Real, S, 1>>;
          LANGULUS_BASES(Scale);
-         static constexpr Count MemberCount {S};
+         static constexpr size_t MemberCount {S};
          static_assert(S > 0, "Scale must be greater than zero");
       };
 

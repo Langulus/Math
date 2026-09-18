@@ -13,7 +13,7 @@ namespace Langulus::Math
 
    /// Combines S and T... to form a normal type                              
    ///   @tparam S - size of the vector                                       
-   template<Count S>
+   template<size_t S>
    struct NormalTypeGenerator {
       template<class...T>
       static void Register(Types<T...>&&) {

@@ -62,7 +62,7 @@ namespace Langulus::Math
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::Frustum);
 
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       using PointType  = T;
       using ScalarType = TypeOf<PointType>;
       using MatrixType = TMatrix<ScalarType, MemberCount + 1>;

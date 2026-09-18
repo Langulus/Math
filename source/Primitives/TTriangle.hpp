@@ -128,7 +128,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Triangle);
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
 
@@ -224,10 +224,10 @@ namespace Langulus::Math
       }
 
       ///   Access points                                                     
-      auto& operator [] (Offset index) const noexcept {
+      auto& operator [] (size_t index) const noexcept {
          return mABC[index];
       }
-      auto& operator [] (Offset index) noexcept {
+      auto& operator [] (size_t index) noexcept {
          return mABC[index];
       }
 
@@ -306,7 +306,7 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
    };
@@ -364,7 +364,7 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
    };

@@ -110,7 +110,7 @@ namespace Langulus::Math
       static constexpr Real Max = Universe;
       static constexpr Real Min = Planck;
       static constexpr Real Range = Level::Max - Level::Min + 1;
-      static constexpr Offset RangeInt = static_cast<Offset>(Level::Max - Level::Min + 1);
+      static constexpr size_t RangeInt = static_cast<size_t>(Level::Max - Level::Min + 1);
 
       // Human is the default level                                     
       static constexpr Real Default = Human;
@@ -119,7 +119,7 @@ namespace Langulus::Math
       constexpr Level GetRefPoint(const Level&) const noexcept;
       constexpr static Level GetRefPoint(const Level&, const Level&) noexcept;
       constexpr Real GetOffset() const noexcept;
-      constexpr Offset GetOffsetInt() const noexcept;
+      constexpr size_t GetOffsetInt() const noexcept;
    };
 
 } // namespace Langulus::Math

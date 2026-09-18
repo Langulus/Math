@@ -101,11 +101,11 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// sampler of the same size                                            
-      template<Count S>
+      template<size_t S>
       struct SamplerOfSize : Sampler {
          LANGULUS(CONCRETE) Math::TSampler<Math::TVector<Langulus::Real, S>>;
          LANGULUS_BASES(Sampler);
-         static constexpr Count MemberCount {S};
+         static constexpr size_t MemberCount {S};
          static_assert(S > 0, "Normal size must be greater than zero");
       };
 

@@ -94,7 +94,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Sphere);
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
       TypeOf<T> mRadius {.5};
@@ -160,7 +160,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Sphere);
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
       // A radius for each cardinal direction                           

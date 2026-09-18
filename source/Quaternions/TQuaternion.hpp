@@ -103,7 +103,7 @@ namespace Langulus::Math
       constexpr TQuaternion() noexcept;
       constexpr TQuaternion(const Base&) noexcept;
       constexpr TQuaternion(const TMatrix<T, 2>&) noexcept;
-      template<Count COLUMNS, Count ROWS>
+      template<size_t COLUMNS, size_t ROWS>
       constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>&)
          noexcept requires (COLUMNS >= 3 and ROWS >= 3);
 
@@ -129,7 +129,7 @@ namespace Langulus::Math
 
       constexpr TQuaternion operator - () const noexcept;
 
-      template<CT::ScalarBased K = T, Count COLUMNS, Count ROWS>
+      template<CT::ScalarBased K = T, size_t COLUMNS, size_t ROWS>
       explicit constexpr operator TMatrix<K, COLUMNS, ROWS>() const noexcept
       requires (COLUMNS >= 3 and ROWS >= 3);
    };

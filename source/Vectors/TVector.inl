@@ -12,9 +12,9 @@
 
 #include <type_traits>
 
-#define TARGS(a)     CT::ScalarBased a##T, Count a##S, int a##D
+#define TARGS(a)     CT::ScalarBased a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
-#define TEMPLATE()   template<CT::ScalarBased T, Count S, int DEFAULT>
+#define TEMPLATE()   template<CT::ScalarBased T, size_t S, int DEFAULT>
 #define TME()        TVector<T, S, DEFAULT>
 
 
@@ -83,7 +83,7 @@ namespace Langulus::Math
       constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
       if constexpr (CT::Vector<T1>) {
          // First element is vector/array, copy its elements            
-         for (Offset i = 0; i < C1; ++i)
+         for (size_t i = 0; i < C1; ++i)
             all[i] = Adapt(t1[i]);
       }
       else {
@@ -95,7 +95,7 @@ namespace Langulus::Math
       if constexpr (C2) {
          if constexpr (CT::Vector<T2>) {
             // Second element is vector/array, copy its elements        
-            for (Offset i = C1; i < C1 + C2; ++i)
+            for (size_t i = C1; i < C1 + C2; ++i)
                all[i] = Adapt(t2[i - C1]);
          }
          else {
@@ -108,7 +108,7 @@ namespace Langulus::Math
             constexpr auto C3 = MemberCount - (C1 + C2);
             if constexpr (C3) {
                const TVector<T, C3 + 1> theRest {tn..., DEFAULT};
-               for (Offset i = C1 + C2; i < MemberCount; ++i)
+               for (size_t i = C1 + C2; i < MemberCount; ++i)
                   all[i] = theRest[i - (C1 + C2)];
             }
          }
@@ -235,18 +235,18 @@ namespace Langulus::Math
    ///   @param i - index of the component (0, 1, 2 correspond to X, Y, Z)    
    ///   @return a reference to the component                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Get(const Offset i) const noexcept -> const T& {
+   constexpr auto TME()::Get(const size_t i) const noexcept -> const T& {
       return all[i];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Get(const Offset i) noexcept -> T& {
+   constexpr auto TME()::Get(const size_t i) noexcept -> T& {
       return all[i];
    }
 
    /// Get the value of a specific component index (with static check)        
    ///   @return a reference to the component                                 
-   TEMPLATE() template<Offset I> LANGULUS(INLINED)
+   TEMPLATE() template<size_t I> LANGULUS(INLINED)
    constexpr auto TME()::GetIdx() const noexcept -> const T& {
       static_assert(I < S, "Index is out of limits");
       return all[I];
@@ -257,19 +257,19 @@ namespace Langulus::Math
    ///   @param a - index of the element (0, 1, 2 correspond to X, Y, Z)      
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const Offset a) noexcept -> T& {
+   constexpr auto TME()::operator [] (const size_t a) noexcept -> T& {
       return all[a];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const Offset a) const noexcept -> const T& {
+   constexpr auto TME()::operator [] (const size_t a) const noexcept -> const T& {
       return all[a];
    }
 
    /// Get the number of components                                           
    ///   @return the number of components                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::GetCount() const noexcept -> Count {
+   constexpr auto TME()::GetCount() const noexcept -> size_t {
       return MemberCount;
    }
 
@@ -308,7 +308,7 @@ namespace Langulus::Math
 
    /// Mutable swizzle                                                        
    ///   @returns a proxy vector with the selected components                 
-   TEMPLATE() template<Offset E1, Offset...EN> LANGULUS(INLINED)
+   TEMPLATE() template<size_t E1, size_t...EN> LANGULUS(INLINED)
    decltype(auto) TME()::Swz() noexcept {
       if constexpr (sizeof...(EN) == 0)
          return (all[E1]);
@@ -318,7 +318,7 @@ namespace Langulus::Math
 
    /// Immutable swizzle, just returns a shuffled vector                      
    ///   @returns a simple vector with the selected copied components         
-   TEMPLATE() template<Offset E1, Offset...EN> LANGULUS(INLINED)
+   TEMPLATE() template<size_t E1, size_t...EN> LANGULUS(INLINED)
    constexpr decltype(auto) TME()::Swz() const noexcept {
       if constexpr (sizeof...(EN) == 0)
          return (all[E1]);
@@ -346,7 +346,7 @@ namespace Langulus::Math
    /// Multiply all components together                                       
    ///   @tparam ALTS - number of dimensions to multiply together             
    ///   @return the product                                                  
-   TEMPLATE() template<Count ALTS> LANGULUS(INLINED)
+   TEMPLATE() template<size_t ALTS> LANGULUS(INLINED)
    constexpr auto TME()::Volume() const noexcept {
       static_assert(ALTS >  1, "Degenerated volume, use higher rank");
       static_assert(ALTS <= S, "Rank out of limits");
@@ -735,7 +735,7 @@ namespace Langulus::Math
       return static_cast<N>(all[0]);
    }
    
-   TEMPLATE() template<Count ALTS> requires (ALTS < S) LANGULUS(INLINED)
+   TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
    TME()::operator TVector<T, ALTS>& () const noexcept {
       return const_cast<TVector<T, ALTS>&>(
          reinterpret_cast<const TVector<T, ALTS>&>(*this)

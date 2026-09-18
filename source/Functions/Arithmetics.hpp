@@ -9,6 +9,7 @@
 #include <Langulus/Core.hpp>
 #include <Langulus/CT/Signed.hpp>
 #include <Langulus/CT/Scalar.hpp>
+#include <Langulus/CT/Comparable.hpp>
 
 
 namespace Langulus::CT
@@ -218,7 +219,7 @@ namespace Langulus::Math
       if constexpr (sizeof...(TN) == 0) {
          if constexpr (CT::HasMin<T1, T2>)
             return t1.Min(t2);
-         else if constexpr (CT::Sortable<T1, T2>)
+         else if constexpr (CT::Comparable<T1, T2>)
             return t1 < t2 ? Forward<T1>(t1) : Forward<T2>(t2);
          else
             static_assert(false, "T must either have Min(t2) method, or be sortable");
@@ -232,7 +233,7 @@ namespace Langulus::Math
       if constexpr (sizeof...(TN) == 0) {
          if constexpr (CT::HasMax<T1, T2>)
             return t1.Max(t2);
-         else if constexpr (CT::Sortable<T1, T2>)
+         else if constexpr (CT::Comparable<T1, T2>)
             return t1 > t2 ? Forward<T1>(t1) : Forward<T2>(t2);
          else
             static_assert(false, "T must either have Max(t2) method, or be sortable");
@@ -245,7 +246,7 @@ namespace Langulus::Math
    ///   @return the positive value, or clamps to zero if negative            
    LANGULUS(INLINED)
    constexpr decltype(auto) Positive(const auto& a) noexcept {
-      using T = TypeOf<Deint<decltype(a)>>;
+      using T = TypeOf<decltype(a)>;
       if constexpr (CT::Unsigned<T>)
          return (a);
       else

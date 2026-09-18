@@ -362,7 +362,7 @@ namespace Langulus::Math
       });
 
       verb.ForEachDeep([&](const Many& part) {
-         Count done = part.ForEach(
+         size_t done = part.ForEach(
             [&](const Normal& normal) {
                // Move towards normalized direction                     
                // All points move in the same direction                 

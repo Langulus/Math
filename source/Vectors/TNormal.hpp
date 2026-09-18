@@ -49,12 +49,12 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// normal of the same size                                             
-      template<Count S>
+      template<size_t S>
       struct NormalOfSize : Normal {
          LANGULUS(CONCRETE) Math::TNormal<Math::TVector<Langulus::Real, S>>;
          LANGULUS_BASES(Normal);
 
-         static constexpr Count MemberCount {S};
+         static constexpr size_t MemberCount {S};
          static_assert(MemberCount > 1,
             "Normal size must be greater than one");
       };

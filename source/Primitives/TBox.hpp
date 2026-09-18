@@ -108,7 +108,7 @@ namespace Langulus::Math
       LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional box");
 
       T mOffsets {.5};

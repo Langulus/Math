@@ -89,8 +89,8 @@ namespace Langulus::Math
    /// Get a zero based offset from this level (as integer)                   
    ///   @return the zero-based offset                                        
    LANGULUS(INLINED)
-   constexpr Offset Level::GetOffsetInt() const noexcept {
-      return static_cast<Offset>(mValue - Level::Min);
+   constexpr size_t Level::GetOffsetInt() const noexcept {
+      return static_cast<size_t>(mValue - Level::Min);
    }
 
 } // namespace Langulus::Math

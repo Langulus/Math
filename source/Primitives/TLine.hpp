@@ -122,7 +122,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Line);
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
       T mAB[2] {};
@@ -145,8 +145,8 @@ namespace Langulus::Math
 
       auto SignedDistance(const PointType&) const;
 
-      auto& operator [] (Offset) const noexcept;
-      auto& operator [] (Offset) noexcept;
+      auto& operator [] (size_t) const noexcept;
+      auto& operator [] (size_t) noexcept;
 
       template<CT::Vector ALT>
       explicit operator TLine<ALT>() const noexcept;
@@ -196,7 +196,7 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Lines don't exist below two dimensions");
    };
@@ -244,7 +244,7 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1,
          "Lines don't exist below two dimensions");
    };

@@ -10,7 +10,7 @@
 #include "Vectors/TVector.inl"
 #include <Langulus/Flow/Code.hpp>
 
-#define TEMPLATE()   template<CT::Dense T, Count S>
+#define TEMPLATE()   template<CT::Dense T, size_t S>
 #define TME()        TGradient<T, S>
 
 
@@ -36,7 +36,7 @@ namespace Langulus::Math
    ///   @param index - the index                                             
    ///   @return a constant reference to the value                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto& TME()::operator [](const Offset& index) const noexcept {
+   constexpr auto& TME()::operator [](const size_t& index) const noexcept {
       if (mIndex - index < S)
          return mBuffer[mIndex - index];
       return mBuffer[S - index];
@@ -46,7 +46,7 @@ namespace Langulus::Math
    ///   @param index - the index                                             
    ///   @return a reference to the value                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto& TME()::operator [](const Offset& index) noexcept {
+   constexpr auto& TME()::operator [](const size_t& index) noexcept {
       if (mIndex - index < S)
          return mBuffer[mIndex - index];
       return mBuffer[S - index];
@@ -57,7 +57,7 @@ namespace Langulus::Math
    ///   @return true if both gradients are the same                          
    TEMPLATE() LANGULUS(INLINED)
    constexpr bool TME()::operator == (const TGradient& other) const noexcept {
-      for (Offset i = 0; i < S; ++i) {
+      for (size_t i = 0; i < S; ++i) {
          if (mBuffer[i] != other.mBuffer[i])
             return false;
       }
@@ -160,7 +160,7 @@ namespace Langulus::Math
       Code result;
       result += NameOf<TGradient>();
       result += Code::Operator::OpenScope;
-      for (Offset i = 0; i < S; ++i) {
+      for (size_t i = 0; i < S; ++i) {
          result += Annies::Text {(*this)[i]};
          if (i < S - 1)
             result += ", ";

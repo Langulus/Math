@@ -12,10 +12,10 @@
 namespace Langulus::Math
 {
 
-   template<CT::Dense T, Count S = 2>
+   template<CT::Dense T, size_t S = 2>
    class TGradient;
 
-   template<CT::Dense T, Count S = 2>
+   template<CT::Dense T, size_t S = 2>
    using TGrad = TGradient<T, S>;
 
    template<CT::Dense T>
@@ -68,11 +68,11 @@ namespace Langulus::Math
    /// derivatives. Can capsulate anything, as long as it is arithmetic.      
    ///                                                                        
 #pragma pack(push, 1)
-   template<CT::Dense T, Count S>
+   template<CT::Dense T, size_t S>
    class TGradient : A::Gradient {
    protected:
       T mBuffer[S] {};
-      Offset mIndex {};
+      size_t mIndex {};
 
    public:
       LANGULUS(POD) CT::POD<T>;
@@ -80,7 +80,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Gradient);
 
       using PointType = T;
-      static constexpr Count StateCount = S;
+      static constexpr size_t StateCount = S;
       static_assert(S > 1, "Can't have a gradient with less than two states");
 
       // Make any gradient qualify as CT::GradientBased                 
@@ -91,8 +91,8 @@ namespace Langulus::Math
       template<class T1, class T2, class... TAIL>
       constexpr TGradient(const T1&, const T2&, const TAIL&...) noexcept;
 
-      constexpr auto& operator [](const Offset&) const noexcept;
-      constexpr auto& operator [](const Offset&) noexcept;
+      constexpr auto& operator [](const size_t&) const noexcept;
+      constexpr auto& operator [](const size_t&) noexcept;
 
       constexpr bool operator == (const TGradient&) const noexcept;
 

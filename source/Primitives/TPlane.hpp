@@ -23,7 +23,7 @@ namespace Langulus::Math
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;
-      static constexpr Count MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Can't have one-dimensional plane");
 
       // Default orientation is always towards user                     

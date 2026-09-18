@@ -24,7 +24,7 @@ namespace Langulus::Math
    ///   @tparam DOUT - number of output dimensions                           
    ///   @tparam DIN - number of input dimensions                             
    ///   @tparam T - real number type to use for computation                  
-   template<Count DOUT, Count DIN, CT::Real T = Real>
+   template<size_t DOUT, size_t DIN, CT::Real T = Real>
    struct THoskins {
       static_assert(DIN >= 1 && DIN <= 4,
          "Hoskin's hashes work only for inputs of 1-4 components");

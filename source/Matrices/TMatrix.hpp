@@ -18,7 +18,7 @@ namespace Langulus
       template<CT::ScalarBased T>
       struct TQuaternion;
 
-      template<CT::ScalarBased T, Count COLUMNS, Count ROWS = COLUMNS>
+      template<CT::ScalarBased T, size_t COLUMNS, size_t ROWS = COLUMNS>
       struct TMatrix;
 
       using Mat2 = TMatrix<Real, 2>;
@@ -46,9 +46,9 @@ namespace Langulus
 
    } // namespace Langulus::Math
 
-   #define TARGS(a)     CT::ScalarBased a##T, Count a##C, Count a##R
+   #define TARGS(a)     CT::ScalarBased a##T, size_t a##C, size_t a##R
    #define TMAT(a)      TMatrix<a##T, a##C, a##R>
-   #define TEMPLATE()   template<CT::ScalarBased T, Count COLUMNS, Count ROWS>
+   #define TEMPLATE()   template<CT::ScalarBased T, size_t COLUMNS, size_t ROWS>
    #define TME()        TMatrix<T, COLUMNS, ROWS>
 
    namespace A
@@ -79,32 +79,32 @@ namespace Langulus
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// matrix of the same column count                                     
-      template<Count COLUMNS>
+      template<size_t COLUMNS>
       struct MatrixOfColumns : Matrix {
          LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, COLUMNS>;
          LANGULUS_BASES(Matrix);
-         static constexpr Count Columns = COLUMNS;
+         static constexpr size_t Columns = COLUMNS;
          static_assert(COLUMNS > 0, "Column count must be greater than zero");
       };
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// matrix of the same rows count                                       
-      template<Count ROWS>
+      template<size_t ROWS>
       struct MatrixOfRows : Matrix {
          LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, ROWS, ROWS>;
          LANGULUS_BASES(Matrix);
-         static constexpr Count Rows = ROWS;
+         static constexpr size_t Rows = ROWS;
          static_assert(ROWS > 0, "Row count must be greater than zero");
       };
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// matrix of the same column and row count                             
-      template<Count COLUMNS, Count ROWS = COLUMNS>
+      template<size_t COLUMNS, size_t ROWS = COLUMNS>
       struct MatrixOfSize : Matrix {
          LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, ROWS>;
          LANGULUS_BASES(Matrix);
-         static constexpr Count Columns = COLUMNS;
-         static constexpr Count Rows = ROWS;
+         static constexpr size_t Columns = COLUMNS;
+         static constexpr size_t Rows = ROWS;
          static_assert(COLUMNS > 0, "Column count must be greater than zero");
          static_assert(ROWS > 0, "Row count must be greater than zero");
       };
@@ -137,10 +137,10 @@ namespace Langulus
          using RowType       = TVector<T, COLUMNS>;
          using TransposeType = TMatrix<T, ROWS, COLUMNS>;
 
-         static constexpr Count Columns = COLUMNS;
-         static constexpr Count Rows = ROWS;
-         static constexpr Count Diagonal = Math::Min(Columns, Rows);
-         static constexpr Count MemberCount = Columns * Rows;
+         static constexpr size_t Columns = COLUMNS;
+         static constexpr size_t Rows = ROWS;
+         static constexpr size_t Diagonal = Math::Min(Columns, Rows);
+         static constexpr size_t MemberCount = Columns * Rows;
          static constexpr bool IsSquare = Columns == Rows;
 
          // Make TMatrix match the CT::MatrixBased concept              
@@ -266,24 +266,24 @@ namespace Langulus
          ///                                                                  
          ///   Access                                                         
          ///                                                                  
-         constexpr auto operator [] (Offset)       noexcept -> ColumnType&;
-         constexpr auto operator [] (Offset) const noexcept -> ColumnType const&;
+         constexpr auto operator [] (size_t)       noexcept -> ColumnType&;
+         constexpr auto operator [] (size_t) const noexcept -> ColumnType const&;
          constexpr auto GetRaw()       noexcept -> T*;
          constexpr auto GetRaw() const noexcept -> T const*;
 
-         template<Offset>
+         template<size_t>
          auto GetRow() const noexcept -> RowType;
-         template<Offset>
+         template<size_t>
          auto GetRow() noexcept;
 
       protected:
-         template<Offset, Offset...C>
-         auto GetRowInner(::std::integer_sequence<Offset, C...>&&) noexcept;
+         template<size_t, size_t...C>
+         auto GetRowInner(::std::integer_sequence<size_t, C...>&&) noexcept;
 
       public:
-         template<Offset>
+         template<size_t>
          auto GetColumn() const noexcept -> ColumnType const&;
-         template<Offset>
+         template<size_t>
          auto GetColumn()       noexcept -> ColumnType&;
 
          constexpr auto GetRight() const noexcept -> TVector<T, 3>;
@@ -318,7 +318,7 @@ namespace Langulus
          constexpr auto last()  const noexcept -> ColumnType const*;
 
       private:
-         template<Count SIZE, Count NEXT_SIZE = SIZE - 1>
+         template<size_t SIZE, size_t NEXT_SIZE = SIZE - 1>
          constexpr static T InnerDeterminant(const T(&a)[SIZE * SIZE]) noexcept;
       };
       #pragma pack(pop)
