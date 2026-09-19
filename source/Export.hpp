@@ -8,7 +8,7 @@
 #pragma once
 #include <Langulus/Core.hpp>
 //#include <Langulus/CT/Lossless.hpp>
-#include <Langulus/Tag.hpp>
+#include <Langulus/TTag.hpp>
 
 
 #if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
@@ -17,10 +17,9 @@
    #define LANGULUS_API_MATH() LANGULUS_IMPORT()
 #endif
 
+/// Make the rest of the code aware, that Langulus::Math has been included    
 #define LANGULUS_LIBRARY_MATH() 1
 
-/// Make the rest of the code aware, that Langulus::Math has been included    
-LANGULUS_EXCEPTION(Arithmetic);
 
 /// Built-in math traits                                                      
 LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(X, "X (first) vector component",
