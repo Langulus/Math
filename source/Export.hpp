@@ -8,7 +8,7 @@
 #pragma once
 #include <Langulus/Core.hpp>
 //#include <Langulus/CT/Lossless.hpp>
-#include <Langulus/Annies/Trait.hpp>
+#include <Langulus/Tag.hpp>
 
 
 #if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)

@@ -9,7 +9,7 @@
 #include "TMatrix.hpp"
 #include "../Vectors/TVector.inl"
 #include "../Numbers/TAngle.inl"
-#include <Langulus/Utils/Sequences.hpp>
+#include <Langulus/Utils/Sequence.hpp>
 
 #define TARGS(a)     CT::ScalarBased a##T, size_t a##C, size_t a##R
 #define TMAT(a)      TMatrix<a##T, a##C, a##R>

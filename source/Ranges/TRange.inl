@@ -8,7 +8,7 @@
 #pragma once
 #include "TRange.hpp"
 #include "../Vectors/TVector.inl"
-#include <Langulus/Annies/Construct.hpp>
+#include <Langulus/Construct.hpp>
 
 #define TEMPLATE()   template<CT::Dense T>
 #define TME()        TRange<T>
