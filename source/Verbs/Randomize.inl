@@ -21,7 +21,7 @@ namespace Langulus::Verbs
 
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
-   template<CT::Dense T, CT::NotVoid...A>
+   /*template<CT::Dense T, CT::NotVoid...A>
    constexpr bool Randomize::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 1)
          return requires (T& t, Verb& v, A...a) { t.Randomize(v, a...); };
@@ -45,19 +45,19 @@ namespace Langulus::Verbs
             typedContext->Randomize(verb, args...);
          };
       }
-   }
+   }*/
 
    /// Execute the modulate verb in a specific context                        
    ///   @param context - the context to execute in                           
    ///   @param verb - the verb to execute                                    
    ///   @return true if verb has been satisfied                              
-   template<CT::Dense T>
+   /*template<CT::Dense T>
    bool Randomize::ExecuteIn(T& context, Verb& verb) {
       static_assert(Randomize::AvailableFor<T>(),
          "Verb is not available for this context, this shouldn't be reached by flow");
       context.Randomize(verb);
       return verb.IsDone();
-   }
+   }*/
 
    /// Operate in a number of types                                           
    ///   @tparam ...T - the list of types to operate on                       

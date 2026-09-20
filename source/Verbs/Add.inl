@@ -22,7 +22,7 @@ namespace Langulus::Verbs
 
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
-   template<CT::Dense T, CT::NotVoid...A>
+   /*template<CT::Dense T, CT::NotVoid...A>
    constexpr bool Add::AvailableFor() noexcept {
       if constexpr (sizeof...(A) == 0) {
          return requires (T& t, Verb& v) { t.Add(v); }
@@ -57,19 +57,19 @@ namespace Langulus::Verbs
             typedContext->Add(verb, args...);
          };
       }
-   }
+   }*/
 
    /// Execute the add/subtract verb in a specific context                    
    ///   @param context - the context to execute in                           
    ///   @param verb - the verb to execute                                    
    ///   @return true if verb has been satisfied                              
-   template<CT::Dense T>
+   /*template<CT::Dense T>
    bool Add::ExecuteIn(T& context, Verb& verb) {
       static_assert(Add::AvailableFor<T>(),
          "Verb is not available for this context, this shouldn't be reached by flow");
       context.Add(verb);
       return verb.IsDone();
-   }
+   }*/
 
    /// Operate in a number of types                                           
    ///   @tparam ...T - the list of types to operate on                       

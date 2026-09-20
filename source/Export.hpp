@@ -22,73 +22,73 @@
 
 
 /// Built-in math traits                                                      
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(X, "X (first) vector component",
+LANGULUS_DEFINE_TAG(X, "X (first) vector component",
    static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(Y, "Y (second) vector component",
+LANGULUS_DEFINE_TAG(Y, "Y (second) vector component",
    static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(Z, "Z (third) vector component",
+LANGULUS_DEFINE_TAG(Z, "Z (third) vector component",
    static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(W, "W (fourth) vector component",
+LANGULUS_DEFINE_TAG(W, "W (fourth) vector component",
    static constexpr size_t Index = 3);
 
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(U, "U (first) vector component",
+LANGULUS_DEFINE_TAG(U, "U (first) vector component",
    static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(V, "V (second) vector component",
+LANGULUS_DEFINE_TAG(V, "V (second) vector component",
    static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(S, "S (third) vector component",
+LANGULUS_DEFINE_TAG(S, "S (third) vector component",
    static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(T, "T (fourth) vector component",
+LANGULUS_DEFINE_TAG(T, "T (fourth) vector component",
    static constexpr size_t Index = 3);
 
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(R, "Red (first) color component",
+LANGULUS_DEFINE_TAG(R, "Red (first) color component",
    static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(G, "Green (second) color component",
+LANGULUS_DEFINE_TAG(G, "Green (second) color component",
    static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(B, "Blue (third) color component",
+LANGULUS_DEFINE_TAG(B, "Blue (third) color component",
    static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(A, "Alpha (fourth) color component",
+LANGULUS_DEFINE_TAG(A, "Alpha (fourth) color component",
    static constexpr size_t Index = 3);
 
-LANGULUS_DEFINE_TRAIT_WITH_PROPERTIES(D, "Depth (first) component",
+LANGULUS_DEFINE_TAG(D, "Depth (first) component",
    static constexpr size_t Index = 0);
 
-LANGULUS_DEFINE_TRAIT(Transform,
+LANGULUS_DEFINE_TAG(Transform,
    "Model transformation trait");
-LANGULUS_DEFINE_TRAIT(View,
+LANGULUS_DEFINE_TAG(View,
    "View transformation trait");
-LANGULUS_DEFINE_TRAIT(Projection,
+LANGULUS_DEFINE_TAG(Projection,
    "Projection transformation trait");
-LANGULUS_DEFINE_TRAIT(Solid,
+LANGULUS_DEFINE_TAG(Solid,
    "Solidity state");
-LANGULUS_DEFINE_TRAIT(Pickable,
+LANGULUS_DEFINE_TAG(Pickable,
    "Pickability state (true to be able to select with mouse)");
-LANGULUS_DEFINE_TRAIT(Signed,
+LANGULUS_DEFINE_TAG(Signed,
    "Signed state (the capability to invert domains/geometry, flip faces, negates numbers)");
-LANGULUS_DEFINE_TRAIT(Bilateral,
+LANGULUS_DEFINE_TAG(Bilateral,
    "Bilateral state (doublesidedness of flat shapes)");
-LANGULUS_DEFINE_TRAIT(Static,
+LANGULUS_DEFINE_TAG(Static,
    "Static state (used mainly as an optimization)");
-LANGULUS_DEFINE_TRAIT(Boundness,
+LANGULUS_DEFINE_TAG(Boundness,
    "Boundness state (shifts control from simulation to user and vice-versa)");
-LANGULUS_DEFINE_TRAIT(Relative,
+LANGULUS_DEFINE_TAG(Relative,
    "Relativity trait");
-LANGULUS_DEFINE_TRAIT(Place,
+LANGULUS_DEFINE_TAG(Place,
    "Position trait");
-LANGULUS_DEFINE_TRAIT(Size,
+LANGULUS_DEFINE_TAG(Size,
    "Size trait");
-LANGULUS_DEFINE_TRAIT(Aim,
+LANGULUS_DEFINE_TAG(Aim,
    "Aim trait, used as a looking direction, or normals in general");
-LANGULUS_DEFINE_TRAIT(Velocity,
+LANGULUS_DEFINE_TAG(Velocity,
    "Velocity trait");
-LANGULUS_DEFINE_TRAIT(Acceleration,
+LANGULUS_DEFINE_TAG(Acceleration,
    "Acceleration trait");
-LANGULUS_DEFINE_TRAIT(Sampler,
+LANGULUS_DEFINE_TAG(Sampler,
    "Sampler trait, used for sampling surfaces/volumes");
-LANGULUS_DEFINE_TRAIT(Level,
+LANGULUS_DEFINE_TAG(Level,
    "Level of an instance");
-LANGULUS_DEFINE_TRAIT(Interpolator,
+LANGULUS_DEFINE_TAG(Interpolator,
    "Interpolation mode");
-LANGULUS_DEFINE_TRAIT(Perspective,
+LANGULUS_DEFINE_TAG(Perspective,
    "Perspective state (boolean)");
 
 

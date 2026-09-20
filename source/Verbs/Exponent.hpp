@@ -28,13 +28,13 @@ namespace Langulus::Verbs
 
       using ArithmeticVerb::ArithmeticVerb;
 
-      template<CT::Dense, CT::NotVoid...>
+      /*template<CT::Dense, CT::NotVoid...>
       static constexpr bool AvailableFor() noexcept;
       template<CT::Dense, CT::NotVoid...>
       static constexpr auto Of() noexcept;
 
       template<CT::Dense T>
-      static bool ExecuteIn(T&, Verb&);
+      static bool ExecuteIn(T&, Verb&);*/
 
       static bool ExecuteDefault(const Many&, Verb&);
       static bool ExecuteDefault(Many&, Verb&);

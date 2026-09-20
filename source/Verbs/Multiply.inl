@@ -21,8 +21,8 @@ namespace Langulus::Verbs
 
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
-   template<CT::Dense T, CT::NotVoid...A>
-   constexpr bool Multiply::AvailableFor() noexcept {
+   /*template<CT::Dense T, CT::NotVoid...A>
+   constexpr bool Multiply::AvailableFor() noexcept {*/
       /*using DT = Decay<T>;
       if constexpr (sizeof...(A) == 0) {
          return requires (DT& t, Verb& v) { t.Multiply(v, a...); }
@@ -39,12 +39,12 @@ namespace Langulus::Verbs
              or requires (DT& t, A... a) { {t / (a / ...)} -> CT::Same<T>; };
       }
       else*/
-      return requires (T& t, Verb& v, A... a) { t.Multiply(v, a...); };
-   }
+      /*return requires (T& t, Verb& v, A... a) { t.Multiply(v, a...); };
+   }*/
 
    /// Get the verb functor for the given type and arguments                  
    ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::NotVoid...A>
+   /*template<CT::Dense T, CT::NotVoid...A>
    constexpr auto Multiply::Of() noexcept {
       if constexpr (CT::Constant<T>) {
          return [](const void* context, Flow::Verb& verb, A...args) {
@@ -58,19 +58,19 @@ namespace Langulus::Verbs
             typedContext->Multiply(verb, args...);
          };
       }
-   }
+   }*/
 
    /// Execute the multiply/divide verb in a specific context                 
    ///   @param context - the context to execute in                           
    ///   @param verb - the verb to execute                                    
    ///   @return true if verb has been satisfied                              
-   template<CT::Dense T>
+   /*template<CT::Dense T>
    bool Multiply::ExecuteIn(T& context, Verb& verb) {
       static_assert(Multiply::AvailableFor<T>(),
          "Verb is not available for this context, this shouldn't be reached by flow");
       context.Multiply(verb);
       return verb.IsDone();
-   }
+   }*/
 
    /// Operate in a number of types                                           
    ///   @tparam ...T - the list of types to operate on                       
