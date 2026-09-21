@@ -6,19 +6,19 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-//#include "../Common.hpp"
-#include <Langulus/Flow/Code.hpp>
-#include "../Export.hpp"
+#include <Langulus/Typenav.hpp>
+#include <Langulus/CT/POD.hpp>
+#include <Langulus/CT/Nullable.hpp>
+#include <Langulus/CT/Suffix.hpp>
+#include <Langulus/CT/Real.hpp>
+#include <Langulus/CT/Signed.hpp>
+#include <Langulus/CT/Number.hpp>
 
 
 namespace Langulus::Math
 {
-
-   LANGULUS_API(MATH) extern void RegisterNumbers();
-
-
    ///                                                                        
-   ///   Templated number                                                     
+   ///   Custom number                                                        
    ///                                                                        
    /// Might seem pointless, but serves various kinds of purposes:            
    ///   1. Provides type-safety layer, that asserts underflows/overflows     
@@ -32,31 +32,25 @@ namespace Langulus::Math
    ///      with the CT::Vector concept                                       
    ///   6. Never allows for integer promotions, unless types differ, in      
    ///      which case type promotion goes to no futher than the bigger type: 
-   ///   -  Whenever you do int8 * int8, you get the truncated int8 as result,
+   ///    - Whenever you do int8 * int8, you get the truncated int8 as result,
    ///      instead of an int - whatever comes in will come out!              
-   ///   -  Whenever you do int8 * int16, you get the truncated int16 as      
-   ///      result, instead of an int - the better of the two is chosen!      
-   ///                                                                        
+   ///    - Whenever you do int8 * int16, you get the truncated int16 as      
+   ///      result, instead of an int - the better of the two is chosen,      
+   ///      instead of silently promoting it to int32!                        
+   ///   7. Allows for infinite precision numbers, floating bar, etc.         
+   ///      alternatives to seamless integrate everywhere.                    
    #pragma pack(push, 1)
    template<CT::Dense T, CT::Dense WRAPPER = T>
    struct TNumber {
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
-      LANGULUS(TYPED) T;
-      LANGULUS(SUFFIX) SuffixOf<T>();
-      LANGULUS_BASES(
-         Conditional<CT::Real<T>
-            , A::Real
-            , Conditional<CT::Signed<T>
-               , A::SignedInteger
-               , A::UnsignedInteger
-            >
-         >
-      );
-      LANGULUS_CONVERTS_TO(Flow::Code);
-
-      static constexpr size_t MemberCount = 1;
-
+      using CTTI_Number       = Yup;
+      using CTTI_CustomNumber = Yup;
+      using CTTI_Typed        = T;
+      using CTTI_Suffix       = Maybe<SuffixOf<T>()>;
+      using CTTI_POD          = Maybe<CT::POD<T>>;
+      using CTTI_Nullable     = Maybe<CT::Nullable<T>>;
+      using CTTI_Real         = Maybe<CT::Real<T>>;
+      using CTTI_Signed       = Maybe<CT::Signed<T>>;
+      
       T mValue {};
 
    public:
@@ -73,8 +67,6 @@ namespace Langulus::Math
       constexpr explicit operator T&   () const noexcept;
       constexpr explicit operator bool () const noexcept;
 
-      explicit operator Flow::Code() const;
-
       /// Prefix operators                                                    
       TNumber& operator ++ () noexcept;
       TNumber& operator -- () noexcept;
@@ -84,105 +76,108 @@ namespace Langulus::Math
       TNumber operator -- (int) noexcept;
    };
    #pragma pack(pop)
+}
 
+namespace Langulus::CT
+{
+   /// Custom number                                                          
+   template<class...T>
+   concept CustomNumber = CT::Dense<T...> and ((Decay<T>::CTTI_CustomNumber) and ...);
 
+   /// Built-in number                                                        
+   template<class...T>
+   concept BuiltinNumber = ((CT::Number<T> and not CT::CustomNumber<T>) and ...);
+}
 
+namespace Langulus::Math
+{
    ///                                                                        
-   ///   Operations on numbers                                                
+   ///   Operations with custom numbers                                       
    ///                                                                        
 
    /// Returns an inverted number                                             
-   template<CT::NumberBased T> requires CT::Signed<T>
+   template<CT::CustomNumber T> requires CT::Signed<T>
    constexpr T operator - (const T&) noexcept;
 
    /// Returns the sum of two numbers                                         
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr auto operator + (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS operator + (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr RHS operator + (const N&, const RHS&) noexcept;
 
    /// Returns the difference of two numbers                                  
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr auto operator - (const LHS&, const RHS&) noexcept;
     
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS operator - (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr RHS operator - (const N&, const RHS&) noexcept;
 
    /// Returns the product of two numbers                                     
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr auto operator * (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS operator * (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr RHS operator * (const N&, const RHS&) noexcept;
 
    /// Returns the division of two numbers                                    
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr auto operator / (const LHS&, const RHS&);
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS operator / (const LHS&, const N&);
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr RHS operator / (const N&, const RHS&);
    
    /// Returns the remainder (a.k.a. modulation) of a division                
    /// We augment c++ builtin types, by providing % operators for Real, too   
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr auto operator % (const LHS&, const RHS&);
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS operator % (const LHS&, const N&);
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr RHS operator % (const N&, const RHS&);
 
    /// Returns the left-shift of two integer vectors                          
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
-   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> requires CT::Integer<LHS, RHS>
    constexpr auto operator << (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
-   requires CT::Integer<TypeOf<LHS>, N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> requires CT::Integer<LHS, N>
    constexpr LHS operator << (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
-   requires CT::Integer<TypeOf<RHS>, N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> requires CT::Integer<RHS, N>
    constexpr RHS operator << (const N&, const RHS&) noexcept;
 
    /// Returns the right-shift of two integer vectors                         
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
-   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> requires CT::Integer<LHS, RHS>
    constexpr auto operator >> (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
-   requires CT::Integer<TypeOf<LHS>, N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> requires CT::Integer<LHS, N>
    constexpr LHS operator >> (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
-   requires CT::Integer<TypeOf<RHS>, N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> requires CT::Integer<RHS, N>
    constexpr RHS operator >> (const N&, const RHS&) noexcept;
 
    /// Returns the xor of two integer vectors                                 
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
-   requires CT::Integer<TypeOf<LHS>, TypeOf<RHS>>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS> requires CT::Integer<LHS, RHS>
    constexpr auto operator ^ (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
-   requires CT::Integer<TypeOf<LHS>, N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N> requires CT::Integer<LHS, N>
    constexpr LHS operator ^ (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
-   requires CT::Integer<TypeOf<RHS>, N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N> requires CT::Integer<RHS, N>
    constexpr RHS operator ^ (const N&, const RHS&) noexcept;
 
 
@@ -190,31 +185,31 @@ namespace Langulus::Math
    ///   Mutators                                                             
    ///                                                                        
    /// Add                                                                    
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr LHS& operator += (LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS& operator += (LHS&, const N&) noexcept;
 
    /// Subtract                                                               
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr LHS& operator -= (LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS& operator -= (LHS&, const N&) noexcept;
 
    /// Multiply                                                               
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr LHS& operator *= (LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS& operator *= (LHS&, const N&) noexcept;
 
    /// Divide                                                                 
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr LHS& operator /= (LHS&, const RHS&);
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr LHS& operator /= (LHS&, const N&);
 
 
@@ -222,53 +217,52 @@ namespace Langulus::Math
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr bool operator < (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr bool operator < (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr bool operator < (const N&, const RHS&) noexcept;
 
    /// Bigger                                                                 
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr bool operator > (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr bool operator > (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr bool operator > (const N&, const RHS&) noexcept;
 
    /// Bigger or equal                                                        
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr bool operator >= (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr bool operator >= (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr bool operator >= (const N&, const RHS&) noexcept;
 
    /// Smaller or equal                                                       
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr bool operator <= (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr bool operator <= (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr bool operator <= (const N&, const RHS&) noexcept;
 
    /// Equal                                                                  
-   template<CT::NumberBased LHS, CT::NumberBased RHS>
+   template<CT::CustomNumber LHS, CT::CustomNumber RHS>
    constexpr bool operator == (const LHS&, const RHS&) noexcept;
 
-   template<CT::NumberBased LHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber LHS, CT::BuiltinNumber N>
    constexpr bool operator == (const LHS&, const N&) noexcept;
 
-   template<CT::NumberBased RHS, CT::BuiltinNumber N>
+   template<CT::CustomNumber RHS, CT::BuiltinNumber N>
    constexpr bool operator == (const N&, const RHS&) noexcept;
-
-} // namespace Langulus::Math
+}

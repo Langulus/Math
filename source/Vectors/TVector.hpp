@@ -6,37 +6,39 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../Functions/Trigonometry.hpp"
+/*#include "../Functions/Trigonometry.hpp"
 #include "../Functions/Arithmetics.hpp"
 #include "../Numbers/TNumber.hpp"
-#include "../Verbs/Multiply.hpp"
+#include "../Verbs/Multiply.hpp"*/
 
+#include "../Numbers/Dimension.hpp"
+#include <Langulus/CT/Scalar.hpp>
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequence.hpp>
+#include <Langulus/Utils/Literal.hpp>
 
-#define TARGS(a)     CT::ScalarBased a##T, size_t a##S, int a##D
+#define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
-#define TEMPLATE()   template<CT::ScalarBased T, size_t S, int DEFAULT>
+#define TEMPLATE()   template<CT::Scalar T, size_t S, int DEFAULT>
 #define TME()        TVector<T, S, DEFAULT>
 
 
 namespace Langulus::Math
 {
+   //LANGULUS_API(MATH) extern void RegisterVectors();
 
-   LANGULUS_API(MATH) extern void RegisterVectors();
-
-   template<CT::ScalarBased T, CT::Dimension D>
+   template<CT::Scalar T, CT::Dimension D>
    struct TVectorComponent;
 
-   template<CT::ScalarBased T, size_t S, int DEFAULT = 0>
+   template<CT::Scalar T, size_t S, int DEFAULT = 0>
    struct TVector;
 
-   template<CT::ScalarBased T, size_t S, int DEFAULT = 0>
+   template<CT::Scalar T, size_t S, int DEFAULT = 0>
    using TVec = TME();
 
    using Vec1     = TVector<Real, 1>;
-   using Vec1f    = TVector<Float, 1>;
-   using Vec1d    = TVector<Double, 1>;
+   using Vec1f    = TVector<float, 1>;
+   using Vec1d    = TVector<double, 1>;
    using Vec1i    = TVector<signed, 1>;
    using Vec1u    = TVector<unsigned, 1>;
    using Vec1i8   = TVector<::std::int8_t, 1>;
@@ -49,8 +51,8 @@ namespace Langulus::Math
    using Vec1u64  = TVector<::std::uint64_t, 1>;
 
    using Vec2     = TVector<Real, 2>;
-   using Vec2f    = TVector<Float, 2>;
-   using Vec2d    = TVector<Double, 2>;
+   using Vec2f    = TVector<float, 2>;
+   using Vec2d    = TVector<double, 2>;
    using Vec2i    = TVector<signed, 2>;
    using Vec2u    = TVector<unsigned, 2>;
    using Vec2i8   = TVector<::std::int8_t, 2>;
@@ -63,8 +65,8 @@ namespace Langulus::Math
    using Vec2u64  = TVector<::std::uint64_t, 2>;
 
    using Vec3     = TVector<Real, 3>;
-   using Vec3f    = TVector<Float, 3>;
-   using Vec3d    = TVector<Double, 3>;
+   using Vec3f    = TVector<float, 3>;
+   using Vec3d    = TVector<double, 3>;
    using Vec3i    = TVector<signed, 3>;
    using Vec3u    = TVector<unsigned, 3>;
    using Vec3i8   = TVector<::std::int8_t, 3>;
@@ -77,8 +79,8 @@ namespace Langulus::Math
    using Vec3u64  = TVector<::std::uint64_t, 3>;
 
    using Vec4     = TVector<Real, 4>;
-   using Vec4f    = TVector<Float, 4>;
-   using Vec4d    = TVector<Double, 4>;
+   using Vec4f    = TVector<float, 4>;
+   using Vec4d    = TVector<double, 4>;
    using Vec4i    = TVector<signed, 4>;
    using Vec4u    = TVector<unsigned, 4>;
    using Vec4i8   = TVector<::std::int8_t, 4>;
@@ -104,61 +106,55 @@ namespace Langulus::Math
    using Veci64   = Vec4i64;
    using Vecu64   = Vec4u64;
 
-} // namespace Langulus::Math
 
-namespace Langulus
-{
-   namespace A
-   {
+   /// Abstract vector that relies on the context to pick the proper type.    
+   /// A 2D world will work with Vec2, while a 3D world will work with Vec3.  
+   /// Some contexts will demand integer vectors, while others will require   
+   /// real ones. If context lacks definition, this will default to Vec4, as  
+   /// it's the most versatile type, albeit a bit bigger.                     
+   struct Vector {
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = Vec4;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// vector                                                              
-      struct Vector {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Vec4;
-      };
+   /// Similar as the above, but the size is explicitly defined.              
+   /// Only the type is decided by the context, defaulting to real.           
+   template<size_t S> requires (S>0)
+   struct VectorOfSize : Vector {
+      using CTTI_Concrete = TVector<Real, S>;
+      using CTTI_Bases    = Vector;
+      using CTTI_Array    = Yes<S>;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// vector of the same size                                             
-      template<size_t S>
-      struct VectorOfSize : Vector {
-         LANGULUS(CONCRETE) Math::TVector<::Langulus::Real, S>;
-         LANGULUS_BASES(Vector);
-         static constexpr size_t MemberCount {S};
-         static_assert(S > 0, "Vector size must be greater than zero");
-      };
+   /// Similar as the above, but the type is explicitly defined.              
+   /// Only the size is decided by the context, defaulting to 4.              
+   template<CT::Scalar T>
+   struct VectorOfType : Vector {
+      using CTTI_Concrete = Math::TVector<T, 4>;
+      using CTTI_Bases    = Vector;
+      using CTTI_Typed    = T;
+   };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// vector of the same type                                             
-      template<CT::ScalarBased T>
-      struct VectorOfType : Vector {
-         LANGULUS(CONCRETE) Math::TVector<T, 4>;
-         LANGULUS(TYPED) T;
-         LANGULUS_BASES(Vector);
-      };
-
-      using Point = Vector;
-
-   } // namespace Langulus::A
-
-} // namespace Langulus
-
-namespace Langulus::Math
-{
-
+   /// Points be just vectors, man                                            
+   using Point = Vector;
+   
    #pragma pack(push, 1)
-   template<size_t, CT::ScalarBased, int DEFAULT>
+
+   template<size_t, CT::Scalar, int DEFAULT>
    struct TVectorBase;
 
 
    ///                                                                        
    /// 1D vector base                                                         
-   template<CT::ScalarBased TYPE, int DEFAULT>
+   template<CT::Scalar TYPE, int DEFAULT>
    struct TVectorBase<1, TYPE, DEFAULT> {
       union {
          TYPE all[1] {};
-         union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first, r, red, u; };
+         union {
+            Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
+         };
       };
+      using CTTI_Members = Members<&TVectorBase::x>;
 
       static constexpr TYPE y       = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE second  = static_cast<TYPE>(DEFAULT);
@@ -179,8 +175,6 @@ namespace Langulus::Math
       static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
       void tail() { static_assert(false, "1D vector doesn't have a tail"); }
-
-      LANGULUS_MEMBERS(&TVectorBase::x);
 
       constexpr TVectorBase() noexcept {
          all[0] = static_cast<TYPE>(DEFAULT);
@@ -208,15 +202,20 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 2D vector base                                                         
-   template<CT::ScalarBased TYPE, int DEFAULT>
+   template<CT::Scalar TYPE, int DEFAULT>
    struct TVectorBase<2, TYPE, DEFAULT> {
       union {
          TYPE all[2] {};
          struct {
-            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
+            union {
+               Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
+            };
+            union {
+               Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+            };
          };
       };
+      using CTTI_Members = Members<&TVectorBase::x, &TVectorBase::y>;
 
       static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
@@ -231,8 +230,6 @@ namespace Langulus::Math
       static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
       void tail() { static_assert(false, "2D vector doesn't have a tail"); }
-
-      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y);
 
       constexpr TVectorBase() noexcept {
          for (int i = 0; i < 2; ++i)
@@ -265,16 +262,27 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 3D vector base                                                         
-   template<CT::ScalarBased TYPE, int DEFAULT>
+   template<CT::Scalar TYPE, int DEFAULT>
    struct TVectorBase<3, TYPE, DEFAULT> {
       union {
          TYPE all[3] {};
          struct {
-            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
-            union { RTTI::Tag<TYPE, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
+            union {
+               Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
+            };
+            union {
+               Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+            };
+            union {
+               Tag<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s;
+            };
          };
       };
+      using CTTI_Members = Members<
+         &TVectorBase::x,
+         &TVectorBase::y, 
+         &TVectorBase::z
+      >;
 
       static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
       static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
@@ -283,8 +291,6 @@ namespace Langulus::Math
       static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
       void tail() { static_assert(false, "3D vector doesn't have a tail"); }
-
-      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z);
 
       constexpr TVectorBase() noexcept {
          for (int i = 0; i < 3; ++i)
@@ -317,21 +323,25 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 4D vector base                                                         
-   template<CT::ScalarBased TYPE, int DEFAULT>
+   template<CT::Scalar TYPE, int DEFAULT>
    struct TVectorBase<4, TYPE, DEFAULT> {
       union {
          TYPE all[4] {};
          struct {
-            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
-            union { RTTI::Tag<TYPE, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
-            union { RTTI::Tag<TYPE, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
+            union { Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
+            union { Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
+            union { Tag<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
+            union { Tag<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
          };
       };
+      using CTTI_Members = Members<
+         &TVectorBase::x,
+         &TVectorBase::y, 
+         &TVectorBase::z,
+         &TVectorBase::w
+      >;
 
       void tail() { static_assert(false, "4D vector doesn't have a tail"); }
-
-      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
 
       constexpr TVectorBase() noexcept {
          for (int i = 0; i < 4; ++i)
@@ -364,22 +374,27 @@ namespace Langulus::Math
 
    ///                                                                        
    /// 5+D vector base                                                        
-   template<size_t S, CT::ScalarBased TYPE, int DEFAULT> requires (S > 4)
+   template<size_t S, CT::Scalar TYPE, int DEFAULT> requires (S > 4)
    struct TVectorBase<S, TYPE, DEFAULT> {
       union {
          TYPE all[S] {};
          struct {
-            union { RTTI::Tag<TYPE, Traits::X, Traits::R, Traits::U> x, first,  r, red,   u; };
-            union { RTTI::Tag<TYPE, Traits::Y, Traits::G, Traits::V> y, second, g, green, v; };
-            union { RTTI::Tag<TYPE, Traits::Z, Traits::B, Traits::S> z, third,  b, blue,  s; };
-            union { RTTI::Tag<TYPE, Traits::W, Traits::A, Traits::T> w, fourth, a, alpha, t; };
+            union { Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
+            union { Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
+            union { Tag<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
+            union { Tag<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
 
             // The remaining elements, that don't have custom names     
             TYPE tail[S - 4];
          };
       };
-
-      LANGULUS_MEMBERS(&TVectorBase::x, &TVectorBase::y, &TVectorBase::z, &TVectorBase::w);
+      using CTTI_Members = Members<
+         &TVectorBase::x,
+         &TVectorBase::y, 
+         &TVectorBase::z,
+         &TVectorBase::w,
+         &TVectorBase::tail
+      >;
 
       constexpr TVectorBase() noexcept {
          for (size_t i = 0; i < S; ++i)
@@ -743,17 +758,14 @@ namespace Langulus::Math
             CommitInner(Sequence<sizeof...(I)>::Expand);
          }
       };
-
-   } // namespace Langulus::Math::Inner
-
+   }
 
    /// Generate a lossless vector type from provided LHS and RHS types        
    ///   @tparam LHS - left hand side, can be scalar/array/vector             
    ///   @tparam RHS - right hand side, can be scalar/array/vector            
    template<class LHS, class RHS>
    using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, OverlapCounts<LHS, RHS>()>;
-
-} // namespace Langulus::Math
+}
 
 #undef TARGS
 #undef TVEC

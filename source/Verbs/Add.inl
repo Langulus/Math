@@ -6,8 +6,8 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Add.hpp"
-#include "Arithmetic.inl"
+#include <Langulus/Verbs/Add.hpp>
+//#include "Arithmetic.inl"
 #include "../Numbers/Infinity.hpp"
 
 #if 0
@@ -19,7 +19,6 @@
 
 namespace Langulus::Verbs
 {
-
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
    /*template<CT::Dense T, CT::NotVoid...A>
@@ -197,7 +196,6 @@ namespace Langulus::Verbs
 
       return false;
    }
-
-} // namespace Langulus::Verbs
+}
 
 #undef VERBOSE_ADD

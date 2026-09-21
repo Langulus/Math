@@ -8,6 +8,7 @@
 #pragma once
 #include <Langulus/Core.hpp>
 //#include <Langulus/CT/Lossless.hpp>
+//#include <Langulus/CT/Scalar.hpp>
 #include <Langulus/TTag.hpp>
 
 
@@ -22,36 +23,6 @@
 
 
 /// Built-in math traits                                                      
-LANGULUS_DEFINE_TAG(X, "X (first) vector component",
-   static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TAG(Y, "Y (second) vector component",
-   static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TAG(Z, "Z (third) vector component",
-   static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TAG(W, "W (fourth) vector component",
-   static constexpr size_t Index = 3);
-
-LANGULUS_DEFINE_TAG(U, "U (first) vector component",
-   static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TAG(V, "V (second) vector component",
-   static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TAG(S, "S (third) vector component",
-   static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TAG(T, "T (fourth) vector component",
-   static constexpr size_t Index = 3);
-
-LANGULUS_DEFINE_TAG(R, "Red (first) color component",
-   static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TAG(G, "Green (second) color component",
-   static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TAG(B, "Blue (third) color component",
-   static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TAG(A, "Alpha (fourth) color component",
-   static constexpr size_t Index = 3);
-
-LANGULUS_DEFINE_TAG(D, "Depth (first) component",
-   static constexpr size_t Index = 0);
-
 LANGULUS_DEFINE_TAG(Transform,
    "Model transformation trait");
 LANGULUS_DEFINE_TAG(View,
@@ -95,7 +66,6 @@ LANGULUS_DEFINE_TAG(Perspective,
 /// Namespace containing all built-in math verbs                              
 namespace Langulus::Verbs
 {
-
    struct Exponent;
    struct Multiply;
    struct Modulate;
@@ -104,90 +74,55 @@ namespace Langulus::Verbs
    struct Add;
    struct Lerp;
    struct Cerp;
-
-} // namespace Langulus::Verbs
-
+}
 
 namespace Langulus::CT
 {
-   namespace Inner
-   {
-      template<class T>
-      concept Dimension = Trait<T> and requires { {T::Index} -> CT::Same<size_t>; };
-   }
-
-   /// Dimension is any trait, defined with an Index property                 
-   /// Used for accessing individual vector components, for example           
-   template<class... T>
-   concept Dimension = (Inner::Dimension<T> and ...);
 
    /// Anything that is adaptive                                              
    template<class...T>
-   concept Adaptive = ((Decay<Deint<T>>::CTTI_AdaptiveTrait) and ...);
-   template<class...T>
-   concept NotAdaptive = ((not Adaptive<T>) and ...);
+   concept Adaptive = Dense<T...> and ((Decay<T>::CTTI_Adaptive) and ...);
 
    /// Anything that has the quaternion trait                                 
    template<class...T>
-   concept QuaternionBased = ((Decay<Deint<T>>::CTTI_QuaternionTrait) and ...);
+   concept Quaternion = Dense<T...> and ((Decay<T>::CTTI_Quaternion) and ...);
 
    /// Anything that has the vector trait                                     
    template<class...T>
-   concept VectorBased = ((Decay<Deint<T>>::CTTI_VectorTrait) and ...);
+   concept Vector = Dense<T...> and ((Decay<T>::CTTI_Vector) and ...);
    
    /// Anything that has the vector trait and contains integers               
    template<class...T>
-   concept VectorBasedInt = ((VectorBased<T> and CT::Integer<TypeOf<T>>) and ...);
+   concept VectorInt = ((Vector<T> and Integer<TypeOf<T>>) and ...);
    
    /// Anything that has the color trait                                      
    template<class...T>
-   concept ColorBased = ((Decay<Deint<T>>::CTTI_ColorTrait) and ...);
+   concept Color = Dense<T...> and ((Decay<T>::CTTI_Color) and ...);
 
    /// Anything that has the range trait                                      
    template<class...T>
-   concept RangeBased = ((Decay<Deint<T>>::CTTI_RangeTrait) and ...);
+   concept Range = Dense<T...> and ((Decay<T>::CTTI_Range) and ...);
 
    /// Anything that has the matrix trait                                     
    template<class...T>
-   concept MatrixBased = ((Decay<Deint<T>>::CTTI_MatrixTrait) and ...);
+   concept Matrix = Dense<T...> and ((Decay<T>::CTTI_Matrix) and ...);
 
    /// Anything that has the gradient trait                                   
    template<class...T>
-   concept GradientBased = ((Decay<Deint<T>>::CTTI_GradientTrait) and ...);
+   concept Gradient = Dense<T...> and ((Decay<T>::CTTI_Gradient) and ...);
 
    /// For recognizing proxy-arrays (intermediate vectors after swizzling)    
    template<class...T>
-   concept ProxyArray = ((Decay<Deint<T>>::CTTI_ProxyArray) and ...);
+   concept ProxyArray = Dense<T...> and ((Decay<T>::CTTI_ProxyArray) and ...);
 
    /// For recognizing proxy-arrays that contain integers                     
    template<class...T>
-   concept ProxyArrayInt = ((ProxyArray<T> and CT::Integer<TypeOf<T>>) and ...);
-
-   /// Anything that doesn't have any of the above traits                     
-   ///   @maintenance keep this one up to date, if adding new math traits     
-   template<class...T>
-   concept ScalarBased = Scalar<T...> and not ((
-           QuaternionBased<T>
-        or VectorBased<T>
-        or RangeBased<T>
-        or MatrixBased<T>
-        or GradientBased<T>
-        or ProxyArray<T>
-        or Adaptive<T>
-      ) and ...);
+   concept ProxyArrayInt = ((ProxyArray<T> and Integer<TypeOf<T>>) and ...);
 
    /// Anything ScalarBased that contains integers                            
-   template<class...T>
-   concept ScalarBasedInt = ((ScalarBased<T> and CT::Integer<TypeOf<T>>) and ...);
-
-   /// Anything that is a CT::CustomNumber and CT::CastsToFundamental         
-   /// It is a more constrained version of CT::CustomNumber, that omits any   
-   /// iterators and other irrelevant stuff                                   
-   template<class...T>
-   concept NumberBased = CustomNumber<T...> and CastsToFundamental<T...>
-       and ((not VectorBased<T> and not Adaptive<T>) and ...);
-
-} // namespace Langulus::CT
+   //template<class...T>
+   //concept ScalarInt = ((Scalar<T> and Integer<TypeOf<T>>) and ...);
+}
 
 namespace Langulus::Math
 {
@@ -198,14 +133,12 @@ namespace Langulus::Math
 
    namespace Typelists
    {
-
       using Arithmetic = Types<
          float, double,
          uint8_t, uint16_t, uint32_t, uint64_t,
-         int8_t, int16_t, int32_t, int64_t
+         int8_t,  int16_t,  int32_t,  int64_t
       >;
 
-      using Fundamental = typename Arithmetic::Cat<bool>;
+      using Fundamental = decltype(Arithmetic{} + Types<bool>{});
    }
-
-} // namespace Langulus::Math
+}
