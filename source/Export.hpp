@@ -127,10 +127,6 @@ namespace Langulus::CT
    template<class...T>
    concept NotAdaptive = ((not Adaptive<T>) and ...);
 
-   /// Anything that has the normalized trait                                 
-   template<class...T>
-   concept Normalized = ((Decay<Deint<T>>::CTTI_NormalizedTrait) and ...);
-
    /// Anything that has the quaternion trait                                 
    template<class...T>
    concept QuaternionBased = ((Decay<Deint<T>>::CTTI_QuaternionTrait) and ...);

@@ -111,15 +111,13 @@ namespace Langulus::Math
    #pragma pack(push, 1)
    TEMPLATE()
    struct TRange {
+      using CTTI_Normalized = Maybe<CT::Normalized<T>>;
       using PointType = T;
       using MemberType = TypeOf<T>;
       static constexpr size_t MemberCount = CountOf<T> * 2;
       static constexpr auto Default = T::Default;
       using CoalescedType = TVector<MemberType, MemberCount, static_cast<int>(Default)>;
       using PointTypeNotNormalized = TVector<MemberType, CountOf<T>>;
-
-      // Make TRange match the CT::Normalized concept                   
-      static constexpr bool CTTI_NormalizedTrait = CT::Normalized<T>;
 
       union {
          // Useful representation for directly feeding to SIMD          

@@ -10,6 +10,8 @@
 #include <Langulus/CT/Signed.hpp>
 #include <Langulus/CT/Scalar.hpp>
 #include <Langulus/CT/Comparable.hpp>
+#include <Langulus/CT/Typed.hpp>
+#include <Langulus/CT/Normalized.hpp>
 
 
 namespace Langulus::CT

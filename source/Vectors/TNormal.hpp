@@ -83,6 +83,7 @@ namespace Langulus
       ///                                                                     
       template<CT::Vector T>
       struct TNormal : T {
+         using CTTI_Normalized = Yup;
          using PointType = T;
          using T::MemberCount;
 
@@ -90,9 +91,6 @@ namespace Langulus
             "Normal size must be greater than one");
          static_assert(CT::Real<TypeOf<T>>,
             "Normal can be only made of real numbers");
-
-         // Make TNormal match the CT::Normalized concept               
-         static constexpr bool CTTI_NormalizedTrait = true;
 
       private:
          static consteval auto GenerateToken() {
