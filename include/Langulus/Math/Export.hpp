@@ -61,6 +61,10 @@ LANGULUS_DEFINE_TAG(Interpolator,
    "Interpolation mode");
 LANGULUS_DEFINE_TAG(Perspective,
    "Perspective state (boolean)");
+LANGULUS_DEFINE_TAG(MapMode,
+   "Mapping mode");
+LANGULUS_DEFINE_TAG(Topology,
+   "Topology type");
 
 
 /// Namespace containing all built-in math verbs                              
@@ -130,6 +134,7 @@ namespace Langulus::Math
 
    LANGULUS_API(MATH) extern void RegisterTraits();
    LANGULUS_API(MATH) extern void RegisterVerbs();
+   LANGULUS_API(MATH) extern void RegisterPrimitives();
 
    namespace Typelists
    {

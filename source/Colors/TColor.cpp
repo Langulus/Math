@@ -5,12 +5,11 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TColor.inl"
+#include <Langulus/Colors/TColor.inl>
 
 
 namespace Langulus::Math
 {
-
    /// Register all commonly used color types and constants, so they can be   
    /// instantiated from scripts                                              
    void RegisterColors() {
@@ -49,5 +48,4 @@ namespace Langulus::Math
       (void) MetaOf<Constants::ColorPurple>();
       (void) MetaOf<Constants::ColorDarkPurple>();
    }
-
-} // namespace Langulus::Math
+}

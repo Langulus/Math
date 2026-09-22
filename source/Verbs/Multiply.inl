@@ -6,8 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Multiply.hpp"
-#include "Arithmetic.inl"
+#include <Langulus/Verbs/Multiply.hpp>
+
+/*#include "Multiply.hpp"
+#include "Arithmetic.inl"*/
 
 #if 0
    #define VERBOSE_MUL(...) Logger::Verbose(__VA_ARGS__)

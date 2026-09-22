@@ -6,8 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Exponent.hpp"
-#include "Arithmetic.inl"
+#include <Langulus/Verbs/Exponent.hpp>
+
+/*#include "Exponent.hpp"
+#include "Arithmetic.inl"*/
 
 #if 0
    #define VERBOSE_EXP(...) Logger::Verbose(__VA_ARGS__)

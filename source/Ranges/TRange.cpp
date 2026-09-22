@@ -5,12 +5,11 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TRange.inl"
+#include <Langulus/Ranges/TRange.inl>
 
 
 namespace Langulus::Math
 {
-
    /// Combines S and T... to form a vector type, and then a range from it    
    ///   @tparam S - size of the vector                                       
    template<size_t S>
@@ -34,7 +33,6 @@ namespace Langulus::Math
       RangeTypeGenerator<2>::Register(AllTypes {});
       RangeTypeGenerator<3>::Register(AllTypes {});
       RangeTypeGenerator<4>::Register(AllTypes {});
-
       
       // Constants                                                      
       (void) MetaOf<Constants::RangeIn>();
@@ -51,5 +49,4 @@ namespace Langulus::Math
       (void) MetaOf<Constants::RangeLeft>();
       (void) MetaOf<Constants::RangeRight>();
    }
-
-} // namespace Langulus::Math
+}

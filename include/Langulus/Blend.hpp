@@ -11,7 +11,6 @@
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Blending modes                                                       
    ///                                                                        
@@ -51,5 +50,4 @@ namespace Langulus::Math
       constexpr BlendMode(Type value) noexcept
          : mMode {value} {}
    };
-
-} // namespace Langulus::Math
+}

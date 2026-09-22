@@ -6,9 +6,11 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "Langulus/CT/Able.hpp"
 #include <Langulus/Verbs/Add.hpp>
-//#include "Arithmetic.inl"
-#include "../Numbers/Infinity.hpp"
+#include <Langulus/Numbers/Infinity.hpp>
+#include <Langulus/TMany.hpp>
+#include <concepts>
 
 #if 0
    #define VERBOSE_ADD(...) Logger::Verbose(__VA_ARGS__)
@@ -17,185 +19,132 @@
 #endif
 
 
-namespace Langulus::Verbs
+namespace Langulus::CTTI
 {
-   /// Compile-time check if a verb is implemented in the provided type       
-   ///   @return true if verb is available                                    
-   /*template<CT::Dense T, CT::NotVoid...A>
-   constexpr bool Add::AvailableFor() noexcept {
-      if constexpr (sizeof...(A) == 0) {
-         return requires (T& t, Verb& v) { t.Add(v); }
-             or requires (T& t) { t += t; }
-             or requires (T& t) { t -= t; }
-             or requires (const T& t) { {t + t} -> CT::Same<T>; }
-             or requires (const T& t) { {t - t} -> CT::Same<T>; };
+   template<class T>
+   concept BuiltinAddable = requires (T& t)         { {t += t} -> ::std::same_as<T&>; }
+                        and requires (T& t)         { {t -= t} -> ::std::same_as<T&>; }
+                        and requires (T const& t)   { {t +  t} -> ::std::same_as<T>;  }
+                        and requires (T const& t)   { {t -  t} -> ::std::same_as<T>;  };
+
+
+   /// Imbue all arithmetic types with the ability to add and subtract        
+   /// each other.                                                            
+   //TODO Implement the same ability from Vulkan POV in order to utilize GPU. 
+   //TODO Each module reflects its own verbs. We can inspect these verbs at   
+   //TODO runtime and decide which implementation to use depending on context.
+   LglsImplementAbilitiesForConcept(BuiltinAddable, LHS) {
+      using Can = Verbs::Add;
+
+      //TODO eventually for constexpr verb execution?
+      /*
+      static constexpr LHS& Positive(LHS& lhs, CT::Executable auto& rhs) noexcept {
+          return lhs += rhs;
       }
-      else if constexpr (sizeof...(A) == 1) {
-         return requires (T& t, Verb& v, A... a) { t.Add(v, a...); }
-             or requires (T& t, A... a) { t += (a + ...); }
-             or requires (T& t, A... a) { t -= (a - ...); }
-             or requires (const T& t, A... a) { {t + (a + ...)} -> CT::Same<T>; }
-             or requires (const T& t, A... a) { {t - (a + ...)} -> CT::Same<T>; };
-      }
-      else return requires (T& t, Verb& v, A... a) { t.Add(v, a...); };
-   }
-
-   /// Get the verb functor for the given type and arguments                  
-   ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::NotVoid...A>
-   constexpr auto Add::Of() noexcept {
-      if constexpr (CT::Constant<T>) {
-         return [](const void* context, Flow::Verb& verb, A...args) {
-            auto typedContext = static_cast<const T*>(context);
-            typedContext->Add(verb, args...);
-         };
-      }
-      else {
-         return [](void* context, Flow::Verb& verb, A...args) {
-            auto typedContext = static_cast<T*>(context);
-            typedContext->Add(verb, args...);
-         };
-      }
-   }*/
-
-   /// Execute the add/subtract verb in a specific context                    
-   ///   @param context - the context to execute in                           
-   ///   @param verb - the verb to execute                                    
-   ///   @return true if verb has been satisfied                              
-   /*template<CT::Dense T>
-   bool Add::ExecuteIn(T& context, Verb& verb) {
-      static_assert(Add::AvailableFor<T>(),
-         "Verb is not available for this context, this shouldn't be reached by flow");
-      context.Add(verb);
-      return verb.IsDone();
-   }*/
-
-   /// Operate in a number of types                                           
-   ///   @tparam ...T - the list of types to operate on                       
-   ///                  order matters!                                        
-   ///   @param context - the original context                                
-   ///   @param common - the base to operate on                               
-   ///   @param verb - the original verb                                      
-   ///   @return if at least one of the types matched verb                    
-   template<CT::NotVoid... T>
-   bool Add::OperateOnTypes(const Many& context, const Many& common, Verb& verb) {
-      return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(context, common, verb,
-            verb.GetMass() < 0
-               ? [](const T* lhs, const T* rhs) noexcept -> T {
-                  return *lhs - *rhs;
-               }
-               : [](const T* lhs, const T* rhs) noexcept -> T {
-                  return *lhs + *rhs;
-               }
-         )) or ...);
-   }
-
-   /// Operate in a number of types (destructive version)                     
-   ///   @tparam ...T - the list of types to operate on                       
-   ///                  order matters!                                        
-   ///   @param context - the original context                                
-   ///   @param common - the base to operate on                               
-   ///   @param verb - the original verb                                      
-   ///   @return if at least one of the types matched verb                    
-   template<CT::NotVoid... T>
-   bool Add::OperateOnTypes(const Many& context, Many& common, Verb& verb) {
-      return ((common.CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(context, common, verb,
-            verb.GetMass() < 0
-               ? [](T* lhs, const T* rhs) noexcept {
-                  *lhs -= *rhs;
-               }
-               : [](T* lhs, const T* rhs) noexcept {
-                  *lhs += *rhs;
-               }
-         )) or ...);
-   }
-
-   /// Invert verb's arguments                                                
-   ///   @tparam ...T - the list of types to operate on                       
-   ///                  order matters!                                        
-   ///   @param common - the base to operate on                               
-   ///   @param verb - the original verb                                      
-   ///   @return if at least one of the types matched verb                    
-   template<CT::NotVoid... T>
-   bool Add::OperateOnTypes(Many& common, Verb& verb) {
-      return ((common.template CastsTo<T, true>()
-         and ArithmeticVerb::Scalar<T>(common, common, verb,
-            [](T* lhs, const T*) noexcept {
-               *lhs *= T {-1};
-            }
-         )) or ...);
-   }
-
-   /// Default add/subtract in an immutable context                           
-   ///   @param context - the block to execute in                             
-   ///   @param verb - add/subtract verb                                      
-   inline bool Add::ExecuteDefault(const Many& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb.GetArgument());
-      if (common.template CastsTo<A::Number>()) {
-         return OperateOnTypes<
-            Float, Double,
-            int32_t, uint32_t, int64_t, uint64_t,
-            int8_t, uint8_t, int16_t, uint16_t
-         >(context, common, verb);
+                          
+      static constexpr LHS Positive(LHS const& lhs, CT::Executable auto& rhs) noexcept {
+         return lhs + rhs;
       }
 
-      return false;
-   }
-
-   /// Default add/subtract in mutable context                                
-   ///   @param context - the block to execute in                             
-   ///   @param verb - add/subtract verb                                      
-   inline bool Add::ExecuteDefault(Many& context, Verb& verb) {
-      auto common = context.ReinterpretAs(verb.GetArgument());
-      if (common.template CastsTo<A::Number>()) {
-         return OperateOnTypes<
-            Float, Double,
-            int32_t, uint32_t, int64_t, uint64_t,
-            int8_t, uint8_t, int16_t, uint16_t
-         >(context, common, verb);
+      static constexpr LHS& Negative(LHS& lhs, CT::Executable auto& rhs) noexcept {
+          return lhs -= rhs;
       }
+                          
+      static constexpr LHS Negative(LHS const& lhs, CT::Executable auto& rhs) noexcept {
+         return lhs - rhs;
+      }*/
 
-      return false;
-   }
-
-   /// A stateless subtraction                                                
-   /// Basically negates rhs when mass is below zero, otherwise does nothing  
-   ///   @param verb - the verb instance to execute                           
-   ///   @return true if execution was a success                              
-   inline bool Add::ExecuteStateless(Verb& verb) {
-      if (verb.CastsTo<A::Number>()) {
-         if (verb.GetMass() < 0) {
-            // Negate signed numbers, otherwise verb is not satisfied   
-            return OperateOnTypes<
-               Float, Double,
-               int32_t, int64_t,
-               int8_t, int16_t
-            >(verb, verb);
+      /// Destructive version, LHS is mutable. This won't allocate unless     
+      /// conversion occurs.                                                  
+      static bool Default(LHS& lhs, CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const& rhs = verb.GetArgument();
+         if (rhs.template IsSame<LHS>()) {
+            // Easy path - types are the same                           
+            auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
+            for (LHS const& i : rhs_typed)
+               lhs += i * mass;
+            return true;
          }
          else {
-            // Don't do anything                                        
-            verb << verb.GetArgument();
+            // Hard path - we must attempt conversion to LHS            
+            auto converted = rhs.template ConvertTo<LHS>();
+            if (not converted)
+               return false;
+
+            for (LHS const& i : converted)
+               lhs += i * mass;
             return true;
          }
       }
-      else if (verb.CastsTo<Math::Infinity>()) {
-         if (verb.GetMass() < 0) {
-            // Negate infinity                                          
-            verb.ForEach([&](Math::Infinity i) {
-               verb << Math::Infinity {-i.mOrder};
-            });
-         }
-         else {
-            // Don't do anything                                        
-            verb << verb.GetArgument();
+       
+      /// Non-destructive version, LHS is constant. Will allocate if          
+      /// conversion occurs, or if verb output isn't reserved enough.         
+      static bool Default(LHS const& lhs, CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const& rhs = verb.GetArgument();
+         auto result = lhs;
+         if (rhs.template IsSame<LHS>()) {
+            // Easy path - types are the same                           
+            auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
+            for (LHS const& i : rhs_typed)
+               result += i * mass;
+
+            verb << result;
             return true;
          }
+         else {
+            // Hard path - we must attempt conversion to LHS            
+            auto converted = rhs.template ConvertTo<LHS>();
+            if (not converted)
+               return false;
+
+            for (LHS const& i : converted)
+               result += i * mass;
+
+            verb << result;
+            return true;
+         }
+      } 
+
+      /// Unary version just imagines there's a zero on the left of each      
+      /// individual element. The order is preserved.                         
+      ///   @note if unary version is reached, this means verb argument has   
+      ///      already been checked and guarantees to contain at least one    
+      ///      element of type LHS! We can safely use reinterpret_cast here!  
+      static bool Default(CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(verb.GetArgument());
+         TMany<LHS> result; result.Reserve(rhs_typed.GetCount());
+         for (LHS const& i : rhs_typed)
+            result << i * mass;
+         verb << Abandon(result);
+         return true;
+      }
+   };
+
+   /// Addition/subtraction of infinities                                     
+   LglsImplementAbilitiesFor(Math::Infinity) {
+      using Can = Verbs::Add;
+
+      /// Infinity +/- anything = infinity                                    
+      static bool Default(Math::Infinity const&, CT::Executable auto&) {
+         return true;
       }
 
-      return false;
-   }
+      /// Unary version can flip the sign of the infinity                     
+      static bool Default(CT::Executable auto& verb) {
+         if (verb.GetMass() >= 0)
+            return true;
+
+         auto& rhs_typed = reinterpret_cast<TMany<Math::Infinity> const&>(verb.GetArgument());
+         TMany<Math::Infinity> result; result.Reserve(rhs_typed.GetCount());
+         for (Math::Infinity const& i : rhs_typed)
+            result << Math::Infinity {-i.mOrder};
+         verb << Abandon(result);
+         return true;
+      }
+   };
 }
 
 #undef VERBOSE_ADD

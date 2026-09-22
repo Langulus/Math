@@ -6,28 +6,24 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Common.hpp"
-
-LANGULUS_DEFINE_TRAIT(MapMode, "Mapping mode");
+#include <Langulus/Utils/Values.hpp>
+#include <Langulus/Utils/Literal.hpp>
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   General mapper                                                       
    ///                                                                        
    /// Represents different tactics for mapping two properties to each other  
    ///                                                                        
    struct MapModeType {
-      LANGULUS(POD) true;
-      LANGULUS(NULLIFIABLE) true;
-      LANGULUS(NAME) "MapMode";
-      LANGULUS(INFO) "Mapping mode";
+      using CTTI_POD       = Yup;
+      using CTTI_Nullable  = Yup;
+      using CTTI_Named     = Yes<"MapMode">;
+      using CTTI_Info      = Yes<"Mapping mode">;
 
-      using Type = uint8_t;
-
-      enum Enum : Type {
+      enum Enum : uint8_t {
          // Let context determine the mapping                           
          Auto = 0,
          // Map to the global position (after object transformation)    
@@ -69,9 +65,10 @@ namespace Langulus::Math
       };
 
    protected:
+      using Type = ::std::underlying_type_t<Enum>;
       Type mMode = Enum::Auto;
 
-      LANGULUS_NAMED_VALUES(
+      using CTTI_Values = Values<
          Auto,
          World,
          Model,
@@ -86,7 +83,7 @@ namespace Langulus::Math
          Contour,
          Unfold,
          Custom
-      );
+      >;
 
    public:
       constexpr MapModeType() noexcept = default;
@@ -98,7 +95,6 @@ namespace Langulus::Math
 
    namespace MapMode
    {
-
       constexpr MapModeType Auto          {MapModeType::Auto         };
       constexpr MapModeType World         {MapModeType::World        };
       constexpr MapModeType Model         {MapModeType::Model        };
@@ -113,7 +109,5 @@ namespace Langulus::Math
       constexpr MapModeType Contour       {MapModeType::Contour      };
       constexpr MapModeType Unfold        {MapModeType::Unfold       };
       constexpr MapModeType Custom        {MapModeType::Custom       };
-
-   } // namespace Langulus::Math::MapMode
-
-} // namespace Langulus::Math
+   }
+}

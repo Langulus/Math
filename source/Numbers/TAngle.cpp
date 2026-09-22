@@ -5,12 +5,11 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TAngle.inl"
+#include <Langulus/Numbers/TAngle.inl>
 
 
 namespace Langulus::Math
 {
-
    /// Register angle types                                                   
    void RegisterAngles() {
       (void) MetaOf<Degrees>();
@@ -31,5 +30,4 @@ namespace Langulus::Math
       (void) MetaOf<Rollrf>();
       (void) MetaOf<Rollrd>();
    }
-
-} // namespace Langulus::Math
+}

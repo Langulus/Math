@@ -6,8 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Move.hpp"
-#include "Arithmetic.inl"
+#include <Langulus/Verbs/Move.hpp>
+
+/*#include "Move.hpp"
+#include "Arithmetic.inl"*/
 
 #if 0
    #define VERBOSE_MOVE(...) Logger::Verbose(__VA_ARGS__)

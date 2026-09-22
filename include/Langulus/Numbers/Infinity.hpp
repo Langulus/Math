@@ -6,5 +6,17 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../../../source/Vectors/TVector.inl"
-#include "../../../source/Vectors/TScale.hpp"
+#include <Langulus/CT/DefineConst.hpp>
+
+
+namespace Langulus::Math
+{
+   ///                                                                        
+   ///   Infinity representation for use in descriptors                       
+   ///                                                                        
+   struct Infinity {
+      int mOrder;
+
+      using CTTI_Values = NamedValue<1, "Infinity", "First order of infinity">;
+   };
+}

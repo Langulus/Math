@@ -5,14 +5,13 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TAngle.hpp"
-#include "Level.inl"
-#include "Infinity.hpp"
+#include <Langulus/Numbers/TAngle.inl>
+#include <Langulus/Numbers/Level.inl>
+#include <Langulus/Numbers/Infinity.hpp>
 
 
 namespace Langulus::Math
 {
-
    /// Register number types                                                  
    void RegisterNumbers() {
       RegisterAngles();
@@ -36,5 +35,4 @@ namespace Langulus::Math
       (void) MetaOf<Constants::LevelMin>();
       (void) MetaOf<Constants::LevelDefault>();
    }
-
-} // namespace Langulus::Math
+}

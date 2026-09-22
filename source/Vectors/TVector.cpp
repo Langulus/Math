@@ -5,12 +5,11 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TVector.inl"
+#include <Langulus/Vectors/TVector.inl>
 
 
 namespace Langulus::Math
 {
-
    /// Combines S and T... to form a vector type                              
    ///   @tparam S - size of the vector                                       
    template<size_t S>
@@ -49,5 +48,4 @@ namespace Langulus::Math
 
       (void) MetaOf<Constants::AxisOrigin>();
    }
-
-} // namespace Langulus::Math
+}

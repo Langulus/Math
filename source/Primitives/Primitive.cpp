@@ -5,17 +5,17 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TBox.inl"
-#include "TCone.inl"
-#include "TCylinder.inl"
-#include "TFrustum.inl"
-#include "TLine.inl"
-#include "TPlane.inl"
-#include "TPolygon.hpp"
-#include "TRay.hpp"
-#include "TSphere.hpp"
-#include "TTriangle.hpp"
-#include "TTorus.hpp"
+#include <Langulus/Primitives/TBox.inl>
+#include <Langulus/Primitives/TCone.inl>
+#include <Langulus/Primitives/TCylinder.inl>
+#include <Langulus/Primitives/TFrustum.inl>
+#include <Langulus/Primitives/TLine.inl>
+#include <Langulus/Primitives/TPlane.inl>
+#include <Langulus/Primitives/TPolygon.hpp>
+#include <Langulus/Primitives/TRay.hpp>
+#include <Langulus/Primitives/TSphere.hpp>
+#include <Langulus/Primitives/TTriangle.hpp>
+#include <Langulus/Primitives/TTorus.hpp>
 
 
 namespace Langulus::Math

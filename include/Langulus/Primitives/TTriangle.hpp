@@ -9,84 +9,70 @@
 #include "Primitive.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::Vector>
+   struct TTriangle;
 
-      template<CT::Vector>
-      struct TTriangle;
+   template<CT::Vector>
+   struct TTriangleStrip;
 
-      template<CT::Vector>
-      struct TTriangleStrip;
+   template<CT::Vector>
+   struct TTriangleFan;
 
-      template<CT::Vector>
-      struct TTriangleFan;
+   using Triangle2      = TTriangle<Vec2>;
+   using Triangle3      = TTriangle<Vec3>;
+   using Triangle4      = TTriangle<Vec4>;
 
-      using Triangle2      = TTriangle<Vec2>;
-      using Triangle3      = TTriangle<Vec3>;
-      using Triangle4      = TTriangle<Vec4>;
+   using TriangleStrip2 = TTriangleStrip<Vec2>;
+   using TriangleStrip3 = TTriangleStrip<Vec3>;
+   using TriangleStrip4 = TTriangleStrip<Vec4>;
 
-      using TriangleStrip2 = TTriangleStrip<Vec2>;
-      using TriangleStrip3 = TTriangleStrip<Vec3>;
-      using TriangleStrip4 = TTriangleStrip<Vec4>;
+   using TriangleFan2   = TTriangleFan<Vec2>;
+   using TriangleFan3   = TTriangleFan<Vec3>;
+   using TriangleFan4   = TTriangleFan<Vec4>;
 
-      using TriangleFan2   = TTriangleFan<Vec2>;
-      using TriangleFan3   = TTriangleFan<Vec3>;
-      using TriangleFan4   = TTriangleFan<Vec4>;
+   using Triangle       = Triangle3;
+   using TriangleStrip  = TriangleStrip3;
+   using TriangleFan    = TriangleFan3;
 
-      using Triangle       = Triangle3;
-      using TriangleStrip  = TriangleStrip3;
-      using TriangleFan    = TriangleFan3;
+   /// An abstract triangle, also used as a topology type                     
+   struct Triangle : Topology {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) Math::Triangle;
+      LANGULUS_BASES(Topology);
+   };
 
-   } // namespace Langulus::Math
+   /// An abstract triangle strip, also used as a topology type               
+   struct TriangleStrip : Triangle {
+      LANGULUS(CONCRETE) Math::TriangleStrip;
+      LANGULUS_BASES(Triangle);
+   };
 
-   namespace A
-   {
+   /// An abstract triangle fan, also used as a topology type                 
+   struct TriangleFan : Triangle {
+      LANGULUS(CONCRETE) Math::TriangleFan;
+      LANGULUS_BASES(Triangle);
+   };
+}
 
-      /// An abstract triangle, also used as a topology type                  
-      struct Triangle : Topology {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Triangle;
-         LANGULUS_BASES(Topology);
-      };
+namespace Langulus::CT
+{
+   /// Concept for distinguishing triangle primitives                         
+   template<class...T>
+   concept Triangle = (DerivedFrom<T, Math::Triangle> and ...);
 
-      /// An abstract triangle strip, also used as a topology type            
-      struct TriangleStrip : Triangle {
-         LANGULUS(CONCRETE) Math::TriangleStrip;
-         LANGULUS_BASES(Triangle);
-      };
+   /// Concept for distinguishing triangle strip topologies                   
+   template<class...T>
+   concept TriangleStrip = (DerivedFrom<T, Math::TriangleStrip> and ...);
 
-      /// An abstract triangle fan, also used as a topology type              
-      struct TriangleFan : Triangle {
-         LANGULUS(CONCRETE) Math::TriangleFan;
-         LANGULUS_BASES(Triangle);
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing triangle primitives                      
-      template<class...T>
-      concept Triangle = (DerivedFrom<T, A::Triangle> and ...);
-
-      /// Concept for distinguishing triangle strip topologies                
-      template<class...T>
-      concept TriangleStrip = (DerivedFrom<T, A::TriangleStrip> and ...);
-
-      /// Concept for distinguishing triangle fan topologies                  
-      template<class...T>
-      concept TriangleFan = (DerivedFrom<T, A::TriangleFan> and ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+   /// Concept for distinguishing triangle fan topologies                     
+   template<class...T>
+   concept TriangleFan = (DerivedFrom<T, Math::TriangleFan> and ...);
+}
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   A templated triangle                                                 
    ///                                                                        
@@ -368,6 +354,5 @@ namespace Langulus::Math
       static_assert(MemberCount > 1,
          "Triangles don't exist below two dimensions");
    };
-
-} // namespace Langulus::Math
+}
 

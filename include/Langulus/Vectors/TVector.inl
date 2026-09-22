@@ -8,13 +8,11 @@
 #pragma once
 #include "TVector.hpp"
 #include "../Numbers/TNumber.inl"
-#include "../Verbs/Multiply.inl"
+#include "../Verbs/Multiply.hpp"
 
-#include <type_traits>
-
-#define TARGS(a)     CT::ScalarBased a##T, size_t a##S, int a##D
+#define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
-#define TEMPLATE()   template<CT::ScalarBased T, size_t S, int DEFAULT>
+#define TEMPLATE()   template<CT::Scalar T, size_t S, int DEFAULT>
 #define TME()        TVector<T, S, DEFAULT>
 
 

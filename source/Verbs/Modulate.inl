@@ -6,8 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include <Langulus/Verbs/Lerp.hpp>
+/*
 #include "Modulate.hpp"
-#include "Arithmetic.inl"
+#include "Arithmetic.inl"*/
 
 #if 0
    #define VERBOSE_MOD(...) Logger::Verbose(__VA_ARGS__)

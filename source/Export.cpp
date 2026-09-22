@@ -5,8 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "Export.hpp"
-
+#include <Langulus/Math/Export.hpp>
 #include "Verbs/Add.inl"
 #include "Verbs/Cerp.inl"
 #include "Verbs/Exponent.inl"
@@ -19,46 +18,45 @@
 
 namespace Langulus::Math
 {
-
    using RTTI::MetaVerb;
 
    /// Register traits                                                        
    void RegisterTraits() {
-      (void) MetaOf<Traits::X>();
-      (void) MetaOf<Traits::Y>();
-      (void) MetaOf<Traits::Z>();
-      (void) MetaOf<Traits::W>();
+      (void) MetaOf<Tags::X>();
+      (void) MetaOf<Tags::Y>();
+      (void) MetaOf<Tags::Z>();
+      (void) MetaOf<Tags::W>();
              
-      (void) MetaOf<Traits::U>();
-      (void) MetaOf<Traits::V>();
-      (void) MetaOf<Traits::S>();
-      (void) MetaOf<Traits::T>();
+      (void) MetaOf<Tags::U>();
+      (void) MetaOf<Tags::V>();
+      (void) MetaOf<Tags::S>();
+      (void) MetaOf<Tags::T>();
              
-      (void) MetaOf<Traits::R>();
-      (void) MetaOf<Traits::G>();
-      (void) MetaOf<Traits::B>();
-      (void) MetaOf<Traits::A>();
-      (void) MetaOf<Traits::D>();
+      (void) MetaOf<Tags::R>();
+      (void) MetaOf<Tags::G>();
+      (void) MetaOf<Tags::B>();
+      (void) MetaOf<Tags::A>();
+      (void) MetaOf<Tags::D>();
              
-      (void) MetaOf<Traits::Transform>();
-      (void) MetaOf<Traits::View>();
-      (void) MetaOf<Traits::Projection>();
-      (void) MetaOf<Traits::Solid>();
-      (void) MetaOf<Traits::Pickable>();
-      (void) MetaOf<Traits::Signed>();
-      (void) MetaOf<Traits::Bilateral>();
-      (void) MetaOf<Traits::Static>();
-      (void) MetaOf<Traits::Boundness>();
-      (void) MetaOf<Traits::Relative>();
-      (void) MetaOf<Traits::Place>();
-      (void) MetaOf<Traits::Size>();
-      (void) MetaOf<Traits::Aim>();
-      (void) MetaOf<Traits::Velocity>();
-      (void) MetaOf<Traits::Acceleration>();
-      (void) MetaOf<Traits::Sampler>();
-      (void) MetaOf<Traits::Level>();
-      (void) MetaOf<Traits::Interpolator>();
-      (void) MetaOf<Traits::Perspective>();
+      (void) MetaOf<Tags::Transform>();
+      (void) MetaOf<Tags::View>();
+      (void) MetaOf<Tags::Projection>();
+      (void) MetaOf<Tags::Solid>();
+      (void) MetaOf<Tags::Pickable>();
+      (void) MetaOf<Tags::Signed>();
+      (void) MetaOf<Tags::Bilateral>();
+      (void) MetaOf<Tags::Static>();
+      (void) MetaOf<Tags::Boundness>();
+      (void) MetaOf<Tags::Relative>();
+      (void) MetaOf<Tags::Place>();
+      (void) MetaOf<Tags::Size>();
+      (void) MetaOf<Tags::Aim>();
+      (void) MetaOf<Tags::Velocity>();
+      (void) MetaOf<Tags::Acceleration>();
+      (void) MetaOf<Tags::Sampler>();
+      (void) MetaOf<Tags::Level>();
+      (void) MetaOf<Tags::Interpolator>();
+      (void) MetaOf<Tags::Perspective>();
    }
 
    /// Register verbs                                                         
@@ -72,5 +70,4 @@ namespace Langulus::Math
       (void) MetaOf<Verbs::Cerp>();
       (void) MetaOf<Verbs::Move>();
    }
-
-} // namespace Langulus::Math
+}
