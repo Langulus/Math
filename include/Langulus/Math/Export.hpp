@@ -130,13 +130,11 @@ namespace Langulus::CT
 
 namespace Langulus::Math
 {
-   using Flow::Verb;
-
    LANGULUS_API(MATH) extern void RegisterTraits();
    LANGULUS_API(MATH) extern void RegisterVerbs();
    LANGULUS_API(MATH) extern void RegisterPrimitives();
 
-   namespace Typelists
+   /*namespace Typelists
    {
       using Arithmetic = Types<
          float, double,
@@ -145,5 +143,5 @@ namespace Langulus::Math
       >;
 
       using Fundamental = decltype(Arithmetic{} + Types<bool>{});
-   }
+   }*/
 }
