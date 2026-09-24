@@ -6,10 +6,11 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "Langulus/CT/Able.hpp"
+#include <Langulus/Functions/Arithmetics.hpp>
 #include <Langulus/Verbs/Lerp.hpp>
-
-/*#include "Lerp.hpp"
-#include "Arithmetic.inl"*/
+#include <Langulus/TMany.hpp>
+#include <concepts>
 
 #if 0
    #define VERBOSE_LERP(...) Logger::Verbose(__VA_ARGS__)
@@ -18,116 +19,77 @@
 #endif
 
 
-namespace Langulus::Verbs
+namespace Langulus::CTTI
 {
+   template<class T>
+   concept BuiltinLerpable = requires (T const& t) {
+      {Math::Lerp(t,t,t)} -> ::std::same_as<T>;
+   };
 
-   /// Compile-time check if a verb is implemented in the provided type       
-   ///   @return true if verb is available                                    
-   /*template<CT::Dense T, CT::NotVoid...A>
-   constexpr bool Lerp::AvailableFor() noexcept {
-      if constexpr (sizeof...(A) == 1) {
-         using A0 = FirstOf<A...>;
-         return requires (T& t, Verb& v, A0 a) { t.Lerp(v, a); };
-      }
-      else return false;
-   }
 
-   /// Get the verb functor for the given type and arguments                  
-   ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::NotVoid...A>
-   constexpr auto Lerp::Of() noexcept {
-      if constexpr (CT::Constant<T>) {
-         return [](const void* context, Flow::Verb& verb, A...args) {
-            auto typedContext = static_cast<const T*>(context);
-            typedContext->Lerp(verb, args...);
-         };
-      }
-      else {
-         return [](void* context, Flow::Verb& verb, A...args) {
-            auto typedContext = static_cast<T*>(context);
-            typedContext->Lerp(verb, args...);
-         };
-      }
-   }*/
+   /// Imbue all arithmetic types with the ability to interpolate linearly    
+   //TODO Implement the same ability from Vulkan POV in order to utilize GPU. 
+   //TODO Each module reflects its own verbs. We can inspect these verbs at   
+   //TODO runtime and decide which implementation to use depending on context.
+   LglsImplementAbilitiesForConcept(BuiltinLerpable, LHS) {
+      using Can = Verbs::Lerp;
 
-   /// Execute the modulate verb in a specific context                        
-   ///   @param context - the context to execute in                           
-   ///   @param verb - the verb to execute                                    
-   ///   @return true if verb has been satisfied                              
-   /*template<CT::Dense T>
-   bool Lerp::ExecuteIn(T& context, Verb& verb) {
-      static_assert(Lerp::AvailableFor<T>(),
-         "Verb is not available for this context, this shouldn't be reached by flow");
-      context.Lerp(verb);
-      return verb.IsDone();
-   }*/
-
-   /// Operate in a number of types                                           
-   ///   @tparam ...T - the list of types to operate on                       
-   ///                  order matters!                                        
-   ///   @param context - the original context                                
-   ///   @param common - the base to operate on                               
-   ///   @param verb - the original verb                                      
-   ///   @return if at least one of the types matched verb                    
-   template<CT::NotVoid... T>
-   bool Lerp::OperateOnTypes(const Many& context, const Many& common, Verb& verb) {
-      return ((common.template CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(context, common, verb,
-            [](const T* lhs, const T* rhs) -> T {
-               return Math::Mod(*lhs, *rhs);
-            }
-         )) or ...);
-   }
-
-   /// Operate in a number of types (destructive version)                     
-   ///   @tparam ...T - the list of types to operate on                       
-   ///                  order matters!                                        
-   ///   @param context - the original context                                
-   ///   @param common - the base to operate on                               
-   ///   @param verb - the original verb                                      
-   ///   @return if at least one of the types matched verb                    
-   template<CT::NotVoid... T>
-   bool Lerp::OperateOnTypes(const Many& context, Many& common, Verb& verb) {
-      return ((common.template CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(context, common, verb,
-            [](T* lhs, const T* rhs) {
-               *lhs = Math::Mod(*lhs, *rhs);
-            }
-         )) or ...);
-   }
-
-   /// Default multiply/divide in an immutable context                        
-   ///   @param context - the block to execute in                             
-   ///   @param verb - multiply/divide verb                                   
-   inline bool Lerp::ExecuteDefault(const Many& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb.GetArgument());
-      if (common.template CastsTo<A::Number>()) {
-         return OperateOnTypes<
-            Float, Double,
-            int32_t, uint32_t, int64_t, uint64_t,
-            int8_t, uint8_t, int16_t, uint16_t
-         >(context, common, verb);
+      static void Inner(LHS& lhs, LHS const* raw, Langulus::Real mass, size_t count) {
+         switch(count) {
+         case 1:
+            lhs = *raw; break;
+         default:
+            lhs = Math::Lerp(raw[0], raw[1], mass); break;
+         }
       }
 
-      return false;
-   }
+      /// Destructive version, LHS is mutable. This won't allocate unless     
+      /// conversion occurs.                                                  
+      static bool Default(LHS& lhs, CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const& rhs = verb.GetArgument();
+         if (rhs.template IsSame<LHS>()) {
+            // Easy path - types are the same                           
+            auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
+            Inner(lhs, rhs_typed.GetRaw(), mass, rhs_typed.GetCount());
+            return true;
+         }
+         else {
+            // Hard path - we must attempt conversion to LHS            
+            auto converted = rhs.template ConvertTo<LHS>();
+            if (not converted)
+               return false;
 
-   /// Default multiply/divide in mutable context                             
-   ///   @param context - the block to execute in                             
-   ///   @param verb - multiply/divide verb                                   
-   inline bool Lerp::ExecuteDefault(Many& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb.GetArgument());
-      if (common.template CastsTo<A::Number>()) {
-         return OperateOnTypes<
-            Float, Double,
-            int32_t, uint32_t, int64_t, uint64_t,
-            int8_t, uint8_t, int16_t, uint16_t
-         >(context, common, verb);
+            Inner(lhs, converted.GetRaw(), mass, converted.GetCount());
+            return true;
+         }
       }
+       
+      /// Non-destructive version, LHS is constant. Will allocate if          
+      /// conversion occurs, or if verb output isn't reserved enough.         
+      static bool Default(LHS const& lhs, CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const& rhs = verb.GetArgument();
+         auto result = lhs;
+         if (rhs.template IsSame<LHS>()) {
+            // Easy path - types are the same                           
+            auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
+            Inner(result, rhs_typed.GetRaw(), mass, rhs_typed.GetCount());
+            verb << result;
+            return true;
+         }
+         else {
+            // Hard path - we must attempt conversion to LHS            
+            auto converted = rhs.template ConvertTo<LHS>();
+            if (not converted)
+               return false;
 
-      return false;
-   }
-
-} // namespace Langulus::Verbs
+            Inner(result, converted.GetRaw(), mass, converted.GetCount());
+            verb << result;
+            return true;
+         }
+      }
+   };
+}
 
 #undef VERBOSE_LERP

@@ -22,11 +22,12 @@
 namespace Langulus::CTTI
 {
    template<class T>
-   concept BuiltinCerpable = requires (T const& t) { {Math::Cerp(t,t,t,t,t)} -> ::std::same_as<T>; };
+   concept BuiltinCerpable = requires (T const& t) {
+      {Math::Cerp(t,t,t,t,t)} -> ::std::same_as<T>;
+   };
 
 
-   /// Imbue all arithmetic types with the ability to add and subtract        
-   /// each other.                                                            
+   /// Imbue all arithmetic types with the ability to interpolate cubicly     
    //TODO Implement the same ability from Vulkan POV in order to utilize GPU. 
    //TODO Each module reflects its own verbs. We can inspect these verbs at   
    //TODO runtime and decide which implementation to use depending on context.
@@ -38,7 +39,7 @@ namespace Langulus::CTTI
          case 1:
             lhs = *raw; break;
          case 2:
-            lhs = Math::Lerp(raw[0], raw[1], mass); break;
+            lhs = Math::Cerp(raw[0], raw[0], raw[1], raw[1], mass); break;
          case 3:
             lhs = Math::Cerp(
                raw[0],

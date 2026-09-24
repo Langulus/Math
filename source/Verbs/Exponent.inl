@@ -7,6 +7,8 @@
 ///                                                                           
 #pragma once
 #include <Langulus/Verbs/Exponent.hpp>
+#include <Langulus/Verbs/Multiply.hpp>
+#include <Langulus/TMany.hpp>
 
 #if 0
    #define VERBOSE_EXP(...) Logger::Verbose(__VA_ARGS__)
@@ -15,100 +17,94 @@
 #endif
 
 
-namespace Langulus::Verbs
+namespace Langulus::CTTI
 {
-   /// Compile-time check if a verb is implemented in the provided type       
-   ///   @return true if verb is available                                    
-   /*template<CT::Dense T, CT::NotVoid...A>
-   constexpr bool Exponent::AvailableFor() noexcept {
-      if constexpr (sizeof...(A) == 0)
-         return requires (T& t, Verb& v) { t.Exponent(v); };
-      else
-         return requires (T& t, Verb& v, A...a) { t.Exponent(v, a...); };
-   }
+   template<class T>
+   concept BuiltinExponentiable = requires (T const& t) {
+      {::std::pow(t,t)} -> ::std::same_as<T>;
+   };
 
-   /// Get the verb functor for the given type and arguments                  
-   ///   @return the function, or nullptr if not available                    
-   template<CT::Dense T, CT::NotVoid...A>
-   constexpr auto Exponent::Of() noexcept {
-      if constexpr (CT::Constant<T>) {
-         return [](const void* context, Flow::Verb& verb, A...args) {
-            auto typedContext = static_cast<const T*>(context);
-            typedContext->Exponent(verb, args...);
-         };
+   /// Imbue all arithmetic types with the ability to exponentiate or root.   
+   /// Tetration included via mass modifiers.                                 
+   //TODO Implement the same ability from Vulkan POV in order to utilize GPU. 
+   //TODO Each module reflects its own verbs. We can inspect these verbs at   
+   //TODO runtime and decide which implementation to use depending on context.
+   LglsImplementAbilitiesForConcept(BuiltinExponentiable, LHS) {
+      using Can = Verbs::Exponent;
+
+      /// Destructive version, LHS is mutable. This won't allocate unless     
+      /// conversion occurs.                                                  
+      static bool Default(LHS& lhs, CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const& rhs = verb.GetArgument();
+         if (rhs.template IsSame<LHS>()) {
+            // Easy path - types are the same                           
+            auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
+            Inner(mass, lhs, rhs_typed);
+            return true;
+         }
+         else {
+            // Hard path - we must attempt conversion to LHS            
+            auto converted = rhs.template ConvertTo<LHS>();
+            if (not converted)
+               return false;
+
+            Inner(mass, lhs, converted);
+            return true;
+         }
       }
-      else {
-         return [](void* context, Flow::Verb& verb, A...args) {
-            auto typedContext = static_cast<T*>(context);
-            typedContext->Exponent(verb, args...);
-         };
+       
+      /// Non-destructive version, LHS is constant. Will allocate if          
+      /// conversion occurs, or if verb output isn't reserved enough.         
+      static bool Default(LHS const& lhs, CT::Executable auto& verb) {
+         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const& rhs = verb.GetArgument();
+         auto result = lhs;
+         if (rhs.template IsSame<LHS>()) {
+            // Easy path - types are the same                           
+            auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
+            Inner(mass, result, rhs_typed);
+            verb << result;
+            return true;
+         }
+         else {
+            // Hard path - we must attempt conversion to LHS            
+            auto converted = rhs.template ConvertTo<LHS>();
+            if (not converted)
+               return false;
+
+            Inner(mass, result, converted);
+            verb << result;
+            return true;
+         }
       }
-   }*/
 
-   /// Execute the exponentiation/root verb in a specific context             
-   ///   @param context - the context to execute in                           
-   ///   @param verb - the verb to execute                                    
-   ///   @return true if verb has been satisfied                              
-   /*template<CT::Dense T>
-   bool Exponent::ExecuteIn(T& context, Verb& verb) {
-      static_assert(Exponent::AvailableFor<T>(),
-         "Verb is not available for this context, this shouldn't be reached by flow");
-      context.Exponent(verb);
-      return verb.IsDone();
-   }*/
-
-   /// Operate in a number of types                                           
-   ///   @tparam ...T - the list of types to operate on                       
-   ///                  order matters!                                        
-   ///   @param context - the original context                                
-   ///   @param common - the base to operate on                               
-   ///   @param verb - the original verb                                      
-   ///   @return if at least one of the types matched verb                    
-   template<CT::NotVoid... T>
-   bool Exponent::OperateOnTypes(const Many& context, const Many& common, Verb& verb) {
-      return ((common.template CastsTo<T, true>()
-         and ArithmeticVerb::Vector<T>(context, common, verb,
-            verb.GetMass() < 0
-               ? [](const T* lhs, const T* rhs) noexcept -> T {
-                  return static_cast<T>(::std::pow(*lhs, T {1} / *rhs));
+   private:
+      /// Common helper                                                       
+      static void Inner(LHS const mass, LHS& lhs, TMany<LHS> const& rhs) noexcept {
+         if (mass > 0) {
+            // Raise to a power                                         
+            for (LHS const& i : rhs) {
+               auto m = mass;
+               while(m > 0) {
+                  lhs = ::std::pow(lhs, i);
+                  m -= 1;
                }
-               : [](const T* lhs, const T* rhs) noexcept -> T {
-                  return static_cast<T>(::std::pow(*lhs, *rhs));
+            }
+         }
+         else {
+            // Root                                                     
+            for (LHS const& i : rhs) {
+               auto m = mass;
+               auto inverse = LHS{1} / i;
+               while(m < 0) {
+                  lhs = ::std::pow(lhs, inverse);
+                  m += 1;
                }
-         )) or ...);
-   }
-
-   /// Default power/root in an immutable context                             
-   ///   @param context - the block to execute in                             
-   ///   @param verb - power/root verb                                        
-   inline bool Exponent::ExecuteDefault(const Many& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb.GetArgument());
-      if (common.template CastsTo<A::Number>()) {
-         return OperateOnTypes<
-            Float, Double,
-            int32_t, uint32_t, int64_t, uint64_t,
-            int8_t, uint8_t, int16_t, uint16_t
-         >(context, common, verb);
+            }
+         }
       }
-
-      return false;
-   }
-
-   /// Default power/root in mutable context                                  
-   ///   @param context - the block to execute in                             
-   ///   @param verb - power/root verb                                        
-   inline bool Exponent::ExecuteDefault(Many& context, Verb& verb) {
-      const auto common = context.ReinterpretAs(verb.GetArgument());
-      if (common.template CastsTo<A::Number>()) {
-         return OperateOnTypes<
-            Float, Double,
-            int32_t, uint32_t, int64_t, uint64_t,
-            int8_t, uint8_t, int16_t, uint16_t
-         >(context, common, verb);
-      }
-
-      return false;
-   }
+   };
 }
 
 #undef VERBOSE_EXP
