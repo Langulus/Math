@@ -8,9 +8,6 @@
 #pragma once
 #include <Langulus/Verbs/Exponent.hpp>
 
-/*#include "Exponent.hpp"
-#include "Arithmetic.inl"*/
-
 #if 0
    #define VERBOSE_EXP(...) Logger::Verbose(__VA_ARGS__)
 #else
@@ -20,7 +17,6 @@
 
 namespace Langulus::Verbs
 {
-
    /// Compile-time check if a verb is implemented in the provided type       
    ///   @return true if verb is available                                    
    /*template<CT::Dense T, CT::NotVoid...A>
@@ -113,7 +109,6 @@ namespace Langulus::Verbs
 
       return false;
    }
-
-} // namespace Langulus::Verbs
+}
 
 #undef VERBOSE_EXP
