@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include <Langulus/Math/Export.hpp>
+#include <Langulus/Math/Tags.hpp>
 #include "Verbs/Add.inl"
 #include "Verbs/Cerp.inl"
 #include "Verbs/Exponent.inl"

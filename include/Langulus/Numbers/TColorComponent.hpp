@@ -6,21 +6,20 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../Vectors/TVector.hpp"
+#include "TNumber.hpp"
+#include "Dimension.hpp"
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Color channel                                                        
    ///                                                                        
    template<CT::Number T, CT::Dimension D>
    struct TColorComponent : TNumber<T, TColorComponent<T, D>> {
-      LANGULUS(TYPED) T;
-      using Base = TNumber<T, TColorComponent<T, D>>;
-      using Dimension = D;
+      using CTTI_Typed  = T;
+      using Base        = TNumber<T, TColorComponent<T, D>>;
+      using Dimension   = D;
       using Base::Base;
    };
-
-} // namespace Langulus::Math
+}

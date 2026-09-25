@@ -6,7 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Langulus/Typenav.hpp>
+//#include <Langulus/Typenav.hpp>
 #include <Langulus/CT/POD.hpp>
 #include <Langulus/CT/Nullable.hpp>
 #include <Langulus/CT/Suffix.hpp>
@@ -40,12 +40,12 @@ namespace Langulus::Math
    ///   7. Allows for infinite precision numbers, floating bar, etc.         
    ///      alternatives to seamless integrate everywhere.                    
    #pragma pack(push, 1)
-   template<CT::Dense T, CT::Dense WRAPPER = T>
+   template<class T, class WRAPPER = T>
    struct TNumber {
       using CTTI_Number       = Yup;
       using CTTI_CustomNumber = Yup;
       using CTTI_Typed        = T;
-      using CTTI_Suffix       = Maybe<SuffixOf<T>()>;
+      using CTTI_Suffix       = Yes<SuffixOf<T>()>;
       using CTTI_POD          = Maybe<CT::POD<T>>;
       using CTTI_Nullable     = Maybe<CT::Nullable<T>>;
       using CTTI_Real         = Maybe<CT::Real<T>>;

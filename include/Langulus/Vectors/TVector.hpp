@@ -16,6 +16,7 @@
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequence.hpp>
 #include <Langulus/Utils/Literal.hpp>
+#include <Langulus/TOwn.hpp>
 
 #define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
@@ -25,8 +26,6 @@
 
 namespace Langulus::Math
 {
-   //LANGULUS_API(MATH) extern void RegisterVectors();
-
    template<CT::Scalar T, CT::Dimension D>
    struct TVectorComponent;
 
@@ -151,7 +150,7 @@ namespace Langulus::Math
       union {
          TYPE all[1] {};
          union {
-            Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
+            Own<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
          };
       };
       using CTTI_Members = Members<&TVectorBase::x>;
@@ -208,10 +207,10 @@ namespace Langulus::Math
          TYPE all[2] {};
          struct {
             union {
-               Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
+               Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
             };
             union {
-               Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+               Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
             };
          };
       };
@@ -268,13 +267,13 @@ namespace Langulus::Math
          TYPE all[3] {};
          struct {
             union {
-               Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
+               Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
             };
             union {
-               Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+               Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
             };
             union {
-               Tag<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s;
+               Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s;
             };
          };
       };
@@ -328,10 +327,10 @@ namespace Langulus::Math
       union {
          TYPE all[4] {};
          struct {
-            union { Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
-            union { Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
-            union { Tag<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
-            union { Tag<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
+            union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
+            union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
+            union { Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
+            union { Own<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
          };
       };
       using CTTI_Members = Members<
@@ -379,10 +378,10 @@ namespace Langulus::Math
       union {
          TYPE all[S] {};
          struct {
-            union { Tag<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
-            union { Tag<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
-            union { Tag<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
-            union { Tag<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
+            union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
+            union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
+            union { Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
+            union { Own<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
 
             // The remaining elements, that don't have custom names     
             TYPE tail[S - 4];
@@ -445,7 +444,7 @@ namespace Langulus::Math
 
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TVector>();
+         constexpr auto defaultClassName = LastCppNameOf<TVector>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -471,18 +470,12 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
-      LANGULUS(ABSTRACT) false;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(NULLIFIABLE) DEFAULT == 0;
-      LANGULUS(TYPED) T;
-      LANGULUS_BASES(
-         A::VectorOfSize<S>, 
-         A::VectorOfType<T>,
-         Base, T
-      );
-      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
-      LANGULUS_VERBS(Verbs::Multiply);
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Nullable  = Maybe<DEFAULT == 0>;
+      using CTTI_Typed     = T;
+      using CTTI_Bases     = Types<VectorOfSize<S>, VectorOfType<T>, Base, T>;
 
       // Make TVector match the CT::VectorBased concept                 
       static constexpr bool CTTI_VectorTrait = true;
@@ -499,7 +492,7 @@ namespace Langulus::Math
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
 
-      template<CT::ScalarBased N, CT::Dimension D>
+      template<CT::Scalar N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
       TVector(const CT::SIMD auto&)  noexcept;
@@ -511,25 +504,25 @@ namespace Langulus::Math
       constexpr auto operator = (const CT::Vector auto&) noexcept -> TVector&;
       constexpr auto operator = (const CT::Scalar auto&) noexcept -> TVector&;
 
-      template<CT::ScalarBased N, CT::Dimension D>
+      template<CT::Scalar N, CT::Dimension D>
       constexpr auto operator = (const TVectorComponent<N, D>&) noexcept -> TVector&;
 
       ///                                                                     
       ///   Verbs                                                             
       ///                                                                     
-      void Multiply(Verb&) const;
-      void Multiply(Verb&);
+      //void Multiply(Verb&) const;
+      //void Multiply(Verb&);
 
       ///                                                                     
       ///   Interpretation                                                    
       ///                                                                     
-      template<CT::Serial AS, class TOKEN>
-      AS Serialize() const;
+      //template<CT::Serial AS, class TOKEN>
+      //AS Serialize() const;
 
-      explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;
+      //explicit operator Annies::Text() const;
+      //explicit operator Flow::Code() const;
 
-      static constexpr decltype(auto) Adapt(const CT::ScalarBased auto&) noexcept;
+      static constexpr decltype(auto) Adapt(const CT::Scalar auto&) noexcept;
 
       ///                                                                     
       ///   Access                                                            
@@ -637,12 +630,12 @@ namespace Langulus::Math
       template<class AS, bool NORMALIZE = CT::Real<AS> and not CT::Real<T>>
       constexpr auto AsCast() const noexcept -> TVector<AS, S>;
 
-      template<size_t = Math::Min(S, 3u)>
+      template<size_t = S < 3u ? S : 3u>
       constexpr auto Volume() const noexcept;
 
-      constexpr auto Dot(const CT::VectorBased auto&) const noexcept -> T;
+      constexpr auto Dot(const CT::Vector auto&) const noexcept -> T;
 
-      template<CT::VectorBased V> requires (S >= 3 and CountOf<V> >= 3)
+      template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
       constexpr auto Cross(const V&) const noexcept -> TVector<T, 3>;
 
       constexpr auto Normalize() const noexcept -> TVector requires (S > 1);
@@ -682,7 +675,7 @@ namespace Langulus::Math
       constexpr explicit operator T&   () const noexcept requires (S == 1);
       constexpr explicit operator bool () const noexcept;
 
-      template<CT::ScalarBased N> requires (S == 1 and CT::Convertible<N, T>)
+      template<CT::Scalar N> requires (S == 1 and CT::Convertible<N, T>)
       /*explicit*/ constexpr operator N () const noexcept;
       
       template<size_t ALTS> requires (ALTS < S)
@@ -712,7 +705,7 @@ namespace Langulus::Math
       ///                                                                     
       template<TARGS(V) = 0, size_t...I>
       struct TProxyArray : TVector<VT, sizeof...(I), VD> {
-         LANGULUS(ACT_AS) void;
+         using CTTI_ReflectAs = void;
          static_assert(sizeof...(I) > 1, "Invalid proxy array size");
          static constexpr bool CTTI_VectorTrait = false;
          static constexpr bool CTTI_ProxyArray = true;

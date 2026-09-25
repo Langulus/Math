@@ -34,15 +34,6 @@ namespace Langulus::CTTI
    LglsImplementAbilitiesForConcept(BuiltinLerpable, LHS) {
       using Can = Verbs::Lerp;
 
-      static void Inner(LHS& lhs, LHS const* raw, Langulus::Real mass, size_t count) {
-         switch(count) {
-         case 1:
-            lhs = *raw; break;
-         default:
-            lhs = Math::Lerp(raw[0], raw[1], mass); break;
-         }
-      }
-
       /// Destructive version, LHS is mutable. This won't allocate unless     
       /// conversion occurs.                                                  
       static bool Default(LHS& lhs, CT::Executable auto& verb) {
@@ -87,6 +78,16 @@ namespace Langulus::CTTI
             Inner(result, converted.GetRaw(), mass, converted.GetCount());
             verb << result;
             return true;
+         }
+      }
+
+   private:
+      static void Inner(LHS& lhs, LHS const* raw, Langulus::Real mass, size_t count) {
+         switch(count) {
+         case 1:
+            lhs = *raw; break;
+         default:
+            lhs = Math::Lerp(raw[0], raw[1], mass); break;
          }
       }
    };

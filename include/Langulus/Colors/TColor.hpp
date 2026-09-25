@@ -9,188 +9,167 @@
 #include "../Numbers/TColorComponent.hpp"
 
 
+namespace Langulus::Math
+{
+   template<CT::Vector>
+   struct TColor;
+
+   template<CT::Number, CT::Dimension>
+   struct TColorComponent;
+
+   using RGB24   = TColor<Vec3u8>;
+   using RGBA32  = TColor<Vec4u8>;
+   using RGBA    = RGBA32;
+   using RGB     = RGB24;
+
+   using RGB96   = TColor<Vec3f>;
+   using RGBA128 = TColor<Vec4f>;
+   using RGBAf   = RGBA128;
+   using RGBf    = RGB96;
+
+   using Red8    = TColorComponent<uint8_t,  Tags::R>;
+   using Green8  = TColorComponent<uint8_t,  Tags::G>;
+   using Blue8   = TColorComponent<uint8_t,  Tags::B>;
+   using Alpha8  = TColorComponent<uint8_t,  Tags::A>;
+
+   using Red32   = TColorComponent<float,    Tags::R>;
+   using Green32 = TColorComponent<float,    Tags::G>;
+   using Blue32  = TColorComponent<float,    Tags::B>;
+   using Alpha32 = TColorComponent<float,    Tags::A>;
+
+   using Depth16 = TColorComponent<uint16_t, Tags::D>;
+   using Depth32 = TColorComponent<float,    Tags::D>;
+
+   using Red     = Red8;
+   using Green   = Green8;
+   using Blue    = Blue8;
+   using Alpha   = Alpha8;
+   using Depth   = Depth32;
+}
+
 namespace Langulus
 {
-   namespace Math
-   {
+   /// Abstract color                                                         
+   struct Color {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Math::RGBA;
+   };
 
-      LANGULUS_API(MATH) extern void RegisterColors();
+   /// Abstract color of specific size                                        
+   template<size_t S>
+   struct ColorOfSize : Color {
+      using CTTI_Concrete  = Math::TColor<Math::TVector<::std::uint8_t, S>>;
+      using CTTI_Bases     = Color;
+      using CTTI_Array     = Yes<S>;
+      static_assert(S > 0, "Color size must be greater than zero");
+   };
 
-      template<CT::VectorBased>
-      struct TColor;
+   /// Abstract color of specific type                                        
+   template<CT::Number T>
+   struct ColorOfType : Color {
+      using CTTI_Concrete  = Math::TColor<Math::TVector<T, 4>>;
+      using CTTI_Bases     = Color;
+      using CTTI_Typed     = T;
+   };
+}
 
-      template<CT::Number, CT::Dimension>
-      struct TColorComponent;
-
-      using RGB24   = TColor<Vec3u8>;
-      using RGBA32  = TColor<Vec4u8>;
-      using RGBA    = RGBA32;
-      using RGB     = RGB24;
-
-      using RGB96   = TColor<Vec3f>;
-      using RGBA128 = TColor<Vec4f>;
-      using RGBAf   = RGBA128;
-      using RGBf    = RGB96;
-
-      using Red8    = TColorComponent<::std::uint8_t, Traits::R>;
-      using Green8  = TColorComponent<::std::uint8_t, Traits::G>;
-      using Blue8   = TColorComponent<::std::uint8_t, Traits::B>;
-      using Alpha8  = TColorComponent<::std::uint8_t, Traits::A>;
-
-      using Red32   = TColorComponent<Float, Traits::R>;
-      using Green32 = TColorComponent<Float, Traits::G>;
-      using Blue32  = TColorComponent<Float, Traits::B>;
-      using Alpha32 = TColorComponent<Float, Traits::A>;
-
-      using Depth16 = TColorComponent<::std::uint16_t, Traits::D>;
-      using Depth32 = TColorComponent<Float, Traits::D>;
-
-      using Red     = Red8;
-      using Green   = Green8;
-      using Blue    = Blue8;
-      using Alpha   = Alpha8;
-      using Depth   = Depth32;
-
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// color                                                               
-      struct Color {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::RGBA;
-      };
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// color of the same size                                              
-      template<size_t S>
-      struct ColorOfSize : Color {
-         LANGULUS(CONCRETE) Math::TColor<Math::TVector<::std::uint8_t, S>>;
-         LANGULUS_BASES(Color);
-         static constexpr size_t MemberCount {S};
-         static_assert(S > 0, "Color size must be greater than zero");
-      };
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// color of the same type                                              
-      template<CT::Number T>
-      struct ColorOfType : Color {
-         LANGULUS(CONCRETE) Math::TColor<Math::TVector<T, 4>>;
-         LANGULUS_BASES(Color);
-         LANGULUS(TYPED) T;
-      };
-
-   } // namespace Langulus::A
-
-   namespace Math
-   {
-
-      ///                                                                     
-      ///   Templated color                                                   
-      ///                                                                     
-      /// Unlike conventional vectors, color vectors that are based on        
-      /// integer types utilize saturation arithmetics                        
-      ///                                                                     
+namespace Langulus::Math
+{
+   ///                                                                        
+   ///   Templated color                                                      
+   ///                                                                        
+   /// Unlike ordinary vectors, color vectors are based on integer types      
+   /// and utilize saturation arithmetics.                                    
+   ///                                                                        
    #pragma pack(push, 1)
-      template<CT::VectorBased T>
-      struct TColor : T {
-         using InnerT = TypeOf<T>;
+   template<CT::Vector T>
+   struct TColor : T {
+      using InnerT = TypeOf<T>;
 
-         using T::r;
-         using T::red;
-         using T::g;
-         using T::green;
-         using T::b;
-         using T::blue;
-         using T::a;
-         using T::alpha;
+      using T::r;
+      using T::red;
+      using T::g;
+      using T::green;
+      using T::b;
+      using T::blue;
+      using T::a;
+      using T::alpha;
 
-         using T::all;
+      using T::all;
 
-         static constexpr InnerT Default = T::Default;
-         static constexpr size_t MemberCount = T::MemberCount;
-         static constexpr bool IsReal = T::IsReal;
-         static constexpr bool CTTI_ColorTrait = true;
-         static constexpr bool CTTI_SaturatedTrait = true;
+      static constexpr InnerT Default = T::Default;
+      static constexpr size_t MemberCount = T::MemberCount;
+      static constexpr bool IsReal = T::IsReal;
+      static constexpr bool CTTI_ColorTrait = true;
+      static constexpr bool CTTI_SaturatedTrait = true;
 
-         static_assert(MemberCount > 1 and MemberCount < 5,
-            "Invalid number of channels");
+      static_assert(MemberCount > 1 and MemberCount < 5,
+         "Invalid number of channels");
 
-      private:
-         /// Custom name generator at compile-time for colors                 
-         static constexpr auto GenerateToken() {
-            constexpr auto defaultClassName = RTTI::LastCppNameOf<TColor>();
-            ::std::array<char, defaultClassName.size() + 1> name {};
-            ::std::size_t offset {};
+   private:
+      /// Custom name generator at compile-time for colors                    
+      static constexpr auto GenerateToken() {
+         constexpr auto defaultClassName = RTTI::LastCppNameOf<TColor>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
 
-            // Write prefix                                             
-            switch (MemberCount) {
-            case 2:
-               for (auto i : "Grayscale")
-                  name[offset++] = i;
-               break;
-            case 3:
-               for (auto i : "RGB")
-                  name[offset++] = i;
-               break;
-            case 4:
-               for (auto i : "RGBA")
-                  name[offset++] = i;
-               break;
-            }
-
-            // Write suffix                                             
-            --offset;
-
-            if constexpr (not CT::Same<InnerT, ::std::uint8_t>) {
-               if constexpr (CT::Same<InnerT, float>)
-                  name[offset++] = 'f';
-               else if constexpr (CT::Same<InnerT, double>)
-                  name[offset++] = 'd';
-               else for (auto i : SuffixOf<InnerT>())
-                  name[offset++] = i;
-            }
-            return name;
+         // Write prefix                                                
+         switch (MemberCount) {
+         case 2:
+            for (auto i : "Grayscale")
+               name[offset++] = i;
+            break;
+         case 3:
+            for (auto i : "RGB")
+               name[offset++] = i;
+            break;
+         case 4:
+            for (auto i : "RGBA")
+               name[offset++] = i;
+            break;
          }
 
-      public:
-         LANGULUS(NAME) GenerateToken();
-         LANGULUS_BASES(
-            A::ColorOfSize<MemberCount>, 
-            A::ColorOfType<InnerT>,
-            T
-         );
+         // Write suffix                                                
+         --offset;
 
-      public:
-         constexpr TColor() noexcept;
+         if constexpr (not CT::Same<InnerT, ::std::uint8_t>) {
+            if constexpr (CT::Same<InnerT, float>)
+               name[offset++] = 'f';
+            else if constexpr (CT::Same<InnerT, double>)
+               name[offset++] = 'd';
+            else for (auto i : SuffixOf<InnerT>())
+               name[offset++] = i;
+         }
+         return name;
+      }
 
-         template<class T1>
-         requires ::std::constructible_from<T, T1>
-         constexpr TColor(T1&&) noexcept;
+   public:
+      using CTTI_Named = Yes<GenerateToken()>;
+      using CTTI_Bases = Types<ColorOfSize<MemberCount>, ColorOfType<InnerT>, T>;
 
-         template<class T1, class...TN>
-         requires ::std::constructible_from<T, T1, TN...>
-         constexpr TColor(T1&&, TN&&...) noexcept;
+   public:
+      constexpr TColor() noexcept;
 
-         constexpr TColor(Logger::Color) noexcept;
-         TColor(Describe&&);
+      template<class T1> requires ::std::constructible_from<T, T1>
+      constexpr TColor(T1&&) noexcept;
 
-         using T::Get;
-         using T::operator =;
+      template<class T1, class...TN> requires ::std::constructible_from<T, T1, TN...>
+      constexpr TColor(T1&&, TN&&...) noexcept;
 
-         template<CT::Number ALTT, CT::Dimension D>
-         constexpr auto operator = (const TColorComponent<ALTT, D>&) noexcept -> TColor&;
+      constexpr TColor(Logger::Color) noexcept;
+      TColor(Describe&&);
 
-         explicit operator Flow::Code() const;
-         explicit operator Annies::Text() const;
-         explicit operator Logger::Color() const;
+      using T::Get;
+      using T::operator =;
 
-         constexpr void MakeOpaque() noexcept;
-      };
-      #pragma pack(pop)
+      template<CT::Number ALTT, CT::Dimension D>
+      constexpr auto operator = (const TColorComponent<ALTT, D>&) noexcept -> TColor&;
 
-   } // namespace Langulus::Math
+      explicit operator Flow::Code() const;
+      explicit operator Annies::Text() const;
+      explicit operator Logger::Color() const;
 
-} // namespace Langulus
+      constexpr void MakeOpaque() noexcept;
+   };
+   #pragma pack(pop)
+}
