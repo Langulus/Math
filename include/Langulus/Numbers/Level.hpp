@@ -7,11 +7,11 @@
 ///                                                                           
 #pragma once
 #include "TNumber.hpp"
+#include <Langulus/CT/DefineConst.hpp>
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Physical levels of simulation and instancing                         
    ///                                                                        
@@ -22,14 +22,14 @@ namespace Langulus::Math
    /// Level of zero in 3D space can contain (10^3)^3 human units.            
    /// Level of seven in 3D space can contain (10^3)^3 galaxy units.          
    /// The absolute amount of units in a level is 10^(3*(o - omin))           
-   /// An entity might exist in multiple levels at the same time.             
+   ///   An entity might exist in multiple levels at the same time.           
    /// For example, a planet in planetary level can also exist as terrain on  
    /// human level, or a dot on galaxy level.                                 
-   /// Generally, stuff in higher levels is more likely to affect stuff in    
+   ///   Generally, stuff in higher levels is more likely to affect stuff in  
    /// lower levels.                                                          
    ///                                                                        
    ///                                                                        
-   /// An example of 1D level subdivisions:                                   
+   /// An example of an abstract 1D level subdivisions:                       
    ///   Planets  |                       |                       |           
    ///            +-----------------------+-----------------------+           
    ///   Humans   |           |           |           |           |           
@@ -120,6 +120,24 @@ namespace Langulus::Math
       constexpr static Level GetRefPoint(const Level&, const Level&) noexcept;
       constexpr Real GetOffset() const noexcept;
       constexpr size_t GetOffsetInt() const noexcept;
-   };
 
-} // namespace Langulus::Math
+      using CTTI_Values = Types<
+         NamedValue<Human,    "Level::Human",      "A canonical human level">,
+         NamedValue<Asteroid, "Level::Asteroid",   "A canonical asteroid level">,
+         NamedValue<Planet,   "Level::Planet",     "A canonical planetary level">,
+         NamedValue<System,   "Level::System",     "A canonical star system level">,
+         NamedValue<Galaxy,   "Level::Galaxy",     "A canonical galactic level">,
+         NamedValue<Universe, "Level::Universe",   "A canonical observable universe level">,
+         NamedValue<Cell,     "Level::Cell",       "A canonical cellular level">,
+         NamedValue<Virus,    "Level::Virus",      "A canonical viral level">,
+         NamedValue<Atom,     "Level::Atom",       "A canonical atomic level">,
+         NamedValue<Neutron,  "Level::Neutron",    "A canonical neutron level">,
+         NamedValue<Quark,    "Level::Quark",      "A canonical quark level">,
+         NamedValue<Neutrino, "Level::Neutrino",   "A canonical neutrino level">,
+         NamedValue<Planck,   "Level::Planck",     "A canonical Planck level">,
+         NamedValue<Max,      "Level::Max",        "The biggest possible level">,
+         NamedValue<Min,      "Level::Min",        "The smallest possible level">,
+         NamedValue<Default,  "Level::Default",    "The default level">
+      >;
+   };
+}

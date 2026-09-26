@@ -13,6 +13,7 @@
 
 #include "../Numbers/Dimension.hpp"
 #include <Langulus/CT/Scalar.hpp>
+#include <Langulus/CT/CustomVector.hpp>
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequence.hpp>
 #include <Langulus/Utils/Literal.hpp>
@@ -139,289 +140,306 @@ namespace Langulus::Math
    
    #pragma pack(push, 1)
 
-   template<size_t, CT::Scalar, int DEFAULT>
-   struct TVectorBase;
+   namespace Inner
+   {
+      template<size_t, CT::Scalar, int DEFAULT>
+      struct TVectorBase;
 
 
-   ///                                                                        
-   /// 1D vector base                                                         
-   template<CT::Scalar TYPE, int DEFAULT>
-   struct TVectorBase<1, TYPE, DEFAULT> {
-      union {
-         TYPE all[1] {};
+      ///                                                                     
+      /// 1D vector base                                                      
+      template<CT::Scalar TYPE, int DEFAULT>
+      struct TVectorBase<1, TYPE, DEFAULT> {
          union {
-            Own<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
-         };
-      };
-      using CTTI_Members = Members<&TVectorBase::x>;
-
-      static constexpr TYPE y       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE second  = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE g       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE green   = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE v       = static_cast<TYPE>(DEFAULT);
-
-      static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE blue    = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE s       = static_cast<TYPE>(DEFAULT);
-
-      static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
-
-      void tail() { static_assert(false, "1D vector doesn't have a tail"); }
-
-      constexpr TVectorBase() noexcept {
-         all[0] = static_cast<TYPE>(DEFAULT);
-      }
-
-      constexpr TVectorBase(const TVectorBase& other) noexcept {
-         all[0] = other.all[0];
-      }
-
-      constexpr TVectorBase(TVectorBase&& other) noexcept {
-         all[0] = other.all[0];
-      }
-
-      constexpr auto& operator = (const TVectorBase& other) noexcept {
-         all[0] = other.all[0];
-         return *this;
-      }
-
-      constexpr auto& operator = (TVectorBase&& other) noexcept {
-         all[0] = other.all[0];
-         return *this;
-      }
-   };
-
-
-   ///                                                                        
-   /// 2D vector base                                                         
-   template<CT::Scalar TYPE, int DEFAULT>
-   struct TVectorBase<2, TYPE, DEFAULT> {
-      union {
-         TYPE all[2] {};
-         struct {
+            TYPE all[1] {};
             union {
-               Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
-            };
-            union {
-               Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+               Own<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
             };
          };
+
+         using CTTI_Members = Members<&TVectorBase::x>;
+         using CTTI_Typed   = TYPE;
+
+         static constexpr TYPE y       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE second  = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE g       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE green   = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE v       = static_cast<TYPE>(DEFAULT);
+
+         static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE blue    = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE s       = static_cast<TYPE>(DEFAULT);
+
+         static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
+
+         void tail() { static_assert(false, "1D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {
+            all[0] = static_cast<TYPE>(DEFAULT);
+         }
+
+         constexpr TVectorBase(const TVectorBase& other) noexcept {
+            all[0] = other.all[0];
+         }
+
+         constexpr TVectorBase(TVectorBase&& other) noexcept {
+            all[0] = other.all[0];
+         }
+
+         constexpr auto& operator = (const TVectorBase& other) noexcept {
+            all[0] = other.all[0];
+            return *this;
+         }
+
+         constexpr auto& operator = (TVectorBase&& other) noexcept {
+            all[0] = other.all[0];
+            return *this;
+         }
       };
-      using CTTI_Members = Members<&TVectorBase::x, &TVectorBase::y>;
-
-      static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE blue    = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE s       = static_cast<TYPE>(DEFAULT);
-
-      static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
-
-      void tail() { static_assert(false, "2D vector doesn't have a tail"); }
-
-      constexpr TVectorBase() noexcept {
-         for (int i = 0; i < 2; ++i)
-            all[i] = static_cast<TYPE>(DEFAULT);
-      }
-
-      constexpr TVectorBase(const TVectorBase& other) noexcept {
-         for (int i = 0; i < 2; ++i)
-            all[i] = other.all[i];
-      }
-
-      constexpr TVectorBase(TVectorBase&& other) noexcept {
-         for (int i = 0; i < 2; ++i)
-            all[i] = other.all[i];
-      }
-
-      constexpr auto& operator = (const TVectorBase& other) noexcept {
-         for (int i = 0; i < 2; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-
-      constexpr auto& operator = (TVectorBase&& other) noexcept {
-         for (int i = 0; i < 2; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-   };
 
 
-   ///                                                                        
-   /// 3D vector base                                                         
-   template<CT::Scalar TYPE, int DEFAULT>
-   struct TVectorBase<3, TYPE, DEFAULT> {
-      union {
-         TYPE all[3] {};
-         struct {
-            union {
-               Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
-            };
-            union {
-               Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
-            };
-            union {
-               Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s;
+      ///                                                                     
+      /// 2D vector base                                                      
+      template<CT::Scalar TYPE, int DEFAULT>
+      struct TVectorBase<2, TYPE, DEFAULT> {
+         union {
+            TYPE all[2] {};
+            struct {
+               union {
+                  Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
+               };
+               union {
+                  Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+               };
             };
          };
+
+         using CTTI_Members = Members<&TVectorBase::x, &TVectorBase::y>;
+         using CTTI_Typed   = TYPE;
+         using CTTI_Array   = Yes<2>;
+
+         static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE b       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE blue    = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE s       = static_cast<TYPE>(DEFAULT);
+
+         static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
+
+         void tail() { static_assert(false, "2D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {
+            for (int i = 0; i < 2; ++i)
+               all[i] = static_cast<TYPE>(DEFAULT);
+         }
+
+         constexpr TVectorBase(const TVectorBase& other) noexcept {
+            for (int i = 0; i < 2; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr TVectorBase(TVectorBase&& other) noexcept {
+            for (int i = 0; i < 2; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr auto& operator = (const TVectorBase& other) noexcept {
+            for (int i = 0; i < 2; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
+
+         constexpr auto& operator = (TVectorBase&& other) noexcept {
+            for (int i = 0; i < 2; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
       };
-      using CTTI_Members = Members<
-         &TVectorBase::x,
-         &TVectorBase::y, 
-         &TVectorBase::z
-      >;
-
-      static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
-      static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
-
-      void tail() { static_assert(false, "3D vector doesn't have a tail"); }
-
-      constexpr TVectorBase() noexcept {
-         for (int i = 0; i < 3; ++i)
-            all[i] = static_cast<TYPE>(DEFAULT);
-      }
-
-      constexpr TVectorBase(const TVectorBase& other) noexcept {
-         for (int i = 0; i < 3; ++i)
-            all[i] = other.all[i];
-      }
-
-      constexpr TVectorBase(TVectorBase&& other) noexcept {
-         for (int i = 0; i < 3; ++i)
-            all[i] = other.all[i];
-      }
-
-      constexpr auto& operator = (const TVectorBase& other) noexcept {
-         for (int i = 0; i < 3; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-
-      constexpr auto& operator = (TVectorBase&& other) noexcept {
-         for (int i = 0; i < 3; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-   };
 
 
-   ///                                                                        
-   /// 4D vector base                                                         
-   template<CT::Scalar TYPE, int DEFAULT>
-   struct TVectorBase<4, TYPE, DEFAULT> {
-      union {
-         TYPE all[4] {};
-         struct {
-            union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
-            union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
-            union { Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
-            union { Own<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
+      ///                                                                     
+      /// 3D vector base                                                      
+      template<CT::Scalar TYPE, int DEFAULT>
+      struct TVectorBase<3, TYPE, DEFAULT> {
+         union {
+            TYPE all[3] {};
+            struct {
+               union {
+                  Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
+               };
+               union {
+                  Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v;
+               };
+               union {
+                  Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s;
+               };
+            };
          };
+
+         using CTTI_Members = Members<
+            &TVectorBase::x,
+            &TVectorBase::y, 
+            &TVectorBase::z
+         >;
+         using CTTI_Typed = TYPE;
+         using CTTI_Array = Yes<3>;
+
+         static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE a       = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
+         static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
+
+         void tail() { static_assert(false, "3D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {
+            for (int i = 0; i < 3; ++i)
+               all[i] = static_cast<TYPE>(DEFAULT);
+         }
+
+         constexpr TVectorBase(const TVectorBase& other) noexcept {
+            for (int i = 0; i < 3; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr TVectorBase(TVectorBase&& other) noexcept {
+            for (int i = 0; i < 3; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr auto& operator = (const TVectorBase& other) noexcept {
+            for (int i = 0; i < 3; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
+
+         constexpr auto& operator = (TVectorBase&& other) noexcept {
+            for (int i = 0; i < 3; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
       };
-      using CTTI_Members = Members<
-         &TVectorBase::x,
-         &TVectorBase::y, 
-         &TVectorBase::z,
-         &TVectorBase::w
-      >;
-
-      void tail() { static_assert(false, "4D vector doesn't have a tail"); }
-
-      constexpr TVectorBase() noexcept {
-         for (int i = 0; i < 4; ++i)
-            all[i] = static_cast<TYPE>(DEFAULT);
-      }
-
-      constexpr TVectorBase(const TVectorBase& other) noexcept {
-         for (int i = 0; i < 4; ++i)
-            all[i] = other.all[i];
-      }
-
-      constexpr TVectorBase(TVectorBase&& other) noexcept {
-         for (int i = 0; i < 4; ++i)
-            all[i] = other.all[i];
-      }
-
-      constexpr auto& operator = (const TVectorBase& other) noexcept {
-         for (int i = 0; i < 4; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-
-      constexpr auto& operator = (TVectorBase&& other) noexcept {
-         for (int i = 0; i < 4; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-   };
 
 
-   ///                                                                        
-   /// 5+D vector base                                                        
-   template<size_t S, CT::Scalar TYPE, int DEFAULT> requires (S > 4)
-   struct TVectorBase<S, TYPE, DEFAULT> {
-      union {
-         TYPE all[S] {};
-         struct {
-            union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
-            union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
-            union { Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
-            union { Own<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
-
-            // The remaining elements, that don't have custom names     
-            TYPE tail[S - 4];
+      ///                                                                     
+      /// 4D vector base                                                      
+      template<CT::Scalar TYPE, int DEFAULT>
+      struct TVectorBase<4, TYPE, DEFAULT> {
+         union {
+            TYPE all[4] {};
+            struct {
+               union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
+               union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
+               union { Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
+               union { Own<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
+            };
          };
+
+         using CTTI_Members = Members<
+            &TVectorBase::x,
+            &TVectorBase::y, 
+            &TVectorBase::z,
+            &TVectorBase::w
+         >;
+         using CTTI_Typed = TYPE;
+         using CTTI_Array = Yes<4>;
+
+         void tail() { static_assert(false, "4D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {
+            for (int i = 0; i < 4; ++i)
+               all[i] = static_cast<TYPE>(DEFAULT);
+         }
+
+         constexpr TVectorBase(const TVectorBase& other) noexcept {
+            for (int i = 0; i < 4; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr TVectorBase(TVectorBase&& other) noexcept {
+            for (int i = 0; i < 4; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr auto& operator = (const TVectorBase& other) noexcept {
+            for (int i = 0; i < 4; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
+
+         constexpr auto& operator = (TVectorBase&& other) noexcept {
+            for (int i = 0; i < 4; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
       };
-      using CTTI_Members = Members<
-         &TVectorBase::x,
-         &TVectorBase::y, 
-         &TVectorBase::z,
-         &TVectorBase::w,
-         &TVectorBase::tail
-      >;
 
-      constexpr TVectorBase() noexcept {
-         for (size_t i = 0; i < S; ++i)
-            all[i] = static_cast<TYPE>(DEFAULT);
-      }
 
-      constexpr TVectorBase(const TVectorBase& other) noexcept {
-         for (size_t i = 0; i < S; ++i)
-            all[i] = other.all[i];
-      }
+      ///                                                                     
+      /// 5+D vector base                                                     
+      template<size_t S, CT::Scalar TYPE, int DEFAULT> requires (S > 4)
+      struct TVectorBase<S, TYPE, DEFAULT> {
+         using CTTI_Typed = TYPE;
+         using CTTI_Array = Yes<S>;
 
-      constexpr TVectorBase(TVectorBase&& other) noexcept {
-         for (size_t i = 0; i < S; ++i)
-            all[i] = other.all[i];
-      }
+         union {
+            TYPE all[S] {};
+            struct {
+               union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
+               union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
+               union { Own<TYPE, Tags::Z, Tags::B, Tags::S> z, third,  b, blue,  s; };
+               union { Own<TYPE, Tags::W, Tags::A, Tags::T> w, fourth, a, alpha, t; };
 
-      constexpr auto& operator = (const TVectorBase& other) noexcept {
-         for (size_t i = 0; i < S; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
+               // The remaining elements, that don't have custom names  
+               TYPE tail[S - 4];
+            };
+         };
+         using CTTI_Members = Members<
+            &TVectorBase::x,
+            &TVectorBase::y, 
+            &TVectorBase::z,
+            &TVectorBase::w,
+            &TVectorBase::tail
+         >;
 
-      constexpr auto& operator = (TVectorBase&& other) noexcept {
-         for (size_t i = 0; i < S; ++i)
-            all[i] = other.all[i];
-         return *this;
-      }
-   };
+         constexpr TVectorBase() noexcept {
+            for (size_t i = 0; i < S; ++i)
+               all[i] = static_cast<TYPE>(DEFAULT);
+         }
+
+         constexpr TVectorBase(const TVectorBase& other) noexcept {
+            for (size_t i = 0; i < S; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr TVectorBase(TVectorBase&& other) noexcept {
+            for (size_t i = 0; i < S; ++i)
+               all[i] = other.all[i];
+         }
+
+         constexpr auto& operator = (const TVectorBase& other) noexcept {
+            for (size_t i = 0; i < S; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
+
+         constexpr auto& operator = (TVectorBase&& other) noexcept {
+            for (size_t i = 0; i < S; ++i)
+               all[i] = other.all[i];
+            return *this;
+         }
+      };
+   }
 
 
    ///                                                                        
@@ -435,13 +453,7 @@ namespace Langulus::Math
    /// swizzling. Proxy vectors eventually decay into conventional vectors.   
    ///                                                                        
    TEMPLATE()
-   struct TVector : TVectorBase<S, T, DEFAULT> {
-      static_assert(S > 0, "Can't have a vector of zero size");
-      static constexpr size_t MemberCount = S;
-      static constexpr T Default = static_cast<T>(DEFAULT);
-      using ArrayType = T[S];
-      using Base = TVectorBase<S, T, DEFAULT>;
-
+   struct TVector : Inner::TVectorBase<S, T, DEFAULT> {
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TVector>();
@@ -470,16 +482,18 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named     = Yes<GenerateToken()>;
-      using CTTI_Abstract  = No;
-      using CTTI_POD       = Maybe<CT::POD<T>>;
-      using CTTI_Nullable  = Maybe<DEFAULT == 0>;
-      using CTTI_Typed     = T;
-      using CTTI_Bases     = Types<VectorOfSize<S>, VectorOfType<T>, Base, T>;
+      static constexpr bool IsReal  = CT::Real<T>;
+      static constexpr T    Default = static_cast<T>(DEFAULT);
+      using ArrayType = T[S];
+      using Base      = Inner::TVectorBase<S, T, DEFAULT>;
 
-      // Make TVector match the CT::VectorBased concept                 
-      static constexpr bool CTTI_VectorTrait = true;
-      static constexpr bool IsReal = CT::Real<T>;
+      using CTTI_Named        = Yes<GenerateToken()>;
+      using CTTI_Abstract     = No;
+      using CTTI_POD          = Maybe<CT::POD<T>>;
+      using CTTI_Nullable     = Maybe<DEFAULT == 0>;
+      using CTTI_Bases        = Types<VectorOfSize<S>, VectorOfType<T>, Base, T>;
+      using CTTI_Vector       = Yup;
+      using CTTI_CustomVector = Yup;
 
    public:
       ///                                                                     
@@ -492,7 +506,7 @@ namespace Langulus::Math
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
 
-      template<CT::Scalar N, CT::Dimension D>
+      template<class N, CT::Dimension D>
       constexpr TVector(const TVectorComponent<N, D>&) noexcept;
 
       TVector(const CT::SIMD auto&)  noexcept;
@@ -696,7 +710,6 @@ namespace Langulus::Math
 
    namespace Inner
    {
-
       ///                                                                     
       ///   Proxy array (a.k.a. a swizzled vector, intermediate type)         
       ///                                                                     

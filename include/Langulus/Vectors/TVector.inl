@@ -6,6 +6,9 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "Langulus/Except.hpp"
+#include "Langulus/Typenav.hpp"
+#include "Langulus/Describe.hpp"
 #include "TVector.hpp"
 #include "../Numbers/TNumber.inl"
 #include "../Verbs/Multiply.hpp"
@@ -22,7 +25,7 @@ namespace Langulus::Math
    /// Default vector constructor - initialize components to Default          
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
-      if constexpr (S > 1) {
+      /*if constexpr (S > 1) {
          static_assert(CT::Vector<TVector>,
             "Vectors should match CT::Vector, if their size is larger than 1");
       }
@@ -37,13 +40,10 @@ namespace Langulus::Math
          "Vectors should match CT::VectorBased");
       static_assert(sizeof(TVector) == sizeof(T) * S,
          "Vectors should match T*4 size");
-      static_assert(CountOf<TVector> == S,
-         "Vectors size should correspond to CountOf");
+      static_assert(ExtentOf<TVector> == S,
+         "Vectors size should correspond to ExtentOf");
       static_assert(CT::Exact<TypeOf<TVector>, T>,
-         "Vectors should have type");
-
-      /*for (auto& e : all)
-         e = Default;*/
+         "Vectors should have type");*/ //TODO move these to tests
    }
    
    /// Construct from any vector (with conversion)                            
@@ -64,11 +64,11 @@ namespace Langulus::Math
    ///   @param x - the component to adapt                                    
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const CT::ScalarBased auto& x) noexcept {
+   constexpr decltype(auto) TME()::Adapt(const CT::Scalar auto& x) noexcept {
       using N = Deref<decltype(x)>;
       static_assert(CT::Convertible<N, T>, "Incompatible number");
 
-      if constexpr (not CT::Same<N, T>)
+      if constexpr (not Same<N, T>)
          return static_cast<T>(x);
       else
          return x;
@@ -78,7 +78,7 @@ namespace Langulus::Math
    /// Excessive elements are ignored, while missing elements are defaulted   
    TEMPLATE() template<class T1, class T2, class...TN> LANGULUS(INLINED)
    constexpr TME()::TVector(const T1& t1, const T2& t2, const TN&...tn) noexcept {
-      constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
+      constexpr auto C1 = AllExtentsOf<T1> < S ? AllExtentsOf<T1> : S;
       if constexpr (CT::Vector<T1>) {
          // First element is vector/array, copy its elements            
          for (size_t i = 0; i < C1; ++i)
@@ -89,7 +89,7 @@ namespace Langulus::Math
          all[0] = Adapt(t1);
       }
 
-      constexpr auto C2 = Math::Min(CountOf<T2>, MemberCount - C1);
+      constexpr auto C2 = AllExtentsOf<T2> < S - C1 ? AllExtentsOf<T2> : S - C1;
       if constexpr (C2) {
          if constexpr (CT::Vector<T2>) {
             // Second element is vector/array, copy its elements        
@@ -103,10 +103,10 @@ namespace Langulus::Math
 
          // Combine all the rest of the arguments in a vector           
          if constexpr (sizeof...(TN)) {
-            constexpr auto C3 = MemberCount - (C1 + C2);
+            constexpr auto C3 = S - (C1 + C2);
             if constexpr (C3) {
                const TVector<T, C3 + 1> theRest {tn..., DEFAULT};
-               for (size_t i = C1 + C2; i < MemberCount; ++i)
+               for (size_t i = C1 + C2; i < S; ++i)
                   all[i] = theRest[i - (C1 + C2)];
             }
          }
@@ -115,7 +115,7 @@ namespace Langulus::Math
 
    /// Construct from a vector component                                      
    ///   @param a - component to set                                          
-   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
+   TEMPLATE() template<class N, CT::Dimension D> LANGULUS(INLINED)
    constexpr TME()::TVector(const TVectorComponent<N, D>& source) noexcept
       : TVector {} {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
@@ -133,22 +133,21 @@ namespace Langulus::Math
    ///   @param describe - the descriptor to scan                             
    TEMPLATE()
    TME()::TVector(Describe&& describe) {
-      LglsAssumeUser(*describe,
-         "Empty descriptor for TVector");
+      LglsAssumeUser(describe, "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    
-      auto initialized = describe->ExtractData(all);
+      auto initialized = describe.ExtractData(all);
       if (not initialized) {
          // Attempt converting anything to T                            
-         initialized = describe->ExtractDataAs(all);
+         initialized = describe.ExtractDataAs(all);
       }
 
       if (not initialized) {
          // Attempt converting from any other kinds of numbers          
          Typelists::Arithmetic::ForEachOr([&]<class AS>{
-            if constexpr (not CT::Similar<T, AS>) {
+            if constexpr (not Same<T, AS>) {
                AS all_as[S];
-               initialized = describe->ExtractData(all_as);
+               initialized = describe.ExtractData(all_as);
                if (initialized)
                   SIMD::Convert<DEFAULT>(all_as, this->all);
                return initialized > 0;
@@ -164,8 +163,7 @@ namespace Langulus::Math
          // empty, the default constructor would've been explicitly     
          // called, instead of this one. This way we can differentiate  
          // whether or not a vector object was successfully initialized.
-         LANGULUS_OOPS(Construct, "Bad TVector descriptor", 
-            ", nothing was initialized: ", *describe);
+         LglsError("Bad TVector descriptor, nothing was initialized: ", *describe);
       case 1:
          // Only one provided element is handled as scalar constructor  
          // Copy first element in array to the rest                     
@@ -180,7 +178,7 @@ namespace Langulus::Math
       }
    }
 
-   TEMPLATE()
+   /*TEMPLATE()
    void TME()::Multiply(Verb& verb) {
       if (verb.GetArgument()) {
          TVector rhs {Describe(verb.GetArgument())};
@@ -210,10 +208,10 @@ namespace Langulus::Math
       if constexpr (SCOPED)
          result += ')';
       return Abandon(result);
-   }
+   }*/
 
    /// Stringify vector for debugging                                         
-   TEMPLATE() LANGULUS(INLINED)
+   /*TEMPLATE() LANGULUS(INLINED)
    TME()::operator Annies::Text() const {
       return Serialize<Annies::Text, TVector>();
    }
@@ -222,7 +220,7 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       return Serialize<Flow::Code, TVector>();
-   }
+   }*/
 
 
    ///                                                                        
@@ -376,7 +374,7 @@ namespace Langulus::Math
    /// Set only a specific component                                          
    ///   @param com - the component to overwrite                              
    ///   @return a reference to this vector                                   
-   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
+   TEMPLATE() template<CT::Scalar N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto TME()::operator = (const TVectorComponent<N, D>& com) noexcept -> TVector& {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
       all[D::Index] = Adapt(com.mValue);
@@ -387,7 +385,7 @@ namespace Langulus::Math
    ///   @param other - the vector to dot with                                
    ///   @return the dot product of both vectors                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Dot(const CT::VectorBased auto& other) const noexcept -> T {
+   constexpr auto TME()::Dot(const CT::Vector auto& other) const noexcept -> T {
       auto source = other.all;
       auto start = all;
       const auto end = start + Math::Min(S, CountOf<decltype(other)>);
@@ -400,7 +398,7 @@ namespace Langulus::Math
    /// Cross product                                                          
    ///   @param rhs - the vector to cross with                                
    ///   @return the cross product of both vectors                            
-   TEMPLATE() template<CT::VectorBased V> requires (S >= 3 and CountOf<V> >= 3)
+   TEMPLATE() template<CT::Vector V> requires (S >= 3 and CountOf<V> >= 3)
    constexpr auto TME()::Cross(const V& rhs) const noexcept -> TVector<T, 3> {
       return { y * rhs.z - z * rhs.y,
                z * rhs.x - x * rhs.z,

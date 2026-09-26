@@ -8,11 +8,12 @@
 #pragma once
 #include "TAngle.hpp"
 #include "TNumber.inl"
+#include "../Functions/Trigonometry.hpp"
+#include <Langulus/Describe.hpp>
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Type used for representing angles in degrees                         
    ///                                                                        
@@ -93,26 +94,24 @@ namespace Langulus::Math
    ///   @param describe - the descriptor to scan                             
    template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
    TAngle<T, D>::TAngle(Describe&& describe) {
-      LglsAssumeUser(*describe,
-         "Empty descriptor for TAngle");
+      LglsAssumeUser(describe, "Empty descriptor for TAngle");
 
       // Attempt initializing without any conversion                    
-      if (not describe->ExtractData(mValue)) {
+      if (not describe.ExtractData(mValue)) {
          // Attempt converting anything to T                            
-         if (not describe->ExtractDataAs(mValue)) {
+         if (not describe.ExtractDataAs(mValue)) {
             // Nothing was initialized. This is always an error in the  
             // context of the descriptor-constructor. If descriptor was 
             // empty, the default constructor would've been explicitly  
             // called, instead of this one. This way we can find out    
             // whether or not an angle instance was initialized or not. 
-            LANGULUS_OOPS(Construct, "Bad TAngle descriptor",
-               ", nothing was initialized: ", *describe);
+            LglsError("Bad TAngle descriptor, nothing was initialized: ", *describe);
          }
       }
    }
 
    /// Convert from any angle to text                                         
-   template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
+   /*template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
    TAngle<T, D>::operator Annies::Text() const {
       Annies::Text result;
       result += NameOf<TAngle>();
@@ -131,7 +130,7 @@ namespace Langulus::Math
       result += static_cast<Flow::Code>(mValue);
       result += Flow::Code::Operator::CloseScope;
       return result;
-   }
+   }*/
 
    /// Add two similar angles                                                 
    template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
@@ -139,7 +138,7 @@ namespace Langulus::Math
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
    ) noexcept {
-      if constexpr (CT::Same<LHST, RHST>)
+      if constexpr (Same<LHST, RHST>)
          return lhs.mValue + rhs.mValue;
       else if constexpr (LHST::Radians)
          return lhs.mValue + DegToRad(rhs.mValue);
@@ -153,7 +152,7 @@ namespace Langulus::Math
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
    ) noexcept {
-      if constexpr (CT::Same<LHST, RHST>)
+      if constexpr (Same<LHST, RHST>)
          return lhs.mValue - rhs.mValue;
       else if constexpr (LHST::Radians)
          return lhs.mValue - DegToRad(rhs.mValue);
@@ -167,7 +166,7 @@ namespace Langulus::Math
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
    ) noexcept {
-      if constexpr (CT::Same<LHST, RHST>)
+      if constexpr (Same<LHST, RHST>)
          return lhs.mValue * rhs.mValue;
       else if constexpr (LHST::Radians)
          return lhs.mValue * DegToRad(rhs.mValue);
@@ -181,7 +180,7 @@ namespace Langulus::Math
       const TAngle<LHST, D>& lhs,
       const TAngle<RHST, D>& rhs
    ) {
-      if constexpr (CT::Same<LHST, RHST>)
+      if constexpr (Same<LHST, RHST>)
          return lhs.mValue / rhs.mValue;
       else if constexpr (LHST::Radians)
          return lhs.mValue / DegToRad(rhs.mValue);
@@ -252,5 +251,4 @@ namespace Langulus::Math
    constexpr Radians operator""_rad(unsigned long long n) noexcept {
       return {n};
    }
-
-} // namespace Langulus::Math
+}

@@ -12,7 +12,7 @@
 #include <Langulus/CT/Suffix.hpp>
 #include <Langulus/CT/Real.hpp>
 #include <Langulus/CT/Signed.hpp>
-#include <Langulus/CT/Number.hpp>
+#include <Langulus/CT/CustomNumber.hpp>
 
 
 namespace Langulus::Math
@@ -76,17 +76,6 @@ namespace Langulus::Math
       TNumber operator -- (int) noexcept;
    };
    #pragma pack(pop)
-}
-
-namespace Langulus::CT
-{
-   /// Custom number                                                          
-   template<class...T>
-   concept CustomNumber = CT::Dense<T...> and ((Decay<T>::CTTI_CustomNumber) and ...);
-
-   /// Built-in number                                                        
-   template<class...T>
-   concept BuiltinNumber = ((CT::Number<T> and not CT::CustomNumber<T>) and ...);
 }
 
 namespace Langulus::Math

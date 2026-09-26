@@ -8,12 +8,11 @@
 #pragma once
 #include "../Vectors/TVector.hpp"
 #include "../Numbers/TColorComponent.hpp"
-#include <Langulus/CT/Vector.hpp>
 
 
 namespace Langulus::Math
 {
-   template<CT::Vector>
+   template<CT::CustomVector>
    struct TColor;
 
    template<CT::Number, CT::Dimension>
@@ -84,7 +83,7 @@ namespace Langulus::Math
    /// and utilize saturation arithmetics.                                    
    ///                                                                        
    #pragma pack(push, 1)
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TColor : T {
       using InnerT = TypeOf<T>;
 
@@ -111,7 +110,7 @@ namespace Langulus::Math
    private:
       /// Custom name generator at compile-time for colors                    
       static constexpr auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TColor>();
+         constexpr auto defaultClassName = LastCppNameOf<TColor>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -134,10 +133,10 @@ namespace Langulus::Math
          // Write suffix                                                
          --offset;
 
-         if constexpr (not CT::Same<InnerT, ::std::uint8_t>) {
-            if constexpr (CT::Same<InnerT, float>)
+         if constexpr (not Same<InnerT, ::std::uint8_t>) {
+            if constexpr (Same<InnerT, float>)
                name[offset++] = 'f';
-            else if constexpr (CT::Same<InnerT, double>)
+            else if constexpr (Same<InnerT, double>)
                name[offset++] = 'd';
             else for (auto i : SuffixOf<InnerT>())
                name[offset++] = i;
@@ -148,6 +147,7 @@ namespace Langulus::Math
    public:
       using CTTI_Named = Yes<GenerateToken()>;
       using CTTI_Bases = Types<ColorOfSize<MemberCount>, ColorOfType<InnerT>, T>;
+      using CTTI_Color = Yup;
 
    public:
       constexpr TColor() noexcept;
@@ -167,8 +167,8 @@ namespace Langulus::Math
       template<CT::Number ALTT, CT::Dimension D>
       constexpr auto operator = (const TColorComponent<ALTT, D>&) noexcept -> TColor&;
 
-      explicit operator Flow::Code() const;
-      explicit operator Annies::Text() const;
+      /*explicit operator Flow::Code() const;
+      explicit operator Annies::Text() const;*/
       explicit operator Logger::Color() const;
 
       constexpr void MakeOpaque() noexcept;

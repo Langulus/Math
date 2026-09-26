@@ -37,18 +37,6 @@ namespace Langulus::CT
    template<class...T>
    concept Adaptive = Dense<T...> and ((Decay<T>::CTTI_Adaptive) and ...);
 
-   /// Anything that has the quaternion trait                                 
-   template<class...T>
-   concept Quaternion = Dense<T...> and ((Decay<T>::CTTI_Quaternion) and ...);
-
-   /// Anything that has the vector trait                                     
-   template<class...T>
-   concept Vector = Dense<T...> and ((Decay<T>::CTTI_Vector) and ...);
-   
-   /// Anything that has the vector trait and contains integers               
-   template<class...T>
-   concept VectorInt = ((Vector<T> and Integer<TypeOf<T>>) and ...);
-   
    /// Anything that has the color trait                                      
    template<class...T>
    concept Color = Dense<T...> and ((Decay<T>::CTTI_Color) and ...);
