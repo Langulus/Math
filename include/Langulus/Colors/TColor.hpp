@@ -6,7 +6,9 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "../Vectors/TVector.hpp"
 #include "../Numbers/TColorComponent.hpp"
+#include <Langulus/CT/Vector.hpp>
 
 
 namespace Langulus::Math

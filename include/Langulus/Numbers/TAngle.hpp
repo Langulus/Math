@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "Langulus/CT/Convertible.hpp"
 #include "TNumber.hpp"
 #include "Dimension.hpp"
 #include "../Math/Tags.hpp"
@@ -146,47 +147,42 @@ namespace Langulus::Math
 
 namespace Langulus
 {
-   /// Used as an imposed base for any type that can be interpretable as   
-   /// an angle                                                            
+   /// Abstract angle                                                         
    struct Angle {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Radians;
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Math::Radians;
    };
 
-   /// Used as an imposed base for any type that can be interpretable as   
-   /// an angle of the same dimension                                      
+   /// Abstract angle of specific dimension                                   
    template<CT::Dimension D>
    struct AngleOfDimension : Angle {
-      LANGULUS(CONCRETE) Math::TAngle<Math::Radians, D>;
-      LANGULUS_BASES(Angle);
+      using CTTI_Concrete  = Math::TAngle<Math::Radians, D>;
+      using CTTI_Bases     = Angle;
    };
 
-   /// Used as an imposed base for any type that can be interpretable as   
-   /// an angle of the same type                                           
+   /// Abstract angle of specific type                                        
    template<CT::Angle T>
    struct AngleOfType : Angle {
-      LANGULUS(CONCRETE) T;
-      LANGULUS(TYPED) T;
-      LANGULUS_BASES(Angle);
+      using CTTI_Concrete  = T;
+      using CTTI_Typed     = T;
+      using CTTI_Bases     = Angle;
    };
 }
    
 namespace Langulus::Math
 {
-   ///                                                                     
-   ///   Templated angle                                                   
-   ///                                                                     
+   ///                                                                        
+   ///   Templated angle                                                      
+   ///                                                                        
    template<CT::Angle T, CT::Dimension D>
    struct TAngle : T {
    private:
       static constexpr auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TAngle>();
-         // Provision a bit more in case default class name turns out
-         // to be too small (g++-14 complains for some reason)       
+         constexpr auto defaultClassName = LastCppNameOf<TAngle>();
          ::std::array<char, defaultClassName.size() + 16> name {};
          ::std::size_t offset = 0;
 
-         // Write dimension name                                     
+         // Write dimension name                                        
          if constexpr (D::Index == 0) {
             for (auto i : "Pitch")
                name[offset++] = i;
@@ -201,29 +197,25 @@ namespace Langulus::Math
          }
          else static_assert(false, "Unsupported dimension");
 
-         // Write angle suffix if degrees                            
-         // Radians have no suffix by default                        
+         // Write angle suffix if degrees                               
+         // Radians have no suffix by default                           
          if constexpr (CT::Degrees<T>)
             name[offset++] = 'd';
 
-         // Write type suffix                                        
+         // Write type suffix                                           
          for (auto i : SuffixOf<T>())
             name[offset++] = i;
          return name;
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
-      LANGULUS_BASES(T, A::AngleOfDimension<D>, A::AngleOfType<T>);
-      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
+      using CTTI_Typed = Yes<GenerateToken()>;
+      using CTTI_Bases = Types<T, AngleOfDimension<D>, AngleOfType<T>>;
 
       using Dimension = D;
       using T::mValue;
       using T::T;
       using T::operator =;
       TAngle(Describe&&);
-
-      explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;
    };
 }
