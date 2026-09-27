@@ -7,6 +7,8 @@
 ///                                                                           
 #pragma once
 #include "../Vectors/TVector.hpp"
+#include <Langulus/CT/Normalized.hpp>
+#include <Langulus/CT/Range.hpp>
 
 #define TEMPLATE()   template<CT::Dense T>
 #define TME()        TRange<T>
@@ -14,9 +16,6 @@
 
 namespace Langulus::Math
 {
-
-   LANGULUS_API(MATH) extern void RegisterRanges();
-
    TEMPLATE() struct TRange;
 
    using Range1f   = TRange<Vec1f>;
@@ -69,55 +68,52 @@ namespace Langulus::Math
    using Range4i16 = TRange<Vec4i16>;
    using Range4i32 = TRange<Vec4i32>;
    using Range4i64 = TRange<Vec4i64>;
+}
 
-} // namespace Langulus::Math
-
-namespace Langulus::A
+namespace Langulus
 {
-
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// range                                                                  
+   /// An abstract range that always concretizises into the most versatile    
+   /// type depending on context. Range4 by default, as it's the most         
+   /// versatile type.                                                        
    struct Range {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Range4;
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = Math::Range4;
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// range of the same size                                                 
    template<size_t S>
    struct RangeOfSize : Range {
-      LANGULUS(CONCRETE) Math::TRange<Math::TVector<Langulus::Real, S>>;
-      LANGULUS_BASES(Range);
-      static constexpr size_t MemberCount {S};
+      using CTTI_Concrete  = Math::TRange<Math::TVector<Langulus::Real, S>>;
+      using CTTI_Bases     = Range;
+      using CTTI_Array     = Yes<S>;
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// range of the same type                                                 
    template<CT::Dense T>
    struct RangeOfType : Range {
-      LANGULUS(CONCRETE) Math::TRange<Math::TVector<T, 4>>;
-      LANGULUS(TYPED) T;
-      LANGULUS_BASES(Range);
+      using CTTI_Concrete  = Math::TRange<Math::TVector<T, 4>>;
+      using CTTI_Typed     = T;
+      using CTTI_Bases     = Range;
    };
-
-} // namespace Langulus::A
+}
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Templated range                                                      
    ///                                                                        
    #pragma pack(push, 1)
    TEMPLATE()
    struct TRange {
-      using CTTI_Normalized = Maybe<CT::Normalized<T>>;
-      using PointType = T;
-      using MemberType = TypeOf<T>;
-      static constexpr size_t MemberCount = CountOf<T> * 2;
-      static constexpr auto Default = T::Default;
-      using CoalescedType = TVector<MemberType, MemberCount, static_cast<int>(Default)>;
-      using PointTypeNotNormalized = TVector<MemberType, CountOf<T>>;
+      static constexpr size_t ScalarCount = ExtentOf<T> * 2;
+      static constexpr auto   Default     = T::Default;
+
+      using PointType         = T;
+      using ScalarType        = TypeOf<T>;
+      using CoalescedType     = TVector<ScalarType, ScalarCount, static_cast<int>(Default)>;
+      using PointTypeNotNormalized = TVector<ScalarType, ExtentOf<T>>;
 
       union {
          // Useful representation for directly feeding to SIMD          
@@ -129,7 +125,7 @@ namespace Langulus::Math
          };
       };
 
-   public:
+   private:
       /// Custom name generator at compile-time for ranges                    
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = RTTI::LastCppNameOf<TRange>();
@@ -158,30 +154,30 @@ namespace Langulus::Math
          return name;
       }
 
-      LANGULUS(NAME)  GenerateToken();
-      LANGULUS(TYPED) MemberType;
-      LANGULUS(POD)   CT::POD<T>;
-      LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
-      LANGULUS_BASES(
-         A::RangeOfSize<(MemberCount > 1 ? MemberCount / 2 : 1)>,
-         A::RangeOfType<MemberType>,
-         MemberType
-      );
-      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
-      LANGULUS_MEMBERS(&TRange::mMin, &TRange::mMax);
-
-      // Make TRange match the CT::RangeBased concept                   
-      static constexpr bool CTTI_RangeTrait = true;
+   public:
+      using CTTI_Range        = Yup;
+      using CTTI_Normalized   = Maybe<CT::Normalized<T>>;
+      using CTTI_Typed        = ScalarType;
+      using CTTI_Array        = Yes<ScalarCount>;
+      using CTTI_Named        = Yes<GenerateToken()>;
+      using CTTI_POD          = Maybe<CT::POD<T>>;
+      using CTTI_Nullable     = Maybe<CT::Nullable<T>>;
+      using CTTI_Members      = Members<&TRange::mMin, &TRange::mMax>;
+      using CTTI_Bases        = Types<
+         RangeOfSize<(ScalarCount > 1 ? ScalarCount / 2 : 1)>,
+         RangeOfType<ScalarType>,
+         ScalarType
+      >;
 
    public:
-      constexpr TRange() noexcept requires CT::Defaultable<T>;
+      constexpr TRange() noexcept;
       constexpr TRange(const TRange&) noexcept;
       constexpr TRange(const CT::Vector auto&) noexcept;
+      constexpr TRange(const CT::Vector auto&, const CT::Vector auto&) noexcept;
       constexpr TRange(const CT::Scalar auto&) noexcept;
+      constexpr TRange(const CT::Scalar auto&, const CT::Scalar auto&) noexcept;
       constexpr TRange(const PointType&, const PointType&) noexcept;
-      constexpr TRange(const MemberType&, const MemberType&) noexcept;
-      constexpr TRange(const CT::ScalarBased auto&, const CT::ScalarBased auto&) noexcept;
-      constexpr TRange(const CT::VectorBased auto&, const CT::VectorBased auto&) noexcept;
+      constexpr TRange(const ScalarType&, const ScalarType&) noexcept;
 
       TRange(const CT::SIMD auto&) noexcept;
       TRange(Describe&&);
@@ -190,18 +186,18 @@ namespace Langulus::Math
       ///   Assignment                                                        
       ///                                                                     
       constexpr auto operator = (const TRange&) noexcept -> TRange&;
-      constexpr auto operator = (const CT::RangeBased  auto&) noexcept -> TRange&;
-      constexpr auto operator = (const CT::VectorBased auto&) noexcept -> TRange&;
-      constexpr auto operator = (const CT::ScalarBased auto&) noexcept -> TRange&;
+      constexpr auto operator = (const CT::Range  auto&) noexcept -> TRange&;
+      constexpr auto operator = (const CT::Vector auto&) noexcept -> TRange&;
+      constexpr auto operator = (const CT::Scalar auto&) noexcept -> TRange&;
 
-      template<CT::ScalarBased N, CT::Dimension D>
+      template<class N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-      explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;
+      /*explicit operator Annies::Text() const;
+      explicit operator Flow::Code() const;*/
 
       constexpr auto Embrace(const auto&...) noexcept -> TRange&;
-      constexpr auto Intersect(const CT::RangeBased auto&) const noexcept -> TRange;
+      constexpr auto Intersect(const CT::Range auto&) const noexcept -> TRange;
 
       auto GetMin() const noexcept -> PointType const&;
       auto GetMax() const noexcept -> PointType const&;
@@ -217,43 +213,39 @@ namespace Langulus::Math
       constexpr auto operator |  (const TRange&) const noexcept -> TRange;
       constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
 
-      constexpr auto operator [] (size_t)       noexcept -> MemberType&;
-      constexpr auto operator [] (size_t) const noexcept -> MemberType const&;
+      constexpr auto operator [] (size_t)       noexcept -> ScalarType&;
+      constexpr auto operator [] (size_t) const noexcept -> ScalarType const&;
    };
    #pragma pack(pop)
 
 
    namespace Inner
    {
-
       template<class LHS, class RHS>
       consteval auto LosslessRange() {
          using L = Decay<LHS>;
          using R = Decay<RHS>;
-         if constexpr (CT::RangeBased<L>) {
-            if constexpr (CT::RangeBased<R>)
+         if constexpr (CT::Range<L>) {
+            if constexpr (CT::Range<R>)
                return (TRange<LosslessVector<typename L::PointType, typename R::PointType>>*) nullptr;
             else
                return (TRange<LosslessVector<typename L::PointType, R>>*) nullptr;
          }
          else {
-            if constexpr (CT::RangeBased<R>)
+            if constexpr (CT::Range<R>)
                return (TRange<LosslessVector<L, typename R::PointType>>*) nullptr;
             else
                return (TRange<LosslessVector<L, R>>*) nullptr;
          }
       }
-
-   } // namespace Langulus::Math::Inner
-
+   }
 
    /// Generate a lossless range type from provided LHS and RHS types         
    ///   @tparam LHS - left hand side, can be scalar/array/vector/range       
    ///   @tparam RHS - right hand side, can be scalar/array/vector/range      
    template<class LHS, class RHS>
    using LosslessRange = Deptr<decltype(Inner::LosslessRange<LHS, RHS>())>;
-
-} // namespace Langulus::Math
+}
 
 #undef TEMPLATE
 #undef TME

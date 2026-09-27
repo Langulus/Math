@@ -41,10 +41,6 @@ namespace Langulus::CT
    template<class...T>
    concept Color = Dense<T...> and ((Decay<T>::CTTI_Color) and ...);
 
-   /// Anything that has the range trait                                      
-   template<class...T>
-   concept Range = Dense<T...> and ((Decay<T>::CTTI_Range) and ...);
-
    /// Anything that has the matrix trait                                     
    template<class...T>
    concept Matrix = Dense<T...> and ((Decay<T>::CTTI_Matrix) and ...);
@@ -74,6 +70,8 @@ namespace Langulus::Math
    LANGULUS_API(MATH) extern void RegisterVectors();
    LANGULUS_API(MATH) extern void RegisterColors();
    LANGULUS_API(MATH) extern void RegisterAngles();
+   LANGULUS_API(MATH) extern void RegisterRanges();
+
 
    /*namespace Typelists
    {
