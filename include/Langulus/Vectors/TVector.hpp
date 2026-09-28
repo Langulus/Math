@@ -17,6 +17,7 @@
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequence.hpp>
 #include <Langulus/Utils/Literal.hpp>
+#include <Langulus/Math/Tags.hpp>
 #include <Langulus/TOwn.hpp>
 
 #define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D

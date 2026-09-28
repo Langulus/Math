@@ -24,33 +24,3 @@ namespace Langulus::CT
    template<class... T>
    concept Dimension = (CT::Inner::Dimension<T> and ...);
 }
-
-LANGULUS_DEFINE_TAG(X, "X (first) vector component",
-   static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TAG(Y, "Y (second) vector component",
-   static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TAG(Z, "Z (third) vector component",
-   static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TAG(W, "W (fourth) vector component",
-   static constexpr size_t Index = 3);
-
-LANGULUS_DEFINE_TAG(U, "U (first) vector component",
-   static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TAG(V, "V (second) vector component",
-   static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TAG(S, "S (third) vector component",
-   static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TAG(T, "T (fourth) vector component",
-   static constexpr size_t Index = 3);
-
-LANGULUS_DEFINE_TAG(R, "Red (first) color component",
-   static constexpr size_t Index = 0);
-LANGULUS_DEFINE_TAG(G, "Green (second) color component",
-   static constexpr size_t Index = 1);
-LANGULUS_DEFINE_TAG(B, "Blue (third) color component",
-   static constexpr size_t Index = 2);
-LANGULUS_DEFINE_TAG(A, "Alpha (fourth) color component",
-   static constexpr size_t Index = 3);
-
-LANGULUS_DEFINE_TAG(D, "Depth (first) component",
-   static constexpr size_t Index = 0);
