@@ -17,12 +17,6 @@
 //#include "../Numbers/TNumber.inl"
 //#include "../Verbs/Multiply.hpp"
 
-#define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D
-#define TVEC(a)      TVector<a##T, a##S, a##D>
-#define TEMPLATE()   template<CT::Scalar T, size_t S, int DEFAULT>
-#define TME()        TVector<T, S, DEFAULT>
-
-
 namespace Langulus::Math
 {
 
@@ -1637,88 +1631,3 @@ namespace Langulus::Math
    }
 
 } // namespace Langulus::Math
-
-#undef TARGS
-#undef TVEC
-#undef TEMPLATE
-#undef TME
-
-
-///                                                                           
-///   Canonical vectors                                                       
-///                                                                           
-namespace Langulus::Axes
-{
-   using namespace ::Langulus::Math;
-
-   /// Canonical X axis                                                       
-   template<CT::Number T = Real>
-   constexpr TVector<T, 4> X {1, 0, 0, 0};
-   
-   /// Canonical Y axis                                                       
-   template<CT::Number T = Real>
-   constexpr TVector<T, 4> Y {0, 1, 0, 0};
-
-   /// Canonical Z axis                                                       
-   template<CT::Number T = Real>
-   constexpr TVector<T, 4> Z {0, 0, 1, 0};
-
-   /// Canonical W axis                                                       
-   template<CT::Number T = Real>
-   constexpr TVector<T, 4> W {0, 0, 0, 1};
-   
-   /// Canonical world origin                                                 
-   template<CT::Number T = Real>
-   constexpr TVector<T, 4> Origin {0, 0, 0, 0};
-
-   /// Canonical forward vector, pointing towards the screen, in positive Z   
-   template<CT::Number T = Real>
-   constexpr auto Forward = Z<T>;
-
-   /// Canonical backward vector, towards the human device, in negative Z     
-   template<CT::Number T = Real>
-   constexpr auto Backward = -Z<T>;
-
-   /// Canonical up vector, pointing from the ground up, in positive Y        
-   template<CT::Number T = Real>
-   constexpr auto Up = Y<T>;
-
-   /// Canonical down vector, pointing in gravity's direction, in negative Y  
-   template<CT::Number T = Real>
-   constexpr auto Down = -Y<T>;
-
-   /// Canonical right vector, pointing to right hand, in positive X          
-   template<CT::Number T = Real>
-   constexpr auto Right = X<T>;
-
-   /// Canonical left vector, pointing to left hand, in negative X            
-   template<CT::Number T = Real>
-   constexpr auto Left = -X<T>;
-
-} // Langulus::Axes
-
-
-LANGULUS_DEFINE_CONSTANT(AxisForward, ::Langulus::Axes::Forward<>,
-   "Axes::Forward", "A canonical forward vector")
-LANGULUS_DEFINE_CONSTANT(AxisBackward, ::Langulus::Axes::Backward<>,
-   "Axes::Backward", "A canonical backward vector")
-LANGULUS_DEFINE_CONSTANT(AxisUp, ::Langulus::Axes::Up<>,
-   "Axes::Up", "A canonical up vector")
-LANGULUS_DEFINE_CONSTANT(AxisDown, ::Langulus::Axes::Down<>,
-   "Axes::Down", "A canonical down vector")
-LANGULUS_DEFINE_CONSTANT(AxisRight, ::Langulus::Axes::Right<>,
-   "Axes::Right", "A canonical right vector")
-LANGULUS_DEFINE_CONSTANT(AxisLeft, ::Langulus::Axes::Left<>,
-   "Axes::Left", "A canonical left vector")
-
-LANGULUS_DEFINE_CONSTANT(AxisX, ::Langulus::Axes::X<>,
-   "Axes::X", "A canonical X axis")
-LANGULUS_DEFINE_CONSTANT(AxisY, ::Langulus::Axes::Y<>,
-   "Axes::Y", "A canonical Y axis")
-LANGULUS_DEFINE_CONSTANT(AxisZ, ::Langulus::Axes::Z<>,
-   "Axes::Z", "A canonical Z axis")
-LANGULUS_DEFINE_CONSTANT(AxisW, ::Langulus::Axes::W<>,
-   "Axes::W", "A canonical W axis")
-
-LANGULUS_DEFINE_CONSTANT(AxisOrigin, ::Langulus::Axes::Origin<>,
-   "Origin", "A canonical zero vector")

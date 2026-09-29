@@ -5,12 +5,11 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "TNormal.hpp"
+#include <Langulus/Vectors/TNormal.hpp>
 
 
 namespace Langulus::Math
 {
-
    /// Combines S and T... to form a normal type                              
    ///   @tparam S - size of the vector                                       
    template<size_t S>
@@ -21,14 +20,10 @@ namespace Langulus::Math
       }
    };
 
-
    /// Register all normal types                                              
    void RegisterNormals() {
-      using RealTypes = Types<Float, Double>;
-
-      NormalTypeGenerator<2>::Register(RealTypes {});
-      NormalTypeGenerator<3>::Register(RealTypes {});
-      NormalTypeGenerator<4>::Register(RealTypes {});
+      NormalTypeGenerator<2>::Register(Typelists::Reals {});
+      NormalTypeGenerator<3>::Register(Typelists::Reals {});
+      NormalTypeGenerator<4>::Register(Typelists::Reals {});
    }
-
-} // namespace Langulus::Math
+}

@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Vectors/TVector.inl>
+#include <Langulus/Vectors/TVector.hpp>
 
 
 namespace Langulus::Math
@@ -23,18 +23,12 @@ namespace Langulus::Math
    /// Register all commonly used vector types and constants, so they can be  
    /// instantiated from scripts                                              
    void RegisterVectors() {
-      using AllTypes = Types<
-         ::std::uint8_t, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t,
-         ::std::int8_t,  ::std::int16_t,  ::std::int32_t,  ::std::int64_t,
-         Float, Double
-      >;
+      VectorTypeGenerator<1>::Register(Typelists::Arithmetic {});
+      VectorTypeGenerator<2>::Register(Typelists::Arithmetic {});
+      VectorTypeGenerator<3>::Register(Typelists::Arithmetic {});
+      VectorTypeGenerator<4>::Register(Typelists::Arithmetic {});
 
-      VectorTypeGenerator<1>::Register(AllTypes {});
-      VectorTypeGenerator<2>::Register(AllTypes {});
-      VectorTypeGenerator<3>::Register(AllTypes {});
-      VectorTypeGenerator<4>::Register(AllTypes {});
-
-      (void) MetaOf<Constants::AxisBackward>();
+      /*(void) MetaOf<Constants::AxisBackward>();
       (void) MetaOf<Constants::AxisForward>();
       (void) MetaOf<Constants::AxisLeft>();
       (void) MetaOf<Constants::AxisRight>();
@@ -46,6 +40,7 @@ namespace Langulus::Math
       (void) MetaOf<Constants::AxisZ>();
       (void) MetaOf<Constants::AxisW>();
 
-      (void) MetaOf<Constants::AxisOrigin>();
+      (void) MetaOf<Constants::AxisOrigin>();*/
    }
 }
+

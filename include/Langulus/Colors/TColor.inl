@@ -7,7 +7,6 @@
 ///                                                                           
 #pragma once
 #include "TColor.hpp"
-#include "../Vectors/TVector.inl"
 
 #define TEMPLATE() template<CT::VectorBased T>
 

@@ -114,40 +114,42 @@ namespace Langulus::Math
       constexpr Level() noexcept
          : Base {Level::Default} {}
 
-      /// Real number construction                                            
+      /// Real number construction. Supports intents.                         
       ///   @param octave the real number to interpret as level               
-      constexpr Level(const CT::Real auto& octave) noexcept {
-         if (octave < Level::Min || octave > Level::Max)
+      constexpr Level(CT::Real auto const& octave) noexcept {
+         decltype(auto) octave_deint = DeintCast(octave);
+         if (octave_deint < Level::Min || octave_deint > Level::Max)
             mValue = Level::OutOfBounds;
-         mValue = static_cast<Real>(octave);
+         mValue = static_cast<Real>(octave_deint);
       }
 
       /// Integer number construction                                         
       ///   @attention unsigned integers will be remapped to the signed range 
       ///   @param octave the integer to interpret as level                   
-      constexpr Level(const CT::Integer auto& octave) noexcept {
-         Real ioct;
-         if constexpr (CT::Signed<decltype(octave)>)
-            ioct = static_cast<Real>(octave);
+      constexpr Level(CT::Integer auto const& octave) noexcept {
+         decltype(auto) octave_deint = DeintCast(octave);
+         Real real_octave;
+         if constexpr (CT::Signed<decltype(octave_deint)>)
+            real_octave = static_cast<Real>(octave_deint);
          else
-            ioct = static_cast<Real>(octave) + Level::Min;
+            real_octave = static_cast<Real>(octave_deint) + Level::Min;
 
-         if (ioct < Level::Min || ioct > Level::Max)
+         if (real_octave < Level::Min || real_octave > Level::Max)
             mValue = Level::OutOfBounds;
-         mValue = ioct;
+         mValue = real_octave;
       }
 
       /// Get a factor for scaling a relative level to this one               
       ///   @param level the level to factor against                          
       ///   @param return the invlog scale that maps this to other            
-      Real GetFactor(const Level& level) const noexcept {
+      Real GetFactor(Level const& level) const noexcept {
          return ::std::pow(Unit, level.mValue - mValue);
       }
 
       /// Get a reference point between two levels                            
       ///   @param level the other level                                      
       ///   @return a middle level between this and other                     
-      constexpr Level GetRefPoint(const Level& level) const noexcept {
+      constexpr Level GetRefPoint(Level const& level) const noexcept {
          if (mValue == Level::OutOfBounds || level.mValue == Level::OutOfBounds) {
             // Reference point can't exist                              
             return Level::OutOfBounds;

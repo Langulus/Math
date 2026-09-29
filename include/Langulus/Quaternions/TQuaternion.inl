@@ -7,8 +7,6 @@
 ///                                                                           
 #pragma once
 #include "TQuaternion.hpp"
-#include "../Vectors/TVector.inl"
-#include "../Matrices/TMatrix.inl"
 
 #define TEMPLATE()   template<CT::ScalarBased T>
 #define QUAT()       TQuaternion<T>

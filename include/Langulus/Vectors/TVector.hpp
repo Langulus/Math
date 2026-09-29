@@ -160,6 +160,7 @@ namespace Langulus::Math
 
          using CTTI_Members = Members<&TVectorBase::x>;
          using CTTI_Typed   = TYPE;
+         using ScalarType   = TYPE;
 
          static constexpr TYPE y       = static_cast<TYPE>(DEFAULT);
          static constexpr TYPE second  = static_cast<TYPE>(DEFAULT);
@@ -224,6 +225,7 @@ namespace Langulus::Math
          using CTTI_Members = Members<&TVectorBase::x, &TVectorBase::y>;
          using CTTI_Typed   = TYPE;
          using CTTI_Array   = Yes<2>;
+         using ScalarType   = TYPE;
 
          static constexpr TYPE z       = static_cast<TYPE>(DEFAULT);
          static constexpr TYPE third   = static_cast<TYPE>(DEFAULT);
@@ -294,6 +296,7 @@ namespace Langulus::Math
          >;
          using CTTI_Typed = TYPE;
          using CTTI_Array = Yes<3>;
+         using ScalarType = TYPE;
 
          static constexpr TYPE w       = static_cast<TYPE>(DEFAULT);
          static constexpr TYPE fourth  = static_cast<TYPE>(DEFAULT);
@@ -354,6 +357,7 @@ namespace Langulus::Math
          >;
          using CTTI_Typed = TYPE;
          using CTTI_Array = Yes<4>;
+         using ScalarType = TYPE;
 
          void tail() { static_assert(false, "4D vector doesn't have a tail"); }
 
@@ -392,6 +396,7 @@ namespace Langulus::Math
       struct TVectorBase<S, TYPE, DEFAULT> {
          using CTTI_Typed = TYPE;
          using CTTI_Array = Yes<S>;
+         using ScalarType = TYPE;
 
          union {
             TYPE all[S] {};
@@ -485,8 +490,9 @@ namespace Langulus::Math
    public:
       static constexpr bool IsReal  = CT::Real<T>;
       static constexpr T    Default = static_cast<T>(DEFAULT);
-      using ArrayType = T[S];
-      using Base      = Inner::TVectorBase<S, T, DEFAULT>;
+      using ArrayType   = T[S];
+      using Base        = Inner::TVectorBase<S, T, DEFAULT>;
+      using PointType   = TVector;
 
       using CTTI_Named        = Yes<GenerateToken()>;
       using CTTI_Abstract     = No;
@@ -715,9 +721,90 @@ namespace Langulus::Math
    using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, OverlapCounts<LHS, RHS>()>;
 }
 
+#include "TVector.inl"
 #include "TSwizzle.hpp"
 
 #undef TARGS
 #undef TVEC
 #undef TEMPLATE
 #undef TME
+
+
+
+///                                                                           
+///   Canonical vectors                                                       
+///                                                                           
+namespace Langulus::Axes
+{
+   using namespace ::Langulus::Math;
+
+   /// Canonical X axis                                                       
+   template<CT::Number T = Real>
+   constexpr TVector<T, 4> X {1, 0, 0, 0};
+   
+   /// Canonical Y axis                                                       
+   template<CT::Number T = Real>
+   constexpr TVector<T, 4> Y {0, 1, 0, 0};
+
+   /// Canonical Z axis                                                       
+   template<CT::Number T = Real>
+   constexpr TVector<T, 4> Z {0, 0, 1, 0};
+
+   /// Canonical W axis                                                       
+   template<CT::Number T = Real>
+   constexpr TVector<T, 4> W {0, 0, 0, 1};
+   
+   /// Canonical world origin                                                 
+   template<CT::Number T = Real>
+   constexpr TVector<T, 4> Origin {0, 0, 0, 0};
+
+   /// Canonical forward vector, pointing towards the screen, in positive Z   
+   template<CT::Number T = Real>
+   constexpr auto Forward = Z<T>;
+
+   /// Canonical backward vector, towards the human device, in negative Z     
+   template<CT::Number T = Real>
+   constexpr auto Backward = -Z<T>;
+
+   /// Canonical up vector, pointing from the ground up, in positive Y        
+   template<CT::Number T = Real>
+   constexpr auto Up = Y<T>;
+
+   /// Canonical down vector, pointing in gravity's direction, in negative Y  
+   template<CT::Number T = Real>
+   constexpr auto Down = -Y<T>;
+
+   /// Canonical right vector, pointing to right hand, in positive X          
+   template<CT::Number T = Real>
+   constexpr auto Right = X<T>;
+
+   /// Canonical left vector, pointing to left hand, in negative X            
+   template<CT::Number T = Real>
+   constexpr auto Left = -X<T>;
+}
+
+
+LANGULUS_DEFINE_CONSTANT(AxisForward, ::Langulus::Axes::Forward<>,
+   "Axes::Forward", "A canonical forward vector")
+LANGULUS_DEFINE_CONSTANT(AxisBackward, ::Langulus::Axes::Backward<>,
+   "Axes::Backward", "A canonical backward vector")
+LANGULUS_DEFINE_CONSTANT(AxisUp, ::Langulus::Axes::Up<>,
+   "Axes::Up", "A canonical up vector")
+LANGULUS_DEFINE_CONSTANT(AxisDown, ::Langulus::Axes::Down<>,
+   "Axes::Down", "A canonical down vector")
+LANGULUS_DEFINE_CONSTANT(AxisRight, ::Langulus::Axes::Right<>,
+   "Axes::Right", "A canonical right vector")
+LANGULUS_DEFINE_CONSTANT(AxisLeft, ::Langulus::Axes::Left<>,
+   "Axes::Left", "A canonical left vector")
+
+LANGULUS_DEFINE_CONSTANT(AxisX, ::Langulus::Axes::X<>,
+   "Axes::X", "A canonical X axis")
+LANGULUS_DEFINE_CONSTANT(AxisY, ::Langulus::Axes::Y<>,
+   "Axes::Y", "A canonical Y axis")
+LANGULUS_DEFINE_CONSTANT(AxisZ, ::Langulus::Axes::Z<>,
+   "Axes::Z", "A canonical Z axis")
+LANGULUS_DEFINE_CONSTANT(AxisW, ::Langulus::Axes::W<>,
+   "Axes::W", "A canonical W axis")
+
+LANGULUS_DEFINE_CONSTANT(AxisOrigin, ::Langulus::Axes::Origin<>,
+   "Origin", "A canonical zero vector")

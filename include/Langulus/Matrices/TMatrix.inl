@@ -7,8 +7,6 @@
 ///                                                                           
 #pragma once
 #include "TMatrix.hpp"
-#include "../Vectors/TVector.inl"
-#include "../Numbers/TAngle.inl"
 #include <Langulus/Utils/Sequence.hpp>
 
 #define TARGS(a)     CT::ScalarBased a##T, size_t a##C, size_t a##R

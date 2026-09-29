@@ -71,4 +71,5 @@ namespace Langulus::Math
    LANGULUS_API(MATH) extern void RegisterColors();
    LANGULUS_API(MATH) extern void RegisterAngles();
    LANGULUS_API(MATH) extern void RegisterRanges();
+   LANGULUS_API(MATH) extern void RegisterNormals();
 }
