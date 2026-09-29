@@ -71,16 +71,4 @@ namespace Langulus::Math
    LANGULUS_API(MATH) extern void RegisterColors();
    LANGULUS_API(MATH) extern void RegisterAngles();
    LANGULUS_API(MATH) extern void RegisterRanges();
-
-
-   /*namespace Typelists
-   {
-      using Arithmetic = Types<
-         float, double,
-         uint8_t, uint16_t, uint32_t, uint64_t,
-         int8_t,  int16_t,  int32_t,  int64_t
-      >;
-
-      using Fundamental = decltype(Arithmetic{} + Types<bool>{});
-   }*/
 }

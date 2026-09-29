@@ -128,11 +128,11 @@ namespace Langulus::Math
    private:
       /// Custom name generator at compile-time for ranges                    
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TRange>();
+         constexpr auto defaultClassName = LastCppNameOf<TRange>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset = 0;
 
-         constexpr auto S = CountOf<T>;
+         constexpr auto S = ExtentOf<T>;
          if constexpr (S > 4) {
             for (auto i : defaultClassName)
                name[offset++] = i;

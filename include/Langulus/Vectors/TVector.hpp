@@ -708,71 +708,14 @@ namespace Langulus::Math
    };
    #pragma pack(pop)
 
-
-   namespace Inner
-   {
-      ///                                                                     
-      ///   Proxy array (a.k.a. a swizzled vector, intermediate type)         
-      ///                                                                     
-      /// Creates a shuffled representation of a source vector, and commits   
-      /// any changes to it upon destruction                                  
-      ///                                                                     
-      template<TARGS(V) = 0, size_t...I>
-      struct TProxyArray : TVector<VT, sizeof...(I), VD> {
-         using CTTI_ReflectAs = void;
-         static_assert(sizeof...(I) > 1, "Invalid proxy array size");
-         static constexpr bool CTTI_VectorTrait = false;
-         static constexpr bool CTTI_ProxyArray = true;
-         using Base = TVector<VT, sizeof...(I), VD>;
-
-      private:
-         // The original data source, will be changed upon destruction  
-         VT (&mSource)[VS];
-
-         /// Commit the changes                                               
-         template<size_t...I2>
-         constexpr void CommitInner(ExpandedSequence<I2...>) noexcept {
-            static_assert(sizeof...(I) == sizeof...(I2));
-            ((mSource[I] = Base::all[I2]), ...);
-         }
-
-      public:
-         TProxyArray() = delete;
-         TProxyArray(const TProxyArray&) = delete;
-         TProxyArray(TProxyArray&&) = delete;
-
-         /// Create a proxy array - copy relevant contents and save a ref for 
-         /// later, when local changes have to be commited to the original    
-         explicit TProxyArray(VT (&source)[VS]) noexcept
-            : Base    {source[I]...}
-            , mSource {source} {}
-
-         /// Intermediate type destructor - commits any local changes to the  
-         /// original array, making sure no information is lost               
-         ~TProxyArray() noexcept { Commit(); }
-
-         using Base::operator =;
-
-         auto GetBase() noexcept -> Base& {
-            return static_cast<Base&>(*this);
-         }
-
-         auto GetBase() const noexcept -> Base const& {
-            return static_cast<Base const&>(*this);
-         }
-
-         void Commit() noexcept {
-            CommitInner(Sequence<sizeof...(I)>::Expand);
-         }
-      };
-   }
-
    /// Generate a lossless vector type from provided LHS and RHS types        
    ///   @tparam LHS - left hand side, can be scalar/array/vector             
    ///   @tparam RHS - right hand side, can be scalar/array/vector            
    template<class LHS, class RHS>
    using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, OverlapCounts<LHS, RHS>()>;
 }
+
+#include "TSwizzle.hpp"
 
 #undef TARGS
 #undef TVEC

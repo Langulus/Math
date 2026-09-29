@@ -6,73 +6,16 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Langulus/Core.hpp>
+//#include <Langulus/Core.hpp>
 #include <Langulus/CT/Real.hpp>
 #include <cmath>
 
 
 namespace Langulus::Math
 {
-   /// MARK: Constants                                                        
    ///                                                                        
-   template<CT::Real T = Real>
-   constexpr T PI {static_cast<T>(3.1415926535897932385L)};
-
-   template<CT::Real T = Real>
-   constexpr T TAU {PI<T> * T {2}};
-
-   template<CT::Real T = Real>
-   constexpr T HALFPI {PI<T> * T {0.5}};
-
-   template<CT::Real T = Real>
-   constexpr T PIi {T {1} / PI<T>};
-
-   template<CT::Real T = Real>
-   constexpr T TAUi {T {1} / TAU<T>};
-
-   template<CT::Real T = Real>
-   constexpr T HALFPIi {T {1} / HALFPI<T>};
-
-   template<CT::Real T = Real>
-   constexpr T LOGHALF {-0.30102999566L};
-
-   template<CT::Real T = Real>
-   constexpr T LOGHALFi {T {1} / LOGHALF<T>};
-
-   template<CT::Real T = Real>
-   constexpr T I180 {T {1} / T {180}};
-
-   template<CT::Real T = Real>
-   constexpr T PIxI180 {PI<T> * I180<T>};
-
-   template<CT::Real T = Real>
-   constexpr T PIix180 {PIi<T> * T {180}};
-
-   template<CT::Real T = Real>
-   constexpr T GOLDEN_ANGLE {(T {3} - Sqrt(T {5})) * PI<T>};
-   
-
    /// MARK: Functions                                                        
    ///                                                                        
-   /// Degrees to radians conversion                                          
-   ///   @param degrees - degrees to convert to radians                       
-   template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto DegToRad(const T& degrees) noexcept {
-      if constexpr (CT::Real<T>)
-         return degrees * PIxI180<T>;
-      else
-         return static_cast<Real>(degrees) * PIxI180<Real>;
-   }
-
-   /// Radians to degrees conversion                                          
-   ///   @param radians - radians to convert to degrees                       
-   template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto RadToDeg(const T& radians) noexcept {
-      if constexpr (CT::Real<T>)
-         return radians * PIix180<T>;
-      else
-         return static_cast<Real>(radians) * PIxI180<Real>;
-   }
 
    /// Calculate cosine                                                       
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 

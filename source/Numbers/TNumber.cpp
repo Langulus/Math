@@ -6,14 +6,14 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include <Langulus/Math/Export.hpp>
-#include <Langulus/Numbers/TAngle.inl>
-#include <Langulus/Numbers/Level.inl>
+#include <Langulus/Numbers/TAngle.hpp>
+#include <Langulus/Numbers/Level.hpp>
 #include <Langulus/Numbers/Infinity.hpp>
 
 
 namespace Langulus::Math
 {
-   /// Register number types                                                  
+   /// Register custom number types                                           
    void RegisterNumbers() {
       RegisterAngles();
 

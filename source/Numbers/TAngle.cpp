@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Numbers/TAngle.inl>
+#include <Langulus/Numbers/TAngle.hpp>
 
 
 namespace Langulus::Math

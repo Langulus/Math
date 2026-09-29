@@ -6,11 +6,11 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Langulus/CT/Convertible.hpp"
 #include "TNumber.hpp"
 #include "Dimension.hpp"
-#include "../Math/Tags.hpp"
+#include <Langulus/Math/Tags.hpp>
 #include <Langulus/CT/Lossless.hpp>
+#include <Langulus/Describe.hpp>
 
 
 namespace Langulus::CT
@@ -32,75 +32,153 @@ namespace Langulus::CT
 
 namespace Langulus::Math
 {
+   /// MARK: Constants                                                        
+   ///                                                                        
+   template<CT::Real T = Real>
+   constexpr T PI {static_cast<T>(3.1415926535897932385L)};
+
+   template<CT::Real T = Real>
+   constexpr T TAU {PI<T> * T {2}};
+
+   template<CT::Real T = Real>
+   constexpr T HALFPI {PI<T> * T {0.5}};
+
+   template<CT::Real T = Real>
+   constexpr T PIi {T {1} / PI<T>};
+
+   template<CT::Real T = Real>
+   constexpr T TAUi {T {1} / TAU<T>};
+
+   template<CT::Real T = Real>
+   constexpr T HALFPIi {T {1} / HALFPI<T>};
+
+   template<CT::Real T = Real>
+   constexpr T LOGHALF {-0.30102999566L};
+
+   template<CT::Real T = Real>
+   constexpr T LOGHALFi {T {1} / LOGHALF<T>};
+
+   template<CT::Real T = Real>
+   constexpr T I180 {T {1} / T {180}};
+
+   template<CT::Real T = Real>
+   constexpr T PIxI180 {PI<T> * I180<T>};
+
+   template<CT::Real T = Real>
+   constexpr T PIix180 {PIi<T> * T {180}};
+
+   template<CT::Real T = Real>
+   constexpr T GOLDEN_ANGLE {(T {3} - Sqrt(T {5})) * PI<T>};
+
+
+   /// MARK: Functions                                                        
+   /// Degrees to radians conversion                                          
+   ///   @param degrees - degrees to convert to radians                       
+   template<CT::Dense T> LANGULUS(INLINED)
+   constexpr auto DegToRad(const T& degrees) noexcept {
+      if constexpr (CT::Real<T>)
+         return degrees * PIxI180<T>;
+      else
+         return static_cast<Real>(degrees) * PIxI180<Real>;
+   }
+
+   /// Radians to degrees conversion                                          
+   ///   @param radians - radians to convert to degrees                       
+   template<CT::Dense T> LANGULUS(INLINED)
+   constexpr auto RadToDeg(const T& radians) noexcept {
+      if constexpr (CT::Real<T>)
+         return radians * PIix180<T>;
+      else
+         return static_cast<Real>(radians) * PIxI180<Real>;
+   }
+
+
    template<CT::Number> struct TDegrees;
    template<CT::Number> struct TRadians;
 
-
    ///                                                                        
-   ///   Type used for representing angles in degrees                         
-   ///                                                                        
+   /// MARK: Degrees                                                          
+   /// Type used for representing angles in degrees                           
    template<CT::Number T>
-   struct TDegrees : TNumber<T, TDegrees<T>> {
-      using Base = TNumber<T, TDegrees<T>>;
+   struct TDegrees : TNumber<T> {
+      using Base = TNumber<T>;
       using Base::mValue;
+      using Base::TNumber;
+      using Base::operator =;
+      using Base::operator bool;
+
       static constexpr bool Radians = false;
 
-      constexpr TDegrees() noexcept = default;
-      constexpr TDegrees(const TDegrees&) noexcept = default;
-      constexpr TDegrees(TDegrees&&) noexcept = default;
+      template<CT::Number N> LANGULUS(ALWAYS_INLINED)
+      constexpr TDegrees(const TDegrees<N>& d) noexcept
+         : Base {d.mValue} {}
 
-      template<CT::Number N>
-      constexpr TDegrees(const TDegrees<N>&) noexcept;
+      template<CT::Number N> LANGULUS(ALWAYS_INLINED)
+      constexpr TDegrees(const TRadians<N>& r) noexcept
+         : Base {r.GetDegrees()} {}
 
-      template<CT::Number N>
-      constexpr TDegrees(const TRadians<N>&) noexcept;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr T GetRadians() const noexcept {
+         return DegToRad(mValue);
+      }
 
-      constexpr TDegrees(const CT::Number auto&) noexcept;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr T GetDegrees() const noexcept {
+         return mValue;
+      }
 
-      TDegrees& operator = (const TDegrees&) noexcept = default;
-      TDegrees& operator = (TDegrees&&) noexcept = default;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr auto Cos() const noexcept -> Lossless<Real, T> {
+         return ::std::cos(DegToRad(mValue));
+      }
 
-      constexpr T GetRadians() const noexcept;
-      constexpr T GetDegrees() const noexcept;
-
-      Lossless<Real, T> Cos() const noexcept;
-      Lossless<Real, T> Sin() const noexcept;
-
-      using Base::operator bool;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr auto Sin() const noexcept -> Lossless<Real, T> {
+         return ::std::sin(DegToRad(mValue));
+      }
    };
 
 
    ///                                                                        
-   ///   Type used for representing angles in radians                         
-   ///                                                                        
+   /// MARK: Radians                                                          
+   /// Type used for representing angles in radians                           
    template<CT::Number T>
-   struct TRadians : TNumber<T, TRadians<T>> {
-      using Base = TNumber<T, TRadians<T>>;
+   struct TRadians : TNumber<T> {
+      using Base = TNumber<T>;
       using Base::mValue;
+      using Base::TNumber;
+      using Base::operator =;
+      using Base::operator bool;
+
       static constexpr bool Radians = true;
 
-      constexpr TRadians() noexcept = default;
-      constexpr TRadians(const TRadians&) noexcept = default;
-      constexpr TRadians(TRadians&&) noexcept = default;
+      template<CT::Number N> LANGULUS(ALWAYS_INLINED)
+      constexpr TRadians(const TDegrees<N>& d) noexcept
+         : Base {d.GetRadians()} {}
 
-      template<CT::Number N>
-      constexpr TRadians(const TRadians<N>&) noexcept;
+      template<CT::Number N> LANGULUS(ALWAYS_INLINED)
+      constexpr TRadians(const TRadians<N>& r) noexcept
+         : Base {r.mValue} {}
 
-      template<CT::Number N>
-      constexpr TRadians(const TDegrees<N>&) noexcept;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr T GetRadians() const noexcept {
+         return mValue;
+      }
 
-      constexpr TRadians(const CT::Number auto&) noexcept;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr T GetDegrees() const noexcept {
+         return RadToDeg(mValue);
+      }
 
-      TRadians& operator = (const TRadians&) noexcept = default;
-      TRadians& operator = (TRadians&&) noexcept = default;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr auto Cos() const noexcept -> Lossless<Real, T> {
+         return ::std::cos(mValue);
+      }
 
-      constexpr T GetRadians() const noexcept;
-      constexpr T GetDegrees() const noexcept;
-
-      Lossless<Real, T> Cos() const noexcept;
-      Lossless<Real, T> Sin() const noexcept;
-
-      using Base::operator bool;
+      LANGULUS(ALWAYS_INLINED)
+      constexpr auto Sin() const noexcept -> Lossless<Real, T> {
+         return ::std::sin(mValue);
+      }
    };
 
    using Degrees = TDegrees<Real>;
@@ -216,6 +294,168 @@ namespace Langulus::Math
       using T::mValue;
       using T::T;
       using T::operator =;
-      TAngle(Describe&&);
+
+      /// Describe-constructor                                                
+      TAngle(Describe&& describe) {
+         LglsAssumeUser(describe, "Empty descriptor for TAngle");
+
+         // Attempt initializing without any conversion                 
+         if (not describe.ExtractData(mValue)) {
+            // Attempt converting anything to T                         
+            if (not describe.ExtractDataAs(mValue)) {
+               // Nothing was initialized. This is always an error in   
+               // the context of the describe-constructor. If descriptor
+               // was empty, the default constructor would've been      
+               // explicitly called, instead of this one. This way we   
+               // can find out whether or not an angle instance was     
+               // initialized or not.                                   
+               LglsError("Bad TAngle descriptor, nothing was initialized: ", *describe);
+            }
+         }
+      }
    };
+
+
+   /// Add two similar angles                                                 
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator + (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
+      if constexpr (Same<LHST, RHST>)
+         return lhs.mValue + rhs.mValue;
+      else if constexpr (LHST::Radians)
+         return lhs.mValue + DegToRad(rhs.mValue);
+      else 
+         return lhs.mValue + RadToDeg(rhs.mValue);
+   }
+
+   /// Subtract two similar angles                                            
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator - (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
+      if constexpr (Same<LHST, RHST>)
+         return lhs.mValue - rhs.mValue;
+      else if constexpr (LHST::Radians)
+         return lhs.mValue - DegToRad(rhs.mValue);
+      else
+         return lhs.mValue - RadToDeg(rhs.mValue);
+   }
+
+   /// Multiply two similar angles                                            
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator * (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
+      if constexpr (Same<LHST, RHST>)
+         return lhs.mValue * rhs.mValue;
+      else if constexpr (LHST::Radians)
+         return lhs.mValue * DegToRad(rhs.mValue);
+      else
+         return lhs.mValue * RadToDeg(rhs.mValue);
+   }
+      
+   /// Divide two similar angles                                              
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D> operator / (
+      const TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) {
+      if constexpr (Same<LHST, RHST>)
+         return lhs.mValue / rhs.mValue;
+      else if constexpr (LHST::Radians)
+         return lhs.mValue / DegToRad(rhs.mValue);
+      else
+         return lhs.mValue / RadToDeg(rhs.mValue);
+   }
+
+   /// Destructively add two similar angles                                   
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator += (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
+      lhs = lhs + rhs;
+      return lhs;
+   }
+      
+   /// Destructively subtract two similar angles                              
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator -= (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
+      lhs = lhs - rhs;
+      return lhs;
+   }
+      
+   /// Destructively multiply two similar angles                              
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator *= (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) noexcept {
+      lhs = lhs * rhs;
+      return lhs;
+   }
+
+   /// Destructively divide two similar angles                                
+   template<CT::Angle LHST, CT::Angle RHST, CT::Dimension D> LANGULUS(INLINED)
+   constexpr TAngle<LHST, D>& operator /= (
+      TAngle<LHST, D>& lhs,
+      const TAngle<RHST, D>& rhs
+   ) {
+      lhs = lhs / rhs;
+      return lhs;
+   }
+
+   /// Real number of degrees literal                                         
+   LANGULUS(INLINED)
+   constexpr Degrees operator""_deg(long double n) noexcept {
+      return {n};
+   }
+
+   /// Real number of degrees literal (from unsigned)                         
+   LANGULUS(INLINED)
+   constexpr Degrees operator""_deg(unsigned long long n) noexcept {
+      return {n};
+   }
+
+   /// Real number of radians literal                                         
+   LANGULUS(INLINED)
+   constexpr Radians operator""_rad(long double n) noexcept {
+      return {n};
+   }
+
+   /// Real number of radians literal (from unsigned)                         
+   LANGULUS(INLINED)
+   constexpr Radians operator""_rad(unsigned long long n) noexcept {
+      return {n};
+   }
 }
+
+
+   /// Convert from any angle to text                                         
+   /*template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
+   TAngle<T, D>::operator Annies::Text() const {
+      Annies::Text result;
+      result += NameOf<TAngle>();
+      result += Flow::Code::Operator::OpenScope;
+      result += static_cast<Annies::Text>(mValue);
+      result += Flow::Code::Operator::CloseScope;
+      return result;
+   }
+
+   /// Convert from any angle to code                                         
+   template<CT::Angle T, CT::Dimension D> LANGULUS(INLINED)
+   TAngle<T, D>::operator Flow::Code() const {
+      Flow::Code result;
+      result += NameOf<TAngle>();
+      result += Flow::Code::Operator::OpenScope;
+      result += static_cast<Flow::Code>(mValue);
+      result += Flow::Code::Operator::CloseScope;
+      return result;
+   }*/

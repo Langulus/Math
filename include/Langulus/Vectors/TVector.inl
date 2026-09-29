@@ -6,12 +6,16 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Langulus/Except.hpp"
-#include "Langulus/Typenav.hpp"
-#include "Langulus/Describe.hpp"
 #include "TVector.hpp"
-#include "../Numbers/TNumber.inl"
-#include "../Verbs/Multiply.hpp"
+#include <Langulus/Functions/Arithmetics.hpp>
+#include <Langulus/Functions/Trigonometry.hpp>
+#include <Langulus/Describe.hpp>
+
+/*#include "Langulus/Except.hpp"
+#include "Langulus/Typenav.hpp"
+*/
+//#include "../Numbers/TNumber.inl"
+//#include "../Verbs/Multiply.hpp"
 
 #define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
@@ -144,7 +148,7 @@ namespace Langulus::Math
 
       if (not initialized) {
          // Attempt converting from any other kinds of numbers          
-         Typelists::Arithmetic::ForEachOr([&]<class AS>{
+         ForEachOr(Typelists::Arithmetic{}, [&]<class AS>{
             if constexpr (not Same<T, AS>) {
                AS all_as[S];
                initialized = describe.ExtractData(all_as);
@@ -266,7 +270,7 @@ namespace Langulus::Math
    ///   @return the number of components                                     
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::GetCount() const noexcept -> size_t {
-      return MemberCount;
+      return S;
    }
 
    /// Get the squared magnitute of the vector                                
@@ -275,9 +279,12 @@ namespace Langulus::Math
    constexpr auto TME()::LengthSquared() const noexcept -> T {
       auto start = all;
       const auto end = start + S;
-      T accum = Math::Sq(*(start++));
-      while (start != end)
-         accum += Math::Sq(*(start++));
+      T accum = *start * *start;
+      ++start;
+      while (start != end) {
+         accum += *start * *start;
+         ++start;
+      }
       return accum;
    }
 
@@ -388,7 +395,7 @@ namespace Langulus::Math
    constexpr auto TME()::Dot(const CT::Vector auto& other) const noexcept -> T {
       auto source = other.all;
       auto start = all;
-      const auto end = start + Math::Min(S, CountOf<decltype(other)>);
+      const auto end = start + Math::Min(S, ExtentOf<decltype(other)>);
       T accum = *(start++) * *(source++);
       while (start != end)
          accum += *(start++) * *(source++);
@@ -398,7 +405,7 @@ namespace Langulus::Math
    /// Cross product                                                          
    ///   @param rhs - the vector to cross with                                
    ///   @return the cross product of both vectors                            
-   TEMPLATE() template<CT::Vector V> requires (S >= 3 and CountOf<V> >= 3)
+   TEMPLATE() template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
    constexpr auto TME()::Cross(const V& rhs) const noexcept -> TVector<T, 3> {
       return { y * rhs.z - z * rhs.y,
                z * rhs.x - x * rhs.z,
@@ -435,7 +442,7 @@ namespace Langulus::Math
       auto maxp = max.all;
       auto start = result.all;
       const auto end = start
-         + Math::Min(S, CountOf<decltype(min)>, CountOf<decltype(max)>);
+         + Math::Min(S, ExtentOf<decltype(min)>, ExtentOf<decltype(max)>);
 
       while (start != end) {
          *start = Math::ClampRev(*start, *(minp++), *(maxp++));
@@ -578,7 +585,7 @@ namespace Langulus::Math
          return result;
       }
       else {
-         T result[Math::Min(S, CountOf<RHS>)];
+         T result[Math::Min(S, ExtentOf<RHS>)];
          const T* lhs = all;
          const T* rhs = period.all;
          for (auto& i : result)
@@ -725,7 +732,7 @@ namespace Langulus::Math
    }
 
    /// Explicit cast to a compatible number of different type                 
-   TEMPLATE() template<CT::ScalarBased N>
+   TEMPLATE() template<CT::Scalar N>
    requires (S == 1 and CT::Convertible<N, T>) LANGULUS(INLINED)
    constexpr TME()::operator N () const noexcept {
       return static_cast<N>(all[0]);
@@ -792,7 +799,7 @@ namespace Langulus::Math
    /// Inversion (unary subtraction)                                          
    /// Returns an inverted vector                                             
    LANGULUS(INLINED)
-   constexpr decltype(auto) operator - (const CT::VectorBased auto& rhs) noexcept {
+   constexpr decltype(auto) operator - (const CT::CustomVector auto& rhs) noexcept {
       using E = Decay<TypeOf<decltype(rhs)>>;
       if constexpr (CT::Signed<E>)
          return rhs * E {-1};
@@ -813,47 +820,47 @@ namespace Langulus::Math
    /// Addition                                                               
    /// Vector + Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Vector + Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Scalar + Vector                                                        
-   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs, rhs)};
    }
 
    /// Vector + Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::ProxyArray auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Add(lhs.GetBase(), rhs)};
    }
 
    /// Proxy + Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator + (const CT::CustomVector auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Add(lhs, rhs.GetBase())};
    }
 
    /// Proxy + Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::ProxyArray auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Add(lhs.GetBase(), rhs)};
    }
 
    /// Scalar + Proxy                                                         
-   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator + (const CT::Scalar auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Add(lhs, rhs.GetBase())};
    }
@@ -863,21 +870,21 @@ namespace Langulus::Math
    /// Subtraction                                                            
    /// Returns the difference of two vectors                                  
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Vector - Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs, rhs)};
    }
 
    /// Scalar - Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs, rhs)};
    }
@@ -885,14 +892,14 @@ namespace Langulus::Math
 
    /// Proxy - Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::ProxyArray auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs.GetBase(), rhs)};
    }
 
    /// Vector - Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator - (const CT::CustomVector auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Subtract(lhs, rhs.GetBase())};
    }
