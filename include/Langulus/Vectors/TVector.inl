@@ -310,7 +310,7 @@ namespace Langulus::Math
       if constexpr (sizeof...(EN) == 0)
          return (all[E1]);
       else
-         return Inner::TProxyArray<T, S, DEFAULT, E1, EN...> {all};
+         return Inner::TSwizzle<T, S, DEFAULT, E1, EN...> {all};
    }
 
    /// Immutable swizzle, just returns a shuffled vector                      
@@ -601,7 +601,7 @@ namespace Langulus::Math
          return result;
       }
       else {
-         T result[Min(S, CountOf<RHS>)];
+         T result[Min(S, ExtentOf<RHS>)];
          const T* lhs = all;
          const T* rhs = edge.all;
          for (auto& i : result)

@@ -721,8 +721,8 @@ namespace Langulus::Math
    using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, OverlapCounts<LHS, RHS>()>;
 }
 
-#include "TVector.inl"
 #include "TSwizzle.hpp"
+#include "TVector.inl"
 
 #undef TARGS
 #undef TVEC
