@@ -83,7 +83,6 @@ namespace Langulus::Math
    ///                                                                        
    /// Unlike ordinary vectors, color vectors are based on integer types      
    /// and utilize saturation arithmetics.                                    
-   ///                                                                        
    #pragma pack(push, 1)
    TEMPLATE()
    struct TColor : T {
@@ -210,6 +209,7 @@ namespace Langulus::Colors
 namespace Langulus::CTTI
 {
    /// RGBA color constants                                                   
+   template<>
    struct DefineConstant<Math::RGBA> : Types<
       NamedValue<Colors::White,     "Colors::White",     "An opaque white color">,
       NamedValue<Colors::Black,     "Colors::Black",     "An opaque black color">,

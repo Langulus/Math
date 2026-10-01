@@ -16,7 +16,6 @@
 
 namespace Langulus::Math
 {
-
    /// Check if box is degenerate                                             
    ///   @return true if at least one offset is zero                          
    TEMPLATE() LANGULUS(INLINED)
@@ -40,7 +39,7 @@ namespace Langulus::Math
    }
 
    /// Stringify box for debugging                                            
-   TEMPLATE() LANGULUS(INLINED)
+   /*TEMPLATE() LANGULUS(INLINED)
    TME()::operator Annies::Text() const {
       return mOffsets.template Serialize<Annies::Text, TME()>();
    }
@@ -49,9 +48,8 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       return mOffsets.template Serialize<Flow::Code, TME()>();
-   }
-
-} // namespace Langulus::Math
+   }*/
+}
 
 #undef TME
 #define TME() TBoxRounded<T>
@@ -59,7 +57,6 @@ namespace Langulus::Math
 
 namespace Langulus::Math
 {
-
    /// Check if box is degenerate                                             
    ///   @return true if at least one offset is zero                          
    TEMPLATE() LANGULUS(INLINED)
@@ -83,7 +80,7 @@ namespace Langulus::Math
    }
 
    /// Stringify box for debugging                                            
-   TEMPLATE() LANGULUS(INLINED)
+   /*TEMPLATE() LANGULUS(INLINED)
    TME()::operator Annies::Text() const {
       using Flow::Code;
       Code result;
@@ -100,9 +97,8 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       return operator Annies::Text();
-   }
-
-} // namespace Langulus::Math
+   }*/
+}
 
 #undef TEMPLATE
 #undef TME

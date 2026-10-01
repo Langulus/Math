@@ -37,7 +37,7 @@ namespace Langulus::CT
 {
    /// Concept for distinguishing box primitives                              
    template<class...T>
-   concept Box = (DerivedFrom<T, Langulus::Box> and ...);
+   concept Box = (DerivedFrom<T, Math::Box> and ...);
 }
 
 namespace Langulus::Math
@@ -57,7 +57,7 @@ namespace Langulus::Math
    ///   +---------------+                                                    
    ///                                                                        
    template<CT::Vector T>
-   struct TBox : Langulus::Box {
+   struct TBox : Box {
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TBox>();
@@ -89,7 +89,7 @@ namespace Langulus::Math
       using CTTI_Abstract  = No;
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Typed     = TypeOf<T>;
-      using CTTI_Bases     = Langulus::Box;
+      using CTTI_Bases     = Box;
 
       using PointType = T;
       static_assert(ExtentOf<T> > 1, "Can't have one-dimensional box");
@@ -111,7 +111,7 @@ namespace Langulus::Math
    ///           ^ +Y                                                         
    ///           |                                                            
    ///    ,------+------, +   (.5, .5) mOffsets from origin                   
-   ///   /               \                                                    
+   ///   /               \.                                                   
    ///  |      origin     |                                                   
    ///  |        +        |--> +X                                             
    ///  |                 |                                                   
