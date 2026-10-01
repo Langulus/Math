@@ -32,13 +32,13 @@
       using TVerb<VERB>::operator ==;
 
       template<CT::NotVoid T>
-      static bool Vector(const Many&, const Many&, Verb&, Operator<T>) noexcept(NOEXCEPT);
+      static bool Vector(Many const&, Many const&, Verb&, Operator<T>) noexcept(NOEXCEPT);
       template<CT::NotVoid T>
-      static bool Vector(const Many&, Many&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
+      static bool Vector(Many const&, Many&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
 
       template<CT::NotVoid T>
-      static bool Scalar(const Many&, const Many&, Verb&, Operator<T>) noexcept(NOEXCEPT);
+      static bool Scalar(Many const&, Many const&, Verb&, Operator<T>) noexcept(NOEXCEPT);
       template<CT::NotVoid T>
-      static bool Scalar(const Many&, Many&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
+      static bool Scalar(Many const&, Many&, Verb&, OperatorMutable<T>) noexcept(NOEXCEPT);
    };
 }*/

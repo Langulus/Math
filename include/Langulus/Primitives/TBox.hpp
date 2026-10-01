@@ -9,77 +9,62 @@
 #include "Primitive.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::Vector> struct TBox;
+   template<CT::Vector> struct TBoxRounded;
 
-      template<CT::Vector>
-      struct TBox;
+   using Box2 = TBox<Vec2>;
+   using Box3 = TBox<Vec3>;
 
-      template<CT::Vector>
-      struct TBoxRounded;
+   using BoxRounded2 = TBoxRounded<Vec2>;
+   using BoxRounded3 = TBoxRounded<Vec3>;
 
-      using Box2 = TBox<Vec2>;
-      using Box3 = TBox<Vec3>;
+   /// An abstract box that depends on context, defaulting to a 3D box        
+   struct Box : Primitive {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Box3;
+      using CTTI_Bases     = Primitive;
+   };
 
-      using BoxRounded2 = TBoxRounded<Vec2>;
-      using BoxRounded3 = TBoxRounded<Vec3>;
+   /// An abstract rounded box that depends on context, defaulting to a 3D box
+   struct BoxRounded : Box {
+      using CTTI_Concrete  = BoxRounded3;
+   };
+}
 
-      using Box = Box3;
-      using BoxRounded = BoxRounded3;
-
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// An abstract box                                                     
-      struct Box : Primitive {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Box;
-         LANGULUS_BASES(Primitive);
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing box primitives                           
-      template<class...T>
-      concept Box = (DerivedFrom<T, A::Box> and ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+namespace Langulus::CT
+{
+   /// Concept for distinguishing box primitives                              
+   template<class...T>
+   concept Box = (DerivedFrom<T, Langulus::Box> and ...);
+}
 
 namespace Langulus::Math
 {
-
-   ///                                                                     |  
-   /// 2D/3D box with varying dimensions, centered around origin           |  
-   ///                                                                     |  
-   /// An example unit 2D quad, centered at origin:                        |  
-   ///           ^ +Y                                                      |  
-   ///           |                                                         |  
-   ///   +-------+-------+   (.5, .5) mOffsets from origin                 |  
-   ///   |               |                                                 |  
-   ///   |               |                                                 |  
-   ///   |       +       |--> +X                                           |  
-   ///   |     origin    |                                                 |  
-   ///   |               |                                                 |  
-   ///   +---------------+                                                 |  
-   ///                                                                     |  
+   ///                                                                        
+   /// 2D/3D box with varying dimensions, centered around origin              
+   ///                                                                        
+   /// An example unit 2D quad, centered at origin:                           
+   ///           ^ +Y                                                         
+   ///           |                                                            
+   ///   +-------+-------+   (.5, .5) mOffsets from origin                    
+   ///   |               |                                                    
+   ///   |               |                                                    
+   ///   |       +       |--> +X                                              
+   ///   |     origin    |                                                    
+   ///   |               |                                                    
+   ///   +---------------+                                                    
+   ///                                                                        
    template<CT::Vector T>
-   struct TBox : A::Box {
+   struct TBox : Langulus::Box {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TBox>();
+         constexpr auto defaultClassName = LastCppNameOf<TBox>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (ExtentOf<T> > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -91,7 +76,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -100,16 +85,14 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
-      LANGULUS(ABSTRACT) false;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Box);
-      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Langulus::Box;
 
       using PointType = T;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Can't have one-dimensional box");
+      static_assert(ExtentOf<T> > 1, "Can't have one-dimensional box");
 
       T mOffsets {.5};
 
@@ -117,29 +100,29 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(const T&) const;
 
-      explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;
+      /*explicit operator Annies::Text() const;
+      explicit operator Flow::Code() const;*/
    };
 
 
-   ///                                                                     |  
-   /// 2D/3D rounded box with varying dimensions, centered around origin   |  
-   ///                                                                     |  
-   ///           ^ +Y                                                      |  
-   ///           |                                                         |  
-   ///    ,------+------, +   (.5, .5) mOffsets from origin                |  
-   ///   /               \                                                 |  
-   ///  |                 |                                                |  
-   ///  |        +        |--> +X                                          |  
-   ///  |      origin     |                                                |  
-   ///   \               /                                                 |  
-   ///    '-------------'   <- mRadius from origin of rounded parts        |  
-   ///                                                                     |  
+   ///                                                                        
+   /// 2D/3D rounded box with varying dimensions, centered around origin      
+   ///                                                                        
+   ///           ^ +Y                                                         
+   ///           |                                                            
+   ///    ,------+------, +   (.5, .5) mOffsets from origin                   
+   ///   /               \                                                    
+   ///  |      origin     |                                                   
+   ///  |        +        |--> +X                                             
+   ///  |                 |                                                   
+   ///   \               /                                                    
+   ///    '-------------'   <- mRadius from origin of rounded parts           
+   ///                                                                        
    template<CT::Vector T>
    struct TBoxRounded : TBox<T> {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TBoxRounded>();
+         constexpr auto defaultClassName = LastCppNameOf<TBoxRounded>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -164,12 +147,12 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
-      LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
+      using CTTI_Named = Yes<GenerateToken()>;
+      //LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
 
       using Base = TBox<T>;
-      using typename Base::PointType;
-      using Base::MemberCount;
+      //using typename Base::PointType;
+      //using Base::MemberCount;
       using Base::mOffsets;
 
       TypeOf<T> mRadius;
@@ -178,8 +161,7 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(const T&) const;
 
-      explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;
+      /*explicit operator Annies::Text() const;
+      explicit operator Flow::Code() const;*/
    };
-
-} // namespace Langulus::Math
+}

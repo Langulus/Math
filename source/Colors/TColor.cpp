@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Colors/TColor.inl>
+#include <Langulus/Colors/TColor.hpp>
 
 
 namespace Langulus::Math
@@ -33,7 +33,7 @@ namespace Langulus::Math
       (void) MetaOf<Depth32>();
 
       // Constants                                                      
-      (void) MetaOf<Constants::ColorWhite>();
+      /*(void) MetaOf<Constants::ColorWhite>();
       (void) MetaOf<Constants::ColorBlack>();
       (void) MetaOf<Constants::ColorGrey>();
       (void) MetaOf<Constants::ColorRed>();
@@ -46,6 +46,6 @@ namespace Langulus::Math
       (void) MetaOf<Constants::ColorOrange>();
       (void) MetaOf<Constants::ColorYellow>();
       (void) MetaOf<Constants::ColorPurple>();
-      (void) MetaOf<Constants::ColorDarkPurple>();
+      (void) MetaOf<Constants::ColorDarkPurple>();*/
    }
 }

@@ -38,12 +38,12 @@ LANGULUS_DEFINE_OPERATOR(Modulate, Modulate, " % ", " % ", 8,
       template<CT::Dense T>
       static bool ExecuteIn(T&, Verb&);*/
 
-      /*static bool ExecuteDefault(const Many&, Verb&);
+      /*static bool ExecuteDefault(Many const&, Verb&);
       static bool ExecuteDefault(Many&, Verb&);
 
       template<CT::NotVoid...>
-      static bool OperateOnTypes(const Many&, const Many&, Verb&);
+      static bool OperateOnTypes(Many const&, Many const&, Verb&);
       template<CT::NotVoid...>
-      static bool OperateOnTypes(const Many&, Many&, Verb&);
+      static bool OperateOnTypes(Many const&, Many&, Verb&);
    };
 }*/

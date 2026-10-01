@@ -730,9 +730,8 @@ namespace Langulus::Math
 #undef TME
 
 
-
 ///                                                                           
-///   Canonical vectors                                                       
+///   Cardinal vectors                                                        
 ///                                                                           
 namespace Langulus::Axes
 {
@@ -783,28 +782,65 @@ namespace Langulus::Axes
    constexpr auto Left = -X<T>;
 }
 
+namespace Langulus::CTTI
+{
+   /// 4-component constants                                                  
+   template<CT::Scalar T, int DEFAULT>
+   struct DefineConstant<Math::TVector<T, 4, DEFAULT>> : Types<
+      NamedValue<Axes::X<T>, "Axes::X", "Cardinal X axis">,
+      NamedValue<Axes::Y<T>, "Axes::Y", "Cardinal Y axis">,
+      NamedValue<Axes::Z<T>, "Axes::Z", "Cardinal Z axis">,
+      NamedValue<Axes::W<T>, "Axes::W", "Cardinal W axis">,
 
-LANGULUS_DEFINE_CONSTANT(AxisForward, ::Langulus::Axes::Forward<>,
-   "Axes::Forward", "A canonical forward vector")
-LANGULUS_DEFINE_CONSTANT(AxisBackward, ::Langulus::Axes::Backward<>,
-   "Axes::Backward", "A canonical backward vector")
-LANGULUS_DEFINE_CONSTANT(AxisUp, ::Langulus::Axes::Up<>,
-   "Axes::Up", "A canonical up vector")
-LANGULUS_DEFINE_CONSTANT(AxisDown, ::Langulus::Axes::Down<>,
-   "Axes::Down", "A canonical down vector")
-LANGULUS_DEFINE_CONSTANT(AxisRight, ::Langulus::Axes::Right<>,
-   "Axes::Right", "A canonical right vector")
-LANGULUS_DEFINE_CONSTANT(AxisLeft, ::Langulus::Axes::Left<>,
-   "Axes::Left", "A canonical left vector")
+      NamedValue<Axes::Forward<T>,  "Cardinal::Forward",    "Cardinal forward direction">,
+      NamedValue<Axes::Backward<T>, "Cardinal::Backward",   "Cardinal backward direction">,
+      NamedValue<Axes::Up<T>,       "Cardinal::Up",         "Cardinal upward direction">,
+      NamedValue<Axes::Down<T>,     "Cardinal::Down",       "Cardinal downward direction">,
+      NamedValue<Axes::Right<T>,    "Cardinal::Right",      "Cardinal right direction">,
+      NamedValue<Axes::Left<T>,     "Cardinal::Left",       "Cardinal left direction">,
 
-LANGULUS_DEFINE_CONSTANT(AxisX, ::Langulus::Axes::X<>,
-   "Axes::X", "A canonical X axis")
-LANGULUS_DEFINE_CONSTANT(AxisY, ::Langulus::Axes::Y<>,
-   "Axes::Y", "A canonical Y axis")
-LANGULUS_DEFINE_CONSTANT(AxisZ, ::Langulus::Axes::Z<>,
-   "Axes::Z", "A canonical Z axis")
-LANGULUS_DEFINE_CONSTANT(AxisW, ::Langulus::Axes::W<>,
-   "Axes::W", "A canonical W axis")
+      NamedValue<Axes::Origin<T>,   "Origin",               "A canonical zero vector">
+   > {};
 
-LANGULUS_DEFINE_CONSTANT(AxisOrigin, ::Langulus::Axes::Origin<>,
-   "Origin", "A canonical zero vector")
+   /// 3-component constants                                                  
+   template<CT::Scalar T, int DEFAULT>
+   struct DefineConstant<Math::TVector<T, 3, DEFAULT>> : Types<
+      NamedValue<Axes::X<T>, "Axes::X", "Cardinal X axis">,
+      NamedValue<Axes::Y<T>, "Axes::Y", "Cardinal Y axis">,
+      NamedValue<Axes::Z<T>, "Axes::Z", "Cardinal Z axis">,
+
+      NamedValue<Axes::Forward<T>,  "Cardinal::Forward",    "Cardinal forward direction">,
+      NamedValue<Axes::Backward<T>, "Cardinal::Backward",   "Cardinal backward direction">,
+      NamedValue<Axes::Up<T>,       "Cardinal::Up",         "Cardinal upward direction">,
+      NamedValue<Axes::Down<T>,     "Cardinal::Down",       "Cardinal downward direction">,
+      NamedValue<Axes::Right<T>,    "Cardinal::Right",      "Cardinal right direction">,
+      NamedValue<Axes::Left<T>,     "Cardinal::Left",       "Cardinal left direction">,
+
+      NamedValue<Axes::Origin<T>,   "Origin",               "A canonical zero vector">
+   > {};
+
+   /// 2-component constants                                                  
+   template<CT::Scalar T, int DEFAULT>
+   struct DefineConstant<Math::TVector<T, 2, DEFAULT>> : Types<
+      NamedValue<Axes::X<T>, "Axes::X", "Cardinal X axis">,
+      NamedValue<Axes::Y<T>, "Axes::Y", "Cardinal Y axis">,
+
+      NamedValue<Axes::Up<T>,       "Cardinal::Up",    "Cardinal upward direction">,
+      NamedValue<Axes::Down<T>,     "Cardinal::Down",  "Cardinal downward direction">,
+      NamedValue<Axes::Right<T>,    "Cardinal::Right", "Cardinal right direction">,
+      NamedValue<Axes::Left<T>,     "Cardinal::Left",  "Cardinal left direction">,
+
+      NamedValue<Axes::Origin<T>,   "Origin",          "A canonical zero vector">
+   > {};
+
+   /// 1-component constants                                                  
+   template<CT::Scalar T, int DEFAULT>
+   struct DefineConstant<Math::TVector<T, 1, DEFAULT>> : Types<
+      NamedValue<Axes::X<T>,        "Axes::X",         "Cardinal X axis">,
+
+      NamedValue<Axes::Right<T>,    "Cardinal::Right", "Cardinal right direction">,
+      NamedValue<Axes::Left<T>,     "Cardinal::Left",  "Cardinal left direction">,
+
+      NamedValue<Axes::Origin<T>,   "Origin",          "A canonical zero vector">
+   > {};
+}

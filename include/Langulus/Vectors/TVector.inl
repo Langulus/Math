@@ -10,6 +10,7 @@
 #include <Langulus/Functions/Arithmetics.hpp>
 #include <Langulus/Functions/Trigonometry.hpp>
 #include <Langulus/Describe.hpp>
+#include <Langulus/CT/Swizzled.hpp>
 
 /*#include "Langulus/Except.hpp"
 #include "Langulus/Typenav.hpp"
@@ -34,8 +35,8 @@ namespace Langulus::Math
 
       static_assert(not CT::QuaternionBased<TVector>,
          "Vectors shouldn't match CT::QuaternionBased");
-      static_assert(CT::VectorBased<TVector>,
-         "Vectors should match CT::VectorBased");
+      static_assert(CT::CustomVector<TVector>,
+         "Vectors should match CT::CustomVector");
       static_assert(sizeof(TVector) == sizeof(T) * S,
          "Vectors should match T*4 size");
       static_assert(ExtentOf<TVector> == S,
@@ -802,7 +803,7 @@ namespace Langulus::Math
    }
 
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator - (const CT::Swizzled auto& rhs) noexcept {
       using E = Decay<TypeOf<decltype(rhs)>>;
       if constexpr (CT::Signed<E>)
          return rhs.GetBase() * E {-1};
@@ -834,27 +835,27 @@ namespace Langulus::Math
 
    /// Vector + Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::ProxyArray auto& lhs, const CT::CustomVector auto& rhs) noexcept {
+   constexpr auto operator + (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Add(lhs.GetBase(), rhs)};
    }
 
    /// Proxy + Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::CustomVector auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator + (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Add(lhs, rhs.GetBase())};
    }
 
    /// Proxy + Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::ProxyArray auto& lhs, const CT::Scalar auto& rhs) noexcept {
+   constexpr auto operator + (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Add(lhs.GetBase(), rhs)};
    }
 
    /// Scalar + Proxy                                                         
-   constexpr auto operator + (const CT::Scalar auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator + (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Add(lhs, rhs.GetBase())};
    }
@@ -886,28 +887,28 @@ namespace Langulus::Math
 
    /// Proxy - Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::ProxyArray auto& lhs, const CT::CustomVector auto& rhs) noexcept {
+   constexpr auto operator - (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs.GetBase(), rhs)};
    }
 
    /// Vector - Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::CustomVector auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator - (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Subtract(lhs, rhs.GetBase())};
    }
 
    /// Proxy - Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs.GetBase(), rhs)};
    }
 
    /// Scalar - Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator - (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Subtract(lhs, rhs.GetBase())};
    }
@@ -917,21 +918,21 @@ namespace Langulus::Math
    /// Multiplication                                                         
    /// Returns the Hadamard product of two vectors                            
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Vector * Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Scalar * Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs, rhs)};
    }
@@ -939,28 +940,28 @@ namespace Langulus::Math
 
    /// Proxy * Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs.GetBase(), rhs)};
    }
 
    /// Vector * Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator * (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Multiply(lhs, rhs.GetBase())};
    }
 
    /// Proxy * Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs.GetBase(), rhs)};
    }
 
    /// Scalar * Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator * (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Multiply(lhs, rhs.GetBase())};
    }
@@ -970,21 +971,21 @@ namespace Langulus::Math
    /// Division                                                               
    /// Returns the division of two vectors                                    
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto operator / (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs, rhs)};
    }
 
    /// Vector / Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto operator / (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs, rhs)};
    }
 
    /// Scalar / Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto operator / (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs, rhs)};
    }
@@ -992,28 +993,28 @@ namespace Langulus::Math
 
    /// Proxy / Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto operator / (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs.GetBase(), rhs)};
    }
 
    /// Vector / Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) {
+   constexpr auto operator / (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Divide(lhs, rhs.GetBase())};
    }
 
    /// Proxy / Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto operator / (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs.GetBase(), rhs)};
    }
 
    /// Scalar / Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) {
+   constexpr auto operator / (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::Divide(lhs, rhs.GetBase())};
    }
@@ -1023,21 +1024,21 @@ namespace Langulus::Math
    /// Shift left                                                             
    /// Int Vector << Int Vector                                               
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::VectorBasedInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::CustomVectorInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::ShiftLeft(lhs, rhs)};
    }
 
    /// Int Vector << Int Scalar                                               
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::VectorBasedInt auto& lhs, const CT::ScalarBasedInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::CustomVectorInt auto& lhs, const CT::ScalarInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::ShiftLeft(lhs, rhs)};
    }
 
    /// Int Scalar << Int Vector                                               
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::ScalarBasedInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::ScalarInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::ShiftLeft(lhs, rhs)};
    }
@@ -1045,28 +1046,28 @@ namespace Langulus::Math
 
    /// Int Proxy << Int Vector                                                
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::ProxyArrayInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::SwizzledInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::ShiftLeft(lhs.GetBase(), rhs)};
    }
 
    /// Int Vector << Int Proxy                                                
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::VectorBasedInt auto& lhs, const CT::ProxyArrayInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::CustomVectorInt auto& lhs, const CT::SwizzledInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::ShiftLeft(lhs, rhs.GetBase())};
    }
 
    /// Int Proxy << Int Scalar                                                
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::ProxyArrayInt auto& lhs, const CT::ScalarBasedInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::SwizzledInt auto& lhs, const CT::ScalarInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::ShiftLeft(lhs.GetBase(), rhs)};
    }
 
    /// Int Scalar << Int Proxy                                                
    LANGULUS(INLINED)
-   constexpr auto operator << (const CT::ScalarBasedInt auto& lhs, const CT::ProxyArrayInt auto& rhs) noexcept {
+   constexpr auto operator << (const CT::ScalarInt auto& lhs, const CT::SwizzledInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::ShiftLeft(lhs, rhs.GetBase())};
    }
@@ -1076,21 +1077,21 @@ namespace Langulus::Math
    /// Shift right                                                            
    /// Int Vector >> Int Vector                                               
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::VectorBasedInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::CustomVectorInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::ShiftRight(lhs, rhs)};
    }
 
    /// Int Vector >> Int Scalar                                               
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::VectorBasedInt auto& lhs, const CT::ScalarBasedInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::CustomVectorInt auto& lhs, const CT::ScalarInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::ShiftRight(lhs, rhs)};
    }
 
    /// Int Scalar >> Int Vector                                               
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::ScalarBasedInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::ScalarInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::ShiftRight(lhs, rhs)};
    }
@@ -1098,28 +1099,28 @@ namespace Langulus::Math
 
    /// Int Proxy >> Int Vector                                                
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::ProxyArrayInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::SwizzledInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::ShiftRight(lhs.GetBase(), rhs)};
    }
 
    /// Int Vector >> Int Proxy                                                
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::VectorBasedInt auto& lhs, const CT::ProxyArrayInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::CustomVectorInt auto& lhs, const CT::SwizzledInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::ShiftRight(lhs, rhs.GetBase())};
    }
 
    /// Int Proxy >> Int Scalar                                                
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::ProxyArrayInt auto& lhs, const CT::ScalarBasedInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::SwizzledInt auto& lhs, const CT::ScalarInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::ShiftRight(lhs.GetBase(), rhs)};
    }
 
    /// Int Scalar >> Int Proxy                                                
    LANGULUS(INLINED)
-   constexpr auto operator >> (const CT::ScalarBasedInt auto& lhs, const CT::ProxyArrayInt auto& rhs) noexcept {
+   constexpr auto operator >> (const CT::ScalarInt auto& lhs, const CT::SwizzledInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::ShiftRight(lhs, rhs.GetBase())};
    }
@@ -1129,21 +1130,21 @@ namespace Langulus::Math
    /// XOR                                                                    
    /// Int Vector xor Int Vector                                              
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::VectorBasedInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept{
+   constexpr auto operator ^ (const CT::CustomVectorInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept{
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::XOr(lhs, rhs)};
    }
 
    /// Int Vector xor Int Scalar                                              
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::VectorBasedInt auto& lhs, const CT::ScalarBasedInt auto& rhs) noexcept {
+   constexpr auto operator ^ (const CT::CustomVectorInt auto& lhs, const CT::ScalarInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::XOr(lhs, rhs)};
    }
 
    /// Int Scalar xor Int Vector                                              
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::ScalarBasedInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept {
+   constexpr auto operator ^ (const CT::ScalarInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::XOr(lhs, rhs)};
    }
@@ -1151,28 +1152,28 @@ namespace Langulus::Math
 
    /// Int Proxy xor Int Vector                                               
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::ProxyArrayInt auto& lhs, const CT::VectorBasedInt auto& rhs) noexcept{
+   constexpr auto operator ^ (const CT::SwizzledInt auto& lhs, const CT::CustomVectorInt auto& rhs) noexcept{
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::XOr(lhs.GetBase(), rhs)};
    }
 
    /// Int Vector xor Int Proxy                                               
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::VectorBasedInt auto& lhs, const CT::ProxyArrayInt auto& rhs) noexcept{
+   constexpr auto operator ^ (const CT::CustomVectorInt auto& lhs, const CT::SwizzledInt auto& rhs) noexcept{
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::XOr(lhs, rhs.GetBase())};
    }
 
    /// Int Proxy xor Int Scalar                                               
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::ProxyArrayInt auto& lhs, const CT::ScalarBasedInt auto& rhs) noexcept {
+   constexpr auto operator ^ (const CT::SwizzledInt auto& lhs, const CT::ScalarInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
       return Ret {SIMD::XOr(lhs.GetBase(), rhs)};
    }
 
    /// Int Scalar xor Int Proxy                                               
    LANGULUS(INLINED)
-   constexpr auto operator ^ (const CT::ScalarBasedInt auto& lhs, const CT::ProxyArrayInt auto& rhs) noexcept {
+   constexpr auto operator ^ (const CT::ScalarInt auto& lhs, const CT::SwizzledInt auto& rhs) noexcept {
       using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
       return Ret {SIMD::XOr(lhs, rhs.GetBase())};
    }
@@ -1187,14 +1188,14 @@ namespace Langulus::Math
    /// Destructive addition                                                   
    /// Vector += Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator += (CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       SIMD::Add(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Vector += Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator += (CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       SIMD::Add(lhs, rhs, lhs);
       return lhs;
    }
@@ -1202,7 +1203,7 @@ namespace Langulus::Math
 
    /// Proxy += Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator += (CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       SIMD::Add(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1210,14 +1211,14 @@ namespace Langulus::Math
 
    /// Vector += Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto& operator += (CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       SIMD::Add(lhs, rhs.GetBase(), lhs);
       return lhs;
    }
 
    /// Proxy += Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator += (CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator += (CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       SIMD::Add(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1228,14 +1229,14 @@ namespace Langulus::Math
    /// Destructive subtraction                                                
    /// Vector -= Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       SIMD::Subtract(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Vector -= Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       SIMD::Subtract(lhs, rhs, lhs);
       return lhs;
    }
@@ -1243,7 +1244,7 @@ namespace Langulus::Math
 
    /// Proxy -= Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       SIMD::Subtract(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1251,14 +1252,14 @@ namespace Langulus::Math
 
    /// Vector -= Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       SIMD::Subtract(lhs, rhs.GetBase(), lhs);
       return lhs;
    }
 
    /// Proxy -= Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator -= (CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       SIMD::Subtract(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1269,14 +1270,14 @@ namespace Langulus::Math
    /// Destructive multiplication                                             
    /// Vector *= Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       SIMD::Multiply(lhs, rhs, lhs);
       return lhs;
    }
 
    /// Vector *= Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       SIMD::Multiply(lhs, rhs, lhs);
       return lhs;
    }
@@ -1284,7 +1285,7 @@ namespace Langulus::Math
 
    /// Proxy *= Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       SIMD::Multiply(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1292,14 +1293,14 @@ namespace Langulus::Math
 
    /// Vector *= Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       SIMD::Multiply(lhs, rhs.GetBase(), lhs);
       return lhs;
    }
 
    /// Proxy *= Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto& operator *= (CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       SIMD::Multiply(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1309,7 +1310,7 @@ namespace Langulus::Math
    /// Vector /= Vector                                                       
    ///   @attention throws on division by zero                                
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto& operator /= (CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) {
       SIMD::Divide(lhs, rhs, lhs);
       return lhs;
    }
@@ -1317,7 +1318,7 @@ namespace Langulus::Math
    /// Vector /= Scalar                                                       
    ///   @attention throws on division by zero                                
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto& operator /= (CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) {
       SIMD::Divide(lhs, rhs, lhs);
       return lhs;
    }
@@ -1326,7 +1327,7 @@ namespace Langulus::Math
    /// Proxy /= Vector                                                        
    ///   @attention throws on division by zero                                
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto& operator /= (CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) {
       SIMD::Divide(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1335,7 +1336,7 @@ namespace Langulus::Math
    /// Vector /= Proxy                                                        
    ///   @attention throws on division by zero                                
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) {
+   constexpr auto& operator /= (CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) {
       SIMD::Divide(lhs, rhs.GetBase(), lhs);
       return lhs;
    }
@@ -1343,7 +1344,7 @@ namespace Langulus::Math
    /// Proxy /= Scalar                                                        
    ///   @attention throws on division by zero                                
    LANGULUS(INLINED)
-   constexpr auto& operator /= (CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto& operator /= (CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) {
       SIMD::Divide(lhs.GetBase(), rhs, lhs.GetBase());
       lhs.Commit();
       return lhs;
@@ -1359,44 +1360,44 @@ namespace Langulus::Math
    /// Lesser                                                                 
    /// Vector < Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator < (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
    /// Vector < Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator < (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
    /// Scalar < Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator < (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs);
    }
 
 
    /// Proxy < Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator < (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Lesser(lhs.GetBase(), rhs);
    }
 
    /// Vector < Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator < (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs.GetBase());
    }
 
    /// Proxy < Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator < (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Lesser(lhs.GetBase(), rhs);
    }
 
    /// Scalar < Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator < (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator < (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::Lesser(lhs, rhs.GetBase());
    }
 
@@ -1405,44 +1406,44 @@ namespace Langulus::Math
    /// Lesser or equal                                                        
    /// Vector <= Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
    /// Vector <= Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
    /// Scalar <= Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs);
    }
 
 
    /// Proxy <= Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs.GetBase(), rhs);
    }
 
    /// Vector <= Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs.GetBase());
    }
 
    /// Proxy <= Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs.GetBase(), rhs);
    }
 
    /// Scalar <= Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator <= (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::EqualsOrLesser(lhs, rhs.GetBase());
    }
 
@@ -1451,44 +1452,44 @@ namespace Langulus::Math
    /// Greater                                                                
    /// Vector > Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator > (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
    /// Vector > Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator > (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
    /// Scalar > Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator > (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs);
    }
 
 
    /// Proxy > Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator > (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Greater(lhs.GetBase(), rhs);
    }
 
    /// Vector > Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator > (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs.GetBase());
    }
 
    /// Proxy > Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator > (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Greater(lhs.GetBase(), rhs);
    }
 
    /// Scalar > Proxy                                                         
    LANGULUS(INLINED)
-   constexpr auto operator > (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator > (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::Greater(lhs, rhs.GetBase());
    }
 
@@ -1497,44 +1498,44 @@ namespace Langulus::Math
    /// Greater or equal                                                       
    /// Vector >= Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
    /// Vector >= Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
    /// Scalar >= Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs);
    }
 
 
    /// Proxy >= Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs.GetBase(), rhs);
    }
 
    /// Vector >= Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs.GetBase());
    }
 
    /// Proxy >= Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs.GetBase(), rhs);
    }
 
    /// Scalar >= Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator >= (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::EqualsOrGreater(lhs, rhs.GetBase());
    }
 
@@ -1543,44 +1544,44 @@ namespace Langulus::Math
    /// Equal                                                                  
    /// Vector == Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Equals(lhs, rhs);
    }
 
    /// Vector == Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Equals(lhs, rhs);
    }
 
    /// Scalar == Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Equals(rhs, lhs);
    }
 
 
    /// Proxy == Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return SIMD::Equals(lhs.GetBase(), rhs);
    }
 
    /// Vector == Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator == (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::Equals(lhs, rhs.GetBase());
    }
 
    /// Proxy == Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Equals(lhs.GetBase(), rhs);
    }
 
    /// Scalar == Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator == (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return SIMD::Equals(rhs.GetBase(), lhs);
    }
 
@@ -1589,44 +1590,44 @@ namespace Langulus::Math
    /// Inequal                                                                
    /// Vector != Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::CustomVector auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
    /// Vector != Scalar                                                       
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::CustomVector auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
    /// Scalar != Vector                                                       
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::ScalarBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::Scalar auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
 
    /// Proxy != Vector                                                        
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::ProxyArray auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::Swizzled auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return not (lhs.GetBase() == rhs);
    }
 
    /// Vector != Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator != (const CT::CustomVector auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return not (lhs == rhs.GetBase());
    }
 
    /// Proxy != Scalar                                                        
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::ProxyArray auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::Swizzled auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return not (lhs.GetBase() == rhs);
    }
 
    /// Scalar != Proxy                                                        
    LANGULUS(INLINED)
-   constexpr auto operator != (const CT::ScalarBased auto& lhs, const CT::ProxyArray auto& rhs) noexcept {
+   constexpr auto operator != (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return not (lhs == rhs.GetBase());
    }
 

@@ -13,7 +13,7 @@ namespace Langulus
 {
    namespace Math
    {
-      template<CT::VectorBased>
+      template<CT::CustomVector>
       struct TScale;
 
       using Scale1      = TScale<TVector<Real, 1, 1>>;
@@ -126,7 +126,7 @@ namespace Langulus
       ///   Templated size                                                    
       /// Vector specialization that defaults to 1 and is used for scaling    
       ///                                                                     
-      template<CT::VectorBased T>
+      template<CT::CustomVector T>
       struct TScale : T {
          using T::MemberCount;
          using T::T;

@@ -6,25 +6,24 @@
 /// SPDX-License-Identifier: MIT                                              
 ///                                                                           
 #pragma once
-#include <Langulus/CT/Number.hpp>
+#include <Langulus/CT/Vector.hpp>
+#include <Langulus/CT/Integer.hpp>
 
 
 namespace Langulus::CTTI
 {
-   /// Extends T by marking it as a custom number, as opposed to CT::Number,  
-   /// which also considers bounded arrays of extent == 1 as numbers, too.    
-   /// Examples:                                                              
-   /// 1) template<> struct CustomNumber<YourType> {};                        
-   /// 2) struct YourType { using CTTI_CustomNumber = Yup; };                 
+   /// Extends T by marking it as a swizzle vector. Examples:                 
+   /// 1) template<> struct Swizzled<YourType> {};                            
+   /// 2) struct YourType { using CTTI_Swizzled = Yup; };                     
    template<class T>
-   struct CustomNumber;
+   struct Swizzled;
 }
 
-LANGULUS_CTTI_CONCEPT_DECVQ(CustomNumber);
+LANGULUS_CTTI_CONCEPT_DECVQ(Swizzled);
 
 namespace Langulus::CT
 {
-   /// Built-in number                                                        
+   /// Swizzled integer vector                                                
    template<class...T>
-   concept BuiltinNumber = ((Number<T> and not CustomNumber<T>) and ...);
+   concept SwizzledInt = ((Swizzled<T> and Integer<TypeOf<T>>) and ...);
 }

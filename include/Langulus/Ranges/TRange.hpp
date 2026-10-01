@@ -10,7 +10,7 @@
 #include <Langulus/CT/Normalized.hpp>
 #include <Langulus/CT/Range.hpp>
 
-#define TEMPLATE()   template<CT::Dense T>
+#define TEMPLATE()   template<CT::CustomVector T>
 #define TME()        TRange<T>
 
 
@@ -148,29 +148,29 @@ namespace Langulus::Math
          name[offset++] = '0' + S;
 
          // Write suffix                                                
-         for (auto i : SuffixOf<TypeOf<T>>())
+         for (auto i : SuffixOf<ScalarType>())
             name[offset++] = i;
 
          return name;
       }
 
    public:
-      using CTTI_Range        = Yup;
-      using CTTI_Normalized   = Maybe<CT::Normalized<T>>;
-      using CTTI_Typed        = ScalarType;
-      using CTTI_Array        = Yes<ScalarCount>;
-      using CTTI_Named        = Yes<GenerateToken()>;
-      using CTTI_POD          = Maybe<CT::POD<T>>;
-      using CTTI_Nullable     = Maybe<CT::Nullable<T>>;
-      using CTTI_Members      = Members<&TRange::mMin, &TRange::mMax>;
-      using CTTI_Bases        = Types<
+      using CTTI_Range      = Yup;
+      using CTTI_Normalized = Maybe<CT::Normalized<T>>;
+      using CTTI_Typed      = ScalarType;
+      using CTTI_Array      = Yes<ScalarCount>;
+      using CTTI_Named      = Yes<GenerateToken()>;
+      using CTTI_POD        = Maybe<CT::POD<T>>;
+      using CTTI_Nullable   = Maybe<CT::Nullable<T>>;
+      using CTTI_Members    = Members<&TRange::mMin, &TRange::mMax>;
+      using CTTI_Bases      = Types<
          RangeOfSize<(ScalarCount > 1 ? ScalarCount / 2 : 1)>,
          RangeOfType<ScalarType>,
          ScalarType
       >;
 
    public:
-      constexpr TRange() noexcept;
+      constexpr TRange() noexcept = default;
       constexpr TRange(const TRange&) noexcept;
       constexpr TRange(const CT::Vector auto&) noexcept;
       constexpr TRange(const CT::Vector auto&, const CT::Vector auto&) noexcept;
@@ -247,5 +247,51 @@ namespace Langulus::Math
    using LosslessRange = Deptr<decltype(Inner::LosslessRange<LHS, RHS>())>;
 }
 
+#include "TRange.inl"
+
 #undef TEMPLATE
 #undef TME
+
+
+namespace Langulus::Ranges
+{
+   using Math::Range3;
+   using Math::Vec3;
+
+   //TODO use infinities instead of big numbers
+   constexpr Range3 In      { -1,   +1   };
+   constexpr Range3 On      { +1,   +1   };
+   constexpr Range3 Center  { +0,   +0   };
+   constexpr Range3 Middle  { -0.5, +0.5 };
+
+   constexpr Range3 Under   { {-1,    -1,    -1   }, {+1,    -1,    +1   } };
+   constexpr Range3 Above   { {-1,    +1,    -1   }, {+1,    +1000, +1   } };
+   constexpr Range3 Below   { {-1,    -1000, -1   }, {+1,    -1,    +1   } };
+   constexpr Range3 Rear    { {-1,    -1,    -1   }, {+1,    +1,    -1   } };
+   constexpr Range3 Behind  { {-1,    -1,    -1000}, {+1,    +1,    -1   } };
+   constexpr Range3 Front   { {-1,    -1,    +1   }, {+1,    +1,    +1   } };
+   constexpr Range3 Ahead   { {-1,    -1,    +1   }, {+1,    +1,    +1000} };
+   constexpr Range3 Left    { {-1000, -1,    -1   }, {-1,    +1,    +1   } };
+   constexpr Range3 Right   { {+1,    -1,    -1   }, {+1000, +1,    +1   } };
+}
+
+namespace Langulus::CTTI
+{
+   /// Range constants                                                        
+   struct DefineConstant<Math::Range3> : Types<
+      NamedValue<Ranges::In,     "Ranges::In",        "A canonical `in` range">,
+      NamedValue<Ranges::On,     "Ranges::On",        "A canonical `on the surface` range">,
+      NamedValue<Ranges::Under,  "Ranges::Under",     "A canonical `on the underside` range">,
+      NamedValue<Ranges::Above,  "Ranges::Above",     "A canonical `above and beyond` range">,
+      NamedValue<Ranges::Below,  "Ranges::Below",     "A canonical `below and beyond` range">,
+      NamedValue<Ranges::Center, "Ranges::Center",    "A canonical center range (not really a range)">,
+      NamedValue<Ranges::Middle, "Ranges::Middle",    "A canonical `middle` range">,
+      NamedValue<Ranges::Rear,   "Ranges::Rear",      "A canonical `on the rear surface` range">,
+      NamedValue<Ranges::Behind, "Ranges::Behind",    "A canonical `behind and beyond` range">,
+      NamedValue<Ranges::Front,  "Ranges::Front",     "A canonical `on the front surface` range">,
+      NamedValue<Ranges::Ahead,  "Ranges::Ahead",     "A canonical `ahead and beyond` range">,
+      NamedValue<Ranges::Left,   "Ranges::Leftside",  "A canonical `on the left and beyond` range">,
+      NamedValue<Ranges::Right,  "Ranges::Rightside", "A canonical `on the right and beyond` range">
+   > {};
+}
+

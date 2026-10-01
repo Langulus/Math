@@ -6,18 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "TRange.hpp"
-
-#define TEMPLATE()   template<CT::Dense T>
-#define TME()        TRange<T>
 
 
 namespace Langulus::Math
 {
-
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange() noexcept requires CT::Defaultable<T> {}
-
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const TRange& a) noexcept {
@@ -50,18 +42,18 @@ namespace Langulus::Math
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept {
-      for (size_t i = 0; i < CountOf<T>; ++i) {
+      for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min.all[i];
-         mMinMax[i + CountOf<T>] = max.all[i];
+         mMinMax[i + ExtentOf<T>] = max.all[i];
       }
    }
 
    /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const MemberType& min, const MemberType& max) noexcept {
-      for (size_t i = 0; i < CountOf<T>; ++i) {
+   constexpr TME()::TRange(const ScalarType& min, const ScalarType& max) noexcept {
+      for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min;
-         mMinMax[i + CountOf<T>] = max;
+         mMinMax[i + ExtentOf<T>] = max;
       }
 
       if constexpr (CT::Normalized<T>) {
@@ -72,19 +64,19 @@ namespace Langulus::Math
 
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const CT::VectorBased auto& min, const CT::VectorBased auto& max) noexcept {
-      for (size_t i = 0; i < CountOf<T>; ++i) {
+   constexpr TME()::TRange(const CT::Vector auto& min, const CT::Vector auto& max) noexcept {
+      for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min.all[i];
-         mMinMax[i + CountOf<T>] = max.all[i];
+         mMinMax[i + ExtentOf<T>] = max.all[i];
       }
    }
 
    /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const CT::ScalarBased auto& min, const CT::ScalarBased auto& max) noexcept {
-      for (size_t i = 0; i < CountOf<T>; ++i) {
+   constexpr TME()::TRange(const CT::Scalar auto& min, const CT::Scalar auto& max) noexcept {
+      for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min;
-         mMinMax[i + CountOf<T>] = max;
+         mMinMax[i + ExtentOf<T>] = max;
       }
 
       if constexpr (CT::Normalized<T>) {
@@ -95,7 +87,7 @@ namespace Langulus::Math
    
    /// Create from registers                                                  
    TEMPLATE() LANGULUS(INLINED)
-   TME()::TRange(const CT::SIMD auto& source) noexcept {
+   TME()::TRange(CT::SIMD auto const& source) noexcept {
       SIMD::Store(source, mMinMax);
 
       if constexpr (CT::Normalized<T>) {
@@ -104,25 +96,24 @@ namespace Langulus::Math
       }
    }
    
-   /// Construct from a descriptor                                            
-   ///   @param describe - the descriptor to scan                             
+   /// Describe-construction                                                  
    TEMPLATE()
    TME()::TRange(Describe&& describe) {
-      LglsAssumeUser(*describe,
-         "Empty descriptor for TRange");
+      LglsAssumeUser(describe, "Empty descriptor for TRange");
 
-      if (describe->CastsTo<A::Range>()) {
-         mMin = Describe {describe->GetMember(*describe->GetType()->GetMember({}, {}, 0), 0)};
-         mMax = Describe {describe->GetMember(*describe->GetType()->GetMember({}, {}, 1), 0)};
+      if (describe->CastsTo<Range>()) {
+         mMin = Describe {describe.GetMember(0)};
+         mMax = Describe {describe.GetMember(1)};
          return;
       }
-      else if (describe->CastsTo<A::Vector>() and describe->GetCount() == 2) {
-         mMin = Describe {describe->GetElement(0)};
-         mMax = Describe {describe->GetElement(1)};
+      else if (describe->CastsTo<Vector>() and describe->GetCount() == 2) {
+         auto handle = describe->GetHandle();
+         mMin = Describe {handle++};
+         mMax = Describe {handle  };
          return;
       }
-      else if (describe->CastsTo<A::Number>()) {
-         mMinMax = {describe.Forward()};
+      else if (describe->CastsTo<Number>()) {
+         mMinMax = LglsFwd(describe);
 
          if constexpr (CT::Normalized<T>) {
             mMin = mMin.Normalize();
@@ -132,12 +123,11 @@ namespace Langulus::Math
       }
 
       // Nothing was initialized. This is always an error in the        
-      // context of the descriptor-constructor. If descriptor was       
+      // context of the describe-constructor. If descriptor was         
       // empty, the default constructor would've been explicitly        
       // called, instead of this one. This way we can differentiate     
       // whether or not a vector object was successfully initialized.   
-      LANGULUS_OOPS(Construct, "Bad TRange descriptor", 
-         ", nothing was initialized: ", *describe);
+      LglsError("Bad TRange descriptor, nothing was initialized: ", *describe);
    }
 
    /// Copy range                                                             
@@ -152,7 +142,7 @@ namespace Langulus::Math
    ///   @param r - the range to copy                                         
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::RangeBased auto& r) noexcept -> TRange& {
+   constexpr auto TME()::operator = (const CT::Range auto& r) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(r)};
    }
 
@@ -160,7 +150,7 @@ namespace Langulus::Math
    ///   @param v - the vector to copy                                        
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::VectorBased auto& v) noexcept -> TRange& {
+   constexpr auto TME()::operator = (const CT::Vector auto& v) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(v)};
    }
   
@@ -168,20 +158,20 @@ namespace Langulus::Math
    ///   @param s - the scalar value                                          
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::ScalarBased auto& s) noexcept -> TRange& {
+   constexpr auto TME()::operator = (const CT::Scalar auto& s) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(s)};
    }
 
    /// Set only a specific component                                          
    ///   @param c - the component to overwrite                                
    ///   @return a reference to this vector                                   
-   TEMPLATE() template<CT::ScalarBased N, CT::Dimension D> LANGULUS(INLINED)
+   TEMPLATE() template<CT::Scalar N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& c) noexcept {
       return *new (this) TRange {PointType {c}};
    }
 
    /// Serialize to code                                                      
-   TEMPLATE() LANGULUS(INLINED)
+   /*TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       using Flow::Code;
       Code result;
@@ -215,7 +205,7 @@ namespace Langulus::Math
       }
       result += ")";
       return result;
-   }
+   }*/
 
    /// Incorporate a point into the range                                     
    TEMPLATE() LANGULUS(INLINED)
@@ -339,26 +329,26 @@ namespace Langulus::Math
 
    /// Range + Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs.mMinMax, rhs)};
    }
 
    /// Range + Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs.mMin + rhs, lhs.mMax + rhs}; //TODO can be optimized further by caching rhs in a register
    }
 
    /// Scalar + Range                                                         
-   constexpr auto operator + (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::Scalar auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Add(lhs, rhs.mMinMax)};
    }
 
    /// Vector + Range                                                         
-   constexpr auto operator + (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+   constexpr auto operator + (const CT::CustomVector auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs + rhs.mMin, lhs + rhs.mMax}; //TODO can be optimized further by caching lhs in a register
    }
@@ -372,26 +362,26 @@ namespace Langulus::Math
 
    /// Range + Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs.mMinMax, rhs)};
    }
 
    /// Range + Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs.mMin - rhs, lhs.mMax - rhs}; //TODO can be optimized further by caching rhs in a register
    }
 
    /// Scalar + Range                                                         
-   constexpr auto operator - (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::Scalar auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Subtract(lhs, rhs.mMinMax)};
    }
 
    /// Vector + Range                                                         
-   constexpr auto operator - (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+   constexpr auto operator - (const CT::CustomVector auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs - rhs.mMin, lhs - rhs.mMax}; //TODO can be optimized further by caching lhs in a register
    }
@@ -405,26 +395,26 @@ namespace Langulus::Math
 
    /// Range * Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs.mMinMax, rhs)};
    }
 
    /// Range * Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs.mMin * rhs, lhs.mMax * rhs}; //TODO can be optimized further by caching rhs in a register
    }
 
    /// Scalar * Range                                                         
-   constexpr auto operator * (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::Scalar auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Multiply(lhs, rhs.mMinMax)};
    }
 
    /// Vector * Range                                                         
-   constexpr auto operator * (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) noexcept {
+   constexpr auto operator * (const CT::CustomVector auto& lhs, const CT::RangeBased auto& rhs) noexcept {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs * rhs.mMin, lhs * rhs.mMax}; //TODO can be optimized further by caching lhs in a register
    }
@@ -438,26 +428,26 @@ namespace Langulus::Math
 
    /// Range / Scalar                                                         
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs.mMinMax, rhs)};
    }
 
    /// Range / Vector                                                         
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto operator / (const CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs.mMin / rhs, lhs.mMax / rhs}; //TODO can be optimized further by caching rhs in a register
    }
 
    /// Scalar / Range                                                         
-   constexpr auto operator / (const CT::ScalarBased auto& lhs, const CT::RangeBased auto& rhs) {
+   constexpr auto operator / (const CT::Scalar auto& lhs, const CT::RangeBased auto& rhs) {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {SIMD::Divide(lhs, rhs.mMinMax)};
    }
 
    /// Vector / Range                                                         
-   constexpr auto operator / (const CT::VectorBased auto& lhs, const CT::RangeBased auto& rhs) {
+   constexpr auto operator / (const CT::CustomVector auto& lhs, const CT::RangeBased auto& rhs) {
       using Ret = LosslessRange<decltype(lhs), decltype(rhs)>;
       return Ret {lhs / rhs.mMin, lhs / rhs.mMax}; //TODO can be optimized further by caching lhs in a register
    }
@@ -472,13 +462,13 @@ namespace Langulus::Math
       return lhs;
    }
 
-   constexpr auto& operator += (CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator += (CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using R = Deref<decltype(lhs)>;
       lhs.mMinMax += R {rhs, rhs};
       return lhs;
    }
 
-   constexpr auto& operator += (CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator += (CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) noexcept {
       lhs.mMinMax += rhs;
       return lhs;
    }
@@ -489,13 +479,13 @@ namespace Langulus::Math
       return lhs;
    }
 
-   constexpr auto& operator -= (CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using R = Deref<decltype(lhs)>;
       lhs.mMinMax -= R {rhs, rhs};
       return lhs;
    }
 
-   constexpr auto& operator -= (CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator -= (CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) noexcept {
       lhs.mMinMax -= rhs;
       return lhs;
    }
@@ -506,13 +496,13 @@ namespace Langulus::Math
       return lhs;
    }
 
-   constexpr auto& operator *= (CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using R = Deref<decltype(lhs)>;
       lhs.mMinMax *= R {rhs, rhs};
       return lhs;
    }
 
-   constexpr auto& operator *= (CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto& operator *= (CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) noexcept {
       lhs.mMinMax *= rhs;
       return lhs;
    }
@@ -523,13 +513,13 @@ namespace Langulus::Math
       return lhs;
    }
 
-   constexpr auto& operator /= (CT::RangeBased auto& lhs, const CT::VectorBased auto& rhs) {
+   constexpr auto& operator /= (CT::RangeBased auto& lhs, const CT::CustomVector auto& rhs) {
       using R = Deref<decltype(lhs)>;
       lhs.mMinMax /= R {rhs, rhs};
       return lhs;
    }
 
-   constexpr auto& operator /= (CT::RangeBased auto& lhs, const CT::ScalarBased auto& rhs) {
+   constexpr auto& operator /= (CT::RangeBased auto& lhs, const CT::Scalar auto& rhs) {
       lhs.mMinMax /= rhs;
       return lhs;
    }
@@ -543,11 +533,11 @@ namespace Langulus::Math
       return lhs.Length() < rhs.Length();
    }
 
-   constexpr auto operator <  (const CT::RangeBased  auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator <  (const CT::RangeBased  auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return lhs.mMax < rhs;
    }
 
-   constexpr auto operator <  (const CT::ScalarBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator <  (const CT::Scalar auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return lhs < rhs.mMin;
    }
 
@@ -556,11 +546,11 @@ namespace Langulus::Math
       return lhs.Length() > rhs.Length();
    }
 
-   constexpr auto operator >  (const CT::RangeBased  auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator >  (const CT::RangeBased  auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return lhs.mMin > rhs;
    }
 
-   constexpr auto operator >  (const CT::ScalarBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator >  (const CT::Scalar auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return lhs > rhs.mMax;
    }
 
@@ -569,11 +559,11 @@ namespace Langulus::Math
       return lhs.Length() >= rhs.Length();
    }
 
-   constexpr auto operator >= (const CT::RangeBased  auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::RangeBased  auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return lhs.mMin >= rhs;
    }
 
-   constexpr auto operator >= (const CT::ScalarBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator >= (const CT::Scalar auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return lhs >= rhs.mMax;
    }
 
@@ -582,11 +572,11 @@ namespace Langulus::Math
       return lhs.Length() <= rhs.Length();
    }
 
-   constexpr auto operator <= (const CT::RangeBased  auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::RangeBased  auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return lhs.mMax <= rhs;
    }
 
-   constexpr auto operator <= (const CT::ScalarBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator <= (const CT::Scalar auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return lhs <= rhs.mMin;
    }
 
@@ -600,23 +590,23 @@ namespace Langulus::Math
    }
 
    /// Range == Scalar                                                        
-   constexpr auto operator == (const CT::RangeBased  auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::RangeBased  auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return SIMD::Equals(lhs.mMinMax, rhs);
    }
 
    /// Scalar == Range                                                        
-   constexpr auto operator == (const CT::ScalarBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator == (const CT::Scalar auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return SIMD::Equals(rhs.mMinMax, lhs);
    }
 
    /// Range == Vector                                                        
-   constexpr auto operator == (const CT::RangeBased  auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator == (const CT::RangeBased  auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       using R = Deref<decltype(lhs)>;
       return SIMD::Equals(lhs.mMinMax, typename R::CoalescedType {rhs});
    }
 
    /// Vector == Range                                                        
-   constexpr auto operator == (const CT::VectorBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator == (const CT::CustomVector auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return rhs == lhs;
    }
 
@@ -624,74 +614,19 @@ namespace Langulus::Math
       return not (lhs == rhs);
    }
 
-   constexpr auto operator != (const CT::RangeBased  auto& lhs, const CT::ScalarBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::RangeBased  auto& lhs, const CT::Scalar auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
-   constexpr auto operator != (const CT::ScalarBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator != (const CT::Scalar auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return not (rhs == lhs);
    }
 
-   constexpr auto operator != (const CT::RangeBased  auto& lhs, const CT::VectorBased auto& rhs) noexcept {
+   constexpr auto operator != (const CT::RangeBased  auto& lhs, const CT::CustomVector auto& rhs) noexcept {
       return not (lhs == rhs);
    }
 
-   constexpr auto operator != (const CT::VectorBased auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
+   constexpr auto operator != (const CT::CustomVector auto& lhs, const CT::RangeBased  auto& rhs) noexcept {
       return not (rhs == lhs);
    }
-
-} // namespace Langulus::Math
-
-#undef TEMPLATE
-#undef TME
-
-
-namespace Langulus::Ranges
-{
-
-   using Math::Range3;
-   using Math::Vec3;
-
-   //TODO use infinities instead of big numbers
-   constexpr Range3 In      { -1, +1 };
-   constexpr Range3 On      { +1, +1 };
-   constexpr Range3 Under   { {-1, -1, -1},    {+1, -1, +1} };
-   constexpr Range3 Above   { {-1, +1, -1},    {+1, +1000, +1} };
-   constexpr Range3 Below   { {-1, -1000, -1}, {+1, -1, +1} };
-   constexpr Range3 Center  { 0, 0 };
-   constexpr Range3 Middle  { -0.5, +0.5 };
-   constexpr Range3 Rear    { {-1, -1, -1},    {+1, +1, -1} };
-   constexpr Range3 Behind  { {-1, -1, -1000}, {+1, +1, -1} };
-   constexpr Range3 Front   { {-1, -1, 1},     {+1, +1, 1} };
-   constexpr Range3 Ahead   { {-1, -1, 1},     {+1, +1, 1000} };
-   constexpr Range3 Left    { {-1000, -1, -1}, {-1, +1, +1} };
-   constexpr Range3 Right   { {1, -1, -1},     {1000, +1, +1} };
-
-} // namespace Langulus::Ranges
-
-LANGULUS_DEFINE_CONSTANT(RangeIn, ::Langulus::Ranges::In,
-   "Ranges::In", "A canonical 'in' range")
-LANGULUS_DEFINE_CONSTANT(RangeOn, ::Langulus::Ranges::On,
-   "Ranges::On", "A canonical 'on the surface' range")
-LANGULUS_DEFINE_CONSTANT(RangeUnder, ::Langulus::Ranges::Under,
-   "Ranges::Under", "A canonical 'on the underside' range")
-LANGULUS_DEFINE_CONSTANT(RangeAbove, ::Langulus::Ranges::Above,
-   "Ranges::Above", "A canonical 'above and beyond' range")
-LANGULUS_DEFINE_CONSTANT(RangeBelow, ::Langulus::Ranges::Below,
-   "Ranges::Below", "A canonical 'below and beyond' range")
-LANGULUS_DEFINE_CONSTANT(RangeCenter, ::Langulus::Ranges::Center,
-   "Ranges::Center", "A canonical center range (not really a range)")
-LANGULUS_DEFINE_CONSTANT(RangeMiddle, ::Langulus::Ranges::Middle,
-   "Ranges::Middle", "A canonical 'middle' range")
-LANGULUS_DEFINE_CONSTANT(RangeRear, ::Langulus::Ranges::Rear,
-   "Ranges::Rear", "A canonical 'on the rear surface' range")
-LANGULUS_DEFINE_CONSTANT(RangeBehind, ::Langulus::Ranges::Behind,
-   "Ranges::Behind", "A canonical 'behind and beyond' range")
-LANGULUS_DEFINE_CONSTANT(RangeFront, ::Langulus::Ranges::Front,
-   "Ranges::Front", "A canonical 'on the front surface' range")
-LANGULUS_DEFINE_CONSTANT(RangeAhead, ::Langulus::Ranges::Ahead,
-   "Ranges::Ahead", "A canonical 'ahead and beyond' range")
-LANGULUS_DEFINE_CONSTANT(RangeLeft, ::Langulus::Ranges::Left,
-   "Ranges::Left", "A canonical 'on the left and beyond' range")
-LANGULUS_DEFINE_CONSTANT(RangeRight, ::Langulus::Ranges::Right,
-   "Ranges::Right", "A canonical 'on the right and beyond' range")
+}

@@ -5,13 +5,13 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Ranges/TRange.inl>
+#include <Langulus/Ranges/TRange.hpp>
 
 
 namespace Langulus::Math
 {
    /// Combines S and T... to form a vector type, and then a range from it    
-   ///   @tparam S - size of the vector                                       
+   ///   @tparam S size of the vector                                         
    template<size_t S>
    struct RangeTypeGenerator {
       template<class...T>
@@ -20,22 +20,16 @@ namespace Langulus::Math
       }
    };
 
-   /// Register all commonly used vector types and constants, so they can be  
+   /// Register all commonly used range types and constants, so they can be   
    /// instantiated from scripts                                              
    void RegisterRanges() {
-      using AllTypes = Types<
-         ::std::uint8_t, ::std::uint16_t, ::std::uint32_t, ::std::uint64_t,
-         ::std::int8_t,  ::std::int16_t,  ::std::int32_t,  ::std::int64_t,
-         Float, Double
-      >;
-
-      RangeTypeGenerator<1>::Register(AllTypes {});
-      RangeTypeGenerator<2>::Register(AllTypes {});
-      RangeTypeGenerator<3>::Register(AllTypes {});
-      RangeTypeGenerator<4>::Register(AllTypes {});
+      RangeTypeGenerator<1>::Register(Typelists::Arithmetic {});
+      RangeTypeGenerator<2>::Register(Typelists::Arithmetic {});
+      RangeTypeGenerator<3>::Register(Typelists::Arithmetic {});
+      RangeTypeGenerator<4>::Register(Typelists::Arithmetic {});
       
       // Constants                                                      
-      (void) MetaOf<Constants::RangeIn>();
+      /*(void) MetaOf<Constants::RangeIn>();
       (void) MetaOf<Constants::RangeOn>();
       (void) MetaOf<Constants::RangeUnder>();
       (void) MetaOf<Constants::RangeAbove>();
@@ -47,6 +41,6 @@ namespace Langulus::Math
       (void) MetaOf<Constants::RangeFront>();
       (void) MetaOf<Constants::RangeAhead>();
       (void) MetaOf<Constants::RangeLeft>();
-      (void) MetaOf<Constants::RangeRight>();
+      (void) MetaOf<Constants::RangeRight>();*/
    }
 }

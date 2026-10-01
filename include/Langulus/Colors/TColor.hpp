@@ -74,6 +74,8 @@ namespace Langulus
    };
 }
 
+#define TEMPLATE() template<CT::CustomVector T>
+
 namespace Langulus::Math
 {
    ///                                                                        
@@ -83,10 +85,8 @@ namespace Langulus::Math
    /// and utilize saturation arithmetics.                                    
    ///                                                                        
    #pragma pack(push, 1)
-   template<CT::CustomVector T>
+   TEMPLATE()
    struct TColor : T {
-      using InnerT = TypeOf<T>;
-
       using T::r;
       using T::red;
       using T::g;
@@ -95,16 +95,9 @@ namespace Langulus::Math
       using T::blue;
       using T::a;
       using T::alpha;
-
       using T::all;
 
-      static constexpr InnerT Default = T::Default;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static constexpr bool IsReal = T::IsReal;
-      static constexpr bool CTTI_ColorTrait = true;
-      static constexpr bool CTTI_SaturatedTrait = true;
-
-      static_assert(MemberCount > 1 and MemberCount < 5,
+      static_assert(ExtentOf<T> > 1 and ExtentOf<T> < 5,
          "Invalid number of channels");
 
    private:
@@ -115,7 +108,7 @@ namespace Langulus::Math
          ::std::size_t offset {};
 
          // Write prefix                                                
-         switch (MemberCount) {
+         switch (ExtentOf<T>) {
          case 2:
             for (auto i : "Grayscale")
                name[offset++] = i;
@@ -133,6 +126,7 @@ namespace Langulus::Math
          // Write suffix                                                
          --offset;
 
+         using InnerT = TypeOf<T>;
          if constexpr (not Same<InnerT, ::std::uint8_t>) {
             if constexpr (Same<InnerT, float>)
                name[offset++] = 'f';
@@ -145,9 +139,10 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;
-      using CTTI_Bases = Types<ColorOfSize<MemberCount>, ColorOfType<InnerT>, T>;
-      using CTTI_Color = Yup;
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Bases     = Types<ColorOfSize<ExtentOf<T>>, ColorOfType<TypeOf<T>>, T>;
+      using CTTI_Color     = Yup;
+      using CTTI_Saturated = Yup;
 
    public:
       constexpr TColor() noexcept;
@@ -174,4 +169,61 @@ namespace Langulus::Math
       constexpr void MakeOpaque() noexcept;
    };
    #pragma pack(pop)
+}
+
+#include "TColor.inl"
+
+#undef TEMPLATE
+
+namespace Langulus::Math
+{
+   /// Luma weights for BT.601 standard, used for convertion to grayscale     
+   constexpr Vec3 LumaBT601  {0.299,  0.587,  0.114 };
+
+   /// Luma weights for BT.709 standard, used for convertion to grayscale     
+   constexpr Vec3 LumaBT709  {0.2126, 0.7152, 0.0722};
+
+   /// Luma weights for BT.2100 standard, used for convertion to grayscale    
+   constexpr Vec3 LumaBT2100 {0.2627, 0.6780, 0.0593};
+}
+
+namespace Langulus::Colors
+{
+   using ::Langulus::Math::RGBA;
+
+   constexpr RGBA White       { 255, 255, 255, 255 };
+   constexpr RGBA Black       {   0,   0,   0, 255 };
+   constexpr RGBA Grey        { 127, 127, 127, 255 };
+   constexpr RGBA Red         { 255,   0,   0, 255 };
+   constexpr RGBA Green       {   0, 255,   0, 255 };
+   constexpr RGBA DarkGreen   {   0, 128,   0, 255 };
+   constexpr RGBA Blue        {   0,   0, 255, 255 };
+   constexpr RGBA DarkBlue    {   0,   0, 128, 255 };
+   constexpr RGBA Cyan        { 128, 128, 255, 255 };
+   constexpr RGBA DarkCyan    {  80,  80, 128, 255 };
+   constexpr RGBA Orange      { 128, 128,   0, 255 };
+   constexpr RGBA Yellow      { 255, 255,   0, 255 };
+   constexpr RGBA Purple      { 255,   0, 255, 255 };
+   constexpr RGBA DarkPurple  { 128,   0, 128, 255 };
+}
+
+namespace Langulus::CTTI
+{
+   /// RGBA color constants                                                   
+   struct DefineConstant<Math::RGBA> : Types<
+      NamedValue<Colors::White,     "Colors::White",     "An opaque white color">,
+      NamedValue<Colors::Black,     "Colors::Black",     "An opaque black color">,
+      NamedValue<Colors::Grey,      "Colors::Grey",      "An opaque grey color">,
+      NamedValue<Colors::Red,       "Colors::Red",       "An opaque red color">,
+      NamedValue<Colors::Green,     "Colors::Green",     "An opaque green color">,
+      NamedValue<Colors::DarkGreen, "Colors::DarkGreen", "An opaque dark green color">,
+      NamedValue<Colors::Blue,      "Colors::Blue",      "An opaque blue color">,
+      NamedValue<Colors::DarkBlue,  "Colors::DarkBlue",  "An opaque dark blue color">,
+      NamedValue<Colors::Cyan,      "Colors::Cyan",      "An opaque cyan color">,
+      NamedValue<Colors::DarkCyan,  "Colors::DarkCyan",  "An opaque dark cyan color">,
+      NamedValue<Colors::Orange,    "Colors::Orange",    "An opaque orange color">,
+      NamedValue<Colors::Yellow,    "Colors::Yellow",    "An opaque yellow color">,
+      NamedValue<Colors::Purple,    "Colors::Purple",    "An opaque purple color">,
+      NamedValue<Colors::DarkPurple,"Colors::DarkPurple","An opaque dark purple color">,
+   > {};
 }

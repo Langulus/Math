@@ -7,10 +7,8 @@
 ///                                                                           
 #pragma once 
 #include "TInstance.hpp"
-#include "Ranges/TRange.inl"
-#include "Quaternions/TQuaternion.inl"
 
-#define TEMPLATE()   template<CT::VectorBased T>
+#define TEMPLATE()   template<CT::CustomVector T>
 #define TME()        TInstance<T>
 
 
@@ -324,7 +322,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not position/normal is relative to      
    ///      current orientation                                               
    TEMPLATE()
-   void TME()::Move(const CT::VectorBased auto& position, bool relative) {
+   void TME()::Move(const CT::CustomVector auto& position, bool relative) {
       if (relative)
          mUseImpulse += mAim * (position * PointType {1,1,-1});
       else
@@ -348,11 +346,11 @@ namespace Langulus::Math
    TEMPLATE()
    void TME()::Move(Flow::Verb& verb) {
       using Annies::Block;
-      using Annies::Trait;
+      using Annies::Tag;
       bool relative = false;
 
       // Read relativity first                                          
-      verb.ForEachDeep([&relative](const Trait& trait) {
+      verb.ForEachDeep([&relative](const Tag& trait) {
          if (trait.IsTrait<Traits::Relative>())
             relative = trait.AsCast<bool>();
       });
@@ -361,7 +359,7 @@ namespace Langulus::Math
             relative = true;
       });
 
-      verb.ForEachDeep([&](const Many& part) {
+      verb.ForEachDeep([&](Many const& part) {
          size_t done = part.ForEach(
             [&](const Normal& normal) {
                // Move towards normalized direction                     

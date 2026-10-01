@@ -37,10 +37,6 @@ namespace Langulus::CT
    template<class...T>
    concept Adaptive = Dense<T...> and ((Decay<T>::CTTI_Adaptive) and ...);
 
-   /// Anything that has the color trait                                      
-   template<class...T>
-   concept Color = Dense<T...> and ((Decay<T>::CTTI_Color) and ...);
-
    /// Anything that has the matrix trait                                     
    template<class...T>
    concept Matrix = Dense<T...> and ((Decay<T>::CTTI_Matrix) and ...);
@@ -50,14 +46,14 @@ namespace Langulus::CT
    concept Gradient = Dense<T...> and ((Decay<T>::CTTI_Gradient) and ...);
 
    /// For recognizing proxy-arrays (intermediate vectors after swizzling)    
-   template<class...T>
-   concept ProxyArray = Dense<T...> and ((Decay<T>::CTTI_ProxyArray) and ...);
+   /*template<class...T>
+   concept Swizzled = Dense<T...> and ((Decay<T>::CTTI_ProxyArray) and ...);
 
    /// For recognizing proxy-arrays that contain integers                     
    template<class...T>
-   concept ProxyArrayInt = ((ProxyArray<T> and Integer<TypeOf<T>>) and ...);
+   concept ProxyArrayInt = ((Swizzled<T> and Integer<TypeOf<T>>) and ...);*/
 
-   /// Anything ScalarBased that contains integers                            
+   /// Anything Scalar that contains integers                            
    //template<class...T>
    //concept ScalarInt = ((Scalar<T> and Integer<TypeOf<T>>) and ...);
 }

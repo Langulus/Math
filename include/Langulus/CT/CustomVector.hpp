@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include <Langulus/CT/Vector.hpp>
+#include <Langulus/CT/Integer.hpp>
 
 
 namespace Langulus::CTTI
@@ -26,5 +27,9 @@ namespace Langulus::CT
 {
    /// Built-in vector                                                        
    template<class...T>
-   concept BuiltinVector = ((CT::Vector<T> and not CT::CustomVector<T>) and ...);
+   concept BuiltinVector = ((Vector<T> and not CustomVector<T>) and ...);
+
+   /// Custom integer vector                                                  
+   template<class...T>
+   concept CustomVectorInt = ((CustomVector<T> and Integer<TypeOf<T>>) and ...);
 }

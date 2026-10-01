@@ -8,7 +8,7 @@
 #pragma once
 #include "TQuaternion.hpp"
 
-#define TEMPLATE()   template<CT::ScalarBased T>
+#define TEMPLATE()   template<CT::Scalar T>
 #define QUAT()       TQuaternion<T>
 
 
@@ -22,9 +22,9 @@ namespace Langulus::Math
       static_assert(CT::Vector<QUAT()>,
          "Quaternions should match CT::Vector");
       static_assert(CT::QuaternionBased<QUAT()>,
-         "Quaternions shouldn't match CT::VectorBased");
-      static_assert(not CT::VectorBased<QUAT()>,
-         "Quaternions should match CT::VectorBased");
+         "Quaternions shouldn't match CT::CustomVector");
+      static_assert(not CT::CustomVector<QUAT()>,
+         "Quaternions should match CT::CustomVector");
       static_assert(sizeof(QUAT()) == sizeof(Base),
          "Quaternions should match Base size");
       static_assert(sizeof(QUAT()) == sizeof(T) * 4,
@@ -240,7 +240,7 @@ namespace Langulus::Math
    }
 
    /// Convert to a matrix                                                    
-   TEMPLATE() template<CT::ScalarBased K, size_t COLUMNS, size_t ROWS>
+   TEMPLATE() template<CT::Scalar K, size_t COLUMNS, size_t ROWS>
    constexpr QUAT()::operator TMatrix<K, COLUMNS, ROWS>()
    const noexcept requires (COLUMNS >= 3 and ROWS >= 3) {
       const K qxx = x * x;
@@ -302,7 +302,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       const CT::QuaternionBased auto& lhs,
-      const CT::VectorBased     auto& rhs
+      const CT::CustomVector     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       const Q vecQuat {typename Q::Base3 {rhs}, 0};
@@ -315,7 +315,7 @@ namespace Langulus::Math
    ///   @return a lossless product of the two                                
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::VectorBased     auto& lhs,
+      const CT::CustomVector     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       return rhs.Conjugate() * lhs;
@@ -334,7 +334,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       const CT::QuaternionBased auto& lhs,
-      const CT::ScalarBased     auto& rhs
+      const CT::Scalar     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Add(lhs, rhs)};
@@ -343,7 +343,7 @@ namespace Langulus::Math
    /// Scalar + Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::ScalarBased     auto& lhs,
+      const CT::Scalar     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -354,7 +354,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       const CT::QuaternionBased auto& lhs,
-      const CT::ScalarBased     auto& rhs
+      const CT::Scalar     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Subtract(lhs, rhs)};
@@ -363,7 +363,7 @@ namespace Langulus::Math
    /// Scalar - Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::ScalarBased     auto& lhs,
+      const CT::Scalar     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -374,7 +374,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       const CT::QuaternionBased auto& lhs,
-      const CT::ScalarBased     auto& rhs
+      const CT::Scalar     auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Multiply(lhs, rhs)};
@@ -383,7 +383,7 @@ namespace Langulus::Math
    /// Scalar * Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::ScalarBased     auto& lhs,
+      const CT::Scalar     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -394,7 +394,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator / (
       const CT::QuaternionBased auto& lhs,
-      const CT::ScalarBased     auto& rhs
+      const CT::Scalar     auto& rhs
    ) {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Divide(lhs, rhs)};
@@ -403,7 +403,7 @@ namespace Langulus::Math
    /// Scalar / Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator / (
-      const CT::ScalarBased     auto& lhs,
+      const CT::Scalar     auto& lhs,
       const CT::QuaternionBased auto& rhs
    ) {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -421,7 +421,7 @@ namespace Langulus::A
    ///   @param p - the position vector                                       
    ///   @param s - the scale vector                                          
    ///   @return the composed matrix                                          
-   template<CT::VectorBased T> constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
+   template<CT::CustomVector T> constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
    Matrix::From(const Math::TQuaternion<TypeOf<T>>& q, const T& p, const T& s) noexcept {
       using K = TypeOf<T>;
       Math::TMatrix<K, T::MemberCount + 1> result;
