@@ -26,17 +26,10 @@ namespace Langulus::Math
    using Normal4f  = TNormal<TVector<float, 4>>;
    using Normal4d  = TNormal<TVector<double, 4>>;
 
-   using Normal    = Normal3;
-   using Normalf   = Normal3f;
-   using Normald   = Normal3d;
-}
-
-namespace Langulus
-{
    /// Abstract normal, used to pick a concrete type depending on context  
    struct Normal {
       using CTTI_Abstract  = Yup;
-      using CTTI_Concrete  = Math::Normal;
+      using CTTI_Concrete  = Math::Normal3;
    };
 
    /// Abstract normal of specific size                                    
@@ -56,10 +49,8 @@ namespace Langulus
       using CTTI_Bases     = Normal;
       static_assert(CT::Real<T>, "Normals can be only made of real numbers");
    };
-}
+   
 
-namespace Langulus::Math
-{
    ///                                                                     
    ///   Templated normal                                                  
    ///                                                                     
@@ -106,20 +97,12 @@ namespace Langulus::Math
       /// A default normal doesn't make sense - it will be degenerate      
       TNormal() = delete;
 
-      /// Any single-parameter constructor for a vector should go through  
-      /// this constructor, so that the vector is later normalized         
-      template<class T1>
-      requires ::std::constructible_from<T, T1> LANGULUS(INLINED)
-      constexpr TNormal(T1&& t1)
-         : T {T {LglsFwd(t1)}.Normalize()} {}
+      /// Any constructor for a vector should go through this constructor, 
+      /// so that the vector is later normalized                           
+      constexpr TNormal(auto&&...tn)
+         : T {T {LglsFwd(tn)...}.Normalize()} {}
 
-      /// Any multi-parameter constructor for a vector should go through   
-      /// this constructor, so that the vector is later normalized         
-      template<class T1, class...TN>
-      requires ::std::constructible_from<T, T1, TN...> LANGULUS(INLINED)
-      constexpr TNormal(T1&& t1, TN&&...tn)
-         : T {T {LglsFwd(t1), LglsFwd(tn)...}.Normalize()} {}
-
+//TODO normalize on assignment?
       /// Convert from any normal to code                                  
       /*LANGULUS(INLINED)
       explicit operator Flow::Code() const {

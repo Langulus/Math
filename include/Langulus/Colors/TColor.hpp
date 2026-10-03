@@ -100,41 +100,47 @@ namespace Langulus::Math
          "Invalid number of channels");
 
    private:
-      /// Custom name generator at compile-time for colors                    
+      /// Custom name generator at compile-time for colors.                   
+      /// Decides how colors will appear in Flow scripts.                     
       static constexpr auto GenerateToken() {
-         constexpr auto defaultClassName = LastCppNameOf<TColor>();
-         ::std::array<char, defaultClassName.size() + 1> name {};
-         ::std::size_t offset {};
-
-         // Write prefix                                                
-         switch (ExtentOf<T>) {
-         case 2:
-            for (auto i : "Grayscale")
-               name[offset++] = i;
-            break;
-         case 3:
-            for (auto i : "RGB")
-               name[offset++] = i;
-            break;
-         case 4:
-            for (auto i : "RGBA")
-               name[offset++] = i;
-            break;
+         if constexpr (ExtentOf<T> < 2 or ExtentOf<T> > 4)
+            return LastCppNameOf<TColor>();
+         else if constexpr (ExtentOf<T> == 2) {
+            using InnerT = TypeOf<T>;
+            if constexpr (not Same<InnerT, ::std::uint8_t>) {
+               if constexpr (Same<InnerT, float>)
+                  return Literal {"GsAf"};
+               else if constexpr (Same<InnerT, double>)
+                  return Literal {"GsAd"};
+               else 
+                  return Literal {"GsA"} + SuffixOf<InnerT>();
+            }
+            else return Literal {"GsA"};
          }
-
-         // Write suffix                                                
-         --offset;
-
-         using InnerT = TypeOf<T>;
-         if constexpr (not Same<InnerT, ::std::uint8_t>) {
-            if constexpr (Same<InnerT, float>)
-               name[offset++] = 'f';
-            else if constexpr (Same<InnerT, double>)
-               name[offset++] = 'd';
-            else for (auto i : SuffixOf<InnerT>())
-               name[offset++] = i;
+         else if constexpr (ExtentOf<T> == 3) {
+            using InnerT = TypeOf<T>;
+            if constexpr (not Same<InnerT, ::std::uint8_t>) {
+               if constexpr (Same<InnerT, float>)
+                  return Literal {"RGBf"};
+               else if constexpr (Same<InnerT, double>)
+                  return Literal {"RGBd"};
+               else 
+                  return Literal {"RGB"} + SuffixOf<InnerT>();
+            }
+            else return Literal {"RGB"};
          }
-         return name;
+         else {
+            using InnerT = TypeOf<T>;
+            if constexpr (not Same<InnerT, ::std::uint8_t>) {
+               if constexpr (Same<InnerT, float>)
+                  return Literal {"RGBAf"};
+               else if constexpr (Same<InnerT, double>)
+                  return Literal {"RGBAd"};
+               else 
+                  return Literal {"RGBA"} + SuffixOf<InnerT>();
+            }
+            else return Literal {"RGBA"};
+         }
       }
 
    public:
@@ -224,6 +230,6 @@ namespace Langulus::CTTI
       NamedValue<Colors::Orange,    "Colors::Orange",    "An opaque orange color">,
       NamedValue<Colors::Yellow,    "Colors::Yellow",    "An opaque yellow color">,
       NamedValue<Colors::Purple,    "Colors::Purple",    "An opaque purple color">,
-      NamedValue<Colors::DarkPurple,"Colors::DarkPurple","An opaque dark purple color">,
+      NamedValue<Colors::DarkPurple,"Colors::DarkPurple","An opaque dark purple color">
    > {};
 }
