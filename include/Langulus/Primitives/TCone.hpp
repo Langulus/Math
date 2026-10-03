@@ -12,21 +12,19 @@
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    /// 3D cone with varying dimensions, centered around origin                
    /// D determines the direction of the cone's pointy side                   
    ///                                                                        
-   template<CT::Vector T, CT::Dimension D = Traits::Y>
+   template<CT::Vector T, CT::Dimension D = Tags::Y>
    struct TCone {
-      LANGULUS(POD) true;
-      LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Primitive);
+      using CTTI_POD    = Yup;
+      using CTTI_Typed  = TypeOf<T>;
+      using CTTI_Bases  = Primitive;
 
       using PointType = T;
       using Dimension = D;
-      using T::MemberCount;
-      static_assert(MemberCount == 3, "Can't have a non-3D cone");
+      static_assert(ExtentOf<T> == 3, "Can't have a non-3D cone");
       static_assert(D::Index < 3, "Can't extend cone in that dimension");
 
       // Size of the cone                                               
@@ -40,5 +38,4 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(const T&) const;
    };
-
-} // namespace Langulus::Math
+}

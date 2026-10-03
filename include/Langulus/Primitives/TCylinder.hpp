@@ -9,83 +9,67 @@
 #include "Primitive.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::CustomVector, CT::Dimension = Tags::Y>
+   struct TCylinder;
 
-      template<CT::Vector, CT::Dimension = Traits::Y>
-      struct TCylinder;
-      template<CT::Vector, CT::Dimension = Traits::Y>
-      struct TCylinderCapped;
+   template<CT::CustomVector, CT::Dimension = Tags::Y>
+   struct TCylinderCapped;
 
-      using Cylinder3       = TCylinder<Vec3>;
-      using CylinderCapped3 = TCylinderCapped<Vec3>;
+   using Cylinder3       = TCylinder<Vec3>;
+   using CylinderCapped3 = TCylinderCapped<Vec3>;
 
-      using Cylinder        = Cylinder3;
-      using CylinderCapped  = CylinderCapped3;
+   /// An abstract cylinder                                                   
+   struct Cylinder : Primitive {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Cylinder3;
+      using CTTI_Bases     = Primitive;
+   };
+}
 
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// An abstract cylinder                                                
-      struct Cylinder : Primitive {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Cylinder;
-         LANGULUS_BASES(Primitive);
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing cylinder primitives                      
-      template<class...T>
-      concept Cylinder = (DerivedFrom<T, A::Cylinder> and ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+namespace Langulus::CT
+{
+   /// Concept for distinguishing cylinder primitives                         
+   template<class...T>
+   concept Cylinder = (DerivedFrom<T, Math::Cylinder> and ...);
+}
 
 namespace Langulus::Math
 {
-
-   ///                                                                     |  
-   /// Infinite 3D cylinder with varying radius, centered at origin        |  
-   /// D determines the direction of the cylinder's height                 |  
-   ///                                                                     |  
-   ///                                                                     |  
-   ///      ^     ^ +D  ^      ^                                           |  
-   ///      |     |     |      |                                           |  
-   ///      | _ _ | _ _ |      |                                           |  
-   ///      |/    |    \|      |                                           |  
-   ///      |     +     |      |                                           |  
-   ///      |\_________/|      | infinite height                           |  
-   ///      |           |      |                                           |  
-   ///      |           |      v                                           |  
-   ///      |     +     |   ----                                           |  
-   ///      |   origin  |                                                  |  
-   ///      | _ _ _ _ _ |                                                  |  
-   ///      |/         \|                                                  |  
-   ///      |     +     |                                                  |  
-   ///      |\____|____/|                                                  |  
-   ///      |     |     |                                                  |  
-   ///      V     |<--->V mRadius                                          |  
-   ///                                                                     |  
-   template<CT::Vector T, CT::Dimension D>
-   struct TCylinder : A::Cylinder {
-      LANGULUS(ABSTRACT) false;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(TYPED) TypeOf<T>;
-      LANGULUS_BASES(A::Cylinder);
+   ///                                                                        
+   /// Infinite 3D cylinder with varying radius, centered at origin.          
+   /// D determines the direction of the cylinder's height.                   
+   ///                                                                        
+   ///                                                                        
+   ///      ^     ^ +D  ^      ^                                              
+   ///      '     |     '      |                                              
+   ///      ' _ _ | _ _ '      |                                              
+   ///      '/    |    \'      |                                              
+   ///      |     +     |      |                                              
+   ///      |\_________/|      | infinite height                              
+   ///      |           |      |                                              
+   ///      |           |      v                                              
+   ///      |     +     |   ----                                              
+   ///      |   origin  |                                                     
+   ///      | _ _ _ _ _ |                                                     
+   ///      |/         \|                                                     
+   ///      |     +     |                                                     
+   ///      '\____|____/'                                                     
+   ///      '     |     '                                                     
+   ///      V     |<--->V mRadius                                             
+   ///                                                                        
+   template<CT::CustomVector T, CT::Dimension D>
+   struct TCylinder : Cylinder {
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Cylinder;
 
       using PointType = T;
       using Dimension = D;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount >= 3, 
+      
+      static_assert(ExtentOf<T> >= 3, 
          "Can't have a cylinder with lower than 3 dimensions");
       static_assert(D::Index < 3, 
          "Can't extend cylinder in that dimension");
@@ -99,33 +83,30 @@ namespace Langulus::Math
    };
 
 
-   ///                                                                     |  
-   /// Capped 3D cylinder with varying size, centered at origin            |  
-   /// D determines the direction of the cylinder's height                 |  
-   ///                                                                     |  
-   ///            ^ +D                                                     |  
-   ///            |                                                        |  
-   ///        ____|____                                                    |  
-   ///       /    |    \                                                   |  
-   ///      |     +     |   ----                                           |  
-   ///      |\_________/|      ^                                           |  
-   ///      |           |      |   mHeight                                 |  
-   ///      |           |      v                                           |  
-   ///      |     +     |   ----                                           |  
-   ///      |   origin  |                                                  |  
-   ///      | _ _ _ _ _ |                                                  |  
-   ///      |/         \|                                                  |  
-   ///      |     +     |                                                  |  
-   ///       \____|____/                                                   |  
-   ///            |     |                                                  |  
-   ///            |<--->| mRadius                                          |  
-   ///                                                                     |  
-   template<CT::Vector T, CT::Dimension D>
+   ///                                                                        
+   /// Capped 3D cylinder with varying size, centered at origin.              
+   /// D determines the direction of the cylinder's height.                   
+   ///                                                                        
+   ///            ^ +D                                                        
+   ///            |                                                           
+   ///        ____|____                                                       
+   ///       /    |    \                                                      
+   ///      |     +     |   ----                                              
+   ///      |\_________/|      ^                                              
+   ///      |           |      |   mHeight                                    
+   ///      |           |      v                                              
+   ///      |     +     |   ----                                              
+   ///      |   origin  |                                                     
+   ///      | _ _ _ _ _ |                                                     
+   ///      |/         \|                                                     
+   ///      |     +     |                                                     
+   ///       \____|____/                                                      
+   ///            |     |                                                     
+   ///            |<--->| mRadius                                             
+   ///                                                                        
+   template<CT::CustomVector T, CT::Dimension D>
    struct TCylinderCapped : TCylinder<T, D> {
-      LANGULUS(TYPED) TypeOf<T>;
       using Base = TCylinder<T, D>;
-      using typename Base::PointType;
-      using Base::MemberCount;
       using Base::mRadius;
 
       TypeOf<T> mHeight {.5};
@@ -135,5 +116,4 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(const T&) const;
    };
-
-} // namespace Langulus::Math
+}
