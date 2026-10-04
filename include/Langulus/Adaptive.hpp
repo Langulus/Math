@@ -37,7 +37,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME)     GenerateToken();
-      LANGULUS(ABSTRACT) false;
+      using CTTI_Abstract = No;
       LANGULUS(TYPED)    T;
       LANGULUS_CONVERTS_TO(Flow::Code);
       static constexpr bool CTTI_AdaptiveTrait = true;

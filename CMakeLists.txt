@@ -45,7 +45,7 @@ target_include_directories(LangulusMath
 
 target_link_libraries(LangulusMath
    PUBLIC   LangulusCore
-            $<$<BOOL:${LANGULUS_OPTION_LOGGING}>:fmt>
+            $<TARGET_PROPERTY:LangulusLogger,INTERFACE_LINK_LIBRARIES>
 )
 
 target_compile_definitions(LangulusMath

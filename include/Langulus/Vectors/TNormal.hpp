@@ -11,7 +11,7 @@
 
 namespace Langulus::Math
 {
-   template<CT::Vector T>
+   template<CT::CustomVector>
    struct TNormal;
 
    using Normal2   = TNormal<TVector<Real, 2>>;
@@ -56,11 +56,12 @@ namespace Langulus::Math
    ///                                                                     
    /// It is essentially a vector that gets normalized after any change    
    ///                                                                     
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TNormal : T {
+      using ScalarType = typename T::ScalarType;
       static_assert(ExtentOf<T> > 1,
          "Normal size must be greater than one");
-      static_assert(CT::Real<TypeOf<T>>,
+      static_assert(CT::Real<ScalarType>,
          "Normal can be only made of real numbers");
 
    private:
@@ -84,7 +85,7 @@ namespace Langulus::Math
          name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                             
-         for (auto i : SuffixOf<TypeOf<T>>())
+         for (auto i : SuffixOf<ScalarType>())
             name[offset++] = i;
          return name;
       }
@@ -92,7 +93,7 @@ namespace Langulus::Math
    public:
       using CTTI_Normalized   = Yup;
       using CTTI_Names        = Yes<GenerateToken()>;
-      using CTTI_Bases        = Types<NormalOfSize<ExtentOf<T>>, NormalOfType<TypeOf<T>>, T>;
+      using CTTI_Bases        = Types<NormalOfSize<ExtentOf<T>>, NormalOfType<ScalarType>, T>;
 
       /// A default normal doesn't make sense - it will be degenerate      
       TNormal() = delete;
@@ -119,7 +120,7 @@ namespace Langulus::Math
       LANGULUS(INLINED)
       constexpr bool IsDegenerate() const noexcept {
          bool result;
-         SIMD::Equals(PointType::all, TypeOf<T> {0}, result);
+         SIMD::Equals(T::all, ScalarType {0}, result);
          return result;
       }
    };

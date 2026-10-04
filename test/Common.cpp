@@ -18,7 +18,7 @@
 #include <Langulus/Math/Normal.hpp>
 #include <Langulus/Math/Range.hpp>
 #include <Langulus/Math/Number.hpp>
-#include <Langulus/Math/Color.hpp>
+#include <Langulus/Color.hpp>
 
 #define CATCH_CONFIG_RUNNER
 #include "Common.hpp"

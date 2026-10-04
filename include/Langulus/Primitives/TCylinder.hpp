@@ -77,9 +77,17 @@ namespace Langulus::Math
       TypeOf<T> mRadius {.5};
 
    public:
-      constexpr bool IsDegenerate() const noexcept;
-      constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept {
+         return mRadius == 0;
+      }
+
+      constexpr bool IsHollow() const noexcept {
+         return mRadius < 0;
+      }
+
+      auto SignedDistance(T const& point) const {
+         return Math::SignedDistance(point, *this);
+      }
    };
 
 
@@ -112,8 +120,16 @@ namespace Langulus::Math
       TypeOf<T> mHeight {.5};
 
    public:
-      constexpr bool IsDegenerate() const noexcept;
-      constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(const T&) const;
+      constexpr bool IsDegenerate() const noexcept {
+         return mRadius == 0 or mHeight == 0;
+      }
+
+      constexpr bool IsHollow() const noexcept {
+         return mRadius < 0 or mHeight < 0;
+      }
+
+      auto SignedDistance(T const& point) const {
+         return Math::SignedDistance(point, *this);
+      }
    };
 }

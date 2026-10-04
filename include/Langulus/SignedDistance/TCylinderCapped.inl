@@ -14,19 +14,18 @@
 ///TODO refer to guidelines
 namespace Langulus::Math
 {
-
    /// Signed distance function for a centered 3D cylinder                    
    template<CT::Number T, CT::Dimension D>
    T SignedDistance(const TVector<T, 3>& point, const TCylinderCapped<TVector<T, 3>, D>& cylinder) {
       using V2 = TVector<T, 2>;
 
-      if constexpr (CT::Same<D, Traits::X>) {
+      if constexpr (Same<D, Tags::X>) {
          const V2 d =
             V2 {Length(point.yz()), Abs(point.x())} -
             V2 {cylinder.mRadius, cylinder.mHeight};
          return Length(d.Max(0)) + Min(Max(d[0], d[1]), T {0});
       }
-      else if constexpr (CT::Same<D, Traits::Y>) {
+      else if constexpr (Same<D, Tags::Y>) {
          const V2 d =
             V2 {Length(point.xz()), Abs(point.y())} -
             V2 {cylinder.mRadius, cylinder.mHeight};
@@ -39,5 +38,4 @@ namespace Langulus::Math
          return Length(d.Max(0)) + Min(Max(d[0], d[1]), T {0});
       }
    };
-
-} // namespace Langulus::Math
+}

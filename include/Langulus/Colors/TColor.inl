@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "TColor.hpp"
 #include <Langulus/CT/Akin.hpp>
 
 
@@ -32,14 +33,14 @@ namespace Langulus::Math
          // Make sure we normalize color if initializing a color made   
          // of real numbers with integers                               
          T::operator = (T {Math::Positive(t1)});
-         *this /= TypeOf<T> {255};
+         *this /= ScalarType {255};
       }
       else if constexpr (not T::IsReal and CT::Real<ALT_T>) {
          // Make sure we scale up color if initializing a color made    
          // of integers with reals                                      
          SIMD::Multiply<true>(DeintCast(t1), ALT_T {255}, all);
       }
-      else T::operator = (T {Forward<T1>(t1)});
+      else T::operator = (T {LglsFwd(t1)});
 
       // Make sure alpha channel is always opaque by default            
       // if not explicitly specified                                    
@@ -62,7 +63,7 @@ namespace Langulus::Math
          // If we're initializing real color using integers,            
          // we have to divide by 255 and saturate (TODO)                
          T::operator = (T {Math::Positive(t1), Math::Positive(tn)...});
-         *this /= TypeOf<T> {255};
+         *this /= ScalarType {255};
       }
       else if constexpr (not T::IsReal and CT::Real<TypeOf<Deint<T1>>>) {
          // If we're initializing integer color using reals,            
@@ -87,14 +88,13 @@ namespace Langulus::Math
       LglsAssumeUser(*describe, "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    
-      using InnerT = TypeOf<T>;
       auto initialized = describe.ExtractData(all);
       if constexpr (T::IsReal) {
          if (initialized) {
             // It was initialized from similar data, but we still have  
             // to saturate if real, or in other words clamp in [0;1]    
-            SIMD::Min(all, InnerT {1}, all);
-            SIMD::Max(all, InnerT {0}, all);
+            SIMD::Min(all, ScalarType {1}, all);
+            SIMD::Max(all, ScalarType {0}, all);
          }
       }
 

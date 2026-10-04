@@ -7,7 +7,7 @@
 ///                                                                           
 #include <Langulus/Primitives/TBox.inl>
 #include <Langulus/Primitives/TCone.inl>
-#include <Langulus/Primitives/TCylinder.inl>
+#include <Langulus/Primitives/TCylinder.hpp>
 #include <Langulus/Primitives/TFrustum.inl>
 #include <Langulus/Primitives/TLine.inl>
 #include <Langulus/Primitives/TPlane.inl>
@@ -20,7 +20,6 @@
 
 namespace Langulus::Math
 {
-
    /// Register primitives                                                    
    void RegisterPrimitives() {
       (void) MetaOf<Box2>();
@@ -62,5 +61,4 @@ namespace Langulus::Math
       (void) MetaOf<TriangleFan3>();
       (void) MetaOf<TriangleFan4>();
    }
-
-} // namespace Langulus::Math
+}

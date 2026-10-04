@@ -86,6 +86,8 @@ namespace Langulus::Math
    #pragma pack(push, 1)
    TEMPLATE()
    struct TColor : T {
+      using typename T::ScalarType;
+      
       using T::r;
       using T::red;
       using T::g;
@@ -106,38 +108,35 @@ namespace Langulus::Math
          if constexpr (ExtentOf<T> < 2 or ExtentOf<T> > 4)
             return LastCppNameOf<TColor>();
          else if constexpr (ExtentOf<T> == 2) {
-            using InnerT = TypeOf<T>;
-            if constexpr (not Same<InnerT, ::std::uint8_t>) {
-               if constexpr (Same<InnerT, float>)
+            if constexpr (not Same<ScalarType, ::std::uint8_t>) {
+               if constexpr (Same<ScalarType, float>)
                   return Literal {"GsAf"};
-               else if constexpr (Same<InnerT, double>)
+               else if constexpr (Same<ScalarType, double>)
                   return Literal {"GsAd"};
                else 
-                  return Literal {"GsA"} + SuffixOf<InnerT>();
+                  return Literal {"GsA"} + SuffixOf<ScalarType>();
             }
             else return Literal {"GsA"};
          }
          else if constexpr (ExtentOf<T> == 3) {
-            using InnerT = TypeOf<T>;
-            if constexpr (not Same<InnerT, ::std::uint8_t>) {
-               if constexpr (Same<InnerT, float>)
+            if constexpr (not Same<ScalarType, ::std::uint8_t>) {
+               if constexpr (Same<ScalarType, float>)
                   return Literal {"RGBf"};
-               else if constexpr (Same<InnerT, double>)
+               else if constexpr (Same<ScalarType, double>)
                   return Literal {"RGBd"};
                else 
-                  return Literal {"RGB"} + SuffixOf<InnerT>();
+                  return Literal {"RGB"} + SuffixOf<ScalarType>();
             }
             else return Literal {"RGB"};
          }
          else {
-            using InnerT = TypeOf<T>;
-            if constexpr (not Same<InnerT, ::std::uint8_t>) {
-               if constexpr (Same<InnerT, float>)
+            if constexpr (not Same<ScalarType, ::std::uint8_t>) {
+               if constexpr (Same<ScalarType, float>)
                   return Literal {"RGBAf"};
-               else if constexpr (Same<InnerT, double>)
+               else if constexpr (Same<ScalarType, double>)
                   return Literal {"RGBAd"};
                else 
-                  return Literal {"RGBA"} + SuffixOf<InnerT>();
+                  return Literal {"RGBA"} + SuffixOf<ScalarType>();
             }
             else return Literal {"RGBA"};
          }
@@ -145,7 +144,7 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named     = Yes<GenerateToken()>;
-      using CTTI_Bases     = Types<ColorOfSize<ExtentOf<T>>, ColorOfType<TypeOf<T>>, T>;
+      using CTTI_Bases     = Types<ColorOfSize<ExtentOf<T>>, ColorOfType<ScalarType>, T>;
       using CTTI_Color     = Yup;
       using CTTI_Saturated = Yup;
 

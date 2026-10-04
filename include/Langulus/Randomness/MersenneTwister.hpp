@@ -6,13 +6,12 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "../Common.hpp"
+#include <Langulus/Math/Export.hpp>
 #include <random>
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    /// Mersenne Twister random number generator                               
    ///                                                                        
@@ -100,5 +99,4 @@ namespace Langulus::Math
    };
 
    using RNG = MersenneTwister;
-
-} // namespace Langulus::Math
+}

@@ -115,7 +115,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS(ABSTRACT) false;
+      using CTTI_Abstract = No;
       LANGULUS(POD) CT::POD<T>;
       LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
       LANGULUS(TYPED) TypeOf<T>;
@@ -189,7 +189,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS(ABSTRACT) false;
+      using CTTI_Abstract = No;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineLoop);
 
@@ -237,7 +237,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS(ABSTRACT) false;
+      using CTTI_Abstract = No;
       LANGULUS(TYPED) TypeOf<T>;
       LANGULUS_BASES(A::LineStrip);
 

@@ -6,7 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once 
-#include "TInstance.hpp"
+#include "Instance.hpp"
 
 #define TEMPLATE()   template<CT::CustomVector T>
 #define TME()        TInstance<T>

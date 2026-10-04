@@ -6,16 +6,16 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Numbers/Level.inl"
-#include "Numbers/TAngle.hpp"
-#include "Ranges/TRange.hpp"
-#include "Vectors/TVector.hpp"
-#include "Vectors/TNormal.hpp"
-#include "Vectors/TForce.hpp"
-#include "Vectors/TScale.hpp"
-#include "Quaternions/TQuaternion.hpp"
-#include "Randomness/MersenneTwister.hpp"
-#include "Verbs/Move.hpp"
+#include "Level.hpp"
+#include "Angle.hpp"
+#include "Range.hpp"
+#include "Vector.hpp"
+#include "Normal.hpp"
+#include "Force.hpp"
+#include "Scale.hpp"
+#include "Quaternion.hpp"
+#include "MersenneTwister.hpp"
+#include <Langulus/Verbs/Move.hpp>
 
 #if 0
    #define VERBOSE_TINSTANCE(a) Logger::Verbose() << a
@@ -26,7 +26,6 @@
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Instance                                                             
    ///                                                                        
@@ -176,5 +175,6 @@ namespace Langulus::Math
 
       bool operator == (const TInstance&) const noexcept = default;
    };
+}
 
-} // namespace Langulus::Math
+#include "Instance.inl"
