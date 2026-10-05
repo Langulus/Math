@@ -190,7 +190,7 @@ namespace Langulus::Math
       constexpr auto operator = (const CT::Vector auto&) noexcept -> TRange&;
       constexpr auto operator = (const CT::Scalar auto&) noexcept -> TRange&;
 
-      template<class N, CT::Dimension D>
+      template<class N, class D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
       /*explicit operator Annies::Text() const;

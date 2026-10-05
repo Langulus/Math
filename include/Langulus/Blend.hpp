@@ -17,8 +17,8 @@ namespace Langulus::Math
    /// Represents different tactics for blending colors                       
    ///                                                                        
    struct BlendMode {
-      LANGULUS(POD) true;
-      LANGULUS(NULLIFIABLE) true;
+      using CTTI_POD = true;
+      using CTTI_Nullable = true;
       LANGULUS(INFO) "Blending mode";
 
       using Type = uint8_t;

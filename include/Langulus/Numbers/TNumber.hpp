@@ -20,6 +20,12 @@
 
 namespace Langulus::Math
 {
+   /// An abstract number that depends on context. Defaults to Real.          
+   struct Number {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Langulus::Real;
+   };
+
    ///                                                                        
    ///   Custom number                                                        
    ///                                                                        
@@ -35,16 +41,17 @@ namespace Langulus::Math
    ///      with the CT::Vector concept                                       
    ///   6. Never allows for integer promotions, unless types differ, in      
    ///      which case type promotion goes to no futher than the bigger type: 
-   ///    - Whenever you do int8 * int8, you get the truncated int8 as result,
-   ///      instead of an int - whatever comes in will come out!              
-   ///    - Whenever you do int8 * int16, you get the truncated int16 as      
-   ///      result, instead of an int - the better of the two is chosen,      
-   ///      instead of silently promoting it to int32!                        
+   ///      * Whenever you do int8 * int8, you get the truncated int8 as      
+   ///        result, instead of an int - whatever comes in will come out!    
+   ///      * Whenever you do int8 * int16, you get the truncated int16 as    
+   ///        result, instead of an int - the better of the two is chosen,    
+   ///        instead of silently promoting it to int32!                      
    ///   7. Allows for infinite precision numbers, floating bar, etc.         
-   ///      alternatives to seamless integrate everywhere.                    
+   ///      alternatives to seamlessly integrate everywhere.                  
    #pragma pack(push, 1)
    template<class T>
-   struct TNumber {
+   struct TNumber : Number {
+      using CTTI_Abstract     = No;
       using CTTI_Number       = Yup;
       using CTTI_CustomNumber = Yup;
       using CTTI_Typed        = T;
@@ -53,25 +60,26 @@ namespace Langulus::Math
       using CTTI_Nullable     = Maybe<CT::Nullable<T>>;
       using CTTI_Real         = Maybe<CT::Real<T>>;
       using CTTI_Signed       = Maybe<CT::Signed<T>>;
+      using CTTI_Bases        = Number;
       
       T mValue {};
 
    public:
       constexpr TNumber() noexcept = default;
-      constexpr TNumber(const TNumber&) noexcept = default;
+      constexpr TNumber(TNumber const&) noexcept = default;
       constexpr TNumber(TNumber&&) noexcept = default;
 
       /// Construct from any number-convertible thing. Supports intents.      
       LANGULUS(ALWAYS_INLINED)
-      constexpr TNumber(const CT::Number auto& a) noexcept
+      constexpr TNumber(CT::Number auto const& a) noexcept
          : mValue {static_cast<T>(DeintCast(a))} {}
 
-      TNumber& operator = (const TNumber&) noexcept = default;
+      TNumber& operator = (TNumber const&) noexcept = default;
       TNumber& operator = (TNumber&&) noexcept = default;
 
       /// Assign any number-convertible thing. Supports intents.              
       LANGULUS(ALWAYS_INLINED)
-      TNumber& operator = (const CT::Number auto& a) noexcept {
+      TNumber& operator = (CT::Number auto const& a) noexcept {
          mValue = static_cast<T>(DeintCast(a));
          return *this;
       }

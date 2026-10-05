@@ -114,7 +114,7 @@ namespace Langulus
       template<CT::Number T>
       struct SamplerOfType : Sampler {
          LANGULUS(CONCRETE) Math::TSampler<Math::TVector<T, 3>>;
-         LANGULUS(TYPED) T;
+         using CTTI_Typed = T;
          LANGULUS_BASES(Sampler);
       };
 
@@ -161,7 +161,7 @@ namespace Langulus
 
       public:
          LANGULUS(NAME)  GenerateToken();
-         LANGULUS(TYPED) TypeOf<T>;
+         using CTTI_Typed = TypeOf<T>;
          LANGULUS_BASES(
             A::SamplerOfSize<MemberCount>,
             A::SamplerOfType<TypeOf<T>>,

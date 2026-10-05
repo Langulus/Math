@@ -350,7 +350,7 @@ namespace Langulus::Math
       bool relative = false;
 
       // Read relativity first                                          
-      verb.ForEachDeep([&relative](const Tag& trait) {
+      verb.ForEachDeep([&relative](Tag const& trait) {
          if (trait.IsTrait<Traits::Relative>())
             relative = trait.AsCast<bool>();
       });

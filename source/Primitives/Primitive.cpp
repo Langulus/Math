@@ -10,7 +10,7 @@
 #include <Langulus/Primitives/TCylinder.hpp>
 #include <Langulus/Primitives/TFrustum.inl>
 #include <Langulus/Primitives/TLine.inl>
-#include <Langulus/Primitives/TPlane.inl>
+#include <Langulus/Primitives/TPlane.hpp>
 #include <Langulus/Primitives/TPolygon.hpp>
 #include <Langulus/Primitives/TRay.hpp>
 #include <Langulus/Primitives/TSphere.hpp>

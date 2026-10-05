@@ -108,9 +108,9 @@ namespace Langulus::Math
    public:
       LANGULUS(NAME) GenerateToken();
       using CTTI_Abstract = No;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_POD = CT::POD<T>;
+      using CTTI_Nullable = CT::Nullifiable<T>;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::Triangle);
 
       using PointType = T;
@@ -286,7 +286,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::TriangleStrip);
 
       Annies::TMany<T> mPoints;
@@ -344,7 +344,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::TriangleFan);
 
       Annies::TMany<T> mPoints;

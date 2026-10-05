@@ -69,7 +69,7 @@ SCENARIO("Parsing scripts", "[code]") {
       const auto code = "Vec2(.sampler.x, -(.time * 8.75 - .sampler.y ^ 2))"_code;
 
       WHEN("Parsed without optimization") {
-         Many required = Construct::From<Vec2>(Many::Wrap<Verb>(
+         Many required = Recipe::From<Vec2>(Many::Wrap<Verb>(
             Verbs::Select {MetaOf<Traits::X>()}.SetSource(
                Verbs::Select {MetaOf<Traits::Sampler>()}
             ),
@@ -98,7 +98,7 @@ SCENARIO("Parsing scripts", "[code]") {
       const auto code = "Vec2(.sampler.x, -(.time * (-8.75) - .sampler.y ^ 2))"_code;
 
       WHEN("Parsed without optimization") {
-         Many required = Construct::From<Vec2>(Many::Wrap<Verb>(
+         Many required = Recipe::From<Vec2>(Many::Wrap<Verb>(
             Verbs::Select {MetaOf<Traits::X>()}.SetSource(
                Verbs::Select {MetaOf<Traits::Sampler>()}
             ),
@@ -236,7 +236,7 @@ SCENARIO("Parsing scripts", "[code]") {
       Many futrNumber {futureMissing};
       futrNumber << MetaOf<A::Number>();
 
-      Verbs::Add add {Construct::From<Fraction>(futrNumber)};
+      Verbs::Add add {Recipe::From<Fraction>(futrNumber)};
       add.SetSource(pastNumber);
 
       Verbs::Conjunct conjunct {futureMissing};
@@ -258,7 +258,7 @@ SCENARIO("Parsing scripts", "[code]") {
       Many futrNumber {futureMissing};
       futrNumber << MetaOf<A::Number>();
 
-      Verbs::Add add {Construct::From<Fraction>(futrNumber)};
+      Verbs::Add add {Recipe::From<Fraction>(futrNumber)};
       add.SetSource(pastMissing);
 
       Verbs::Conjunct conjunct {futureMissing};

@@ -114,7 +114,7 @@ namespace Langulus
       struct ScaleOfType : Scale {
          LANGULUS(CONCRETE) Math::TScale<Math::TVector<T, 3, 1>>;
          LANGULUS_BASES(Scale);
-         LANGULUS(TYPED) T;
+         using CTTI_Typed = T;
       };
 
    } // namespace Langulus::A
@@ -159,7 +159,7 @@ namespace Langulus
 
       public:
          LANGULUS(NAME)  GenerateToken();
-         LANGULUS(TYPED) TypeOf<T>;
+         using CTTI_Typed = TypeOf<T>;
          LANGULUS_BASES(
             A::ScaleOfSize<MemberCount>,
             A::ScaleOfType<TypeOf<T>>,

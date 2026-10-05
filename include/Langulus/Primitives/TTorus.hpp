@@ -17,8 +17,8 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::Vector T, CT::Dimension D = Traits::Y>
    struct TTorus {
-      LANGULUS(POD) true;
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_POD = true;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::Primitive);
 
       using PointType = T;

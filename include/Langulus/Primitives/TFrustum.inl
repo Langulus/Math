@@ -7,14 +7,13 @@
 ///                                                                           
 #pragma once
 #include "TFrustum.hpp"
-#include "TPlane.inl"
+#include "TPlane.hpp"
 
 #define TEMPLATE() template<CT::Vector T>
 
 
 namespace Langulus::Math
 {
-
    /// Default unit frustum construction                                      
    TEMPLATE() LANGULUS(INLINED)
    constexpr TFrustum<T>::TFrustum() noexcept {
@@ -115,7 +114,6 @@ namespace Langulus::Math
 
       return true;
    }
-
-} // namespace Langulus::Math
+}
 
 #undef TEMPLATE

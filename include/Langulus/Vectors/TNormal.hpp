@@ -96,7 +96,7 @@ namespace Langulus::Math
       using CTTI_Bases        = Types<NormalOfSize<ExtentOf<T>>, NormalOfType<ScalarType>, T>;
 
       /// A default normal doesn't make sense - it will be degenerate      
-      TNormal() = delete;
+      TNormal() = delete("A default normal doesn't make sense - it will end up degenerate");
 
       /// Any constructor for a vector should go through this constructor, 
       /// so that the vector is later normalized                           

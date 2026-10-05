@@ -43,9 +43,9 @@ namespace Langulus
       ///                                                                     
       template<CT::Vector T>
       struct TRay {
-         LANGULUS(POD) CT::POD<T>;
-         LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
-         LANGULUS(TYPED) TypeOf<T>;
+         using CTTI_POD = CT::POD<T>;
+         using CTTI_Nullable = CT::Nullifiable<T>;
+         using CTTI_Typed = TypeOf<T>;
          LANGULUS_BASES(A::Ray);
 
          using PointType = T;

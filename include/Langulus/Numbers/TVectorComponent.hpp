@@ -6,21 +6,20 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "TNumber.hpp"
 #include "../Vectors/TVector.hpp"
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
-   ///   Vector component                                                     
-   ///                                                                        
-   template<CT::DenseNumber T, CT::Dimension D>
-   struct TVectorComponent : TNumber<T, TVectorComponent<T, D>> {
-      LANGULUS(TYPED) T;
-      using Base = TNumber<T, TVectorComponent<T, D>>;
+   /// A number associated with a dimension. When used in arithmetics, it     
+   /// will affect only the dimension it is associated with:                  
+   ///   TVector{1,2,3} + TVectorComponent<int, 1>{5} -> TVector{1,7,3}       
+   template<CT::Number T, CT::Dimension D>
+   struct TVectorComponent : TNumber<T> {
+      using Base      = TNumber<T>;
       using Dimension = D;
-      using Base::Base;
+      using TNumber<T>::TNumber;
    };
-
-} // namespace Langulus::Math
+}

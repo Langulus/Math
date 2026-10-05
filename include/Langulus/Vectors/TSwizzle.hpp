@@ -34,9 +34,12 @@ namespace Langulus::Math::Inner
       }
 
    public:
-      TSwizzle() = delete;
-      TSwizzle(const TSwizzle&) = delete;
-      TSwizzle(TSwizzle&&) = delete;
+      TSwizzle()                = delete("Swizzling is done only in temporary variables - "
+                                         "any copying around or naming such variables is ill-formed");
+      TSwizzle(TSwizzle const&) = delete("Swizzling is done only in temporary variables - "
+                                         "any copying around or naming such variables is ill-formed");
+      TSwizzle(TSwizzle&&)      = delete("Swizzling is done only in temporary variables - "
+                                         "any copying around or naming such variables is ill-formed");
 
       /// Create a proxy array - copy relevant contents and save a ref for    
       /// later, when local changes have to be commited to the original       

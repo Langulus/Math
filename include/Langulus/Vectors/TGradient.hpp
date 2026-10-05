@@ -75,8 +75,8 @@ namespace Langulus::Math
       size_t mIndex {};
 
    public:
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(NULLIFIABLE) CT::Nullifiable<T>;
+      using CTTI_POD = CT::POD<T>;
+      using CTTI_Nullable = CT::Nullifiable<T>;
       LANGULUS_BASES(A::Gradient);
 
       using PointType = T;

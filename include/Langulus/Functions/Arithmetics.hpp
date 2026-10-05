@@ -145,13 +145,10 @@ namespace Langulus::CT
    concept Multipliable = requires (const Decay<LHS> a, const Decay<RHS> b, Decay<LHS> c) {
       c = a * b;
    };
-
-} // namespace Langulus::CT
-
+}
 
 namespace Langulus::Math
 {
-
    /// Get absolute value                                                     
    ///   @param a - the number/class to absolute                              
    ///   @return either T or whatever Abs() returns for class                 

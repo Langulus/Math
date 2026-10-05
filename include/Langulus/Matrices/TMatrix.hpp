@@ -114,7 +114,7 @@ namespace Langulus
       template<CT::Scalar T>
       struct MatrixOfType : Matrix {
          LANGULUS(CONCRETE) Math::TMatrix<T, 4, 4>;
-         LANGULUS(TYPED) T;
+         using CTTI_Typed = T;
          LANGULUS_BASES(Matrix);
       };
 
@@ -187,9 +187,9 @@ namespace Langulus
 
       public:
          LANGULUS(NAME) GenerateToken();
-         LANGULUS(POD) CT::POD<T>;
-         LANGULUS(NULLIFIABLE) false;
-         LANGULUS(TYPED) T;
+         using CTTI_POD = CT::POD<T>;
+         using CTTI_Nullable = No;
+         using CTTI_Typed = T;
          LANGULUS_BASES(
             A::MatrixOfSize<COLUMNS, ROWS>, 
             A::MatrixOfColumns<COLUMNS>,

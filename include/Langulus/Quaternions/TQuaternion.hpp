@@ -43,7 +43,7 @@ namespace Langulus::A
    template<CT::Scalar T>
    struct QuaternionOfType : Quaternion {
       LANGULUS(CONCRETE) Math::TQuaternion<T>;
-      LANGULUS(TYPED) T;
+      using CTTI_Typed = T;
       LANGULUS_BASES(Quaternion);
    };
 
@@ -91,7 +91,7 @@ namespace Langulus::Math
 
    public:
       LANGULUS(NAME) GenerateToken();
-      LANGULUS(NULLIFIABLE) false;
+      using CTTI_Nullable = No;
       LANGULUS_BASES(Base, A::QuaternionOfType<T>);
 
       // Make TQuaternion match the CT::QuaternionBased concept         

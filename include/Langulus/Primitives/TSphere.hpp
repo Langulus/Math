@@ -89,8 +89,8 @@ namespace Langulus::Math
    public:
       LANGULUS(NAME) GenerateToken();
       using CTTI_Abstract = No;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_POD = CT::POD<T>;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::Sphere);
 
       using PointType = T;
@@ -155,8 +155,8 @@ namespace Langulus::Math
    public:
       LANGULUS(NAME) GenerateToken();
       using CTTI_Abstract = No;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_POD = CT::POD<T>;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::Sphere);
 
       using PointType = T;

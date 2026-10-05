@@ -6,21 +6,14 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "TVector.hpp"
 #include <Langulus/Functions/Arithmetics.hpp>
 #include <Langulus/Functions/Trigonometry.hpp>
 #include <Langulus/Describe.hpp>
 #include <Langulus/CT/Swizzled.hpp>
 
-/*#include "Langulus/Except.hpp"
-#include "Langulus/Typenav.hpp"
-*/
-//#include "../Numbers/TNumber.inl"
-//#include "../Verbs/Multiply.hpp"
 
 namespace Langulus::Math
 {
-
    /// Default vector constructor - initialize components to Default          
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector() noexcept {
@@ -1630,5 +1623,4 @@ namespace Langulus::Math
    constexpr auto operator != (const CT::Scalar auto& lhs, const CT::Swizzled auto& rhs) noexcept {
       return not (lhs == rhs.GetBase());
    }
-
-} // namespace Langulus::Math
+}

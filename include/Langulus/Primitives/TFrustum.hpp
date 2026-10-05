@@ -58,8 +58,8 @@ namespace Langulus::Math
    template<CT::Vector T>
    struct TFrustum : A::Frustum {
       using CTTI_Abstract = No;
-      LANGULUS(POD) CT::POD<T>;
-      LANGULUS(TYPED) TypeOf<T>;
+      using CTTI_POD = CT::POD<T>;
+      using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::Frustum);
 
       static constexpr size_t MemberCount = T::MemberCount;

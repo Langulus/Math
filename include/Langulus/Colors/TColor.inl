@@ -101,7 +101,7 @@ namespace Langulus::Math
       if (not initialized) {
          // Attempt converting from any other kinds of numbers          
          ForEachOr(Typelists::Arithmetic{}, [&]<class AS>{
-            if constexpr (not Same<InnerT, AS>) {
+            if constexpr (not Same<ScalarType, AS>) {
                AS all_as[ExtentOf<T>];
                initialized = describe.ExtractData(all_as);
                if (initialized) {
@@ -109,14 +109,14 @@ namespace Langulus::Math
                      // If we're initializing real color using integers,
                      // we have to divide by 255 and saturate (TODO)    
                      SIMD::Convert<T::Default>(all_as, this->all);
-                     *this /= InnerT {255};
+                     *this /= ScalarType {255};
                   }
                   else if constexpr (not T::IsReal and CT::Real<AS>) {
                      // If we're initializing integer color using reals,
                      // we have to multiply by 255 and saturate         
                      SIMD::Multiply(all_as, AS {255}, all_as);
-                     SIMD::Min(all_as, InnerT {255}, all_as);
-                     SIMD::Max(all_as, InnerT {0}, all_as);
+                     SIMD::Min(all_as, ScalarType {255}, all_as);
+                     SIMD::Max(all_as, ScalarType {  0}, all_as);
                      SIMD::Convert<T::Default>(all_as, this->all);
                   }
                   else SIMD::Convert<T::Default>(all_as, this->all);
@@ -307,9 +307,9 @@ namespace Langulus::Math
    constexpr void TColor<T>::MakeOpaque() noexcept {
       if constexpr (ExtentOf<T> >= 4) {
          if constexpr (T::IsReal)
-            alpha = TypeOf<T> {1};
+            alpha = ScalarType {1};
          else
-            alpha = TypeOf<T> {255};
+            alpha = ScalarType {255};
       }
       else LANGULUS(NOOP);
    }
@@ -361,8 +361,8 @@ namespace Langulus::Math
          }
       };
 
-      constexpr bool IsReal = CT::Real<TypeOf<T>>;
-      constexpr TypeOf<T> d3 {3};
+      constexpr bool IsReal = CT::Real<ScalarType>;
+      constexpr ScalarType d3 {3};
       if constexpr (IsReal) {
          const auto rr = static_cast<::std::uint8_t>(Clamp01(r) * d3);
          const auto gg = static_cast<::std::uint8_t>(Clamp01(g) * d3);
@@ -370,7 +370,7 @@ namespace Langulus::Math
          return ColorMap[rr][gg][bb];
       }
       else {
-         constexpr auto third = ::std::numeric_limits<TypeOf<T>>::max() / d3;
+         constexpr auto third = ::std::numeric_limits<ScalarType>::max() / d3;
          return ColorMap[r / third][g / third][b / third];
       }
    }

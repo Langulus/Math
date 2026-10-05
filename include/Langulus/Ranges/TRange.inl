@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include <Langulus/Math/Number.hpp>
 
 
 namespace Langulus::Math
@@ -165,7 +166,7 @@ namespace Langulus::Math
    /// Set only a specific component                                          
    ///   @param c - the component to overwrite                                
    ///   @return a reference to this vector                                   
-   TEMPLATE() template<CT::Scalar N, CT::Dimension D> LANGULUS(INLINED)
+   TEMPLATE() template<class N, class D> LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& c) noexcept {
       return *new (this) TRange {PointType {c}};
    }
