@@ -92,7 +92,7 @@ namespace Langulus::Math
 
    public:
       using CTTI_Normalized   = Yup;
-      using CTTI_Names        = Yes<GenerateToken()>;
+      using CTTI_Named        = Yes<GenerateToken()>;
       using CTTI_Bases        = Types<NormalOfSize<ExtentOf<T>>, NormalOfType<ScalarType>, T>;
 
       /// A default normal doesn't make sense - it will be degenerate      
