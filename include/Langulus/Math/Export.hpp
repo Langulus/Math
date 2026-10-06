@@ -44,18 +44,6 @@ namespace Langulus::CT
    /// Anything that has the gradient trait                                   
    template<class...T>
    concept Gradient = Dense<T...> and ((Decay<T>::CTTI_Gradient) and ...);
-
-   /// For recognizing proxy-arrays (intermediate vectors after swizzling)    
-   /*template<class...T>
-   concept Swizzled = Dense<T...> and ((Decay<T>::CTTI_ProxyArray) and ...);
-
-   /// For recognizing proxy-arrays that contain integers                     
-   template<class...T>
-   concept ProxyArrayInt = ((Swizzled<T> and Integer<TypeOf<T>>) and ...);*/
-
-   /// Anything Scalar that contains integers                            
-   //template<class...T>
-   //concept ScalarInt = ((Scalar<T> and Integer<TypeOf<T>>) and ...);
 }
 
 namespace Langulus::Math

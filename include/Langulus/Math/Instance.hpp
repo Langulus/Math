@@ -166,7 +166,7 @@ namespace Langulus::Math
       template<class K>
       void Move(const TScale<K>&, bool relative = false);
 
-      void Move(const CT::CustomVector auto&, bool relative = false);
+      void Move(CT::CustomVector auto const&, bool relative = false);
 
       template<class K>
       void Move(const TForce<K>&, bool relative = false);

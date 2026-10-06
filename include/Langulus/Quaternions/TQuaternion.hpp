@@ -145,21 +145,21 @@ namespace Langulus::Math
    ///   Operators that involve quaternions                                   
    ///                                                                        
    constexpr auto operator * (const CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
-   constexpr auto operator * (const CT::QuaternionBased auto&, const CT::CustomVector auto&) noexcept;
-   constexpr auto operator * (const CT::CustomVector auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (const CT::QuaternionBased auto&, CT::CustomVector auto const&) noexcept;
+   constexpr auto operator * (CT::CustomVector auto const&, const CT::QuaternionBased auto&) noexcept;
 
    constexpr void operator *= (CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
 
-   constexpr auto operator + (const CT::QuaternionBased auto&, const CT::Scalar auto&) noexcept;
-   constexpr auto operator + (const CT::Scalar auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator + (const CT::QuaternionBased auto&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator + (CT::Scalar auto const&, const CT::QuaternionBased auto&) noexcept;
 
-   constexpr auto operator - (const CT::QuaternionBased auto&, const CT::Scalar auto&) noexcept;
-   constexpr auto operator - (const CT::Scalar auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator - (const CT::QuaternionBased auto&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator - (CT::Scalar auto const&, const CT::QuaternionBased auto&) noexcept;
 
-   constexpr auto operator * (const CT::QuaternionBased auto&, const CT::Scalar auto&) noexcept;
-   constexpr auto operator * (const CT::Scalar auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (const CT::QuaternionBased auto&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator * (CT::Scalar auto const&, const CT::QuaternionBased auto&) noexcept;
 
-   constexpr auto operator / (const CT::QuaternionBased auto&, const CT::Scalar auto&);
-   constexpr auto operator / (const CT::Scalar auto&, const CT::QuaternionBased auto&);
+   constexpr auto operator / (const CT::QuaternionBased auto&, CT::Scalar auto const&);
+   constexpr auto operator / (CT::Scalar auto const&, const CT::QuaternionBased auto&);
 
 } // namespace Langulus::Math

@@ -71,7 +71,7 @@ namespace Langulus::Math
    /// Construct from scalar                                                  
    ///   @param x - spread across entire matrix diagonal                      
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TMatrix(const CT::Scalar auto& x) noexcept {
+   constexpr TME()::TMatrix(CT::Scalar auto const& x) noexcept {
       const T xx = Adapt(DeintCast(x));
       for (size_t i = 0; i < Diagonal; ++i)
          mColumns[i][i] = xx;
@@ -84,7 +84,7 @@ namespace Langulus::Math
    ///      the elements are copied sequentially with any missing elements    
    ///      defaulting to identity                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TMatrix(const CT::CustomVector auto& x) noexcept {
+   constexpr TME()::TMatrix(CT::CustomVector auto const& x) noexcept {
       using V = Deref<Deint<decltype(x)>>;
       constexpr auto D = Math::Min(Diagonal, CountOf<V>);
       for (size_t i = 0; i < D; ++i)
@@ -185,7 +185,7 @@ namespace Langulus::Math
    ///   @param x - the component to adapt                                    
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Adapt(const CT::Scalar auto& x) noexcept {
+   constexpr decltype(auto) TME()::Adapt(CT::Scalar auto const& x) noexcept {
       using N = Deref<decltype(x)>;
       static_assert(CT::Convertible<N, T>, "Incompatible number");
 
@@ -319,7 +319,7 @@ namespace Langulus::Math
    ///   @param position - the position to set                                
    ///   @return the translation matrix                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Translate(const CT::CustomVector auto& position) noexcept
+   constexpr auto TME()::Translate(CT::CustomVector auto const& position) noexcept
    -> TMatrix {
       TMatrix temp {};
       return temp.SetPosition(position);
@@ -332,7 +332,7 @@ namespace Langulus::Math
    ///   @param x - the uniform scale factor                                  
    ///   @return the scale matrix                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Scale(const CT::Scalar auto& x) noexcept -> TMatrix {
+   constexpr auto TME()::Scale(CT::Scalar auto const& x) noexcept -> TMatrix {
       TMatrix temp {x};
       if constexpr (Diagonal >= 4) {
          for (size_t i = 3; i < Diagonal; ++i)
@@ -346,7 +346,7 @@ namespace Langulus::Math
    ///   @param x - the scale factors                                         
    ///   @return the scale matrix                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Scale(const CT::CustomVector auto& x) noexcept -> TMatrix {
+   constexpr auto TME()::Scale(CT::CustomVector auto const& x) noexcept -> TMatrix {
       return TMatrix {x};
    }
 
@@ -386,12 +386,12 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::CustomVector auto& other) noexcept -> TMatrix& {
+   constexpr auto TME()::operator = (CT::CustomVector auto const& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::Scalar auto& other) noexcept -> TMatrix& {
+   constexpr auto TME()::operator = (CT::Scalar auto const& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
@@ -1019,7 +1019,7 @@ namespace Langulus::Math
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::CustomVector auto& lhs,
+      CT::CustomVector auto const& lhs,
       const CT::MatrixBased auto& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
@@ -1037,7 +1037,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::CustomVector auto& lhs,
+      CT::CustomVector auto const& lhs,
       const CT::MatrixBased auto& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1054,7 +1054,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::CustomVector auto& lhs,
+      CT::CustomVector auto const& lhs,
       const CT::MatrixBased auto& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1072,7 +1072,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       const CT::MatrixBased auto& lhs,
-      const CT::CustomVector auto& rhs
+      CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       constexpr auto C = CountOf<Ret>;
@@ -1090,7 +1090,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       const CT::MatrixBased auto& lhs,
-      const CT::CustomVector auto& rhs
+      CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
@@ -1107,7 +1107,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       const CT::MatrixBased auto& lhs,
-      const CT::CustomVector auto& rhs
+      CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
@@ -1123,7 +1123,7 @@ namespace Langulus::Math
    ///   @return the scaled matrix                                            
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::Scalar auto& lhs,
+      CT::Scalar auto const& lhs,
       const CT::MatrixBased auto& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1135,7 +1135,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       const CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       return rhs * lhs;
    }
@@ -1147,7 +1147,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator / (
       const CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
@@ -1161,7 +1161,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::Scalar auto& lhs,
+      CT::Scalar auto const& lhs,
       const CT::MatrixBased auto& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1173,7 +1173,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       const CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       return rhs + lhs;
    }
@@ -1185,7 +1185,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       const CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
@@ -1211,7 +1211,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator += (
       CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       SIMD::Add(lhs.mArray, rhs, lhs.mArray);
       return lhs;
@@ -1221,7 +1221,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator += (
       CT::MatrixBased auto& lhs,
-      const CT::CustomVector auto& rhs
+      CT::CustomVector auto const& rhs
    ) noexcept {
       return (lhs = lhs + rhs);
    }
@@ -1240,7 +1240,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator -= (
       CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       SIMD::Subtract(lhs.mArray, rhs, lhs.mArray);
       return lhs;
@@ -1250,7 +1250,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator -= (
       CT::MatrixBased auto& lhs,
-      const CT::CustomVector auto& rhs
+      CT::CustomVector auto const& rhs
    ) noexcept {
       return (lhs = lhs - rhs);
    }
@@ -1268,7 +1268,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator *= (
       CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       SIMD::Multiply(lhs.mArray, rhs, lhs.mArray);
       return lhs;
@@ -1278,7 +1278,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator /= (
       CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) {
       SIMD::Divide(lhs.mArray, rhs, lhs.mArray);
       return lhs;
@@ -1304,14 +1304,14 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator == (
       const CT::MatrixBased auto& lhs,
-      const CT::Scalar auto& rhs
+      CT::Scalar auto const& rhs
    ) noexcept {
       return SIMD::Equals(lhs.mArray, rhs);
    }
 
    LANGULUS(INLINED)
    constexpr auto operator == (
-      const CT::Scalar auto& lhs,
+      CT::Scalar auto const& lhs,
       const CT::MatrixBased auto& rhs
    ) noexcept {
       return SIMD::Equals(rhs.mArray, lhs);

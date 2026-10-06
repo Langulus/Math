@@ -141,7 +141,7 @@ namespace Langulus
          static constexpr size_t Rows = ROWS;
          static constexpr size_t Diagonal = Math::Min(Columns, Rows);
          static constexpr size_t MemberCount = Columns * Rows;
-         static constexpr bool IsSquare = Columns == Rows;
+         static constexpr bool   IsSquare = Columns == Rows;
 
          // Make TMatrix match the CT::MatrixBased concept              
          static constexpr bool CTTI_MatrixTrait = true;
@@ -207,8 +207,8 @@ namespace Langulus
          constexpr TMatrix(const TMatrix&) noexcept;
          constexpr TMatrix(TMatrix&&) noexcept;
          constexpr TMatrix(const CT::MatrixBased auto&) noexcept;
-         constexpr TMatrix(const CT::CustomVector auto&) noexcept;
-         constexpr TMatrix(const CT::Scalar auto&) noexcept;
+         constexpr TMatrix(CT::CustomVector auto const&) noexcept;
+         constexpr TMatrix(CT::Scalar auto const&) noexcept;
          template<class T1>
          constexpr TMatrix(const T1*) noexcept;
          template<class T1, class T2, class...TN>
@@ -234,9 +234,9 @@ namespace Langulus
             const CT::Angle auto& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :(
          ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
 
-         static constexpr auto Translate(const CT::CustomVector auto&) noexcept -> TMatrix;
-         static constexpr auto Scale(const CT::Scalar auto&) noexcept -> TMatrix;
-         static constexpr auto Scale(const CT::CustomVector auto&) noexcept -> TMatrix;
+         static constexpr auto Translate(CT::CustomVector auto const&) noexcept -> TMatrix;
+         static constexpr auto Scale(CT::Scalar auto const&) noexcept -> TMatrix;
+         static constexpr auto Scale(CT::CustomVector auto const&) noexcept -> TMatrix;
          static constexpr auto Identity() noexcept -> TMatrix;
          static constexpr auto Null() noexcept -> TMatrix;
 
@@ -246,8 +246,8 @@ namespace Langulus
          constexpr auto operator = (const TMatrix&) noexcept -> TMatrix&;
          constexpr auto operator = (TMatrix&&) noexcept -> TMatrix&;
          constexpr auto operator = (const CT::MatrixBased auto&) noexcept -> TMatrix&;
-         constexpr auto operator = (const CT::CustomVector auto&) noexcept -> TMatrix&;
-         constexpr auto operator = (const CT::Scalar auto&) noexcept -> TMatrix&;
+         constexpr auto operator = (CT::CustomVector auto const&) noexcept -> TMatrix&;
+         constexpr auto operator = (CT::Scalar auto const&) noexcept -> TMatrix&;
 
          template<CT::Scalar N, CT::Dimension D>
          constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
@@ -261,7 +261,7 @@ namespace Langulus
          explicit operator Annies::Text() const;
          explicit operator Flow::Code() const;
 
-         static constexpr decltype(auto) Adapt(const CT::Scalar auto&) noexcept;
+         static constexpr decltype(auto) Adapt(CT::Scalar auto const&) noexcept;
 
          ///                                                                  
          ///   Access                                                         
@@ -342,21 +342,21 @@ namespace Langulus
       constexpr auto operator + (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
       constexpr auto operator - (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
 
-      constexpr auto operator * (const CT::CustomVector auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator + (const CT::CustomVector auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator - (const CT::CustomVector auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator * (CT::CustomVector auto const&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator + (CT::CustomVector auto const&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator - (CT::CustomVector auto const&, const CT::MatrixBased auto&) noexcept;
 
-      constexpr auto operator * (const CT::MatrixBased auto&, const CT::CustomVector auto&) noexcept;
-      constexpr auto operator + (const CT::MatrixBased auto&, const CT::CustomVector auto&) noexcept;
-      constexpr auto operator - (const CT::MatrixBased auto&, const CT::CustomVector auto&) noexcept;
+      constexpr auto operator * (const CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
+      constexpr auto operator + (const CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
+      constexpr auto operator - (const CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
 
-      constexpr auto operator * (const CT::Scalar auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator + (const CT::Scalar auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator * (CT::Scalar auto const&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator + (CT::Scalar auto const&, const CT::MatrixBased auto&) noexcept;
 
-      constexpr auto operator * (const CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
-      constexpr auto operator / (const CT::MatrixBased auto&, const CT::Scalar auto&);
-      constexpr auto operator + (const CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
-      constexpr auto operator - (const CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
+      constexpr auto operator * (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
+      constexpr auto operator / (const CT::MatrixBased auto&, CT::Scalar auto const&);
+      constexpr auto operator + (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
+      constexpr auto operator - (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
 
 
       ///                                                                     
@@ -364,28 +364,28 @@ namespace Langulus
       ///                                                                     
       /// Add                                                                 
       constexpr auto& operator += (CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto& operator += (CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
-      constexpr auto& operator += (CT::MatrixBased auto&, const CT::CustomVector auto&) noexcept;
+      constexpr auto& operator += (CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
+      constexpr auto& operator += (CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
 
       /// Subtract                                                            
       constexpr auto& operator -= (CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto& operator -= (CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
-      constexpr auto& operator -= (CT::MatrixBased auto&, const CT::CustomVector auto&) noexcept;
+      constexpr auto& operator -= (CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
+      constexpr auto& operator -= (CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
 
       /// Multiply                                                            
       constexpr auto& operator *= (CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto& operator *= (CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
+      constexpr auto& operator *= (CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
 
       /// Divide                                                              
-      constexpr auto& operator /= (CT::MatrixBased auto&, const CT::Scalar auto&);
+      constexpr auto& operator /= (CT::MatrixBased auto&, CT::Scalar auto const&);
 
 
       ///                                                                     
       ///   Comparison                                                        
       ///                                                                     
       constexpr auto operator == (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator == (const CT::MatrixBased auto&, const CT::Scalar auto&) noexcept;
-      constexpr auto operator == (const CT::Scalar auto&, const CT::MatrixBased auto&) noexcept;
+      constexpr auto operator == (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
+      constexpr auto operator == (CT::Scalar auto const&, const CT::MatrixBased auto&) noexcept;
 
    } // namespace Langulus::Math
 

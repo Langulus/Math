@@ -322,7 +322,7 @@ namespace Langulus::Math
    ///   @param relative - whether or not position/normal is relative to      
    ///      current orientation                                               
    TEMPLATE()
-   void TME()::Move(const CT::CustomVector auto& position, bool relative) {
+   void TME()::Move(CT::CustomVector auto const& position, bool relative) {
       if (relative)
          mUseImpulse += mAim * (position * PointType {1,1,-1});
       else

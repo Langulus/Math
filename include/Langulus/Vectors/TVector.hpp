@@ -508,7 +508,7 @@ namespace Langulus::Math
       ///                                                                     
       constexpr TVector() noexcept;
       constexpr TVector(const CT::Vector auto&) noexcept;
-      constexpr TVector(const CT::Scalar auto&) noexcept;
+      constexpr TVector(CT::Scalar auto const&) noexcept;
 
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
@@ -523,7 +523,7 @@ namespace Langulus::Math
       ///   Assignment                                                        
       ///                                                                     
       constexpr auto operator = (const CT::Vector auto&) noexcept -> TVector&;
-      constexpr auto operator = (const CT::Scalar auto&) noexcept -> TVector&;
+      constexpr auto operator = (CT::Scalar auto const&) noexcept -> TVector&;
 
       template<CT::Scalar N, CT::Dimension D>
       constexpr auto operator = (const TVectorComponent<N, D>&) noexcept -> TVector&;
@@ -543,7 +543,7 @@ namespace Langulus::Math
       //explicit operator Annies::Text() const;
       //explicit operator Flow::Code() const;
 
-      static constexpr decltype(auto) Adapt(const CT::Scalar auto&) noexcept;
+      static constexpr decltype(auto) Adapt(CT::Scalar auto const&) noexcept;
 
       ///                                                                     
       ///   Access                                                            

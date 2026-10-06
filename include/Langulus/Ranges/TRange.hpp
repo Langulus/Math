@@ -174,8 +174,8 @@ namespace Langulus::Math
       constexpr TRange(const TRange&) noexcept;
       constexpr TRange(const CT::Vector auto&) noexcept;
       constexpr TRange(const CT::Vector auto&, const CT::Vector auto&) noexcept;
-      constexpr TRange(const CT::Scalar auto&) noexcept;
-      constexpr TRange(const CT::Scalar auto&, const CT::Scalar auto&) noexcept;
+      constexpr TRange(CT::Scalar auto const&) noexcept;
+      constexpr TRange(CT::Scalar auto const&, CT::Scalar auto const&) noexcept;
       constexpr TRange(const PointType&, const PointType&) noexcept;
       constexpr TRange(const ScalarType&, const ScalarType&) noexcept;
 
@@ -188,7 +188,7 @@ namespace Langulus::Math
       constexpr auto operator = (const TRange&) noexcept -> TRange&;
       constexpr auto operator = (const CT::Range  auto&) noexcept -> TRange&;
       constexpr auto operator = (const CT::Vector auto&) noexcept -> TRange&;
-      constexpr auto operator = (const CT::Scalar auto&) noexcept -> TRange&;
+      constexpr auto operator = (CT::Scalar auto const&) noexcept -> TRange&;
 
       template<class N, class D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
@@ -213,11 +213,17 @@ namespace Langulus::Math
       constexpr auto operator |  (const TRange&) const noexcept -> TRange;
       constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
 
-      constexpr auto operator [] (size_t)       noexcept -> ScalarType&;
-      constexpr auto operator [] (size_t) const noexcept -> ScalarType const&;
+      /// Get Nth range element                                               
+      ///   @attention assumes index is in range's extent limits              
+      ///   @param a index of the element. Given E == ExtentOf<T>:            
+      ///         0,     1,     2,     ...   E + 0,   E + 1,   E + 2  ...     
+      ///         minX   minY   minZ   ...   maxX     maxY     maxZ   ...     
+      ///   @returns a reference to the component                             
+      constexpr auto& operator [] (this auto&& self, size_t a) noexcept {
+         return self.mMinMax[a];
+      }
    };
    #pragma pack(pop)
-
 
    namespace Inner
    {
@@ -278,6 +284,7 @@ namespace Langulus::Ranges
 namespace Langulus::CTTI
 {
    /// Range constants                                                        
+   template<>
    struct DefineConstant<Math::Range3> : Types<
       NamedValue<Ranges::In,     "Ranges::In",        "A canonical `in` range">,
       NamedValue<Ranges::On,     "Ranges::On",        "A canonical `on the surface` range">,
