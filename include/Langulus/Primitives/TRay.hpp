@@ -27,8 +27,8 @@ namespace Langulus
 
       /// An abstract ray                                                     
       struct Ray {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Ray;
+         using CTTI_Abstract = Yup;
+         using CTTI_Concrete = Math::Ray;
          LANGULUS_BASES(Primitive);
       };
 
@@ -58,7 +58,7 @@ namespace Langulus
       public:
          constexpr TRay() = default;
 
-         constexpr TRay(const T& position, const T& normal) noexcept
+         constexpr TRay(T const& position, T const& normal) noexcept
             : mOrigin {position}
             , mNormal {normal.Normalize()} {}
 

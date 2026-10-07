@@ -38,20 +38,20 @@ namespace Langulus::Math
 
    /// An abstract triangle, also used as a topology type                     
    struct Triangle : Topology {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Triangle;
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = Math::Triangle;
       LANGULUS_BASES(Topology);
    };
 
    /// An abstract triangle strip, also used as a topology type               
    struct TriangleStrip : Triangle {
-      LANGULUS(CONCRETE) Math::TriangleStrip;
+      using CTTI_Concrete = Math::TriangleStrip;
       LANGULUS_BASES(Triangle);
    };
 
    /// An abstract triangle fan, also used as a topology type                 
    struct TriangleFan : Triangle {
-      LANGULUS(CONCRETE) Math::TriangleFan;
+      using CTTI_Concrete = Math::TriangleFan;
       LANGULUS_BASES(Triangle);
    };
 }
@@ -106,7 +106,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Abstract = No;
       using CTTI_POD = CT::POD<T>;
       using CTTI_Nullable = CT::Nullifiable<T>;
@@ -170,7 +170,7 @@ namespace Langulus::Math
       /// Calculate signed distance                                           
       ///   @param point - the point from which distance is calculated        
       ///   @return the distance                                              
-      auto SignedDistance(const T& point) const {
+      auto SignedDistance(T const& point) const {
          const auto e0 = mABC[1] - mABC[0];
          const auto e1 = mABC[2] - mABC[1];
          const auto e2 = mABC[0] - mABC[2];
@@ -228,16 +228,16 @@ namespace Langulus::Math
       }
 
       /// Modify the triangle                                                 
-      TTriangle operator + (const T& rhs) const noexcept {
+      TTriangle operator + (T const& rhs) const noexcept {
          return {mABC[0] + rhs, mABC[1] + rhs, mABC[2] + rhs};
       }
-      TTriangle operator - (const T& rhs) const noexcept {
+      TTriangle operator - (T const& rhs) const noexcept {
          return {mABC[0] - rhs, mABC[1] - rhs, mABC[2] - rhs};
       }
-      TTriangle operator * (const T& rhs) const noexcept {
+      TTriangle operator * (T const& rhs) const noexcept {
          return {mABC[0] * rhs, mABC[1] * rhs, mABC[2] * rhs};
       }
-      TTriangle operator / (const T& rhs) const {
+      TTriangle operator / (T const& rhs) const {
          return {mABC[0] / rhs, mABC[1] / rhs, mABC[2] / rhs};
       }
    };
@@ -285,7 +285,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::TriangleStrip);
 
@@ -343,7 +343,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::TriangleFan);
 

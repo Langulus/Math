@@ -193,7 +193,7 @@ TEMPLATE_TEST_CASE("Colors", "[color]",
             else static_assert(false, "TODO");
          };
 
-         tester.template operator() <const T&> (x);
+         tester.template operator() <T const&> (x);
          tester.template operator() <      T&> (x);
       }
 	}

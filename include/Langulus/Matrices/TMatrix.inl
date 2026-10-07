@@ -6,18 +6,95 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "TMatrix.hpp"
-#include <Langulus/Utils/Sequence.hpp>
-
-#define TARGS(a)     CT::Scalar a##T, size_t a##C, size_t a##R
-#define TMAT(a)      TMatrix<a##T, a##C, a##R>
-#define TEMPLATE()   template<CT::Scalar T, size_t COLUMNS, size_t ROWS>
-#define TME()        TMatrix<T, COLUMNS, ROWS>
 
 
 namespace Langulus::Math
 {
+   /// MARK: Abstract                                                         
+   /// Perspective constructor - left-handed perspective projection matrix    
+   ///   @param fieldOfView - an angle representing the horizontal field of   
+   ///                        view                                            
+   ///   @param aspect - the aspect ratio (width/height)                      
+   ///   @param near - the distance to the near clipping plane                
+   ///   @param far - the distance to the far clipping plane                  
+   ///   @return the projection matrix                                        
+   template<CT::Scalar T>
+   constexpr auto A::Matrix::PerspectiveFOV(
+      CT::Angle auto const& fieldOfView, T const& aspect,
+      T const& near, T const& far
+   ) -> Math::TMatrix<T, 4> {
+      // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix.html
+      const T scale = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5}) * near;
+      const T r = scale;
+      const T l = -r;
+      const T t = scale / aspect;
+      const T b = -t;
 
+      auto result = Math::TMatrix<T, 4>::Null();
+      result.mArray[0]  = T {2} * near / (r - l);
+      result.mArray[5]  = T {2} * near / (t - b);
+
+      result.mArray[8]  =   (r + l) / (r - l);
+      result.mArray[9]  =   (t + b) / (t - b);
+      result.mArray[10] = - (far + near) / (far - near);
+      result.mArray[11] = T {-1};
+
+      result.mArray[14] = T {-2} * far * near / (far - near);
+      return result;
+   }
+
+   /// Perspective constructor - left-handed perspective projection matrix    
+   /// described by a region on the near clipping plane                       
+   template<CT::Scalar T>
+   constexpr auto A::Matrix::PerspectiveRegion(
+      T const& left, T const& right,
+      T const& top,  T const& bottom,
+      T const& near, T const& far
+   ) -> Math::TMatrix<T, 4> {
+      auto result = Math::TMatrix<T, 4>::Null();
+      const auto x = T {2} * near / (right - left  );
+      const auto y = T {2} * near / (  top - bottom);
+
+      const auto a =   (right + left  ) / (right - left  );
+      const auto b =   (  top + bottom) / (  top - bottom);
+      const auto c = - (  far + near  ) / (  far - near  );
+      const auto d = T {-2} * far * near / (far - near);
+
+      result[ 0] = x;
+      result[ 5] = y;
+      result[ 8] = a;
+      result[ 9] = b;
+      result[10] = c;
+      result[11] = -1;
+      result[14] = d;
+      return result;
+   }
+
+   /// Orthographic constructor - LH orthographic projection matrix           
+   template<CT::Scalar T>
+   constexpr auto A::Matrix::Orthographic(
+      T const& width, T const& height,
+      T const& near,  T const& far
+   ) -> Math::TMatrix<T, 4> {
+      const auto range = far - near;
+      if (range == 0 or width == 0 or height == 0)
+         throw Except::ZeroDivision();
+
+      auto result = Math::TMatrix<T, 4>::Null();
+      result.mArray[ 0] = T { 2} / width;
+      result.mArray[ 5] = T { 2} / height;
+      result.mArray[10] = T {-2} / range;
+      result.mArray[12] = T {-1} / width;
+      result.mArray[13] = T {-1} / height;
+      result.mArray[14] = T { 1} / range;
+      result.mArray[15] = T { 1};
+      return result;
+   }
+
+
+
+
+   /// MARK: TMatrix                                                          
    /// Default constructor (identity)                                         
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix() noexcept {
@@ -27,7 +104,7 @@ namespace Langulus::Math
 
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TMatrix(const TMatrix& other) noexcept {
+   constexpr TME()::TMatrix(TMatrix const& other) noexcept {
       for (size_t i = 0; i < Columns; ++i)
          mColumns[i] = other.mColumns[i];
    }
@@ -42,7 +119,7 @@ namespace Langulus::Math
    /// Construct from similar matrix                                          
    ///   @param a - differently sized matrix                                  
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TMatrix(const CT::MatrixBased auto& a) noexcept {
+   constexpr TME()::TMatrix(CT::Matrix auto const& a) noexcept {
       using M = Deref<Deint<decltype(a)>>;
       if constexpr (M::Columns != Columns or M::Rows != Rows) {
          if constexpr (M::Columns < Columns or M::Rows < Rows) {
@@ -107,7 +184,7 @@ namespace Langulus::Math
    ///   @param t1, t2, tn.. - scalars or vector                              
    TEMPLATE() template<class T1, class T2, class...TN> LANGULUS(INLINED)
    constexpr TME()::TMatrix(const T1& t1, const T2& t2, const TN&...tn) noexcept {
-      static_assert(not CT::MatrixBased<T1, T2, TN...>,
+      static_assert(not CT::Matrix<T1, T2, TN...>,
          "Sequential matrices not allowed");
 
       constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
@@ -224,7 +301,7 @@ namespace Langulus::Math
 
    /// Create a rotational matrix (for 2x2 matrix, only around z)             
    TEMPLATE()
-   constexpr auto TME()::Rotate(const CT::Angle auto& roll) noexcept
+   constexpr auto TME()::Rotate(CT::Angle auto const& roll) noexcept
    -> TMatrix requires (ROWS >= 2 and COLUMNS >= 2) {
       auto cosR = Math::Cos(roll);
       auto sinR = Math::Sin(roll);
@@ -240,7 +317,7 @@ namespace Langulus::Math
    /// Create a rotational matrix based on axis and angle                     
    /// Builds a 3D rotation matrix created from normalized axis and an angle  
    TEMPLATE()
-   constexpr auto TME()::RotateAxis(const TVector<T, 3>& axis, const CT::Angle auto& a) noexcept
+   constexpr auto TME()::RotateAxis(const TVector<T, 3>& axis, CT::Angle auto const& a) noexcept
    -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
       const T c = Math::Cos(a);
       const T s = Math::Sin(a);
@@ -265,7 +342,7 @@ namespace Langulus::Math
    /// Rotational constructor in euler angles (for 3x3 matrix or above)       
    /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
-   constexpr auto TME()::Rotate(const CT::Angle auto& pitch, const CT::Angle auto& yaw) noexcept
+   constexpr auto TME()::Rotate(CT::Angle auto const& pitch, CT::Angle auto const& yaw) noexcept
    -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
@@ -291,9 +368,9 @@ namespace Langulus::Math
    /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
    constexpr auto TME()::Rotate(
-      const CT::Angle auto& pitch,
-      const CT::Angle auto& yaw,
-      const CT::Angle auto& roll
+      CT::Angle auto const& pitch,
+      CT::Angle auto const& yaw,
+      CT::Angle auto const& roll
    ) noexcept -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
@@ -367,7 +444,7 @@ namespace Langulus::Math
    ///   Assignment                                                           
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const TMatrix& other) noexcept -> TMatrix& {
+   constexpr auto TME()::operator = (TMatrix const& other) noexcept -> TMatrix& {
       for (size_t i = 0; i < Columns; ++i)
          mColumns[i] = other.mColumns[i];
       return *this;
@@ -381,7 +458,7 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::MatrixBased auto& other) noexcept -> TMatrix& {
+   constexpr auto TME()::operator = (CT::Matrix auto const& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
@@ -832,110 +909,15 @@ namespace Langulus::Math
       return mColumns + COLUMNS - 1;
    }
 
-} // namespace Langulus::Math
 
 
-namespace Langulus::A
-{
 
-   /// Perspective constructor - left-handed perspective projection matrix    
-   ///   @param fieldOfView - an angle representing the horizontal field of   
-   ///                        view                                            
-   ///   @param aspect - the aspect ratio (width/height)                      
-   ///   @param near - the distance to the near clipping plane                
-   ///   @param far - the distance to the far clipping plane                  
-   ///   @return the projection matrix                                        
-   template<CT::Scalar T>
-   constexpr auto A::Matrix::PerspectiveFOV(
-      const CT::Angle auto& fieldOfView, const T& aspect,
-      const T& near, const T& far
-   ) -> Math::TMatrix<T, 4> {
-      // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix.html
-      const T scale = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5}) * near;
-      const T r = scale;
-      const T l = -r;
-      const T t = scale / aspect;
-      const T b = -t;
 
-      auto result = Math::TMatrix<T, 4>::Null();
-      result.mArray[0]  = T {2} * near / (r - l);
-      result.mArray[5]  = T {2} * near / (t - b);
-
-      result.mArray[8]  =   (r + l) / (r - l);
-      result.mArray[9]  =   (t + b) / (t - b);
-      result.mArray[10] = - (far + near) / (far - near);
-      result.mArray[11] = T {-1};
-
-      result.mArray[14] = T {-2} * far * near / (far - near);
-      return result;
-   }
-
-   /// Perspective constructor - left-handed perspective projection matrix    
-   /// described by a region on the near clipping plane                       
-   template<CT::Scalar T>
-   constexpr auto A::Matrix::PerspectiveRegion(
-      const T& left, const T& right,
-      const T& top,  const T& bottom,
-      const T& near, const T& far
-   ) -> Math::TMatrix<T, 4> {
-      auto result = Math::TMatrix<T, 4>::Null();
-      const auto x = T {2} * near / (right - left  );
-      const auto y = T {2} * near / (  top - bottom);
-
-      const auto a =   (right + left  ) / (right - left  );
-      const auto b =   (  top + bottom) / (  top - bottom);
-      const auto c = - (  far + near  ) / (  far - near  );
-      const auto d = T {-2} * far * near / (far - near);
-
-      result[ 0] = x;
-      result[ 5] = y;
-      result[ 8] = a;
-      result[ 9] = b;
-      result[10] = c;
-      result[11] = -1;
-      result[14] = d;
-      return result;
-   }
-
-   /// Orthographic constructor - LH orthographic projection matrix           
-   template<CT::Scalar T>
-   constexpr auto A::Matrix::Orthographic(
-      const T& width, const T& height,
-      const T& near,  const T& far
-   ) -> Math::TMatrix<T, 4> {
-      const auto range = far - near;
-      if (range == 0 or width == 0 or height == 0)
-         throw Except::ZeroDivision();
-
-      auto result = Math::TMatrix<T, 4>::Null();
-      result.mArray[ 0] = T { 2} / width;
-      result.mArray[ 5] = T { 2} / height;
-      result.mArray[10] = T {-2} / range;
-      result.mArray[12] = T {-1} / width;
-      result.mArray[13] = T {-1} / height;
-      result.mArray[14] = T { 1} / range;
-      result.mArray[15] = T { 1};
-      return result;
-   }
-
-} // namespace Langulus::A
-
-#undef TARGS
-#undef TMAT
-#undef TEMPLATE
-#undef TME
-
-namespace Langulus::Math
-{
-
-   /// Multiply matrices                                                      
-   ///   @param lhs - left matrix                                             
-   ///   @param rhs - right matrix                                            
-   ///   @return the product                                                  
+   /// MARK: Multiply                                                         
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       using LHS = Deref<decltype(lhs)>;
       using RHS = Deref<decltype(rhs)>;
@@ -971,14 +953,11 @@ namespace Langulus::Math
       return r;
    }
 
-   /// Add matrices (commutative)                                             
-   ///   @param lhs - left matrix                                             
-   ///   @param rhs - right matrix                                            
-   ///   @return the added matrices                                           
+   /// MARK: Add (commutative)                                                
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
@@ -992,14 +971,11 @@ namespace Langulus::Math
       return Ret {result};
    }
 
-   /// Subtract matrices                                                      
-   ///   @param lhs - left matrix                                             
-   ///   @param rhs - right matrix                                            
-   ///   @return the subtracted matrices                                      
+   /// MARK: Subtract                                                         
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
@@ -1020,7 +996,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       CT::CustomVector auto const& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       constexpr auto C = CountOf<Ret>;
@@ -1038,7 +1014,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       CT::CustomVector auto const& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
@@ -1055,7 +1031,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       CT::CustomVector auto const& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::Columns][Ret::Rows];
@@ -1071,7 +1047,7 @@ namespace Langulus::Math
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1089,7 +1065,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
@@ -1106,7 +1082,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
@@ -1124,7 +1100,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       CT::Scalar auto const& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
@@ -1134,7 +1110,7 @@ namespace Langulus::Math
 
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       return rhs * lhs;
@@ -1146,7 +1122,7 @@ namespace Langulus::Math
    ///   @return the scaled matrix                                            
    LANGULUS(INLINED)
    constexpr auto operator / (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::Scalar auto const& rhs
    ) {
       using Ret = Deref<decltype(lhs)>;
@@ -1162,7 +1138,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       CT::Scalar auto const& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       TypeOf<Ret> result[Ret::MemberCount];
@@ -1172,7 +1148,7 @@ namespace Langulus::Math
 
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       return rhs + lhs;
@@ -1184,7 +1160,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
@@ -1200,8 +1176,8 @@ namespace Langulus::Math
    /// Add two matrices                                                       
    LANGULUS(INLINED)
    constexpr auto& operator += (
-      CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       SIMD::Add(lhs.mArray, rhs.mArray, lhs.mArray);
       return lhs;
@@ -1210,7 +1186,7 @@ namespace Langulus::Math
    /// Add a scalar to a matrix                                               
    LANGULUS(INLINED)
    constexpr auto& operator += (
-      CT::MatrixBased auto& lhs,
+      CT::Matrix auto& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       SIMD::Add(lhs.mArray, rhs, lhs.mArray);
@@ -1220,7 +1196,7 @@ namespace Langulus::Math
    /// Add a vector to each column of a matrix                                
    LANGULUS(INLINED)
    constexpr auto& operator += (
-      CT::MatrixBased auto& lhs,
+      CT::Matrix auto& lhs,
       CT::CustomVector auto const& rhs
    ) noexcept {
       return (lhs = lhs + rhs);
@@ -1229,8 +1205,8 @@ namespace Langulus::Math
    /// Subtract two matrices                                                  
    LANGULUS(INLINED)
    constexpr auto& operator -= (
-      CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       SIMD::Subtract(lhs.mArray, rhs.mArray, lhs.mArray);
       return lhs;
@@ -1239,7 +1215,7 @@ namespace Langulus::Math
    /// Subtract a scalar from a matrix                                        
    LANGULUS(INLINED)
    constexpr auto& operator -= (
-      CT::MatrixBased auto& lhs,
+      CT::Matrix auto& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       SIMD::Subtract(lhs.mArray, rhs, lhs.mArray);
@@ -1249,7 +1225,7 @@ namespace Langulus::Math
    /// Subtract a vector from each column of a matrix                         
    LANGULUS(INLINED)
    constexpr auto& operator -= (
-      CT::MatrixBased auto& lhs,
+      CT::Matrix auto& lhs,
       CT::CustomVector auto const& rhs
    ) noexcept {
       return (lhs = lhs - rhs);
@@ -1258,8 +1234,8 @@ namespace Langulus::Math
    /// Multiply two matrices                                                  
    LANGULUS(INLINED)
    constexpr auto& operator *= (
-      CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       return (lhs = lhs * rhs);
    }
@@ -1267,7 +1243,7 @@ namespace Langulus::Math
    /// Multiply matrix by a scalar                                            
    LANGULUS(INLINED)
    constexpr auto& operator *= (
-      CT::MatrixBased auto& lhs,
+      CT::Matrix auto& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       SIMD::Multiply(lhs.mArray, rhs, lhs.mArray);
@@ -1277,7 +1253,7 @@ namespace Langulus::Math
    /// Divide matrix by a scalar                                              
    LANGULUS(INLINED)
    constexpr auto& operator /= (
-      CT::MatrixBased auto& lhs,
+      CT::Matrix auto& lhs,
       CT::Scalar auto const& rhs
    ) {
       SIMD::Divide(lhs.mArray, rhs, lhs.mArray);
@@ -1290,8 +1266,8 @@ namespace Langulus::Math
    ///                                                                        
    LANGULUS(INLINED)
    constexpr auto operator == (
-      const CT::MatrixBased auto& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& lhs,
+      CT::Matrix auto const& rhs
    ) noexcept {
       using LHS = Deref<decltype(lhs)>;
       using RHS = Deref<decltype(rhs)>;
@@ -1303,7 +1279,7 @@ namespace Langulus::Math
 
    LANGULUS(INLINED)
    constexpr auto operator == (
-      const CT::MatrixBased auto& lhs,
+      CT::Matrix auto const& lhs,
       CT::Scalar auto const& rhs
    ) noexcept {
       return SIMD::Equals(lhs.mArray, rhs);
@@ -1312,9 +1288,8 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator == (
       CT::Scalar auto const& lhs,
-      const CT::MatrixBased auto& rhs
+      CT::Matrix auto const& rhs
    ) noexcept {
       return SIMD::Equals(rhs.mArray, lhs);
    }
-
-} // namespace Langulus::Math
+}

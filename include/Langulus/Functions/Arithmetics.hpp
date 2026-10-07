@@ -153,7 +153,7 @@ namespace Langulus::Math
    ///   @param a - the number/class to absolute                              
    ///   @return either T or whatever Abs() returns for class                 
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Abs(const T& a) noexcept {
+   constexpr decltype(auto) Abs(T const& a) noexcept {
       if constexpr (CT::HasAbs<T>)
          return a.Abs();
       else if constexpr (CT::Unsigned<T>)
@@ -168,7 +168,7 @@ namespace Langulus::Math
    ///   @param a - the number/class to get sign of                           
    ///   @return either T(-1) or T(1), or whatever Sign() returns for class   
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Sign(const T& a) noexcept {
+   constexpr decltype(auto) Sign(T const& a) noexcept {
       if constexpr (CT::HasSign<T>)
          return a.Sign();
       else if constexpr (CT::Unsigned<T>) {
@@ -254,7 +254,7 @@ namespace Langulus::Math
 
    /// Round                                                                  
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Round(const T& a) noexcept {
+   constexpr decltype(auto) Round(T const& a) noexcept {
       if constexpr (CT::HasRound<T>)
          return a.Round();
       else if constexpr (CT::Integer<T>)
@@ -267,7 +267,7 @@ namespace Langulus::Math
 
    /// Floor                                                                  
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Floor(const T& a) noexcept {
+   constexpr decltype(auto) Floor(T const& a) noexcept {
       if constexpr (CT::HasFloor<T>)
          return a.Floor();
       else if constexpr (CT::Integer<T>)
@@ -287,7 +287,7 @@ namespace Langulus::Math
 
    /// Ceil                                                                   
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Ceil(const T& a) noexcept {
+   constexpr decltype(auto) Ceil(T const& a) noexcept {
       if constexpr (CT::HasCeil<T>)
          return a.Ceil();
       else if constexpr (CT::Integer<T>)
@@ -307,7 +307,7 @@ namespace Langulus::Math
 
    /// Get square of anything with multiplication operator                    
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto Sq(const T& n) noexcept {
+   constexpr auto Sq(T const& n) noexcept {
       if constexpr (CT::Multipliable<T, T>)
          return n * n;
       else
@@ -320,7 +320,7 @@ namespace Langulus::Math
       /// Compile-time square root using binary search                        
       /// Applicable only to unsigned integers                                
       template<CT::Unsigned T>
-      constexpr T SqrtHelper(const T& x, const T& lo, const T& hi) noexcept {
+      constexpr T SqrtHelper(T const& x, T const& lo, T const& hi) noexcept {
          if (lo == hi)
             return lo;
 
@@ -335,7 +335,7 @@ namespace Langulus::Math
    /// Square root                                                            
    ///   @attention assumes x is not a negative number                        
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto Sqrt(const T& x) {
+   constexpr auto Sqrt(T const& x) {
       if constexpr (CT::HasSqrt<T>)
          return x.Sqrt();
       else if constexpr (CT::Unsigned<T>)
@@ -366,7 +366,7 @@ namespace Langulus::Math
    
    /// Get a fractional part                                                  
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto Frac(const T& f) noexcept {
+   constexpr auto Frac(T const& f) noexcept {
       if constexpr (CT::HasFrac<T>)
          return f.Frac();
       else if constexpr (CT::Real<T>)
@@ -390,13 +390,13 @@ namespace Langulus::Math
 
    /// Remaps a [0; 1] range to a [-1; 1] range                               
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto Center(const T& a) noexcept {
+   constexpr auto Center(T const& a) noexcept {
       return a * T {2} - T {1};
    }
 
    /// Clamp a value inside the interval [min;max]                            
    template<CT::Dense T, CT::Dense MIN, CT::Dense MAX> LANGULUS(INLINED)
-   constexpr auto Clamp(const T& v, const MIN& min, const MAX& max) noexcept {
+   constexpr auto Clamp(T const& v, const MIN& min, const MAX& max) noexcept {
       if constexpr (CT::HasClamp<T, MIN, MAX>)
          return v.Clamp(min, max);
       else if constexpr (CT::Number<T, MIN, MAX>) {
@@ -415,14 +415,14 @@ namespace Langulus::Math
 
    /// Clamp a real value inside the interval [0:1]                           
    template<CT::Real T> LANGULUS(INLINED)
-   constexpr decltype(auto) Saturate(const T& v) noexcept {
+   constexpr decltype(auto) Saturate(T const& v) noexcept {
       return Clamp(v, T {0}, T {1});
    }
 
    /// Clamp a value outside the interval (min:max)                           
    /// If the value is near min, min is returned, otherwise max is returned   
    template<CT::Dense T, CT::Dense MIN, CT::Dense MAX> LANGULUS(INLINED)
-   constexpr auto ClampRev(const T& v, const MIN& min, const MAX& max) noexcept {
+   constexpr auto ClampRev(T const& v, const MIN& min, const MAX& max) noexcept {
       if constexpr (CT::HasClampRev<T, MIN, MAX>)
          return v.ClampRev(min, max);
       else if constexpr (CT::Number<T, MIN, MAX>) {
@@ -460,7 +460,7 @@ namespace Langulus::Math
 
    /// Get length (as in magnitude)                                           
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Length(const T& v) noexcept {
+   constexpr decltype(auto) Length(T const& v) noexcept {
       if constexpr (CT::HasLength<T>)
          return v.Length();
       else if constexpr (CT::Number<T>)
@@ -479,7 +479,7 @@ namespace Langulus::Math
 
    /// Normalize                                                              
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr decltype(auto) Normalize(const T& v) noexcept {
+   constexpr decltype(auto) Normalize(T const& v) noexcept {
       if constexpr (CT::Normalized<T>)
          return v;
       else if constexpr (CT::HasNormalize<T>)
@@ -490,7 +490,7 @@ namespace Langulus::Math
 
    /// Step function                                                          
    template<CT::Dense T, CT::Dense EDGE> LANGULUS(INLINED)
-   constexpr auto Step(const EDGE& edge, const T& x) noexcept {
+   constexpr auto Step(const EDGE& edge, T const& x) noexcept {
       if constexpr (CT::HasStep<T, EDGE>)
          return x.Step(edge);
       else if constexpr (CT::Number<T, EDGE>)
@@ -501,7 +501,7 @@ namespace Langulus::Math
 
    /// Smooth step (Hermite) interpolation, analogous to the GLSL function    
    template<CT::Dense T, CT::Dense MIN, CT::Dense MAX> LANGULUS(INLINED)
-   constexpr auto SmoothStep(const MIN& min, const MAX& max, const T& x) noexcept {
+   constexpr auto SmoothStep(const MIN& min, const MAX& max, T const& x) noexcept {
       const T t = Saturate((x - T {min}) / T {max - min});
       return t * t * (-t * T {2} + T {3});
    }
@@ -510,7 +510,7 @@ namespace Langulus::Math
    ///   @param exponent - the power to raise to                              
    ///   @return e^x                                                          
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto Exp(const T& x) noexcept {
+   constexpr auto Exp(T const& x) noexcept {
       if constexpr (CT::HasExp<T>)
          return x.Exp();
       else if constexpr (CT::Number<T>)
@@ -521,13 +521,13 @@ namespace Langulus::Math
 
    /// Solve 2^x                                                              
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto Exp2(const T& x) noexcept {
+   constexpr auto Exp2(T const& x) noexcept {
       return Pow(T {2}, x);
    }
 
    /// Sum of positive numbers [0;n], or elements of vector                  
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr T Sum(const T& n) noexcept {
+   constexpr T Sum(T const& n) noexcept {
       if constexpr (CT::HasSum<T>)
          return n.Sum();
       else if constexpr (CT::Number<T>) {
@@ -542,7 +542,7 @@ namespace Langulus::Math
    ///   @param input - the number to add, repeat for more numbers            
    ///   @param output - the sum, gets overwritten every time                 
    template<CT::Dense T> LANGULUS(INLINED)
-   void KahanSum(T& cookie, const T& input, T& output) noexcept {
+   void KahanSum(T& cookie, T const& input, T& output) noexcept {
       T y = input - cookie;
       // So far, so good: cookie be zero on first iteration             
       T t = output + y;

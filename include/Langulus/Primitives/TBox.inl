@@ -34,7 +34,7 @@ namespace Langulus::Math
    ///   @param point - point to check distance from                          
    ///   @return the distance to the primitive                                
    TEMPLATE() LANGULUS(INLINED)
-   auto TME()::SignedDistance(const T& point) const {
+   auto TME()::SignedDistance(T const& point) const {
       return Math::SignedDistance(point, *this);
    }
 
@@ -75,7 +75,7 @@ namespace Langulus::Math
    ///   @param point - point to check distance from                          
    ///   @return the distance to the primitive                                
    TEMPLATE() LANGULUS(INLINED)
-   auto TME()::SignedDistance(const T& point) const {
+   auto TME()::SignedDistance(T const& point) const {
       return Math::SignedDistance(point, *this);
    }
 

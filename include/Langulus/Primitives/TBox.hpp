@@ -98,7 +98,7 @@ namespace Langulus::Math
 
       constexpr bool IsDegenerate() const noexcept;
       constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(const T&) const;
+      auto SignedDistance(T const&) const;
 
       /*explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;*/
@@ -159,7 +159,7 @@ namespace Langulus::Math
 
       constexpr bool IsDegenerate() const noexcept;
       constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(const T&) const;
+      auto SignedDistance(T const&) const;
 
       /*explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;*/

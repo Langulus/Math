@@ -29,8 +29,8 @@ namespace Langulus
 
       /// An abstract polygon, also used as a topology type                   
       struct Polygon {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Polygon;
+         using CTTI_Abstract = Yup;
+         using CTTI_Concrete = Math::Polygon;
          LANGULUS_BASES(Topology);
       };
 
@@ -56,7 +56,7 @@ namespace Langulus
 
          /// Calculate signed distance                                        
          LANGULUS(INLINED)
-         auto SignedDistance(const T&) const {
+         auto SignedDistance(T const&) const {
             TODO();
          }
 

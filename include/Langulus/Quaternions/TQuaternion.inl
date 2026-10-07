@@ -125,7 +125,7 @@ namespace Langulus::Math
 
    /// Create a quaternion from euler angles   in radians                     
    /*
-   inline static constexpr ME FromEuler(const T& yaw, const T& pitch, const T& roll) noexcept {
+   inline static constexpr ME FromEuler(T const& yaw, T const& pitch, T const& roll) noexcept {
       const auto qy = FromAxisAngle(Up<T>, yaw);
       const auto qx = FromAxisAngle(Right<T>, pitch);
       const auto qz = FromAxisAngle(Forward<T>, roll);
@@ -134,7 +134,7 @@ namespace Langulus::Math
 
    /// Create a quaternion from axis and angle                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr QUAT() QUAT()::FromAxis(const Base3& axis, const CT::Angle auto& angle) noexcept {
+   constexpr QUAT() QUAT()::FromAxis(const Base3& axis, CT::Angle auto const& angle) noexcept {
       using A = Deref<decltype(angle)>;
       const auto halfangle = angle * A {.5};
       return {
@@ -422,7 +422,7 @@ namespace Langulus::A
    ///   @param s - the scale vector                                          
    ///   @return the composed matrix                                          
    template<CT::CustomVector T> constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
-   Matrix::From(const Math::TQuaternion<TypeOf<T>>& q, const T& p, const T& s) noexcept {
+   Matrix::From(const Math::TQuaternion<TypeOf<T>>& q, T const& p, T const& s) noexcept {
       using K = TypeOf<T>;
       Math::TMatrix<K, T::MemberCount + 1> result;
       auto x2 = q.x + q.x;

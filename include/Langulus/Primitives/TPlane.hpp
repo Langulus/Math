@@ -35,7 +35,7 @@ namespace Langulus::Math
       constexpr TPlane() noexcept = default;
 
       /// Construction from normal and offset                                 
-      constexpr TPlane(const T& normal, ScalarType offset) noexcept 
+      constexpr TPlane(T const& normal, ScalarType offset) noexcept 
          : mNormal {normal}
          , mOffset {offset} {
          Normalize();
@@ -49,7 +49,7 @@ namespace Langulus::Math
       }
 
       /// Construction from distance * direction                              
-      constexpr TPlane(const T& offset) noexcept {
+      constexpr TPlane(T const& offset) noexcept {
          const auto d = offset.Length();
          mNormal = offset / d;
          mOffset = d;
@@ -81,7 +81,7 @@ namespace Langulus::Math
       /// Calculate signed distance                                           
       ///   @param point point to check distance from                         
       ///   @return the distance to the plane                                 
-      auto SignedDistance(const T& point) const {
+      auto SignedDistance(T const& point) const {
          return Math::SignedDistance(point, *this);
       }
    };

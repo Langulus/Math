@@ -23,7 +23,7 @@ namespace Langulus::Math
    /// Returns an inverted adaptive (standing operator)                       
    ///   @param a - adaptive to invert                                        
    template<CT::Adaptive T> requires CT::Signed<T> LANGULUS(INLINED)
-   constexpr T operator - (const T& a) noexcept {
+   constexpr T operator - (T const& a) noexcept {
       return {-a.mValue, a.mLevel};
    }
 

@@ -94,15 +94,15 @@ namespace Langulus
       /// Used as an imposed base for any type that can be interpretable as a 
       /// size                                                                
       struct Scale {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Scale;
+         using CTTI_Abstract = Yup;
+         using CTTI_Concrete = Math::Scale;
       };
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// size of the same size                                               
       template<size_t S>
       struct ScaleOfSize : Scale {
-         LANGULUS(CONCRETE) Math::TScale<Math::TVector<::Langulus::Real, S, 1>>;
+         using CTTI_Concrete = Math::TScale<Math::TVector<::Langulus::Real, S, 1>>;
          LANGULUS_BASES(Scale);
          static constexpr size_t MemberCount {S};
          static_assert(S > 0, "Scale must be greater than zero");
@@ -112,7 +112,7 @@ namespace Langulus
       /// size of the same type                                               
       template<CT::Number T>
       struct ScaleOfType : Scale {
-         LANGULUS(CONCRETE) Math::TScale<Math::TVector<T, 3, 1>>;
+         using CTTI_Concrete = Math::TScale<Math::TVector<T, 3, 1>>;
          LANGULUS_BASES(Scale);
          using CTTI_Typed = T;
       };

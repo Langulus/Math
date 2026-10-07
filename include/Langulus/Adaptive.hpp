@@ -49,7 +49,7 @@ namespace Langulus::Math
 
    public:
       constexpr Adaptive() noexcept = default;
-      constexpr Adaptive(const T& data, Level level = {}) noexcept
+      constexpr Adaptive(T const& data, Level level = {}) noexcept
          : mValue {data}
          , mLevel {level} {}
 
@@ -77,7 +77,7 @@ namespace Langulus::Math
    };
 
    template<class T>
-   Adaptive(const T&, Level) -> Adaptive<Deint<T>>;
+   Adaptive(T const&, Level) -> Adaptive<Deint<T>>;
 
 
    ///                                                                        
@@ -86,7 +86,7 @@ namespace Langulus::Math
 
    /// Returns an inverted number                                             
    template<CT::Adaptive T> requires CT::Signed<T>
-   constexpr T operator - (const T&) noexcept;
+   constexpr T operator - (T const&) noexcept;
 
    /// Returns the sum of two numbers                                         
    constexpr auto operator + (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;

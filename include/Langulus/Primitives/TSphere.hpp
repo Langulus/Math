@@ -34,8 +34,8 @@ namespace Langulus
 
       /// An abstract sphere                                                  
       struct Sphere : Primitive {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Sphere;
+         using CTTI_Abstract = Yup;
+         using CTTI_Concrete = Math::Sphere;
          LANGULUS_BASES(Primitive);
       };
 
@@ -87,7 +87,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Abstract = No;
       using CTTI_POD = CT::POD<T>;
       using CTTI_Typed = TypeOf<T>;
@@ -115,7 +115,7 @@ namespace Langulus::Math
       /// Calculate signed distance                                           
       ///   @param point - point to check distance from                       
       ///   @return the distance to the primitive                             
-      auto SignedDistance(const T& point) const {
+      auto SignedDistance(T const& point) const {
          return point.Length() - mRadius;
       }
    };
@@ -153,7 +153,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Abstract = No;
       using CTTI_POD = CT::POD<T>;
       using CTTI_Typed = TypeOf<T>;
@@ -182,7 +182,7 @@ namespace Langulus::Math
       /// Calculate signed distance                                           
       ///   @param point - point to check distance from                       
       ///   @return the distance to the primitive                             
-      auto SignedDistance(const T& point) const {
+      auto SignedDistance(T const& point) const {
          const auto k0 = (point / mRadii).Length();
          const auto k1 = (point / (mRadii * mRadii)).Length();
          return k0 * (k0 - TypeOf<T> {1}) / k1;

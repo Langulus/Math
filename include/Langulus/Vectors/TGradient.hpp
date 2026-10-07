@@ -53,7 +53,7 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as      
    /// a gradient                                                             
    struct Gradient {
-      LANGULUS(ABSTRACT) true;
+      using CTTI_Abstract = Yup;
    };
 
 } // namespace Langulus::A
@@ -87,7 +87,7 @@ namespace Langulus::Math
       static constexpr bool CTTI_GradientTrait = true;
 
       constexpr TGradient() noexcept = default;
-      constexpr TGradient(const T&) noexcept;
+      constexpr TGradient(T const&) noexcept;
       template<class T1, class T2, class... TAIL>
       constexpr TGradient(const T1&, const T2&, const TAIL&...) noexcept;
 
@@ -106,9 +106,9 @@ namespace Langulus::Math
       constexpr auto Previous()       noexcept -> T&;
 
       constexpr T Delta() const;
-      constexpr T Project(const T&) const;
+      constexpr T Project(T const&) const;
 
-      constexpr void Reset(const T&) noexcept;
+      constexpr void Reset(T const&) noexcept;
 
       constexpr T Sum() const noexcept;
 

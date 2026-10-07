@@ -223,7 +223,7 @@ namespace Langulus::Math
    ///   @param i - index of the component (0, 1, 2 correspond to X, Y, Z)    
    ///   @return a reference to the component                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Get(const size_t i) const noexcept -> const T& {
+   constexpr auto TME()::Get(const size_t i) const noexcept -> T const& {
       return all[i];
    }
 
@@ -235,7 +235,7 @@ namespace Langulus::Math
    /// Get the value of a specific component index (with static check)        
    ///   @return a reference to the component                                 
    TEMPLATE() template<size_t I> LANGULUS(INLINED)
-   constexpr auto TME()::GetIdx() const noexcept -> const T& {
+   constexpr auto TME()::GetIdx() const noexcept -> T const& {
       static_assert(I < S, "Index is out of limits");
       return all[I];
    }
@@ -250,7 +250,7 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t a) const noexcept -> const T& {
+   constexpr auto TME()::operator [] (const size_t a) const noexcept -> T const& {
       return all[a];
    }
 
@@ -394,7 +394,7 @@ namespace Langulus::Math
    ///   @param rhs - the vector to cross with                                
    ///   @return the cross product of both vectors                            
    TEMPLATE() template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
-   constexpr auto TME()::Cross(const V& rhs) const noexcept -> TVector<T, 3> {
+   constexpr auto TME()::Cross(V const& rhs) const noexcept -> TVector<T, 3> {
       return { y * rhs.z - z * rhs.y,
                z * rhs.x - x * rhs.z,
                x * rhs.y - y * rhs.x };
@@ -684,7 +684,7 @@ namespace Langulus::Math
 
    /// Warp (used for periodic boundary conditions)                           
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Warp(const T& scalar) const noexcept -> TVector {
+   constexpr auto TME()::Warp(T const& scalar) const noexcept -> TVector {
       if constexpr (CT::Signed<T>) {
          const auto absScale = Abs(scalar);
          const auto halfScale = absScale / T {2};

@@ -41,19 +41,19 @@ namespace Langulus
 
       /// An abstract line, also used as a topology type                      
       struct Line : Topology {
-         LANGULUS(CONCRETE) Math::Line;
+         using CTTI_Concrete = Math::Line;
          LANGULUS_BASES(Topology);
       };
 
       /// An abstract line loop, also used as a topology type                 
       struct LineLoop : Line {
-         LANGULUS(CONCRETE) Math::LineLoop;
+         using CTTI_Concrete = Math::LineLoop;
          LANGULUS_BASES(Line);
       };
 
       /// An abstract line strip, also used as a topology type                
       struct LineStrip : Line {
-         LANGULUS(CONCRETE) Math::LineStrip;
+         using CTTI_Concrete = Math::LineStrip;
          LANGULUS_BASES(Line);
       };
 
@@ -114,7 +114,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Abstract = No;
       using CTTI_POD = CT::POD<T>;
       using CTTI_Nullable = CT::Nullifiable<T>;
@@ -188,7 +188,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Abstract = No;
       using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::LineLoop);
@@ -236,7 +236,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Abstract = No;
       using CTTI_Typed = TypeOf<T>;
       LANGULUS_BASES(A::LineStrip);

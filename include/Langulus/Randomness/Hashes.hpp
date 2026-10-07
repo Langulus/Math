@@ -400,7 +400,7 @@ namespace Langulus::Math
    ///   @tparam T - real type to use (deducible)                             
    ///   @param n - the number to hash                                        
    template<CT::Real T>
-   T SinHash(const T& n) noexcept {
+   T SinHash(T const& n) noexcept {
       return Frac(Sin(n) * T {43758.5453123});
    }
 
@@ -426,7 +426,7 @@ namespace Langulus::Math
    ///   @tparam T - integer type to use (deducible)                          
    ///   @param n - the number to hash                                        
    template<CT::Integer T>
-   auto IntHash(const T& n) noexcept {
+   auto IntHash(T const& n) noexcept {
       return n * (n ^ (n >> 15));
    }
 

@@ -54,7 +54,7 @@ namespace Langulus::Math
       ///   @param max - the higher end of the range                          
       ///   @return the newly generated number                                
       template<CT::Number T, bool MIN_INCLUSIVE = true, bool MAX_INCLUSIVE = true>
-      T Get(const T& min, const T& max) noexcept {
+      T Get(T const& min, T const& max) noexcept {
          LglsAssumeUser(min < max,
             "Lower limit is not below higher limit");
          LglsAssumeUser(

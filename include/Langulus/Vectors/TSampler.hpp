@@ -95,15 +95,15 @@ namespace Langulus
       /// Used as an imposed base for any type that can be interpretable as a 
       /// sampler                                                             
       struct Sampler {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Sampler3;
+         using CTTI_Abstract = Yup;
+         using CTTI_Concrete = Math::Sampler3;
       };
 
       /// Used as an imposed base for any type that can be interpretable as a 
       /// sampler of the same size                                            
       template<size_t S>
       struct SamplerOfSize : Sampler {
-         LANGULUS(CONCRETE) Math::TSampler<Math::TVector<Langulus::Real, S>>;
+         using CTTI_Concrete = Math::TSampler<Math::TVector<Langulus::Real, S>>;
          LANGULUS_BASES(Sampler);
          static constexpr size_t MemberCount {S};
          static_assert(S > 0, "Normal size must be greater than zero");
@@ -113,7 +113,7 @@ namespace Langulus
       /// sampler of the same type                                            
       template<CT::Number T>
       struct SamplerOfType : Sampler {
-         LANGULUS(CONCRETE) Math::TSampler<Math::TVector<T, 3>>;
+         using CTTI_Concrete = Math::TSampler<Math::TVector<T, 3>>;
          using CTTI_Typed = T;
          LANGULUS_BASES(Sampler);
       };
@@ -170,7 +170,7 @@ namespace Langulus
 
          /// Construct a normal from a vector                                 
          ///   @param other - the vector to normalize                         
-         constexpr TSampler(const T& other)
+         constexpr TSampler(T const& other)
             : T {other} {}
 
          /// Convert from any sampler to code                                 

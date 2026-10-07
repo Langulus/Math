@@ -574,14 +574,14 @@ namespace Langulus::Math
 
       using Base::all;
 
-      constexpr auto Get(size_t) const noexcept -> const T&;
+      constexpr auto Get(size_t) const noexcept -> T const&;
       constexpr auto Get(size_t)       noexcept ->       T&;
 
       template<size_t I>
-      constexpr auto GetIdx() const noexcept -> const T&;
+      constexpr auto GetIdx() const noexcept -> T const&;
 
       constexpr auto operator [] (size_t)       noexcept ->       T&;
-      constexpr auto operator [] (size_t) const noexcept -> const T&;
+      constexpr auto operator [] (size_t) const noexcept -> T const&;
 
       constexpr auto GetCount() const noexcept -> size_t;
       constexpr auto LengthSquared() const noexcept -> T;
@@ -657,7 +657,7 @@ namespace Langulus::Math
       constexpr auto Dot(const CT::Vector auto&) const noexcept -> T;
 
       template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
-      constexpr auto Cross(const V&) const noexcept -> TVector<T, 3>;
+      constexpr auto Cross(V const&) const noexcept -> TVector<T, 3>;
 
       constexpr auto Normalize() const noexcept -> TVector requires (S > 1);
 
@@ -674,7 +674,7 @@ namespace Langulus::Math
       constexpr auto Exp     () const noexcept -> TVector;
       constexpr auto Sin     () const noexcept -> TVector;
       constexpr auto Cos     () const noexcept -> TVector;
-      constexpr auto Warp(const T&) const noexcept -> TVector;
+      constexpr auto Warp(T const&) const noexcept -> TVector;
 
       static constexpr auto Max() noexcept -> TVector;
       static constexpr auto Min() noexcept -> TVector;

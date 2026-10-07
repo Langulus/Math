@@ -75,7 +75,7 @@ namespace Langulus::Math
    /// Degrees to radians conversion                                          
    ///   @param degrees - degrees to convert to radians                       
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto DegToRad(const T& degrees) noexcept {
+   constexpr auto DegToRad(T const& degrees) noexcept {
       if constexpr (CT::Real<T>)
          return degrees * PIxI180<T>;
       else
@@ -85,7 +85,7 @@ namespace Langulus::Math
    /// Radians to degrees conversion                                          
    ///   @param radians - radians to convert to degrees                       
    template<CT::Dense T> LANGULUS(INLINED)
-   constexpr auto RadToDeg(const T& radians) noexcept {
+   constexpr auto RadToDeg(T const& radians) noexcept {
       if constexpr (CT::Real<T>)
          return radians * PIix180<T>;
       else

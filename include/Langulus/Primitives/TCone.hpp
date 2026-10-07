@@ -36,6 +36,6 @@ namespace Langulus::Math
    public:
       constexpr bool IsDegenerate() const noexcept;
       constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(const T&) const;
+      auto SignedDistance(T const&) const;
    };
 }

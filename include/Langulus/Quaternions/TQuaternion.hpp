@@ -34,15 +34,15 @@ namespace Langulus::A
    /// Used as an imposed base for any type that can be interpretable as a    
    /// quaternion                                                             
    struct Quaternion {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) Math::Quaternion;
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = Math::Quaternion;
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// quaternion of the same type                                            
    template<CT::Scalar T>
    struct QuaternionOfType : Quaternion {
-      LANGULUS(CONCRETE) Math::TQuaternion<T>;
+      using CTTI_Concrete = Math::TQuaternion<T>;
       using CTTI_Typed = T;
       LANGULUS_BASES(Quaternion);
    };
@@ -90,7 +90,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME) GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Nullable = No;
       LANGULUS_BASES(Base, A::QuaternionOfType<T>);
 
@@ -110,7 +110,7 @@ namespace Langulus::Math
       explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;
 
-      static constexpr TQuaternion FromAxis(const Base3&, const CT::Angle auto&) noexcept;
+      static constexpr TQuaternion FromAxis(const Base3&, CT::Angle auto const&) noexcept;
 
       template<CT::Angle A, CT::Dimension D>
       static constexpr TQuaternion FromAngle(const TAngle<A, D>&) noexcept;

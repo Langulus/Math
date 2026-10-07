@@ -31,8 +31,8 @@ namespace Langulus
 
       /// An abstract frustum                                                 
       struct Frustum : Primitive {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Frustum;
+         using CTTI_Abstract = Yup;
+         using CTTI_Concrete = Math::Frustum;
          LANGULUS_BASES(Primitive);
       };
 
@@ -80,7 +80,7 @@ namespace Langulus::Math
 
       constexpr bool IsDegenerate() const noexcept;
       constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(const T&) const;
+      auto SignedDistance(T const&) const;
       bool Intersects(const TRange<T>&) const noexcept;
    };
 

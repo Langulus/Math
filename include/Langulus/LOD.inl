@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "LOD.hpp"
-#include "Matrices/TMatrix.inl"
+#include "Matrices/TMatrix.hpp"
 #include "Numbers/Level.inl"
 #include "Primitives/TFrustum.inl"
 

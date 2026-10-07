@@ -19,7 +19,7 @@ namespace Langulus::Math
    /// Manual construction                                                    
    ///   @param initial - the initial value                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TGradient(const T& initial) noexcept {
+   constexpr TME()::TGradient(T const& initial) noexcept {
       for (auto& i : mBuffer)
          i = initial;
    }
@@ -93,7 +93,7 @@ namespace Langulus::Math
 
    /// Get the current value                                                  
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T& TME()::Current() const noexcept {
+   constexpr T const& TME()::Current() const noexcept {
       return mBuffer[mIndex];
    }
 
@@ -104,7 +104,7 @@ namespace Langulus::Math
 
    /// Get the previous value                                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr const T& TME()::Previous() const noexcept {
+   constexpr T const& TME()::Previous() const noexcept {
       return mIndex >= 1 ? mBuffer[mIndex - 1] : mBuffer[S - 1];
    }
 
@@ -122,13 +122,13 @@ namespace Langulus::Math
 
    /// Get a projection in the future                                         
    TEMPLATE() LANGULUS(INLINED)
-   constexpr T TME()::Project(const T& steps) const {
+   constexpr T TME()::Project(T const& steps) const {
       return Current() + Delta() * steps;
    }
 
    /// Reset                                                                  
    TEMPLATE() LANGULUS(INLINED)
-   constexpr void TME()::Reset(const T& value) noexcept {
+   constexpr void TME()::Reset(T const& value) noexcept {
       for (auto& i : mBuffer)
          i = value;
       mIndex = 0;

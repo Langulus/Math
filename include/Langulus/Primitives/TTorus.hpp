@@ -45,7 +45,7 @@ namespace Langulus::Math
       /// Calculate signed distance                                           
       ///   @param point - point to check distance from                       
       ///   @return the distance to the primitive                             
-      auto SignedDistance(const T& point) const {
+      auto SignedDistance(T const& point) const {
          if constexpr (CT::Same<D, Traits::X>) {
             const auto q = TVector<TypeOf<T>, 2>(point.yz().Length() - mOuterRadius, point[0]);
             return q.Length() - mInnerRadius;

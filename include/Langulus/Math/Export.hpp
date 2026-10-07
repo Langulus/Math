@@ -37,10 +37,6 @@ namespace Langulus::CT
    template<class...T>
    concept Adaptive = Dense<T...> and ((Decay<T>::CTTI_Adaptive) and ...);
 
-   /// Anything that has the matrix trait                                     
-   template<class...T>
-   concept Matrix = Dense<T...> and ((Decay<T>::CTTI_Matrix) and ...);
-
    /// Anything that has the gradient trait                                   
    template<class...T>
    concept Gradient = Dense<T...> and ((Decay<T>::CTTI_Gradient) and ...);

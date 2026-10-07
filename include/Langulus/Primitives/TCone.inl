@@ -30,7 +30,7 @@ namespace Langulus::Math
    ///   @param point - point to check distance from                          
    ///   @return the distance to the primitive                                
    template<CT::Vector T, CT::Dimension D>
-   auto TCone<T, D>::SignedDistance(const T& point) const {
+   auto TCone<T, D>::SignedDistance(T const& point) const {
       return ::Langulus::Math::SignedDistance(point, *this);
    }
 

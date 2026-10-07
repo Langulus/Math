@@ -135,7 +135,7 @@ namespace Langulus::Math
 
    /// Returns an inverted number (standing operator)                         
    template<CT::CustomNumber T> requires CT::Signed<T> LANGULUS(ALWAYS_INLINED)
-   constexpr T operator - (const T& a) noexcept {
+   constexpr T operator - (T const& a) noexcept {
       return -FundamentalCast(a);
    }
 

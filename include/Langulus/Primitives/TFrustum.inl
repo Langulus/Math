@@ -80,7 +80,7 @@ namespace Langulus::Math
    ///   @param point - point to check distance from                          
    ///   @return the distance to the primitive                                
    TEMPLATE() LANGULUS(INLINED)
-   auto TFrustum<T>::SignedDistance(const T& point) const {
+   auto TFrustum<T>::SignedDistance(T const& point) const {
       return Min(
          mPlanes[0].SignedDistance(point),
          mPlanes[1].SignedDistance(point),

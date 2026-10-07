@@ -21,7 +21,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T> LANGULUS(INLINED)
-   auto Cos(const T& a) noexcept {
+   auto Cos(T const& a) noexcept {
       if constexpr (requires (T a) { {a.Cos()} -> CT::NotVoid; })
          return a.Cos();
       else if constexpr (CT::Real<T>)
@@ -34,7 +34,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T> LANGULUS(INLINED)
-   auto Sin(const T& a) noexcept {
+   auto Sin(T const& a) noexcept {
       if constexpr (requires (T a) { {a.Sin()} -> CT::NotVoid; })
          return a.Sin();
       else if constexpr (CT::Real<T>)
@@ -47,7 +47,7 @@ namespace Langulus::Math
    ///   @attention if angle is not Radians or Degrees, it is assumed radians 
    ///   @param a - the angle                                                 
    template<CT::Dense T> LANGULUS(INLINED)
-   auto Atan(const T& a) noexcept {
+   auto Atan(T const& a) noexcept {
       if constexpr (requires (T a) { {a.Atan()} -> CT::NotVoid; })
          return a.Atan();
       else if constexpr (CT::Real<T>)

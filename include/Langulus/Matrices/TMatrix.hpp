@@ -8,388 +8,365 @@
 #pragma once
 #include "../Vectors/TVector.hpp"
 #include "../Numbers/TAngle.hpp"
+#include <Langulus/CT/Matrix.hpp>
+
+#define TARGS(a)     CT::Scalar a##T, size_t a##C, size_t a##R
+#define TMAT(a)      TMatrix<a##T, a##C, a##R>
+#define TEMPLATE()   template<CT::Scalar T, size_t COLS, size_t ROWS>
+#define TME()        TMatrix<T, COLUMNS, ROWS>
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::Scalar>
+   struct TQuaternion;
 
-      template<CT::Scalar T>
-      struct TQuaternion;
+   template<CT::Scalar, size_t COLS, size_t ROWS = COLS>
+   struct TMatrix;
 
-      template<CT::Scalar T, size_t COLUMNS, size_t ROWS = COLUMNS>
-      struct TMatrix;
+   using Mat2  = TMatrix<Real, 2>;
+   using Mat3  = TMatrix<Real, 3>;
+   using Mat4  = TMatrix<Real, 4>;
 
-      using Mat2 = TMatrix<Real, 2>;
-      using Mat3 = TMatrix<Real, 3>;
-      using Mat4 = TMatrix<Real, 4>;
+   using Mat2f = TMatrix<float, 2>;
+   using Mat3f = TMatrix<float, 3>;
+   using Mat4f = TMatrix<float, 4>;
 
-      using Mat2f = TMatrix<Float, 2>;
-      using Mat3f = TMatrix<Float, 3>;
-      using Mat4f = TMatrix<Float, 4>;
+   using Mat2d = TMatrix<double, 2>;
+   using Mat3d = TMatrix<double, 3>;
+   using Mat4d = TMatrix<double, 4>;
 
-      using Mat2d = TMatrix<Double, 2>;
-      using Mat3d = TMatrix<Double, 3>;
-      using Mat4d = TMatrix<Double, 4>;
+   using Mat2i = TMatrix<int, 2>;
+   using Mat3i = TMatrix<int, 3>;
+   using Mat4i = TMatrix<int, 4>;
 
-      using Mat2i = TMatrix<int, 2>;
-      using Mat3i = TMatrix<int, 3>;
-      using Mat4i = TMatrix<int, 4>;
+   using Mat2u = TMatrix<unsigned, 2>;
+   using Mat3u = TMatrix<unsigned, 3>;
+   using Mat4u = TMatrix<unsigned, 4>;
 
-      using Mat2u = TMatrix<unsigned, 2>;
-      using Mat3u = TMatrix<unsigned, 3>;
-      using Mat4u = TMatrix<unsigned, 4>;
 
-      using Matrix = Mat4;
-      using Mat = Matrix;
+   /// An abstract matrix that depends on context. Defaults to 4x4 reals      
+   struct Matrix {
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = Mat4;
 
-   } // namespace Langulus::Math
+      template<CT::CustomVector V> static constexpr auto
+      From(const TQuaternion<TypeOf<V>>&, V const& = 0, V const& = 1) noexcept
+         -> TMatrix<TypeOf<V>, V::MemberCount + 1>;
 
-   #define TARGS(a)     CT::Scalar a##T, size_t a##C, size_t a##R
-   #define TMAT(a)      TMatrix<a##T, a##C, a##R>
-   #define TEMPLATE()   template<CT::Scalar T, size_t COLUMNS, size_t ROWS>
-   #define TME()        TMatrix<T, COLUMNS, ROWS>
+      template<CT::Angle A, CT::Scalar T> static constexpr auto
+      PerspectiveFOV(A const&, T const& aspect, T const& near, T const& far)
+         -> TMatrix<T, 4>;
 
-   namespace A
-   {
+      template<CT::Scalar T> static constexpr auto
+      PerspectiveRegion(T const& left, T const& right, T const& top, T const& bottom, T const& near, T const& far)
+         -> TMatrix<T, 4>;
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix                                                              
-      struct Matrix {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) Math::Matrix;
+      template<CT::Scalar T> static constexpr auto
+      Orthographic(T const& width, T const& height, T const& near, T const& far)
+         -> TMatrix<T, 4>;
+   };
 
-         template<CT::CustomVector V> static constexpr auto
-         From(const Math::TQuaternion<TypeOf<V>>&, const V& = 0, const V& = 1) noexcept
-            -> Math::TMatrix<TypeOf<V>, V::MemberCount + 1>;
+   /// An abstract matrix of specific column size, with rows and type that    
+   /// depends on context. Defaults to a square real matrix.                  
+   template<size_t C>
+   struct MatrixOfColumns : Matrix {
+      using CTTI_Concrete  = TMatrix<Real, C, C>;
+      using CTTI_Bases     = Matrix;
 
-         template<CT::Scalar T> static constexpr auto
-         PerspectiveFOV(const CT::Angle auto&, const T& aspect, const T& near, const T& far)
-            -> Math::TMatrix<T, 4>;
+      static constexpr size_t Cols = C;
+      static_assert(C > 0, "Column count must be greater than zero");
+   };
 
-         template<CT::Scalar T> static constexpr auto
-         PerspectiveRegion(const T& left, const T& right, const T& top, const T& bottom, const T& near, const T& far)
-            -> Math::TMatrix<T, 4>;
+   /// An abstract matrix of specific row size, with type and column size that
+   /// depends on context. Defaults to a square real matrix.                  
+   template<size_t R>
+   struct MatrixOfRows : Matrix {
+      using CTTI_Concrete  = TMatrix<Real, R, R>;
+      using CTTI_Bases     = Matrix;
 
-         template<CT::Scalar T> static constexpr auto
-         Orthographic(const T& width, const T& height, const T& near, const T& far)
-            -> Math::TMatrix<T, 4>;
+      static constexpr size_t Rows = R;
+      static_assert(R > 0, "Row count must be greater than zero");
+   };
+
+   /// An abstract matrix of specific size, with type that depends on context.
+   /// Defaults to a real matrix.                                             
+   template<size_t C, size_t R = C>
+   struct MatrixOfSize : Matrix {
+      using CTTI_Concrete  = Math::TMatrix<::Langulus::Real, C, R>;
+      using CTTI_Bases     = Matrix;
+      
+      static constexpr size_t Cols = C;
+      static constexpr size_t Rows = R;
+      static_assert(C > 0, "Column count must be greater than zero");
+      static_assert(R > 0, "Row count must be greater than zero");
+   };
+
+   /// An abstract matrix of specific type, with size that depends on context.
+   /// Defaults to a 4x4 matrix.                                              
+   template<CT::Scalar T>
+   struct MatrixOfType : Matrix {
+      using CTTI_Concrete  = TMatrix<T, 4, 4>;
+      using CTTI_Typed     = T;
+      using CTTI_Bases     = Matrix;
+   };
+
+
+   ///                                                                        
+   /// MARK: TMatrix                                                          
+   /// A templated matrix (column-major)                                      
+   ///                                                                        
+   #pragma pack(push, 1)
+   TEMPLATE()
+   struct TMatrix {
+      static_assert(COLS > 0, "Column count must be greater than zero");
+      static_assert(ROWS > 0, "Row count must be greater than zero");
+
+      using ColType        = TVector<T, ROWS>;
+      using RowType        = TVector<T, COLS>;
+      using TransposeType  = TMatrix<T, ROWS, COLS>;
+
+      static constexpr size_t Cols        = COLS;
+      static constexpr size_t Rows        = ROWS;
+      static constexpr size_t Diagonal    = Math::Min(Cols, Rows);
+      static constexpr size_t MemberCount = Cols *  Rows;
+      static constexpr bool   IsSquare    = Cols == Rows;
+
+      union {
+         ColType mColumns[Columns] {};
+         T       mArray[MemberCount];
       };
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same column count                                     
-      template<size_t COLUMNS>
-      struct MatrixOfColumns : Matrix {
-         LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, COLUMNS>;
-         LANGULUS_BASES(Matrix);
-         static constexpr size_t Columns = COLUMNS;
-         static_assert(COLUMNS > 0, "Column count must be greater than zero");
-      };
+   private:
+      /// Custom name generator at compile-time for matrices               
+      static consteval auto GenerateToken() {
+         constexpr auto defaultClassName = LastCppNameOf<TMatrix>();
+         ::std::array<char, defaultClassName.size() + 1> name {};
+         ::std::size_t offset {};
 
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same rows count                                       
-      template<size_t ROWS>
-      struct MatrixOfRows : Matrix {
-         LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, ROWS, ROWS>;
-         LANGULUS_BASES(Matrix);
-         static constexpr size_t Rows = ROWS;
-         static_assert(ROWS > 0, "Row count must be greater than zero");
-      };
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same column and row count                             
-      template<size_t COLUMNS, size_t ROWS = COLUMNS>
-      struct MatrixOfSize : Matrix {
-         LANGULUS(CONCRETE) Math::TMatrix<::Langulus::Real, COLUMNS, ROWS>;
-         LANGULUS_BASES(Matrix);
-         static constexpr size_t Columns = COLUMNS;
-         static constexpr size_t Rows = ROWS;
-         static_assert(COLUMNS > 0, "Column count must be greater than zero");
-         static_assert(ROWS > 0, "Row count must be greater than zero");
-      };
-
-      /// Used as an imposed base for any type that can be interpretable as a 
-      /// matrix of the same type                                             
-      template<CT::Scalar T>
-      struct MatrixOfType : Matrix {
-         LANGULUS(CONCRETE) Math::TMatrix<T, 4, 4>;
-         using CTTI_Typed = T;
-         LANGULUS_BASES(Matrix);
-      };
-
-   } // namespace Langulus::A
-
-
-   namespace Math
-   {
-
-      ///                                                                     
-      ///   A templated matrix (column-major)                                 
-      ///                                                                     
-      #pragma pack(push, 1)
-      TEMPLATE()
-      struct TMatrix {
-         static_assert(COLUMNS > 0, "Column count must be greater than zero");
-         static_assert(ROWS > 0, "Row count must be greater than zero");
-
-         using ColumnType    = TVector<T, ROWS>;
-         using RowType       = TVector<T, COLUMNS>;
-         using TransposeType = TMatrix<T, ROWS, COLUMNS>;
-
-         static constexpr size_t Columns = COLUMNS;
-         static constexpr size_t Rows = ROWS;
-         static constexpr size_t Diagonal = Math::Min(Columns, Rows);
-         static constexpr size_t MemberCount = Columns * Rows;
-         static constexpr bool   IsSquare = Columns == Rows;
-
-         // Make TMatrix match the CT::MatrixBased concept              
-         static constexpr bool CTTI_MatrixTrait = true;
-
-         union {
-            ColumnType mColumns[Columns] {};
-            T mArray[MemberCount];
-         };
-
-      private:
-         /// Custom name generator at compile-time for matrices               
-         static consteval auto GenerateToken() {
-            constexpr auto defaultClassName = RTTI::LastCppNameOf<TMatrix>();
-            ::std::array<char, defaultClassName.size() + 1> name {};
-            ::std::size_t offset {};
-
-            if constexpr (COLUMNS > 4 or ROWS > 4) {
-               for (auto i : defaultClassName)
-                  name[offset++] = i;
-               return name;
-            }
-
-            // Write prefix                                             
-            constexpr Token prefix = "Matrix";
-            for (auto i : prefix)
-               name[offset++] = i;
-
-            // Write columns and rows                                   
-            if constexpr (COLUMNS == ROWS) {
-               name[offset++] = '0' + COLUMNS;
-            }
-            else {
-               name[offset++] = '0' + COLUMNS;
-               name[offset++] = 'x';
-               name[offset++] = '0' + ROWS;
-            }
-
-            // Write suffix                                             
-            for (auto i : SuffixOf<T>())
+         if constexpr (COLUMNS > 4 or ROWS > 4) {
+            for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
          }
 
-      public:
-         LANGULUS(NAME) GenerateToken();
-         using CTTI_POD = CT::POD<T>;
-         using CTTI_Nullable = No;
-         using CTTI_Typed = T;
-         LANGULUS_BASES(
-            A::MatrixOfSize<COLUMNS, ROWS>, 
-            A::MatrixOfColumns<COLUMNS>,
-            A::MatrixOfRows<ROWS>,
-            A::MatrixOfType<T>, 
-            T
-         );
-         LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
+         // Write prefix                                             
+         constexpr Token prefix = "Matrix";
+         for (auto i : prefix)
+            name[offset++] = i;
 
-      public:
-         ///                                                                  
-         ///   Construction                                                   
-         ///                                                                  
-         constexpr TMatrix() noexcept;
-         constexpr TMatrix(const TMatrix&) noexcept;
-         constexpr TMatrix(TMatrix&&) noexcept;
-         constexpr TMatrix(const CT::MatrixBased auto&) noexcept;
-         constexpr TMatrix(CT::CustomVector auto const&) noexcept;
-         constexpr TMatrix(CT::Scalar auto const&) noexcept;
-         template<class T1>
-         constexpr TMatrix(const T1*) noexcept;
-         template<class T1, class T2, class...TN>
-         constexpr TMatrix(const T1&, const T2&, const TN&...) noexcept;
+         // Write columns and rows                                   
+         if constexpr (COLUMNS == ROWS) {
+            name[offset++] = '0' + COLUMNS;
+         }
+         else {
+            name[offset++] = '0' + COLUMNS;
+            name[offset++] = 'x';
+            name[offset++] = '0' + ROWS;
+         }
 
-         explicit TMatrix(Describe&&);
+         // Write suffix                                             
+         for (auto i : SuffixOf<T>())
+            name[offset++] = i;
+         return name;
+      }
 
-         static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>)
-         requires (ROWS >= 2 and COLUMNS >= 2);
-
-         static constexpr TMatrix Rotate(const CT::Angle auto&) noexcept
-         requires (ROWS >= 2 and COLUMNS >= 2);
-
-         static constexpr TMatrix RotateAxis(const TVector<T, 3>&, const CT::Angle auto&) noexcept
-         requires (ROWS >= 3 and COLUMNS >= 3);
-
-         static constexpr TMatrix Rotate(const CT::Angle auto& pitch, const CT::Angle auto& yaw) noexcept
-         requires (ROWS >= 3 and COLUMNS >= 3);
-
-         static constexpr TMatrix Rotate(
-            const CT::Angle auto& pitch,
-            const CT::Angle auto& yaw,
-            const CT::Angle auto& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :(
-         ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
-
-         static constexpr auto Translate(CT::CustomVector auto const&) noexcept -> TMatrix;
-         static constexpr auto Scale(CT::Scalar auto const&) noexcept -> TMatrix;
-         static constexpr auto Scale(CT::CustomVector auto const&) noexcept -> TMatrix;
-         static constexpr auto Identity() noexcept -> TMatrix;
-         static constexpr auto Null() noexcept -> TMatrix;
-
-         ///                                                                  
-         ///   Assignment                                                     
-         ///                                                                  
-         constexpr auto operator = (const TMatrix&) noexcept -> TMatrix&;
-         constexpr auto operator = (TMatrix&&) noexcept -> TMatrix&;
-         constexpr auto operator = (const CT::MatrixBased auto&) noexcept -> TMatrix&;
-         constexpr auto operator = (CT::CustomVector auto const&) noexcept -> TMatrix&;
-         constexpr auto operator = (CT::Scalar auto const&) noexcept -> TMatrix&;
-
-         template<CT::Scalar N, CT::Dimension D>
-         constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
-
-         ///                                                                  
-         ///   Interpretation                                                 
-         ///                                                                  
-         template<CT::Serial AS, class TOKEN>
-         AS Serialize() const;
-
-         explicit operator Annies::Text() const;
-         explicit operator Flow::Code() const;
-
-         static constexpr decltype(auto) Adapt(CT::Scalar auto const&) noexcept;
-
-         ///                                                                  
-         ///   Access                                                         
-         ///                                                                  
-         constexpr auto operator [] (size_t)       noexcept -> ColumnType&;
-         constexpr auto operator [] (size_t) const noexcept -> ColumnType const&;
-         constexpr auto GetRaw()       noexcept -> T*;
-         constexpr auto GetRaw() const noexcept -> T const*;
-
-         template<size_t>
-         auto GetRow() const noexcept -> RowType;
-         template<size_t>
-         auto GetRow() noexcept;
-
-      protected:
-         template<size_t, size_t...C>
-         auto GetRowInner(::std::integer_sequence<size_t, C...>&&) noexcept;
-
-      public:
-         template<size_t>
-         auto GetColumn() const noexcept -> ColumnType const&;
-         template<size_t>
-         auto GetColumn()       noexcept -> ColumnType&;
-
-         constexpr auto GetRight() const noexcept -> TVector<T, 3>;
-         constexpr auto GetUp() const noexcept -> TVector<T, 3>;
-         constexpr auto GetView() const noexcept -> TVector<T, 3>;
-         constexpr auto GetScale() const noexcept -> TVector<T, 3>;
-
-         constexpr auto GetPosition() const noexcept
-         -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLUMNS > 2);
-
-         constexpr auto SetPosition(const CT::Vector auto&) noexcept
-         -> TMatrix& requires (ROWS > 2 and COLUMNS > 2);
-
-         constexpr bool IsIdentity() const noexcept;
-         constexpr bool IsNull() const noexcept;
-
-         constexpr auto Determinant() const noexcept -> T;
-         constexpr auto Transpose() const noexcept -> TMatrix;
-         constexpr auto Cofactor(int, int, int) const noexcept -> TMatrix;
-         constexpr auto Determinant(int) const noexcept -> T;
-         constexpr auto Adjoint() const noexcept -> TMatrix;
-         auto Invert() const -> TMatrix;
-
-         ///                                                                  
-         ///   Iteration                                                      
-         ///                                                                  
-         constexpr auto begin()       noexcept -> ColumnType*;
-         constexpr auto end()         noexcept -> ColumnType*;
-         constexpr auto last()        noexcept -> ColumnType*;
-         constexpr auto begin() const noexcept -> ColumnType const*;
-         constexpr auto end()   const noexcept -> ColumnType const*;
-         constexpr auto last()  const noexcept -> ColumnType const*;
-
-      private:
-         template<size_t SIZE, size_t NEXT_SIZE = SIZE - 1>
-         constexpr static T InnerDeterminant(const T(&a)[SIZE * SIZE]) noexcept;
-      };
-      #pragma pack(pop)
-
-
-      /// Generate a lossless matrix type from provided LHS and RHS matrices  
-      ///   @tparam LHS - left hand side, can be scalar/array/vector/matrix   
-      ///   @tparam RHS - right hand side, can be scalar/array/vector/matrix  
-      template<class LHS, class RHS> requires CT::MatrixBased<Deref<LHS>, Deref<RHS>>
-      using LosslessMatrix = TMatrix<
-         Lossless<TypeOf<LHS>, TypeOf<RHS>>,
-         Deref<LHS>::Columns < Deref<RHS>::Columns ? Deref<RHS>::Columns : Deref<LHS>::Columns,
-         Deref<LHS>::Rows    < Deref<RHS>::Rows    ? Deref<RHS>::Rows    : Deref<LHS>::Rows
+   public:
+      using CTTI_Typed     = T;
+      using CTTI_Matrix    = Yup;
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Nullable  = No;
+      using CTTI_Bases     = Types<
+         MatrixOfSize<COLS, ROWS>, MatrixOfColumns<COLS>, MatrixOfRows<ROWS>,
+         MatrixOfType<T>, 
+         T
       >;
 
+   public:
+      ///                                                                  
+      ///   Construction                                                   
+      ///                                                                  
+      constexpr TMatrix() noexcept;
+      constexpr TMatrix(TMatrix const&) noexcept;
+      constexpr TMatrix(TMatrix&&) noexcept;
+      constexpr TMatrix(CT::Matrix auto const&) noexcept;
+      constexpr TMatrix(CT::Vector auto const&) noexcept;
+      constexpr TMatrix(CT::Scalar auto const&) noexcept;
+      template<class T1>
+      constexpr TMatrix(const T1*) noexcept;
+      template<class T1, class T2, class...TN>
+      constexpr TMatrix(const T1&, const T2&, const TN&...) noexcept;
 
-      ///                                                                     
-      ///   Operations                                                        
-      ///                                                                     
-      constexpr auto operator * (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator + (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator - (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
+      explicit TMatrix(Describe&&);
 
-      constexpr auto operator * (CT::CustomVector auto const&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator + (CT::CustomVector auto const&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator - (CT::CustomVector auto const&, const CT::MatrixBased auto&) noexcept;
+      static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>)
+      requires (ROWS >= 2 and COLUMNS >= 2);
 
-      constexpr auto operator * (const CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
-      constexpr auto operator + (const CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
-      constexpr auto operator - (const CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
+      static constexpr TMatrix Rotate(CT::Angle auto const&) noexcept
+      requires (ROWS >= 2 and COLUMNS >= 2);
 
-      constexpr auto operator * (CT::Scalar auto const&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator + (CT::Scalar auto const&, const CT::MatrixBased auto&) noexcept;
+      static constexpr TMatrix RotateAxis(const TVector<T, 3>&, CT::Angle auto const&) noexcept
+      requires (ROWS >= 3 and COLUMNS >= 3);
 
-      constexpr auto operator * (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
-      constexpr auto operator / (const CT::MatrixBased auto&, CT::Scalar auto const&);
-      constexpr auto operator + (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
-      constexpr auto operator - (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
+      static constexpr TMatrix Rotate(CT::Angle auto const& pitch, CT::Angle auto const& yaw) noexcept
+      requires (ROWS >= 3 and COLUMNS >= 3);
+
+      static constexpr TMatrix Rotate(
+         CT::Angle auto const& pitch,
+         CT::Angle auto const& yaw,
+         CT::Angle auto const& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :( //TODO check if still relevant
+      ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
+
+      static constexpr auto Translate(CT::CustomVector auto const&) noexcept -> TMatrix;
+      static constexpr auto Scale(CT::Scalar auto const&) noexcept -> TMatrix;
+      static constexpr auto Scale(CT::CustomVector auto const&) noexcept -> TMatrix;
+      static constexpr auto Identity() noexcept -> TMatrix;
+      static constexpr auto Null() noexcept -> TMatrix;
+
+      ///                                                                  
+      ///   Assignment                                                     
+      ///                                                                  
+      constexpr auto operator = (TMatrix const&) noexcept -> TMatrix&;
+      constexpr auto operator = (TMatrix&&) noexcept -> TMatrix&;
+      constexpr auto operator = (CT::Matrix auto const&) noexcept -> TMatrix&;
+      constexpr auto operator = (CT::Vector auto const&) noexcept -> TMatrix&;
+      constexpr auto operator = (CT::Scalar auto const&) noexcept -> TMatrix&;
+
+      template<CT::Scalar N, CT::Dimension D>
+      constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
+
+      ///                                                                  
+      ///   Interpretation                                                 
+      ///                                                                  
+      static constexpr decltype(auto) Adapt(CT::Scalar auto const&) noexcept;
+
+      ///                                                                  
+      ///   Access                                                         
+      ///                                                                  
+      constexpr auto operator [] (size_t)       noexcept -> ColumnType&;
+      constexpr auto operator [] (size_t) const noexcept -> ColumnType const&;
+      constexpr auto GetRaw()       noexcept -> T*;
+      constexpr auto GetRaw() const noexcept -> T const*;
+
+      template<size_t>
+      auto GetRow() const noexcept -> RowType;
+      template<size_t>
+      auto GetRow() noexcept;
+
+   protected:
+      template<size_t, size_t...C>
+      auto GetRowInner(::std::integer_sequence<size_t, C...>&&) noexcept;
+
+   public:
+      template<size_t>
+      auto GetColumn() const noexcept -> ColumnType const&;
+      template<size_t>
+      auto GetColumn()       noexcept -> ColumnType&;
+
+      constexpr auto GetRight() const noexcept -> TVector<T, 3>;
+      constexpr auto GetUp() const noexcept -> TVector<T, 3>;
+      constexpr auto GetView() const noexcept -> TVector<T, 3>;
+      constexpr auto GetScale() const noexcept -> TVector<T, 3>;
+
+      constexpr auto GetPosition() const noexcept
+      -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLUMNS > 2);
+
+      constexpr auto SetPosition(const CT::Vector auto&) noexcept
+      -> TMatrix& requires (ROWS > 2 and COLUMNS > 2);
+
+      constexpr bool IsIdentity() const noexcept;
+      constexpr bool IsNull() const noexcept;
+
+      constexpr auto Determinant() const noexcept -> T;
+      constexpr auto Transpose() const noexcept -> TMatrix;
+      constexpr auto Cofactor(int, int, int) const noexcept -> TMatrix;
+      constexpr auto Determinant(int) const noexcept -> T;
+      constexpr auto Adjoint() const noexcept -> TMatrix;
+      auto Invert() const -> TMatrix;
+
+      ///                                                                  
+      ///   Iteration                                                      
+      ///                                                                  
+      constexpr auto begin()       noexcept -> ColumnType*;
+      constexpr auto end()         noexcept -> ColumnType*;
+      constexpr auto last()        noexcept -> ColumnType*;
+      constexpr auto begin() const noexcept -> ColumnType const*;
+      constexpr auto end()   const noexcept -> ColumnType const*;
+      constexpr auto last()  const noexcept -> ColumnType const*;
+
+   private:
+      template<size_t SIZE, size_t NEXT_SIZE = SIZE - 1>
+      constexpr static T InnerDeterminant(const T(&a)[SIZE * SIZE]) noexcept;
+   };
+   #pragma pack(pop)
 
 
-      ///                                                                     
-      ///   Mutators                                                          
-      ///                                                                     
-      /// Add                                                                 
-      constexpr auto& operator += (CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto& operator += (CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
-      constexpr auto& operator += (CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
-
-      /// Subtract                                                            
-      constexpr auto& operator -= (CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto& operator -= (CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
-      constexpr auto& operator -= (CT::MatrixBased auto&, CT::CustomVector auto const&) noexcept;
-
-      /// Multiply                                                            
-      constexpr auto& operator *= (CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto& operator *= (CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
-
-      /// Divide                                                              
-      constexpr auto& operator /= (CT::MatrixBased auto&, CT::Scalar auto const&);
+   /// Generate a lossless matrix type from provided LHS and RHS matrices  
+   ///   @tparam LHS left hand side, can be scalar/array/vector/matrix     
+   ///   @tparam RHS right hand side, can be scalar/array/vector/matrix    
+   template<class LHS, class RHS> requires CT::Matrix<Deref<LHS>, Deref<RHS>>
+   using LosslessMatrix = TMatrix<
+      Lossless<TypeOf<LHS>, TypeOf<RHS>>,
+      Deref<LHS>::Cols < Deref<RHS>::Cols ? Deref<RHS>::Cols : Deref<LHS>::Cols,
+      Deref<LHS>::Rows < Deref<RHS>::Rows ? Deref<RHS>::Rows : Deref<LHS>::Rows
+   >;
 
 
-      ///                                                                     
-      ///   Comparison                                                        
-      ///                                                                     
-      constexpr auto operator == (const CT::MatrixBased auto&, const CT::MatrixBased auto&) noexcept;
-      constexpr auto operator == (const CT::MatrixBased auto&, CT::Scalar auto const&) noexcept;
-      constexpr auto operator == (CT::Scalar auto const&, const CT::MatrixBased auto&) noexcept;
+   ///                                                                     
+   ///   Operations                                                        
+   ///                                                                     
+   constexpr auto operator * (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
+   constexpr auto operator + (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
+   constexpr auto operator - (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
 
-   } // namespace Langulus::Math
+   constexpr auto operator * (CT::Vector auto const&, CT::Matrix auto const&) noexcept;
+   constexpr auto operator + (CT::Vector auto const&, CT::Matrix auto const&) noexcept;
+   constexpr auto operator - (CT::Vector auto const&, CT::Matrix auto const&) noexcept;
 
-} // namespace Langulus
+   constexpr auto operator * (CT::Matrix auto const&, CT::Vector auto const&) noexcept;
+   constexpr auto operator + (CT::Matrix auto const&, CT::Vector auto const&) noexcept;
+   constexpr auto operator - (CT::Matrix auto const&, CT::Vector auto const&) noexcept;
+
+   constexpr auto operator * (CT::Scalar auto const&, CT::Matrix auto const&) noexcept;
+   constexpr auto operator + (CT::Scalar auto const&, CT::Matrix auto const&) noexcept;
+
+   constexpr auto operator * (CT::Matrix auto const&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator / (CT::Matrix auto const&, CT::Scalar auto const&);
+   constexpr auto operator + (CT::Matrix auto const&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator - (CT::Matrix auto const&, CT::Scalar auto const&) noexcept;
+
+
+   ///                                                                     
+   ///   Mutators                                                          
+   ///                                                                     
+   /// Add                                                                 
+   constexpr auto& operator += (CT::Matrix auto&, CT::Matrix auto const&) noexcept;
+   constexpr auto& operator += (CT::Matrix auto&, CT::Scalar auto const&) noexcept;
+   constexpr auto& operator += (CT::Matrix auto&, CT::Vector auto const&) noexcept;
+
+   /// Subtract                                                            
+   constexpr auto& operator -= (CT::Matrix auto&, CT::Matrix auto const&) noexcept;
+   constexpr auto& operator -= (CT::Matrix auto&, CT::Scalar auto const&) noexcept;
+   constexpr auto& operator -= (CT::Matrix auto&, CT::Vector auto const&) noexcept;
+
+   /// Multiply                                                            
+   constexpr auto& operator *= (CT::Matrix auto&, CT::Matrix auto const&) noexcept;
+   constexpr auto& operator *= (CT::Matrix auto&, CT::Scalar auto const&) noexcept;
+
+   /// Divide                                                              
+   constexpr auto& operator /= (CT::Matrix auto&, CT::Scalar auto const&);
+
+
+   ///                                                                     
+   ///   Comparison                                                        
+   ///                                                                     
+   constexpr auto operator == (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
+   constexpr auto operator == (CT::Matrix auto const&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator == (CT::Scalar auto const&, CT::Matrix auto const&) noexcept;
+}
+
+#include "TMatrix.inl"
 
 #undef TARGS
 #undef TMAT
