@@ -13,7 +13,7 @@
 #define TARGS(a)     CT::Scalar a##T, size_t a##C, size_t a##R
 #define TMAT(a)      TMatrix<a##T, a##C, a##R>
 #define TEMPLATE()   template<CT::Scalar T, size_t COLS, size_t ROWS>
-#define TME()        TMatrix<T, COLUMNS, ROWS>
+#define TME()        TMatrix<T, COLS, ROWS>
 
 
 namespace Langulus::Math
@@ -133,39 +133,39 @@ namespace Langulus::Math
       static constexpr bool   IsSquare    = Cols == Rows;
 
       union {
-         ColType mColumns[Columns] {};
+         ColType mColumns[Cols] {};
          T       mArray[MemberCount];
       };
 
    private:
-      /// Custom name generator at compile-time for matrices               
+      /// Custom name generator at compile-time for matrices                  
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TMatrix>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (COLUMNS > 4 or ROWS > 4) {
+         if constexpr (COLS > 4 or ROWS > 4) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
          }
 
-         // Write prefix                                             
+         // Write prefix                                                
          constexpr Token prefix = "Matrix";
          for (auto i : prefix)
             name[offset++] = i;
 
-         // Write columns and rows                                   
-         if constexpr (COLUMNS == ROWS) {
-            name[offset++] = '0' + COLUMNS;
+         // Write columns and rows                                      
+         if constexpr (COLS == ROWS) {
+            name[offset++] = '0' + COLS;
          }
          else {
-            name[offset++] = '0' + COLUMNS;
+            name[offset++] = '0' + COLS;
             name[offset++] = 'x';
             name[offset++] = '0' + ROWS;
          }
 
-         // Write suffix                                             
+         // Write suffix                                                
          for (auto i : SuffixOf<T>())
             name[offset++] = i;
          return name;
@@ -184,9 +184,9 @@ namespace Langulus::Math
       >;
 
    public:
-      ///                                                                  
-      ///   Construction                                                   
-      ///                                                                  
+      ///                                                                     
+      ///   Construction                                                      
+      ///                                                                     
       constexpr TMatrix() noexcept;
       constexpr TMatrix(TMatrix const&) noexcept;
       constexpr TMatrix(TMatrix&&) noexcept;
@@ -201,32 +201,32 @@ namespace Langulus::Math
       explicit TMatrix(Describe&&);
 
       static constexpr TMatrix LookAt(TVector<T, 3>, TVector<T, 3>)
-      requires (ROWS >= 2 and COLUMNS >= 2);
+      requires (ROWS >= 2 and COLS >= 2);
 
       static constexpr TMatrix Rotate(CT::Angle auto const&) noexcept
-      requires (ROWS >= 2 and COLUMNS >= 2);
+      requires (ROWS >= 2 and COLS >= 2);
 
       static constexpr TMatrix RotateAxis(const TVector<T, 3>&, CT::Angle auto const&) noexcept
-      requires (ROWS >= 3 and COLUMNS >= 3);
+      requires (ROWS >= 3 and COLS >= 3);
 
       static constexpr TMatrix Rotate(CT::Angle auto const& pitch, CT::Angle auto const& yaw) noexcept
-      requires (ROWS >= 3 and COLUMNS >= 3);
+      requires (ROWS >= 3 and COLS >= 3);
 
       static constexpr TMatrix Rotate(
          CT::Angle auto const& pitch,
          CT::Angle auto const& yaw,
          CT::Angle auto const& roll /*= Radians {0}*/ // causes clang-cl 16.0.5 to crash :( //TODO check if still relevant
-      ) noexcept requires (ROWS >= 3 and COLUMNS >= 3);
+      ) noexcept requires (ROWS >= 3 and COLS >= 3);
 
-      static constexpr auto Translate(CT::CustomVector auto const&) noexcept -> TMatrix;
+      static constexpr auto Translate(CT::Vector auto const&) noexcept -> TMatrix;
       static constexpr auto Scale(CT::Scalar auto const&) noexcept -> TMatrix;
-      static constexpr auto Scale(CT::CustomVector auto const&) noexcept -> TMatrix;
+      static constexpr auto Scale(CT::Vector auto const&) noexcept -> TMatrix;
       static constexpr auto Identity() noexcept -> TMatrix;
       static constexpr auto Null() noexcept -> TMatrix;
 
-      ///                                                                  
-      ///   Assignment                                                     
-      ///                                                                  
+      ///                                                                     
+      ///   Assignment                                                        
+      ///                                                                     
       constexpr auto operator = (TMatrix const&) noexcept -> TMatrix&;
       constexpr auto operator = (TMatrix&&) noexcept -> TMatrix&;
       constexpr auto operator = (CT::Matrix auto const&) noexcept -> TMatrix&;
@@ -236,16 +236,16 @@ namespace Langulus::Math
       template<CT::Scalar N, CT::Dimension D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-      ///                                                                  
-      ///   Interpretation                                                 
-      ///                                                                  
+      ///                                                                     
+      ///   Interpretation                                                    
+      ///                                                                     
       static constexpr decltype(auto) Adapt(CT::Scalar auto const&) noexcept;
 
-      ///                                                                  
-      ///   Access                                                         
-      ///                                                                  
-      constexpr auto operator [] (size_t)       noexcept -> ColumnType&;
-      constexpr auto operator [] (size_t) const noexcept -> ColumnType const&;
+      ///                                                                     
+      ///   Access                                                            
+      ///                                                                     
+      constexpr auto operator [] (size_t)       noexcept -> ColType&;
+      constexpr auto operator [] (size_t) const noexcept -> ColType const&;
       constexpr auto GetRaw()       noexcept -> T*;
       constexpr auto GetRaw() const noexcept -> T const*;
 
@@ -260,9 +260,9 @@ namespace Langulus::Math
 
    public:
       template<size_t>
-      auto GetColumn() const noexcept -> ColumnType const&;
+      auto GetColumn() const noexcept -> ColType const&;
       template<size_t>
-      auto GetColumn()       noexcept -> ColumnType&;
+      auto GetColumn()       noexcept -> ColType&;
 
       constexpr auto GetRight() const noexcept -> TVector<T, 3>;
       constexpr auto GetUp() const noexcept -> TVector<T, 3>;
@@ -270,10 +270,10 @@ namespace Langulus::Math
       constexpr auto GetScale() const noexcept -> TVector<T, 3>;
 
       constexpr auto GetPosition() const noexcept
-      -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLUMNS > 2);
+      -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLS > 2);
 
       constexpr auto SetPosition(const CT::Vector auto&) noexcept
-      -> TMatrix& requires (ROWS > 2 and COLUMNS > 2);
+      -> TMatrix& requires (ROWS > 2 and COLS > 2);
 
       constexpr bool IsIdentity() const noexcept;
       constexpr bool IsNull() const noexcept;
@@ -285,15 +285,15 @@ namespace Langulus::Math
       constexpr auto Adjoint() const noexcept -> TMatrix;
       auto Invert() const -> TMatrix;
 
-      ///                                                                  
-      ///   Iteration                                                      
-      ///                                                                  
-      constexpr auto begin()       noexcept -> ColumnType*;
-      constexpr auto end()         noexcept -> ColumnType*;
-      constexpr auto last()        noexcept -> ColumnType*;
-      constexpr auto begin() const noexcept -> ColumnType const*;
-      constexpr auto end()   const noexcept -> ColumnType const*;
-      constexpr auto last()  const noexcept -> ColumnType const*;
+      ///                                                                     
+      ///   Iteration                                                         
+      ///                                                                     
+      constexpr auto begin()       noexcept -> ColType*;
+      constexpr auto end()         noexcept -> ColType*;
+      constexpr auto last()        noexcept -> ColType*;
+      constexpr auto begin() const noexcept -> ColType const*;
+      constexpr auto end()   const noexcept -> ColType const*;
+      constexpr auto last()  const noexcept -> ColType const*;
 
    private:
       template<size_t SIZE, size_t NEXT_SIZE = SIZE - 1>
@@ -302,9 +302,9 @@ namespace Langulus::Math
    #pragma pack(pop)
 
 
-   /// Generate a lossless matrix type from provided LHS and RHS matrices  
-   ///   @tparam LHS left hand side, can be scalar/array/vector/matrix     
-   ///   @tparam RHS right hand side, can be scalar/array/vector/matrix    
+   /// Generate a lossless matrix type from provided LHS and RHS matrices     
+   ///   @tparam LHS left hand side, can be scalar/array/vector/matrix        
+   ///   @tparam RHS right hand side, can be scalar/array/vector/matrix       
    template<class LHS, class RHS> requires CT::Matrix<Deref<LHS>, Deref<RHS>>
    using LosslessMatrix = TMatrix<
       Lossless<TypeOf<LHS>, TypeOf<RHS>>,
@@ -313,9 +313,9 @@ namespace Langulus::Math
    >;
 
 
-   ///                                                                     
-   ///   Operations                                                        
-   ///                                                                     
+   ///                                                                        
+   ///   Operations                                                           
+   ///                                                                        
    constexpr auto operator * (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
    constexpr auto operator + (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
    constexpr auto operator - (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
@@ -337,30 +337,30 @@ namespace Langulus::Math
    constexpr auto operator - (CT::Matrix auto const&, CT::Scalar auto const&) noexcept;
 
 
-   ///                                                                     
-   ///   Mutators                                                          
-   ///                                                                     
-   /// Add                                                                 
+   ///                                                                        
+   ///   Mutators                                                             
+   ///                                                                        
+   /// Add                                                                    
    constexpr auto& operator += (CT::Matrix auto&, CT::Matrix auto const&) noexcept;
    constexpr auto& operator += (CT::Matrix auto&, CT::Scalar auto const&) noexcept;
    constexpr auto& operator += (CT::Matrix auto&, CT::Vector auto const&) noexcept;
 
-   /// Subtract                                                            
+   /// Subtract                                                               
    constexpr auto& operator -= (CT::Matrix auto&, CT::Matrix auto const&) noexcept;
    constexpr auto& operator -= (CT::Matrix auto&, CT::Scalar auto const&) noexcept;
    constexpr auto& operator -= (CT::Matrix auto&, CT::Vector auto const&) noexcept;
 
-   /// Multiply                                                            
+   /// Multiply                                                               
    constexpr auto& operator *= (CT::Matrix auto&, CT::Matrix auto const&) noexcept;
    constexpr auto& operator *= (CT::Matrix auto&, CT::Scalar auto const&) noexcept;
 
-   /// Divide                                                              
+   /// Divide                                                                 
    constexpr auto& operator /= (CT::Matrix auto&, CT::Scalar auto const&);
 
 
-   ///                                                                     
-   ///   Comparison                                                        
-   ///                                                                     
+   ///                                                                        
+   ///   Comparison                                                           
+   ///                                                                        
    constexpr auto operator == (CT::Matrix auto const&, CT::Matrix auto const&) noexcept;
    constexpr auto operator == (CT::Matrix auto const&, CT::Scalar auto const&) noexcept;
    constexpr auto operator == (CT::Scalar auto const&, CT::Matrix auto const&) noexcept;

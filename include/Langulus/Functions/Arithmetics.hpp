@@ -219,11 +219,11 @@ namespace Langulus::Math
          if constexpr (CT::HasMin<T1, T2>)
             return t1.Min(t2);
          else if constexpr (CT::Comparable<T1, T2>)
-            return t1 < t2 ? Forward<T1>(t1) : Forward<T2>(t2);
+            return t1 < t2 ? LglsFwd(t1) : LglsFwd(t2);
          else
             static_assert(false, "T must either have Min(t2) method, or be sortable");
       }
-      else return Min(Min(Forward<T1>(t1), Forward<T2>(t2)), Forward<TN>(tn)...);
+      else return Min(Min(LglsFwd(t1), LglsFwd(t2)), LglsFwd(tn)...);
    }
 
    /// Get the biggest of the provided                                        
@@ -233,11 +233,11 @@ namespace Langulus::Math
          if constexpr (CT::HasMax<T1, T2>)
             return t1.Max(t2);
          else if constexpr (CT::Comparable<T1, T2>)
-            return t1 > t2 ? Forward<T1>(t1) : Forward<T2>(t2);
+            return t1 > t2 ? LglsFwd(t1) : LglsFwd(t2);
          else
             static_assert(false, "T must either have Max(t2) method, or be sortable");
       }
-      else return Max(Max(Forward<T1>(t1), Forward<T2>(t2)), Forward<TN>(tn)...);
+      else return Max(Max(LglsFwd(t1), LglsFwd(t2)), LglsFwd(tn)...);
    }
 
    /// Positive value or zero                                                 

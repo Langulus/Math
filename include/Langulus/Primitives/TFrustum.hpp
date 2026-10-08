@@ -11,56 +11,40 @@
 #include "../Matrices/TMatrix.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::Vector T>
+   struct TFrustum;
 
-      template<CT::Vector T>
-      struct TFrustum;
+   using Frustum2 = TFrustum<Vec2>;
+   using Frustum3 = TFrustum<Vec3>;
 
-      using Frustum2 = TFrustum<Vec2>;
-      using Frustum3 = TFrustum<Vec3>;
+   /// An abstract frustum                                                    
+   struct Frustum : Primitive {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Frustum3;
+      using CTTI_Bases     = Primitive;
+   };
+}
 
-      using Frustum = Frustum3;
-
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// An abstract frustum                                                 
-      struct Frustum : Primitive {
-         using CTTI_Abstract = Yup;
-         using CTTI_Concrete = Math::Frustum;
-         LANGULUS_BASES(Primitive);
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing frustum primitives                       
-      template<class...T>
-      concept Frustum = (DerivedFrom<T, A::Frustum> and ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+namespace Langulus::CT
+{
+   /// Concept for distinguishing frustum primitives                          
+   template<class...T>
+   concept Frustum = (DerivedFrom<T, Math::Frustum> and ...);
+}
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   2D/3D frustum, centered around origin                                
    ///                                                                        
    template<CT::Vector T>
-   struct TFrustum : A::Frustum {
-      using CTTI_Abstract = No;
-      using CTTI_POD = CT::POD<T>;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::Frustum);
+   struct TFrustum : Frustum {
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::Frustum;
 
       static constexpr size_t MemberCount = T::MemberCount;
       using PointType  = T;
@@ -76,12 +60,11 @@ namespace Langulus::Math
       constexpr TFrustum() noexcept;
       template<template<class> class S> requires CT::Intent<S<TFrustum<T>>>
       constexpr TFrustum(S<TFrustum>&&) noexcept;
-      constexpr TFrustum(const MatrixType&) noexcept;
+      constexpr TFrustum(MatrixType const&) noexcept;
 
       constexpr bool IsDegenerate() const noexcept;
       constexpr bool IsHollow() const noexcept;
       auto SignedDistance(T const&) const;
       bool Intersects(const TRange<T>&) const noexcept;
    };
-
-} // namespace Langulus::Math
+}

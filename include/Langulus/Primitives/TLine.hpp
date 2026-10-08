@@ -9,87 +9,69 @@
 #include "Primitive.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::Vector>
+   struct TLine;
 
-      template<CT::Vector>
-      struct TLine;
+   template<CT::Vector>
+   struct TLineLoop;
 
-      template<CT::Vector>
-      struct TLineLoop;
+   template<CT::Vector>
+   struct TLineStrip;
 
-      template<CT::Vector>
-      struct TLineStrip;
+   using Line2      = TLine<Vec2>;
+   using Line3      = TLine<Vec3>;
+   using LineLoop2  = TLineLoop<Vec2>;
+   using LineLoop3  = TLineLoop<Vec3>;
+   using LineStrip2 = TLineStrip<Vec2>;
+   using LineStrip3 = TLineStrip<Vec3>;
 
-      using Line2      = TLine<Vec2>;
-      using Line3      = TLine<Vec3>;
-      using LineLoop2  = TLineLoop<Vec2>;
-      using LineLoop3  = TLineLoop<Vec3>;
-      using LineStrip2 = TLineStrip<Vec2>;
-      using LineStrip3 = TLineStrip<Vec3>;
+   /// An abstract line, also used as a topology type                         
+   struct Line : Topology {
+      using CTTI_Concrete  = Math::Line3;
+      using CTTI_Bases     = Math::Topology;
+   };
 
-      using Line       = Line3;
-      using LineLoop   = LineLoop3;
-      using LineStrip  = LineStrip3;
+   /// An abstract line loop, also used as a topology type                    
+   struct LineLoop : Line {
+      using CTTI_Concrete  = Math::LineLoop3;
+      using CTTI_Bases     = Math::Line;
+   };
 
-   } // namespace Langulus::Maht
+   /// An abstract line strip, also used as a topology type                   
+   struct LineStrip : Line {
+      using CTTI_Concrete  = Math::LineStrip3;
+      using CTTI_Bases     = Math::Line;
+   };
+}
 
-   namespace A
-   {
+namespace Langulus::CT
+{
+   /// Concept for distinguishing line primitives                             
+   template<class...T>
+   concept Line = (DerivedFrom<T, Math::Line> and ...);
 
-      /// An abstract line, also used as a topology type                      
-      struct Line : Topology {
-         using CTTI_Concrete = Math::Line;
-         LANGULUS_BASES(Topology);
-      };
+   /// Concept for distinguishing line loop primitives                        
+   template<class...T>
+   concept LineLoop = (DerivedFrom<T, Math::LineLoop> and ...);
 
-      /// An abstract line loop, also used as a topology type                 
-      struct LineLoop : Line {
-         using CTTI_Concrete = Math::LineLoop;
-         LANGULUS_BASES(Line);
-      };
-
-      /// An abstract line strip, also used as a topology type                
-      struct LineStrip : Line {
-         using CTTI_Concrete = Math::LineStrip;
-         LANGULUS_BASES(Line);
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing line primitives                          
-      template<class...T>
-      concept Line = (DerivedFrom<T, A::Line> and ...);
-
-      /// Concept for distinguishing line loop primitives                     
-      template<class...T>
-      concept LineLoop = (DerivedFrom<T, A::LineLoop> and ...);
-
-      /// Concept for distinguishing line strip primitives                    
-      template<class...T>
-      concept LineStrip = (DerivedFrom<T, A::LineStrip> and ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+   /// Concept for distinguishing line strip primitives                       
+   template<class...T>
+   concept LineStrip = (DerivedFrom<T, Math::LineStrip> and ...);
+}
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    ///   Templated line segment                                               
    ///                                                                        
    #pragma pack(push, 1)
    template<CT::Vector T>
-   struct TLine : A::Line {
+   struct TLine : Line {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TLine>();
+         constexpr auto defaultClassName = LastCppNameOf<TLine>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -114,12 +96,12 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Abstract = No;
-      using CTTI_POD = CT::POD<T>;
-      using CTTI_Nullable = CT::Nullifiable<T>;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::Line);
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Nullable  = Maybe<CT::Nullable<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::Line;
 
       using PointType = T;
       static constexpr size_t MemberCount = T::MemberCount;
@@ -160,10 +142,10 @@ namespace Langulus::Math
    /// the previous, and the last point forms a line with the first one       
    ///                                                                        
    template<CT::Vector T>
-   struct TLineLoop : A::LineLoop {
+   struct TLineLoop : LineLoop {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TLineLoop>();
+         constexpr auto defaultClassName = LastCppNameOf<TLineLoop>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -208,10 +190,10 @@ namespace Langulus::Math
    /// the previous                                                           
    ///                                                                        
    template<CT::Vector T>
-   struct TLineStrip : A::LineStrip {
+   struct TLineStrip : LineStrip {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TLineStrip>();
+         constexpr auto defaultClassName = LastCppNameOf<TLineStrip>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -248,5 +230,4 @@ namespace Langulus::Math
       static_assert(MemberCount > 1,
          "Lines don't exist below two dimensions");
    };
-
-} // namespace Langulus::Math
+}

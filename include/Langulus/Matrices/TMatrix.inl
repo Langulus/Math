@@ -12,17 +12,18 @@ namespace Langulus::Math
 {
    /// MARK: Abstract                                                         
    /// Perspective constructor - left-handed perspective projection matrix    
-   ///   @param fieldOfView - an angle representing the horizontal field of   
-   ///                        view                                            
-   ///   @param aspect - the aspect ratio (width/height)                      
-   ///   @param near - the distance to the near clipping plane                
-   ///   @param far - the distance to the far clipping plane                  
+   ///   @param fieldOfView an angle representing the horizontal field of view
+   ///   @param aspect the aspect ratio (width/height)                        
+   ///   @param near the distance to the near clipping plane                  
+   ///   @param far the distance to the far clipping plane                    
    ///   @return the projection matrix                                        
-   template<CT::Scalar T>
-   constexpr auto A::Matrix::PerspectiveFOV(
-      CT::Angle auto const& fieldOfView, T const& aspect,
-      T const& near, T const& far
-   ) -> Math::TMatrix<T, 4> {
+   template<CT::Angle A, CT::Scalar T>
+   constexpr auto Matrix::PerspectiveFOV(
+      A const& fieldOfView,
+      T const& aspect,
+      T const& near,
+      T const& far
+   ) -> TMatrix<T, 4> {
       // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix.html
       const T scale = ::std::tan(T {fieldOfView.GetRadians()} * T {0.5}) * near;
       const T r = scale;
@@ -30,7 +31,7 @@ namespace Langulus::Math
       const T t = scale / aspect;
       const T b = -t;
 
-      auto result = Math::TMatrix<T, 4>::Null();
+      auto result = TMatrix<T, 4>::Null();
       result.mArray[0]  = T {2} * near / (r - l);
       result.mArray[5]  = T {2} * near / (t - b);
 
@@ -46,12 +47,12 @@ namespace Langulus::Math
    /// Perspective constructor - left-handed perspective projection matrix    
    /// described by a region on the near clipping plane                       
    template<CT::Scalar T>
-   constexpr auto A::Matrix::PerspectiveRegion(
+   constexpr auto Matrix::PerspectiveRegion(
       T const& left, T const& right,
       T const& top,  T const& bottom,
       T const& near, T const& far
-   ) -> Math::TMatrix<T, 4> {
-      auto result = Math::TMatrix<T, 4>::Null();
+   ) -> TMatrix<T, 4> {
+      auto result = TMatrix<T, 4>::Null();
       const auto x = T {2} * near / (right - left  );
       const auto y = T {2} * near / (  top - bottom);
 
@@ -72,15 +73,15 @@ namespace Langulus::Math
 
    /// Orthographic constructor - LH orthographic projection matrix           
    template<CT::Scalar T>
-   constexpr auto A::Matrix::Orthographic(
+   constexpr auto Matrix::Orthographic(
       T const& width, T const& height,
       T const& near,  T const& far
-   ) -> Math::TMatrix<T, 4> {
+   ) -> TMatrix<T, 4> {
       const auto range = far - near;
       if (range == 0 or width == 0 or height == 0)
-         throw Except::ZeroDivision();
+         throw Exception("Zero division");
 
-      auto result = Math::TMatrix<T, 4>::Null();
+      auto result = TMatrix<T, 4>::Null();
       result.mArray[ 0] = T { 2} / width;
       result.mArray[ 5] = T { 2} / height;
       result.mArray[10] = T {-2} / range;
@@ -90,8 +91,6 @@ namespace Langulus::Math
       result.mArray[15] = T { 1};
       return result;
    }
-
-
 
 
    /// MARK: TMatrix                                                          
@@ -105,35 +104,35 @@ namespace Langulus::Math
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(TMatrix const& other) noexcept {
-      for (size_t i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Cols; ++i)
          mColumns[i] = other.mColumns[i];
    }
 
    /// Move constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(TMatrix&& other) noexcept {
-      for (size_t i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Cols; ++i)
          mColumns[i] = ::std::move(other.mColumns[i]);
    }
 
    /// Construct from similar matrix                                          
-   ///   @param a - differently sized matrix                                  
+   ///   @param a differently sized matrix                                    
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(CT::Matrix auto const& a) noexcept {
       using M = Deref<Deint<decltype(a)>>;
-      if constexpr (M::Columns != Columns or M::Rows != Rows) {
-         if constexpr (M::Columns < Columns or M::Rows < Rows) {
+      if constexpr (M::Cols != Cols or M::Rows != Rows) {
+         if constexpr (M::Cols < Cols or M::Rows < Rows) {
             // If copied region is smaller, make sure to reset          
             *this = Identity();
          }
 
-         for (size_t col = 0; col < Math::Min(Columns, M::Columns); ++col) {
+         for (size_t col = 0; col < Math::Min(Cols, M::Cols); ++col) {
             for (size_t row = 0; row < Math::Min(Rows, M::Rows); ++row) {
                mColumns[col][row] = Adapt(DeintCast(a).mColumns[col][row]);
             }
          }
       }
-      else if constexpr (not CT::Same<TypeOf<M>, T>) {
+      else if constexpr (not Same<TypeOf<M>, T>) {
          for (int i = 0; i < MemberCount; ++i) {
             // Convert all elements                                     
             mArray[i] = Adapt(DeintCast(a).mArray[i]);
@@ -146,7 +145,7 @@ namespace Langulus::Math
    }
    
    /// Construct from scalar                                                  
-   ///   @param x - spread across entire matrix diagonal                      
+   ///   @param x spread across entire matrix diagonal                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TMatrix(CT::Scalar auto const& x) noexcept {
       const T xx = Adapt(DeintCast(x));
@@ -155,24 +154,24 @@ namespace Langulus::Math
    }
 
    /// Construct from vector                                                  
-   ///   @param x - spread across entire matrix diagonal, if vector size is   
+   ///   @param x spread across entire matrix diagonal, if vector size is     
    ///      equal or smaller than the number of diagonal cells if vector is   
    ///      smaller, the remaining values default to 1 if vector is larger,   
    ///      the elements are copied sequentially with any missing elements    
    ///      defaulting to identity                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TMatrix(CT::CustomVector auto const& x) noexcept {
+   constexpr TME()::TMatrix(CT::Vector auto const& x) noexcept {
       using V = Deref<Deint<decltype(x)>>;
-      constexpr auto D = Math::Min(Diagonal, CountOf<V>);
+      constexpr auto D = Math::Min(Diagonal, ExtentOf<V>);
       for (size_t i = 0; i < D; ++i)
          mColumns[i][i] = Adapt(x[i]);
    }
 
    /// Manual initialization from an array (unsafe)                           
-   ///   @param t1 - array of scalars                                         
+   ///   @param t1 array of scalars                                           
    TEMPLATE() template<class T1> LANGULUS(INLINED)
    constexpr TME()::TMatrix(const T1* t1) noexcept {
-      if constexpr (CT::Similar<T, T1>)
+      if constexpr (Same<T, T1>)
          ::std::memcpy(mArray, t1, sizeof(mArray));
       else
          SIMD::Convert<0>(*static_cast<const T1(*)[MemberCount]>(static_cast<const void*>(t1)), mArray);
@@ -181,13 +180,13 @@ namespace Langulus::Math
    /// Manual initialization with variadic head-tail                          
    /// The count of elements in head and tail should sum to the matrix size   
    /// Unitialized elements will default to identity                          
-   ///   @param t1, t2, tn.. - scalars or vector                              
+   ///   @param t1, t2, tn.. scalars or vectors                               
    TEMPLATE() template<class T1, class T2, class...TN> LANGULUS(INLINED)
    constexpr TME()::TMatrix(const T1& t1, const T2& t2, const TN&...tn) noexcept {
       static_assert(not CT::Matrix<T1, T2, TN...>,
          "Sequential matrices not allowed");
 
-      constexpr auto C1 = Math::Min(CountOf<T1>, MemberCount);
+      constexpr auto C1 = Math::Min(ExtentOf<T1>, MemberCount);
       if constexpr (CT::Vector<T1>) {
          // First element is vector/array, copy its elements            
          for (size_t i = 0; i < C1; ++i)
@@ -198,7 +197,7 @@ namespace Langulus::Math
          mArray[0] = Adapt(t1);
       }
 
-      constexpr auto C2 = Math::Min(CountOf<T2>, MemberCount - C1);
+      constexpr auto C2 = Math::Min(ExtentOf<T2>, MemberCount - C1);
       if constexpr (C2) {
          if constexpr (CT::Vector<T2>) {
             // Second element is vector/array, copy its elements        
@@ -212,7 +211,7 @@ namespace Langulus::Math
 
          // Combine all the rest of the arguments in a vector           
          if constexpr (sizeof...(TN)) {
-            constexpr auto C3 = Math::Min(CountOf<TN...>, MemberCount - (C1 + C2));
+            constexpr auto C3 = Math::Min(ExtentOf<TN...>, MemberCount - (C1 + C2));
             if constexpr (C3) {
                const TVector<T, C3> theRest {tn...};
                for (size_t i = C1 + C2; i < MemberCount; ++i)
@@ -223,18 +222,17 @@ namespace Langulus::Math
    }
    
    /// Construct from a descriptor                                            
-   ///   @param describe - the descriptor to scan                             
+   ///   @param describe the descriptor to scan                               
    TEMPLATE()
    TME()::TMatrix(Describe&& describe) {
-      LglsAssumeUser(*describe,
-         "Empty descriptor for TMatrix");
+      LglsAssumeUser(describe, "Empty descriptor for TMatrix");
 
       // Attempt initializing without any conversion                    
       T all[MemberCount];
-      auto initialized = describe->ExtractData(all);
+      auto initialized = describe.ExtractData(all);
       if (not initialized) {
          // Attempt converting anything to T                            
-         initialized = describe->ExtractDataAs(all);
+         initialized = describe.ExtractDataAs(all);
       }
 
       if (not initialized) {
@@ -243,8 +241,7 @@ namespace Langulus::Math
          // empty, the default constructor would've been explicitly     
          // called, instead of this one. This way we can differentiate  
          // whether or not a matrix object was successfully initialized 
-         LANGULUS_OOPS(Construct, "Bad TMatrix descriptor",
-            ", nothing was initialized: ", *describe);
+         LglsError("Bad TMatrix descriptor, nothing was initialized: ", *describe);
       }
       else if (initialized <= Diagonal) {
          // If number of values is below number of columns, create a    
@@ -259,14 +256,14 @@ namespace Langulus::Math
    }
 
    /// Adapt a component to the matrix's internal type                        
-   ///   @param x - the component to adapt                                    
+   ///   @param x the component to adapt                                      
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr decltype(auto) TME()::Adapt(CT::Scalar auto const& x) noexcept {
       using N = Deref<decltype(x)>;
       static_assert(CT::Convertible<N, T>, "Incompatible number");
 
-      if constexpr (not CT::Same<N, T>)
+      if constexpr (not Same<N, T>)
          return static_cast<T>(x);
       else
          return x;
@@ -275,13 +272,13 @@ namespace Langulus::Math
    /// Look at constructor - LH lookat matrix                                 
    TEMPLATE()
    constexpr auto TME()::LookAt(TVector<T, 3> forward, TVector<T, 3> up)
-   -> TMatrix requires (ROWS >= 2 and COLUMNS >= 2) {
+   -> TMatrix requires (ROWS >= 2 and COLS >= 2) {
       static_assert(IsSquare, "Can't make a look-at matrix from this one");
 
       forward = forward.Normalize();
       up = up.Normalize();
       if (forward.Abs() == up.Abs())
-         throw Except::Arithmetic("Degenerate LookAt matrix - forward and up are the same");
+         throw Exception("Degenerate LookAt matrix - forward and up are the same");
 
       const auto right = up.Cross(forward).Normalize();
       up = forward.Cross(right);
@@ -302,7 +299,7 @@ namespace Langulus::Math
    /// Create a rotational matrix (for 2x2 matrix, only around z)             
    TEMPLATE()
    constexpr auto TME()::Rotate(CT::Angle auto const& roll) noexcept
-   -> TMatrix requires (ROWS >= 2 and COLUMNS >= 2) {
+   -> TMatrix requires (ROWS >= 2 and COLS >= 2) {
       auto cosR = Math::Cos(roll);
       auto sinR = Math::Sin(roll);
 
@@ -318,7 +315,7 @@ namespace Langulus::Math
    /// Builds a 3D rotation matrix created from normalized axis and an angle  
    TEMPLATE()
    constexpr auto TME()::RotateAxis(const TVector<T, 3>& axis, CT::Angle auto const& a) noexcept
-   -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
+   -> TMatrix requires (ROWS >= 3 and COLS >= 3) {
       const T c = Math::Cos(a);
       const T s = Math::Sin(a);
 
@@ -343,7 +340,7 @@ namespace Langulus::Math
    /// Creates a homogeneous 3D rotation matrix from euler angles (Y * X * Z) 
    TEMPLATE()
    constexpr auto TME()::Rotate(CT::Angle auto const& pitch, CT::Angle auto const& yaw) noexcept
-   -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
+   -> TMatrix requires (ROWS >= 3 and COLS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
       const T tmp_cp = Math::Cos(pitch);
@@ -371,7 +368,7 @@ namespace Langulus::Math
       CT::Angle auto const& pitch,
       CT::Angle auto const& yaw,
       CT::Angle auto const& roll
-   ) noexcept -> TMatrix requires (ROWS >= 3 and COLUMNS >= 3) {
+   ) noexcept -> TMatrix requires (ROWS >= 3 and COLS >= 3) {
       const T tmp_ch = Math::Cos(yaw);
       const T tmp_sh = Math::Sin(yaw);
       const T tmp_cp = Math::Cos(pitch);
@@ -393,21 +390,21 @@ namespace Langulus::Math
    }
 
    /// Translational matrix                                                   
-   ///   @param position - the position to set                                
+   ///   @param position the position to set                                  
    ///   @return the translation matrix                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Translate(CT::CustomVector auto const& position) noexcept
+   constexpr auto TME()::Translate(CT::Vector auto const& position) noexcept
    -> TMatrix {
       TMatrix temp {};
       return temp.SetPosition(position);
    }
 
    /// Uniform scale matrix                                                   
-   ///   @attention diagonals beyond 3x3 matrix created with this routine     
-   ///              will always be 1. If you want the entire diagonal set,    
-   ///              use the scalar constructor instead                        
-   ///   @param x - the uniform scale factor                                  
+   ///   @param x the uniform scale factor                                    
    ///   @return the scale matrix                                             
+   ///   @attention diagonals beyond 3x3 matrix created with this routine     
+   ///      will always be 1. If you want the entire diagonal set, use the    
+   ///      scalar constructor instead.                                       
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Scale(CT::Scalar auto const& x) noexcept -> TMatrix {
       TMatrix temp {x};
@@ -419,11 +416,11 @@ namespace Langulus::Math
    }
 
    /// Non-uniform scale matrix                                               
-   ///   @attention diagonals beyond the vector size will be defaulted to 1   
-   ///   @param x - the scale factors                                         
+   ///   @param x the scale factors                                           
    ///   @return the scale matrix                                             
+   ///   @attention diagonals beyond the vector size will be defaulted to 1   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Scale(CT::CustomVector auto const& x) noexcept -> TMatrix {
+   constexpr auto TME()::Scale(CT::Vector auto const& x) noexcept -> TMatrix {
       return TMatrix {x};
    }
 
@@ -445,14 +442,14 @@ namespace Langulus::Math
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (TMatrix const& other) noexcept -> TMatrix& {
-      for (size_t i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Cols; ++i)
          mColumns[i] = other.mColumns[i];
       return *this;
    }
 
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (TMatrix&& other) noexcept -> TMatrix& {
-      for (size_t i = 0; i < Columns; ++i)
+      for (size_t i = 0; i < Cols; ++i)
          mColumns[i] = ::std::move(other.mColumns[i]);
       return *this;
    }
@@ -463,7 +460,7 @@ namespace Langulus::Math
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (CT::CustomVector auto const& other) noexcept -> TMatrix& {
+   constexpr auto TME()::operator = (CT::Vector auto const& other) noexcept -> TMatrix& {
       return *new (this) TMatrix {other};
    }
 
@@ -474,7 +471,7 @@ namespace Langulus::Math
 
    TEMPLATE() template<CT::Scalar N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto& TME()::operator = (const TVectorComponent<N, D>& other) noexcept {
-      static_assert(D::Index < Columns and D::Index < Rows,
+      static_assert(D::Index < Cols and D::Index < Rows,
          "Vector component out of limits");
       new (this) TME();
       mColumns[D::Index][D::Index] = Adapt(other.mValue);
@@ -488,7 +485,7 @@ namespace Langulus::Math
 
    /// Write the body of the matrix                                           
    ///   @return the resulting body                                           
-   TEMPLATE() template<CT::Serial AS, class TOKEN>
+   /*TEMPLATE() template<CT::Serial AS, class TOKEN>
    AS TME()::Serialize() const {
       AS result;
       constexpr bool SCOPED = not CT::Same<TME(), TOKEN>;
@@ -514,25 +511,25 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    TME()::operator Flow::Code() const {
       return Serialize<Flow::Code, TME()>();
-   }
+   }*/
 
 
    ///                                                                        
    ///   ENCAPSULATION                                                        
    ///                                                                        
    /// Access 1D index                                                        
-   ///   @param i - index [0; MemberCount)                                    
+   ///   @param i index [0; MemberCount)                                      
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t i) noexcept -> ColumnType& {
+   constexpr auto TME()::operator [] (const size_t i) noexcept -> ColType& {
       return mColumns[i];
    }
 
    /// Access 1D index (const)                                                
-   ///   @param i - index [0; COLS*ROWS)                                      
+   ///   @param i index [0; COLS*ROWS)                                        
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t i) const noexcept -> ColumnType const& {
+   constexpr auto TME()::operator [] (const size_t i) const noexcept -> ColType const& {
       return mColumns[i];
    }
 
@@ -585,32 +582,31 @@ namespace Langulus::Math
    /// Get translation                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::GetPosition() const noexcept
-   -> TVector<T, ROWS - 1> const& requires (ROWS > 2 and COLUMNS > 2) {
-      return mColumns[Columns - 1];
+   -> TVector<T, ROWS - 1> const& requires (ROWS > 2 and COLS > 2) {
+      return mColumns[Cols - 1];
    }
 
    /// Set translation                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::SetPosition(const CT::Vector auto& position) noexcept
-   -> TMatrix& requires (ROWS > 2 and COLUMNS > 2) {
+   -> TMatrix& requires (ROWS > 2 and COLS > 2) {
       using V = Deref<decltype(position)>;
-      constexpr auto S = Math::Min(3u, CountOf<V>);
-      static_assert (S <= Rows and S <= Columns,
-         "Position out of matrix limits");
-      auto& column = mColumns[Columns - 1];
+      constexpr auto S = Math::Min(3u, ExtentOf<V>);
+      static_assert (S <= Rows and S <= Cols, "Position out of matrix limits");
+      auto& column = mColumns[Cols - 1];
       for (unsigned i = 0; i < S; ++i)
          column[i] = position[i];
       return *this;
    }
 
    /// Get a whole row                                                        
-   ///   @param idx - row index                                               
+   ///   @param idx row index                                                 
    ///   @return a row                                                        
    TEMPLATE() template<size_t ROW> LANGULUS(INLINED)
    auto TME()::GetRow() const noexcept -> RowType {
       static_assert(ROW < Rows, "Row index out if range");
-      T r[Columns];
-      for (unsigned col = 0; col < Columns; ++col)
+      T r[Cols];
+      for (unsigned col = 0; col < Cols; ++col)
          r[col] = mColumns[col][ROW];
       return r;
    }
@@ -618,26 +614,26 @@ namespace Langulus::Math
    TEMPLATE() template<size_t ROW> LANGULUS(INLINED)
    auto TME()::GetRow() noexcept {
       static_assert(ROW < Rows, "Row index out if range");
-      return GetRowInner<ROW>(::std::make_integer_sequence<size_t, Columns>());
+      return GetRowInner<ROW>(::std::make_integer_sequence<size_t, Cols>());
    }
 
    TEMPLATE() template<size_t ROW, size_t...C> LANGULUS(INLINED)
    auto TME()::GetRowInner(::std::integer_sequence<size_t, C...>&&) noexcept {
-      return Inner::TProxyArray<T, COLUMNS, 0, (C * Rows + ROW)...>(mArray);
+      return Inner::TSwizzle<T, COLS, 0, (C * Rows + ROW)...>(mArray);
    }
 
    /// Get a whole column                                                     
-   ///   @param idx - column index                                            
+   ///   @param idx column index                                              
    ///   @return a column                                                     
    TEMPLATE() template<size_t COL> LANGULUS(INLINED)
-   auto TME()::GetColumn() const noexcept -> ColumnType const& {
-      static_assert(COL < Columns, "Column index out if range");
+   auto TME()::GetColumn() const noexcept -> ColType const& {
+      static_assert(COL < Cols, "Column index out if range");
       return mColumns[COL];
    }
 
    TEMPLATE() template<size_t COL> LANGULUS(INLINED)
-   auto TME()::GetColumn() noexcept -> ColumnType& {
-      static_assert(COL < Columns, "Column index out if range");
+   auto TME()::GetColumn() noexcept -> ColType& {
+      static_assert(COL < Cols, "Column index out if range");
       return mColumns[COL];
    }
 
@@ -694,7 +690,7 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr T TME()::Determinant() const noexcept {
       static_assert(IsSquare, "Can't get determinant of a non-square matrix");
-      return InnerDeterminant<Columns>(mArray);
+      return InnerDeterminant<Cols>(mArray);
    }
 
    /// Transpose the matrix                                                   
@@ -703,7 +699,7 @@ namespace Langulus::Math
    constexpr auto TME()::Transpose() const noexcept -> TMatrix {
       static_assert(IsSquare, "Can't transpose non-square matrix");
       TME() result = *this;
-      for (int i = 0; i < Columns; ++i) {
+      for (int i = 0; i < Cols; ++i) {
          for (int j = 0; j < i; ++j) {
             ::std::swap(result.mColumns[i][j], result.mColumns[j][i]);
          }
@@ -791,10 +787,10 @@ namespace Langulus::Math
    auto TME()::Invert() const -> TMatrix {
       static_assert(IsSquare, "Can't invert non-square matrix");
 
-      if constexpr (Columns == 2) {
+      if constexpr (Cols == 2) {
          const auto det = mArray[0] * mArray[3] - mArray[1] * mArray[2];
          if (det == 0)
-            throw Except::Arithmetic("Degenerate 2x2 matrix");
+            throw Exception("Degenerate 2x2 matrix");
 
          const auto detInv = 1 / det;
          return {
@@ -804,7 +800,7 @@ namespace Langulus::Math
              mArray[0] * detInv
          };
       }
-      else if constexpr (Columns == 3) {
+      else if constexpr (Cols == 3) {
          auto n11 = mArray[0], n21 = mArray[1], n31 = mArray[2],
               n12 = mArray[3], n22 = mArray[4], n32 = mArray[5],
               n13 = mArray[6], n23 = mArray[7], n33 = mArray[8];
@@ -815,7 +811,7 @@ namespace Langulus::Math
 
          const auto det = n11 * t11 + n21 * t12 + n31 * t13;
          if (det == 0)
-            throw Except::ZeroDivision("Degenerate 3x3 matrix");
+            throw Exception("Degenerate 3x3 matrix");
 
          const auto detInv = 1 / det;
 
@@ -833,7 +829,7 @@ namespace Langulus::Math
             (n22 * n11 - n21 * n12) * detInv
          };
       }
-      else if constexpr (Columns == 4) {
+      else if constexpr (Cols == 4) {
          auto n11 = mArray[0], n21 = mArray[1], n31 = mArray[2], n41 = mArray[3];
          auto n12 = mArray[4], n22 = mArray[5], n32 = mArray[6], n42 = mArray[7];
          auto n13 = mArray[8], n23 = mArray[9], n33 = mArray[10], n43 = mArray[11];
@@ -846,7 +842,7 @@ namespace Langulus::Math
 
          const auto det = n11 * t11 + n21 * t12 + n31 * t13 + n41 * t14;
          if (det == 0)
-            throw Except::ZeroDivision("Degenerate 4x4 matrix");
+            throw Exception("Degenerate 4x4 matrix");
 
          const auto detInv = 1 / det;
 
@@ -880,33 +876,33 @@ namespace Langulus::Math
    ///   Iteration                                                            
    ///                                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::begin() noexcept -> ColumnType* {
+   constexpr auto TME()::begin() noexcept -> ColType* {
       return mColumns;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::end() noexcept -> ColumnType* {
-      return mColumns + COLUMNS;
+   constexpr auto TME()::end() noexcept -> ColType* {
+      return mColumns + COLS;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::last() noexcept -> ColumnType* {
-      return mColumns + COLUMNS - 1;
+   constexpr auto TME()::last() noexcept -> ColType* {
+      return mColumns + COLS - 1;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::begin() const noexcept -> ColumnType const* {
+   constexpr auto TME()::begin() const noexcept -> ColType const* {
       return mColumns;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::end() const noexcept -> ColumnType const* {
-      return mColumns + COLUMNS;
+   constexpr auto TME()::end() const noexcept -> ColType const* {
+      return mColumns + COLS;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::last() const noexcept -> ColumnType const* {
-      return mColumns + COLUMNS - 1;
+   constexpr auto TME()::last() const noexcept -> ColType const* {
+      return mColumns + COLS - 1;
    }
 
 
@@ -932,7 +928,7 @@ namespace Langulus::Math
 
          Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
             //TODO make this more elegant somehow...
-            IF_CONSTEXPR() {
+            /*if consteval {
                SIMD::Add(rc,
                   SIMD::Inner::MultiplyConstexpr(
                      lhs.template GetColumn<ROW>(),
@@ -940,14 +936,14 @@ namespace Langulus::Math
                   ), rc
                );
             }
-            else {
+            else {*/
                SIMD::Add(rc,
                   SIMD::Inner::Multiply(
                      lhs.template GetColumn<ROW>(),
                      rhsc.template GetIdx<ROW>()
                   ), rc
                );
-            }
+            //}
          });
       });
       return r;
@@ -978,8 +974,8 @@ namespace Langulus::Math
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
-      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
+      TypeOf<Ret> result[Ret::Cols][Ret::Rows];
+      Sequence<Ret::Cols>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Subtract(
             lhs.template GetColumn<COL>(),
             rhs.template GetColumn<COL>(),
@@ -990,8 +986,6 @@ namespace Langulus::Math
    }
 
    /// Multiply by a column vector                                            
-   ///   @param lhs - vector                                                  
-   ///   @param rhs - matrix                                                  
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
    constexpr auto operator * (
@@ -999,7 +993,7 @@ namespace Langulus::Math
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
-      constexpr auto C = CountOf<Ret>;
+      constexpr auto C = ExtentOf<Ret>;
       TypeOf<Ret> r[C];
       Sequence<C>::ForEach([&]<size_t COL>() noexcept {
          r[COL] = (rhs.template GetColumn<COL>() * lhs).HSum();
@@ -1008,8 +1002,6 @@ namespace Langulus::Math
    }
 
    /// Add a column vector                                                    
-   ///   @param lhs - vector                                                  
-   ///   @param rhs - matrix                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
@@ -1017,16 +1009,14 @@ namespace Langulus::Math
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
-      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
+      TypeOf<Ret> result[Ret::Cols][Ret::Rows];
+      Sequence<Ret::Cols>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Add(rhs.template GetColumn<COL>(), lhs, result[COL]);
       });
       return Ret {result};
    }
 
    /// Subtract a column vector                                               
-   ///   @param lhs - vector                                                  
-   ///   @param rhs - matrix                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
@@ -1034,16 +1024,14 @@ namespace Langulus::Math
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
-      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
+      TypeOf<Ret> result[Ret::Cols][Ret::Rows];
+      Sequence<Ret::Cols>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Subtract(lhs, rhs.template GetColumn<COL>(), result[COL]);
       });
       return Ret {result};
    }
 
    /// Multiply by a row vector                                               
-   ///   @param lhs - matrix                                                  
-   ///   @param rhs - vector                                                  
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
    constexpr auto operator * (
@@ -1051,7 +1039,7 @@ namespace Langulus::Math
       CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
-      constexpr auto C = CountOf<Ret>;
+      constexpr auto C = ExtentOf<Ret>;
       TypeOf<Ret> r[C];
       Sequence<C>::ForEach([&]<size_t ROW>() noexcept {
          r[ROW] = (lhs.template GetRow<ROW>() * rhs).HSum();
@@ -1060,8 +1048,6 @@ namespace Langulus::Math
    }
 
    /// Add a row vector                                                       
-   ///   @param lhs - matrix                                                  
-   ///   @param rhs - vector                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
@@ -1069,7 +1055,7 @@ namespace Langulus::Math
       CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
-      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      TypeOf<Ret> result[Ret::Cols][Ret::Rows];
       Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
          SIMD::Add(lhs.template GetRow<ROW>(), rhs, result[ROW]);
       });
@@ -1077,8 +1063,6 @@ namespace Langulus::Math
    }
 
    /// Subtract a row vector                                                  
-   ///   @param lhs - matrix                                                  
-   ///   @param rhs - vector                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
@@ -1086,7 +1070,7 @@ namespace Langulus::Math
       CT::CustomVector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
-      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
+      TypeOf<Ret> result[Ret::Cols][Ret::Rows];
       Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
          SIMD::Subtract(lhs.template GetRow<ROW>(), rhs, result[ROW]);
       });
@@ -1094,8 +1078,6 @@ namespace Langulus::Math
    }
 
    /// Multiply a matrix by a scalar (commutative)                            
-   ///   @param lhs - scalar                                                  
-   ///   @param rhs - matrix                                                  
    ///   @return the scaled matrix                                            
    LANGULUS(INLINED)
    constexpr auto operator * (
@@ -1117,8 +1099,6 @@ namespace Langulus::Math
    }
 
    /// Divide a matrix by a scalar                                            
-   ///   @param lhs - matrix                                                  
-   ///   @param rhs - scalar                                                  
    ///   @return the scaled matrix                                            
    LANGULUS(INLINED)
    constexpr auto operator / (
@@ -1132,8 +1112,6 @@ namespace Langulus::Math
    }
 
    /// Add a scalar to a matrix (commutative)                                 
-   ///   @param lhs - scalar                                                  
-   ///   @param rhs - matrix                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
@@ -1155,8 +1133,6 @@ namespace Langulus::Math
    }
 
    /// Subtract a scalar from a matrix                                        
-   ///   @param lhs - matrix                                                  
-   ///   @param rhs - scalar                                                  
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
@@ -1271,7 +1247,7 @@ namespace Langulus::Math
    ) noexcept {
       using LHS = Deref<decltype(lhs)>;
       using RHS = Deref<decltype(rhs)>;
-      if constexpr (LHS::Columns != RHS::Columns or LHS::Rows != RHS::Rows)
+      if constexpr (LHS::Cols != RHS::Cols or LHS::Rows != RHS::Rows)
          return false;
       else
          return SIMD::Equals(lhs.mArray, rhs.mArray);
