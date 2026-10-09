@@ -16,7 +16,7 @@ namespace Langulus::Math
    /// 3D cone with varying dimensions, centered around origin                
    /// D determines the direction of the cone's pointy side                   
    ///                                                                        
-   template<CT::Vector T, CT::Dimension D = Tags::Y>
+   template<CT::CustomVector T, CT::Dimension D = Tags::Y>
    struct TCone {
       using CTTI_POD    = Yup;
       using CTTI_Typed  = TypeOf<T>;
@@ -34,8 +34,16 @@ namespace Langulus::Math
       TRadians<TypeOf<T>> mAngle {HALFPI<TypeOf<T>>};
 
    public:
-      constexpr bool IsDegenerate() const noexcept;
-      constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(T const&) const;
+      /// Check if cone is degenerate                                         
+      ///   @return true if at least one offset is zero                       
+      constexpr bool IsDegenerate() const noexcept {
+         return mHeight == 0 || mAngle == 0;
+      }
+
+      /// Check if cone is hollow                                             
+      ///   @return true if at least one of the offsets is negative           
+      constexpr bool IsHollow() const noexcept {
+         return mHeight < 0;
+      }
    };
 }

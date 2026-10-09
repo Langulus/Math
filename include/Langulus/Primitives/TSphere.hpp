@@ -9,60 +9,45 @@
 #include "Primitive.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::CustomVector>
+   struct TSphere;
 
-      template<CT::Vector>
-      struct TSphere;
+   using Sphere2    = TSphere<Vec2>;
+   using Sphere3    = TSphere<Vec3>;
 
-      template<CT::Vector>
-      struct TEllipsoid;
+   template<CT::CustomVector>
+   struct TEllipsoid;
 
-      using Circle     = TSphere<Vec2>;
-      using Sphere     = TSphere<Vec3>;
+   using Ellipsoid2 = TEllipsoid<Vec2>;
+   using Ellipsoid3 = TEllipsoid<Vec3>;
 
-      using Ellipsoid2 = TEllipsoid<Vec2>;
-      using Ellipsoid3 = TEllipsoid<Vec3>;
-      using Ellipsoid  = Ellipsoid3;
+   /// An abstract sphere                                                     
+   struct Sphere : Primitive {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Math::Sphere3;
+      using CTTI_Bases     = Math::Primitive;
+   };
+}
 
-   } // namespace Langulus::Math
-
-   namespace A
-   {
-
-      /// An abstract sphere                                                  
-      struct Sphere : Primitive {
-         using CTTI_Abstract = Yup;
-         using CTTI_Concrete = Math::Sphere;
-         LANGULUS_BASES(Primitive);
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing sphere primitives                        
-      template<class...T>
-      concept Sphere = (DerivedFrom<T, A::Sphere> and ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+namespace Langulus::CT
+{
+   /// Concept for distinguishing sphere primitives                           
+   template<class...T>
+   concept Sphere = (DerivedFrom<T, Math::Sphere> and ...);
+}
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    /// 2D circle, or 3D sphere, centered around origin                        
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TSphere {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TSphere>();
+         constexpr auto defaultClassName = LastCppNameOf<TSphere>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -87,17 +72,18 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Abstract = No;
-      using CTTI_POD = CT::POD<T>;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::Sphere);
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::Sphere;
 
-      using PointType = T;
+      using PointType  = T;
+      using ScalarType = TypeOf<T>;
       static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
-      TypeOf<T> mRadius {.5};
+      ScalarType mRadius {.5};
 
    public:
       /// Check if sphere is degenerate                                       
@@ -124,11 +110,11 @@ namespace Langulus::Math
    ///                                                                        
    /// 2D/3D ellipsoid, centered around origin                                
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TEllipsoid {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TEllipsoid>();
+         constexpr auto defaultClassName = LastCppNameOf<TEllipsoid>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -153,13 +139,14 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Abstract = No;
-      using CTTI_POD = CT::POD<T>;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::Sphere);
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::Sphere;
 
-      using PointType = T;
+      using PointType  = T;
+      using ScalarType = TypeOf<T>;
       static constexpr size_t MemberCount = T::MemberCount;
       static_assert(MemberCount > 1, "Roundness doesn't exist below two dimensions");
 
@@ -178,16 +165,6 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept {
          return mRadii < 0;
       }
-
-      /// Calculate signed distance                                           
-      ///   @param point - point to check distance from                       
-      ///   @return the distance to the primitive                             
-      auto SignedDistance(T const& point) const {
-         const auto k0 = (point / mRadii).Length();
-         const auto k1 = (point / (mRadii * mRadii)).Length();
-         return k0 * (k0 - TypeOf<T> {1}) / k1;
-      }
    };
-
-} // namespace Langulus::Math
+}
 

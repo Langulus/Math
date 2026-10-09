@@ -13,7 +13,7 @@
 
 namespace Langulus::Math
 {
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TFrustum;
 
    using Frustum2 = TFrustum<Vec2>;
@@ -39,7 +39,7 @@ namespace Langulus::Math
    ///                                                                        
    ///   2D/3D frustum, centered around origin                                
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TFrustum : Frustum {
       using CTTI_Abstract  = No;
       using CTTI_POD       = Maybe<CT::POD<T>>;
@@ -64,7 +64,8 @@ namespace Langulus::Math
 
       constexpr bool IsDegenerate() const noexcept;
       constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(T const&) const;
       bool Intersects(const TRange<T>&) const noexcept;
    };
 }
+
+#include "TFrustum.inl"

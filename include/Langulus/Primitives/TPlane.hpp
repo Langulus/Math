@@ -77,12 +77,5 @@ namespace Langulus::Math
       constexpr bool IsDegenerate() const noexcept {
          return mNormal.Length() == ScalarType {0};
       }
-
-      /// Calculate signed distance                                           
-      ///   @param point point to check distance from                         
-      ///   @return the distance to the plane                                 
-      auto SignedDistance(T const& point) const {
-         return Math::SignedDistance(point, *this);
-      }
    };
 }

@@ -5,11 +5,11 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Primitives/TBox.inl>
-#include <Langulus/Primitives/TCone.inl>
+#include <Langulus/Primitives/TBox.hpp>
+#include <Langulus/Primitives/TCone.hpp>
 #include <Langulus/Primitives/TCylinder.hpp>
-#include <Langulus/Primitives/TFrustum.inl>
-#include <Langulus/Primitives/TLine.inl>
+#include <Langulus/Primitives/TFrustum.hpp>
+#include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Primitives/TPlane.hpp>
 #include <Langulus/Primitives/TPolygon.hpp>
 #include <Langulus/Primitives/TRay.hpp>

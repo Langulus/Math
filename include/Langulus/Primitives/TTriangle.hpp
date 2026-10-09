@@ -11,48 +11,45 @@
 
 namespace Langulus::Math
 {
-   template<CT::Vector>
+   template<CT::CustomVector>
    struct TTriangle;
-
-   template<CT::Vector>
-   struct TTriangleStrip;
-
-   template<CT::Vector>
-   struct TTriangleFan;
 
    using Triangle2      = TTriangle<Vec2>;
    using Triangle3      = TTriangle<Vec3>;
    using Triangle4      = TTriangle<Vec4>;
 
+   template<CT::CustomVector>
+   struct TTriangleStrip;
+
    using TriangleStrip2 = TTriangleStrip<Vec2>;
    using TriangleStrip3 = TTriangleStrip<Vec3>;
    using TriangleStrip4 = TTriangleStrip<Vec4>;
+
+   template<CT::CustomVector>
+   struct TTriangleFan;
 
    using TriangleFan2   = TTriangleFan<Vec2>;
    using TriangleFan3   = TTriangleFan<Vec3>;
    using TriangleFan4   = TTriangleFan<Vec4>;
 
-   using Triangle       = Triangle3;
-   using TriangleStrip  = TriangleStrip3;
-   using TriangleFan    = TriangleFan3;
 
    /// An abstract triangle, also used as a topology type                     
    struct Triangle : Topology {
-      using CTTI_Abstract = Yup;
-      using CTTI_Concrete = Math::Triangle;
-      LANGULUS_BASES(Topology);
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Math::Triangle3;
+      using CTTI_Bases     = Math::Topology;
    };
 
    /// An abstract triangle strip, also used as a topology type               
    struct TriangleStrip : Triangle {
-      using CTTI_Concrete = Math::TriangleStrip;
-      LANGULUS_BASES(Triangle);
+      using CTTI_Concrete  = Math::TriangleStrip3;
+      using CTTI_Bases     = Math::Triangle;
    };
 
    /// An abstract triangle fan, also used as a topology type                 
    struct TriangleFan : Triangle {
-      using CTTI_Concrete = Math::TriangleFan;
-      LANGULUS_BASES(Triangle);
+      using CTTI_Concrete  = Math::TriangleFan3;
+      using CTTI_Bases     = Math::Triangle;
    };
 }
 
@@ -77,11 +74,11 @@ namespace Langulus::Math
    ///   A templated triangle                                                 
    ///                                                                        
    #pragma pack(push, 1)
-   template<CT::Vector T>
-   struct TTriangle : A::Triangle {
+   template<CT::CustomVector T>
+   struct TTriangle : Math::Triangle {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TTriangle>();
+         constexpr auto defaultClassName = LastCppNameOf<TTriangle>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -106,17 +103,17 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Abstract = No;
-      using CTTI_POD = CT::POD<T>;
-      using CTTI_Nullable = CT::Nullifiable<T>;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::Triangle);
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Nullable  = Maybe<CT::Nullable<T>>;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::Triangle;
 
-      using PointType = T;
+      using PointType  = T;
+      using ScalarType = TypeOf<T>;
       static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1,
-         "Triangles don't exist below two dimensions");
+      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
 
       T mABC[3] {};
 
@@ -124,23 +121,19 @@ namespace Langulus::Math
       constexpr TTriangle() = default;
 
       /// Manual construction                                                 
-      ///   @param p1 - first point                                           
-      ///   @param p2 - second point                                          
-      ///   @param p3 - third point                                           
       template<CT::Vector ALT_T = T>
       constexpr TTriangle(const ALT_T& p1, const ALT_T& p2, const ALT_T& p3) noexcept
          : mABC {p1, p2, p3} {}
 
       /// Manual construction from three points of any type                   
-      ///   @param points - pointer to the three points                       
-      template<CT::Vector ALT_T = T>
+      template<CT::CustomVector ALT_T = T>
       constexpr TTriangle(const ALT_T* points) noexcept
          : mABC {points[0], points[1], points[2]} {}
 
       /// Manual construction from dense memory of any type, indexed          
-      ///   @param points - pointer to the point array                        
-      ///   @param indices - three indices for the points array               
-      template<CT::Vector ALT_T = T, CT::Integer IDX>
+      ///   @param points pointer to the point array                          
+      ///   @param indices three indices for the points array                 
+      template<CT::CustomVector ALT_T = T, CT::Integer IDX>
       constexpr TTriangle(const ALT_T* points, const IDX(&indices)[3]) noexcept
          : mABC {points[indices[0]], points[indices[1]], points[indices[2]]} {}
 
@@ -154,8 +147,8 @@ namespace Langulus::Math
 
       /// Subdivide triangle                                                  
       ///   @return the four new triangles                                    
-      ::std::array<TTriangle, 4> Subdivide() const noexcept {
-         constexpr TypeOf<T> two {2};
+      auto Subdivide() const noexcept -> ::std::array<TTriangle, 4> {
+         constexpr ScalarType two {2};
          const T m01 = mABC[0] + (mABC[1] - mABC[0]) / two;
          const T m12 = mABC[1] + (mABC[2] - mABC[1]) / two;
          const T m20 = mABC[2] + (mABC[0] - mABC[2]) / two;
@@ -167,48 +160,6 @@ namespace Langulus::Math
          };
       }
 
-      /// Calculate signed distance                                           
-      ///   @param point - the point from which distance is calculated        
-      ///   @return the distance                                              
-      auto SignedDistance(T const& point) const {
-         const auto e0 = mABC[1] - mABC[0];
-         const auto e1 = mABC[2] - mABC[1];
-         const auto e2 = mABC[0] - mABC[2];
-         const auto v0 =   point - mABC[0];
-         const auto v1 =   point - mABC[1];
-         const auto v2 =   point - mABC[2];
-
-         if constexpr (MemberCount < 3) {
-            // 2D signed distance field                                 
-            const auto pq0 = v0 - e0 * Saturate(v0.Dot(e0) / Dot2(e0));
-            const auto pq1 = v1 - e1 * Saturate(v1.Dot(e1) / Dot2(e1));
-            const auto pq2 = v2 - e2 * Saturate(v2.Dot(e2) / Dot2(e2));
-            const auto s = Sign(e0[0] * e2[1] - e0[1] * e2[0]);
-
-            const T d = Min(
-               T(Dot2(pq0), s * (v0[0] * e0[1] - v0[1] * e0[0])),
-               T(Dot2(pq1), s * (v1[0] * e1[1] - v1[1] * e1[0])),
-               T(Dot2(pq2), s * (v2[0] * e2[1] - v2[1] * e2[0]))
-            );
-
-            return -Sqrt(d[0]) * Sign(d[1]);
-         }
-         else {
-            // 3D signed distance field                                 
-            const auto nor = e0.Cross(e2);
-            return Sqrt((
-                  Sign(e0.Cross(nor).Dot(v0)) +
-                  Sign(e1.Cross(nor).Dot(v1)) +
-                  Sign(e2.Cross(nor).Dot(v2)) < Real {2})
-               ? Min(
-                  Dot2(e0 * Saturate(e0.Dot(v0) / Dot2(e0)) - v0),
-                  Dot2(e1 * Saturate(e1.Dot(v1) / Dot2(e1)) - v1),
-                  Dot2(e2 * Saturate(e2.Dot(v2) / Dot2(e2)) - v2))
-               : Sq(nor.Dot(v0)) / Dot2(nor)
-            );
-         }
-      }
-
       ///   Access points                                                     
       auto& operator [] (size_t index) const noexcept {
          return mABC[index];
@@ -218,13 +169,11 @@ namespace Langulus::Math
       }
 
       /// Convert to other kinds of triangles                                 
-      template<CT::Vector ALT>
+      template<CT::CustomVector ALT>
       explicit operator TTriangle<ALT>() const noexcept {
-         return { 
-            static_cast<ALT>(mABC[0]),
-            static_cast<ALT>(mABC[1]),
-            static_cast<ALT>(mABC[2])
-         };
+         return { static_cast<ALT>(mABC[0]),
+                  static_cast<ALT>(mABC[1]),
+                  static_cast<ALT>(mABC[2])  };
       }
 
       /// Modify the triangle                                                 
@@ -249,18 +198,18 @@ namespace Langulus::Math
    /// List of points, forming triangles, by always sharing the last two      
    /// points in the sequence                                                 
    ///                                                                        
-   ///      1________3_______ 5     Notice all trianlges are clockwise        
+   ///      1________3_______ 5     Notice all triangles are clockwise        
    ///      /\      /\      /       0,1,2 - first triangle                    
    ///     /  \    /  \    /        2,1,3 - second triangle                   
    ///    /    \  /    \  /         2,3,4 - third triangle                    
    ///   /______\/______\/          4,3,5 - fourth triangle                   
    ///  0        2        4                                                   
    ///                                                                        
-   template<CT::Vector T>
-   struct TTriangleStrip : A::TriangleStrip {
+   template<CT::CustomVector T>
+   struct TTriangleStrip : Math::TriangleStrip {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TTriangleStrip>();
+         constexpr auto defaultClassName = LastCppNameOf<TTriangleStrip>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -285,16 +234,15 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
+      using CTTI_Named = Yes<GenerateToken()>;
       using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::TriangleStrip);
+      using CTTI_Bases = Math::TriangleStrip;
 
       Annies::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1,
-         "Triangles don't exist below two dimensions");
+      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
    };
 
 
@@ -303,7 +251,7 @@ namespace Langulus::Math
    /// List of points, forming triangles, by always sharing the first and     
    /// last points in the sequence                                            
    ///                                                                        
-   ///      2________3             Notice all trianlges are clockwise         
+   ///      2________3             Notice all triangles are clockwise         
    ///      /\      /\             0,1,2 - first triangle                     
    ///     /  \    /  \            0,2,3 - second triangle                    
    ///    /    \  /    \           0,3,4 - third triangle                     
@@ -314,11 +262,11 @@ namespace Langulus::Math
    ///              \/                                                        
    ///               5                                                        
    ///                                                                        
-   template<CT::Vector T>
-   struct TTriangleFan : A::TriangleFan {
+   template<CT::CustomVector T>
+   struct TTriangleFan : Math::TriangleFan {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TTriangleFan>();
+         constexpr auto defaultClassName = LastCppNameOf<TTriangleFan>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -345,14 +293,13 @@ namespace Langulus::Math
    public:
       using CTTI_Named = Yes<GenerateToken()>;;
       using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::TriangleFan);
+      using CTTI_Bases = Math::TriangleFan;
 
       Annies::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1,
-         "Triangles don't exist below two dimensions");
+      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
    };
 }
 

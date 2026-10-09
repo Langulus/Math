@@ -9,64 +9,39 @@
 #include "Primitive.hpp"
 
 
-namespace Langulus
+namespace Langulus::Math
 {
-   namespace Math
-   {
+   template<CT::CustomVector>
+   struct TPolygon;
 
-      template<CT::Vector>
-      struct TPolygon;
+   using Polygon2 = TPolygon<Vec2>;
+   using Polygon3 = TPolygon<Vec3>;
 
-      using Polygon2 = TPolygon<Vec2>;
-      using Polygon3 = TPolygon<Vec3>;
+   /// An abstract polygon, also used as a topology type                      
+   struct Polygon {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Math::Polygon3;
+      using CTTI_Bases     = Math::Topology;
+   };
 
-      using Polygon  = Polygon3;
+   ///                                                                        
+   ///   A templated polygon                                                  
+   ///                                                                        
+   /// A list of coplanar points that form a surface with a complex edge      
+   ///                                                                        
+   template<CT::CustomVector T>
+   struct TPolygon : Annies::TMany<T> {
+      using CTTI_Deep   = No;
+      using CTTI_Bases  = Math::Polygon;
 
-   } // namespace Langulus::Math
+      using Base = Annies::TMany<T>;
+      using PointType = T;
+      static constexpr auto MemberCount = T::MemberCount;
+      static_assert(MemberCount > 1, "Polygons can't exist below two dimensions");
 
-   namespace A
-   {
-
-      /// An abstract polygon, also used as a topology type                   
-      struct Polygon {
-         using CTTI_Abstract = Yup;
-         using CTTI_Concrete = Math::Polygon;
-         LANGULUS_BASES(Topology);
-      };
-
-   } // namespace Langulus::A
-
-   namespace Math
-   {
-
-      ///                                                                     
-      ///   A templated polygon                                               
-      ///                                                                     
-      /// A list of coplanar points that form a surface with a complex edge   
-      ///                                                                     
-      template<CT::Vector T>
-      struct TPolygon : Annies::TMany<T> {
-         LANGULUS(DEEP) false;
-         LANGULUS_BASES(A::Polygon);
-
-         using Base = Annies::TMany<T>;
-         using PointType = T;
-         static constexpr auto MemberCount = T::MemberCount;
-         static_assert(MemberCount > 1, "Polygons don't exist below two dimensions");
-
-         /// Calculate signed distance                                        
-         LANGULUS(INLINED)
-         auto SignedDistance(T const&) const {
-            TODO();
-         }
-
-         /// Compare two polygon sequences                                    
-         LANGULUS(INLINED)
-         bool operator == (const TPolygon& rhs) const {
-            return Base::operator == (static_cast<const Base&>(rhs));
-         }
-      };
-
-   } // namespace Langulus::Math
-
-} // namespace Langulus
+      /// Compare two polygon sequences                                       
+      bool operator == (const TPolygon& rhs) const {
+         return Base::operator == (static_cast<const Base&>(rhs));
+      }
+   };
+}

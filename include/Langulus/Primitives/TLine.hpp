@@ -11,13 +11,13 @@
 
 namespace Langulus::Math
 {
-   template<CT::Vector>
+   template<CT::CustomVector>
    struct TLine;
 
-   template<CT::Vector>
+   template<CT::CustomVector>
    struct TLineLoop;
 
-   template<CT::Vector>
+   template<CT::CustomVector>
    struct TLineStrip;
 
    using Line2      = TLine<Vec2>;
@@ -67,7 +67,7 @@ namespace Langulus::Math
    ///   Templated line segment                                               
    ///                                                                        
    #pragma pack(push, 1)
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TLine : Line {
    private:
       static consteval auto GenerateToken() {
@@ -110,28 +110,50 @@ namespace Langulus::Math
       T mAB[2] {};
 
    public:
-      constexpr TLine() noexcept;
+      /// Default construction (along x)                                      
+      constexpr TLine() noexcept {
+         mAB[1][0] = TypeOf<T> {0};
+      }
 
+      /// Manual construction from two points of any type                     
       template<CT::Vector ALT_T = T>
-      constexpr TLine(const ALT_T&, const ALT_T&) noexcept;
+      constexpr TLine(const ALT_T& p1, const ALT_T& p2) noexcept
+         : mAB {T{p1}, T{p2}} {}
 
-      template<CT::Vector ALT_T = T>
-      constexpr TLine(const ALT_T*) noexcept;
+      /// Manual construction from two points of any type (unsafe)            
+      template<CT::CustomVector ALT_T = T>
+      constexpr TLine(const ALT_T* points) noexcept
+         : mAB {points[0], points[1]} {}
 
-      template<CT::Vector ALT_T = T, CT::Integer IDX>
-      constexpr TLine(const ALT_T*, const IDX(&)[2]) noexcept;
+      /// Manual construction from two points of any type, indexed            
+      template<CT::CustomVector ALT_T = T, CT::Integer IDX>
+      constexpr TLine(const ALT_T* points, const IDX(&indices)[2]) noexcept
+         : mAB {points[indices[0]], points[indices[1]]} {}
 
-      bool IsDegenerate() const noexcept;
+      /// Check if line is degenerate                                         
+      ///   @return true if line has no radius or no length                   
+      bool IsDegenerate() const noexcept {
+         return (mAB[0] - mAB[1]).Length() == TypeOf<T> {0};
+      }
 
-      ::std::array<TLine, 2> Subdivide() const noexcept;
+      /// Subdivide line                                                      
+      ///   @return the two new lines                                         
+      auto Subdivide() const noexcept -> ::std::array<TLine, 2> {
+         const T midpoint = mAB[0] + (mAB[1] - mAB[0]) / TypeOf<T> {2};
+         return {{mAB[0], midpoint}, {midpoint, mAB[1]}};
+      }
 
-      auto SignedDistance(const PointType&) const;
+      /// Access points                                                       
+      auto& operator [] (this auto&& self, size_t i) noexcept {
+         return self.mAB[i];
+      }
 
-      auto& operator [] (size_t) const noexcept;
-      auto& operator [] (size_t) noexcept;
-
-      template<CT::Vector ALT>
-      explicit operator TLine<ALT>() const noexcept;
+      /// Convert to other kinds of lines                                     
+      ///   @tparam ALT - alternative point type (deducible)                  
+      template<CT::CustomVector ALT>
+      explicit operator TLine<ALT>() const noexcept {
+         return {static_cast<ALT>(mAB[0]), static_cast<ALT>(mAB[1])};
+      }
    };
    #pragma pack(pop)
 
@@ -141,7 +163,7 @@ namespace Langulus::Math
    /// Essentially a list of points, where each next point forms a line with  
    /// the previous, and the last point forms a line with the first one       
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TLineLoop : LineLoop {
    private:
       static consteval auto GenerateToken() {
@@ -170,17 +192,16 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Abstract = No;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::LineLoop);
-
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Abstract  = No;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::LineLoop;
+      
       Annies::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1,
-         "Lines don't exist below two dimensions");
+      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
    };
 
 
@@ -189,7 +210,7 @@ namespace Langulus::Math
    /// Essentially a list of points, where each next point forms a line with  
    /// the previous                                                           
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TLineStrip : LineStrip {
    private:
       static consteval auto GenerateToken() {
@@ -218,16 +239,15 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Abstract = No;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::LineStrip);
+      using CTTI_Named     = Yes<GenerateToken()>;;
+      using CTTI_Abstract  = No;
+      using CTTI_Typed     = TypeOf<T>;
+      using CTTI_Bases     = Math::LineStrip;
 
       Annies::TMany<T> mPoints;
 
       using PointType = T;
       static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1,
-         "Lines don't exist below two dimensions");
+      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
    };
 }

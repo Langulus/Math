@@ -11,8 +11,8 @@
 
 namespace Langulus::Math
 {
-   template<CT::Vector> struct TBox;
-   template<CT::Vector> struct TBoxRounded;
+   template<CT::CustomVector> struct TBox;
+   template<CT::CustomVector> struct TBoxRounded;
 
    using Box2 = TBox<Vec2>;
    using Box3 = TBox<Vec3>;
@@ -56,7 +56,7 @@ namespace Langulus::Math
    ///   |               |                                                    
    ///   +---------------+                                                    
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TBox : Box {
    private:
       static consteval auto GenerateToken() {
@@ -96,12 +96,17 @@ namespace Langulus::Math
 
       T mOffsets {.5};
 
-      constexpr bool IsDegenerate() const noexcept;
-      constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(T const&) const;
+      /// Check if box is degenerate                                          
+      ///   @return true if at least one offset is zero                       
+      constexpr bool IsDegenerate() const noexcept {
+         return mOffsets.IsDegenerate();
+      }
 
-      /*explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;*/
+      /// Check if box is hollow                                              
+      ///   @return true if at least one of the offsets is negative           
+      constexpr bool IsHollow() const noexcept {
+         return mOffsets[0] < TypeOf<T> {0};
+      }
    };
 
 
@@ -118,7 +123,7 @@ namespace Langulus::Math
    ///   \               /                                                    
    ///    '-------------'   <- mRadius from origin of rounded parts           
    ///                                                                        
-   template<CT::Vector T>
+   template<CT::CustomVector T>
    struct TBoxRounded : TBox<T> {
    private:
       static consteval auto GenerateToken() {
@@ -148,20 +153,17 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named = Yes<GenerateToken()>;
-      //LANGULUS_CONVERTS_TO(Annies::Text, Flow::Code);
-
       using Base = TBox<T>;
-      //using typename Base::PointType;
-      //using Base::MemberCount;
       using Base::mOffsets;
 
       TypeOf<T> mRadius;
 
-      constexpr bool IsDegenerate() const noexcept;
-      constexpr bool IsHollow() const noexcept;
-      auto SignedDistance(T const&) const;
+      constexpr bool IsDegenerate() const noexcept {
+         return mOffsets.Length() - mRadius, TypeOf<T> {0};
+      }
 
-      /*explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;*/
+      constexpr bool IsHollow() const noexcept {
+         return mOffsets[0] - mRadius < TypeOf<T> {0};
+      }
    };
 }

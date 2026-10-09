@@ -84,10 +84,6 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept {
          return mRadius < 0;
       }
-
-      auto SignedDistance(T const& point) const {
-         return Math::SignedDistance(point, *this);
-      }
    };
 
 
@@ -126,10 +122,6 @@ namespace Langulus::Math
 
       constexpr bool IsHollow() const noexcept {
          return mRadius < 0 or mHeight < 0;
-      }
-
-      auto SignedDistance(T const& point) const {
-         return Math::SignedDistance(point, *this);
       }
    };
 }

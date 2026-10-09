@@ -12,7 +12,7 @@
 #include "../Verbs/Multiply.hpp"*/
 
 #include "../Numbers/Dimension.hpp"
-#include <Langulus/CT/Scalar.hpp>
+#include <Langulus/CT/Number.hpp>
 #include <Langulus/CT/CustomVector.hpp>
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequence.hpp>
@@ -20,21 +20,21 @@
 #include <Langulus/Math/Tags.hpp>
 #include <Langulus/TOwn.hpp>
 
-#define TARGS(a)     CT::Scalar a##T, size_t a##S, int a##D
+#define TARGS(a)     CT::Number a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>
-#define TEMPLATE()   template<CT::Scalar T, size_t S, int DEFAULT>
+#define TEMPLATE()   template<CT::Number T, size_t S, int DEFAULT>
 #define TME()        TVector<T, S, DEFAULT>
 
 
 namespace Langulus::Math
 {
-   template<CT::Scalar T, CT::Dimension D>
+   template<CT::Number T, CT::Dimension D>
    struct TVectorComponent;
 
-   template<CT::Scalar T, size_t S, int DEFAULT = 0>
+   template<CT::Number T, size_t S, int DEFAULT = 0>
    struct TVector;
 
-   template<CT::Scalar T, size_t S, int DEFAULT = 0>
+   template<CT::Number T, size_t S, int DEFAULT = 0>
    using TVec = TME();
 
    using Vec1     = TVector<Real, 1>;
@@ -129,7 +129,7 @@ namespace Langulus::Math
 
    /// Similar as the above, but the type is explicitly defined.              
    /// Only the size is decided by the context, defaulting to 4.              
-   template<CT::Scalar T>
+   template<CT::Number T>
    struct VectorOfType : Vector {
       using CTTI_Concrete = Math::TVector<T, 4>;
       using CTTI_Bases    = Vector;
@@ -143,13 +143,13 @@ namespace Langulus::Math
 
    namespace Inner
    {
-      template<size_t, CT::Scalar, int DEFAULT>
+      template<size_t, CT::Number, int DEFAULT>
       struct TVectorBase;
 
 
       ///                                                                     
       /// 1D vector base                                                      
-      template<CT::Scalar TYPE, int DEFAULT>
+      template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<1, TYPE, DEFAULT> {
          union {
             TYPE all[1] {};
@@ -208,7 +208,7 @@ namespace Langulus::Math
 
       ///                                                                     
       /// 2D vector base                                                      
-      template<CT::Scalar TYPE, int DEFAULT>
+      template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<2, TYPE, DEFAULT> {
          union {
             TYPE all[2] {};
@@ -272,7 +272,7 @@ namespace Langulus::Math
 
       ///                                                                     
       /// 3D vector base                                                      
-      template<CT::Scalar TYPE, int DEFAULT>
+      template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<3, TYPE, DEFAULT> {
          union {
             TYPE all[3] {};
@@ -337,7 +337,7 @@ namespace Langulus::Math
 
       ///                                                                     
       /// 4D vector base                                                      
-      template<CT::Scalar TYPE, int DEFAULT>
+      template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<4, TYPE, DEFAULT> {
          union {
             TYPE all[4] {};
@@ -392,7 +392,7 @@ namespace Langulus::Math
 
       ///                                                                     
       /// 5+D vector base                                                     
-      template<size_t S, CT::Scalar TYPE, int DEFAULT> requires (S > 4)
+      template<size_t S, CT::Number TYPE, int DEFAULT> requires (S > 4)
       struct TVectorBase<S, TYPE, DEFAULT> {
          using CTTI_Typed = TYPE;
          using CTTI_Array = Yes<S>;
@@ -696,7 +696,7 @@ namespace Langulus::Math
       constexpr explicit operator T&   () const noexcept requires (S == 1);
       constexpr explicit operator bool () const noexcept;
 
-      template<CT::Scalar N> requires (S == 1 and CT::Convertible<N, T>)
+      template<CT::Number N> requires (S == 1 and CT::Convertible<N, T>)
       /*explicit*/ constexpr operator N () const noexcept;
       
       template<size_t ALTS> requires (ALTS < S)
@@ -718,7 +718,7 @@ namespace Langulus::Math
    ///   @tparam LHS - left hand side, can be scalar/array/vector             
    ///   @tparam RHS - right hand side, can be scalar/array/vector            
    template<class LHS, class RHS>
-   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, OverlapCounts<LHS, RHS>()>;
+   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, Langulus::Inner::OverlapCounts<LHS, RHS>()>;
 }
 
 #include "TSwizzle.hpp"
@@ -785,7 +785,7 @@ namespace Langulus::Axes
 namespace Langulus::CTTI
 {
    /// 4-component constants                                                  
-   template<CT::Scalar T, int DEFAULT>
+   template<CT::Number T, int DEFAULT>
    struct DefineConstant<Math::TVector<T, 4, DEFAULT>> : Types<
       NamedValue<Axes::X<T>, "Axes::X", "Cardinal X axis">,
       NamedValue<Axes::Y<T>, "Axes::Y", "Cardinal Y axis">,
@@ -803,7 +803,7 @@ namespace Langulus::CTTI
    > {};
 
    /// 3-component constants                                                  
-   template<CT::Scalar T, int DEFAULT>
+   template<CT::Number T, int DEFAULT>
    struct DefineConstant<Math::TVector<T, 3, DEFAULT>> : Types<
       NamedValue<Axes::X<T>, "Axes::X", "Cardinal X axis">,
       NamedValue<Axes::Y<T>, "Axes::Y", "Cardinal Y axis">,
@@ -820,7 +820,7 @@ namespace Langulus::CTTI
    > {};
 
    /// 2-component constants                                                  
-   template<CT::Scalar T, int DEFAULT>
+   template<CT::Number T, int DEFAULT>
    struct DefineConstant<Math::TVector<T, 2, DEFAULT>> : Types<
       NamedValue<Axes::X<T>, "Axes::X", "Cardinal X axis">,
       NamedValue<Axes::Y<T>, "Axes::Y", "Cardinal Y axis">,
@@ -834,7 +834,7 @@ namespace Langulus::CTTI
    > {};
 
    /// 1-component constants                                                  
-   template<CT::Scalar T, int DEFAULT>
+   template<CT::Number T, int DEFAULT>
    struct DefineConstant<Math::TVector<T, 1, DEFAULT>> : Types<
       NamedValue<Axes::X<T>,        "Axes::X",         "Cardinal X axis">,
 

@@ -6,10 +6,8 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "TFrustum.hpp"
-#include "TPlane.hpp"
 
-#define TEMPLATE() template<CT::Vector T>
+#define TEMPLATE() template<CT::CustomVector T>
 
 
 namespace Langulus::Math
@@ -74,21 +72,6 @@ namespace Langulus::Math
    constexpr bool TFrustum<T>::IsHollow() const noexcept {
       TODO();
       return false;
-   }
-
-   /// Calculate signed distance                                              
-   ///   @param point - point to check distance from                          
-   ///   @return the distance to the primitive                                
-   TEMPLATE() LANGULUS(INLINED)
-   auto TFrustum<T>::SignedDistance(T const& point) const {
-      return Min(
-         mPlanes[0].SignedDistance(point),
-         mPlanes[1].SignedDistance(point),
-         mPlanes[2].SignedDistance(point),
-         mPlanes[3].SignedDistance(point),
-         mPlanes[4].SignedDistance(point),
-         mPlanes[5].SignedDistance(point)
-      );
    }
 
    /// Intersect with an AABB                                                 

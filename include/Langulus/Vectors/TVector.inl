@@ -720,7 +720,7 @@ namespace Langulus::Math
    }
 
    /// Explicit cast to a compatible number of different type                 
-   TEMPLATE() template<CT::Scalar N>
+   TEMPLATE() template<CT::Number N>
    requires (S == 1 and CT::Convertible<N, T>) LANGULUS(INLINED)
    constexpr TME()::operator N () const noexcept {
       return static_cast<N>(all[0]);

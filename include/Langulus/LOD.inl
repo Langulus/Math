@@ -9,7 +9,7 @@
 #include "LOD.hpp"
 #include "Matrices/TMatrix.hpp"
 #include "Numbers/Level.inl"
-#include "Primitives/TFrustum.inl"
+#include "Primitives/TFrustum.hpp"
 
 
 namespace Langulus::Math

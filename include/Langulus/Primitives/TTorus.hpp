@@ -11,23 +11,23 @@
 
 namespace Langulus::Math
 {
-
    ///                                                                        
    /// 3D torus                                                               
    ///                                                                        
-   template<CT::Vector T, CT::Dimension D = Traits::Y>
+   template<CT::CustomVector T, CT::Dimension D = Tags::Y>
    struct TTorus {
-      using CTTI_POD = true;
-      using CTTI_Typed = TypeOf<T>;
-      LANGULUS_BASES(A::Primitive);
+      using CTTI_POD    = Maybe<CT::POD<T>>;
+      using CTTI_Typed  = TypeOf<T>;
+      using CTTI_Bases  = Math::Primitive;
 
-      using PointType = T;
+      using PointType  = T;
+      using ScalarType = TypeOf<T>;
       using T::MemberCount;
       static_assert(MemberCount == 3, "Can't have a non-three-dimensional torus");
       static_assert(D::Index < 3, "Can't extend torus in that dimension");
 
-      TypeOf<T> mOuterRadius {.5};
-      TypeOf<T> mInnerRadius {.5};
+      ScalarType mOuterRadius {.5};
+      ScalarType mInnerRadius {.5};
 
    public:
       /// Check if torus is degenerate                                        
@@ -41,26 +41,6 @@ namespace Langulus::Math
       constexpr bool IsHollow() const noexcept {
          return mInnerRadius * mOuterRadius < 0;
       }
-
-      /// Calculate signed distance                                           
-      ///   @param point - point to check distance from                       
-      ///   @return the distance to the primitive                             
-      auto SignedDistance(T const& point) const {
-         if constexpr (CT::Same<D, Traits::X>) {
-            const auto q = TVector<TypeOf<T>, 2>(point.yz().Length() - mOuterRadius, point[0]);
-            return q.Length() - mInnerRadius;
-         }
-         else if constexpr (CT::Same<D, Traits::Y>) {
-            const auto q = TVector<TypeOf<T>, 2>(point.xz().Length() - mOuterRadius, point[1]);
-            return q.Length() - mInnerRadius;
-         }
-         else if constexpr (CT::Same<D, Traits::Z>) {
-            const auto q = TVector<TypeOf<T>, 2>(point.xy().Length() - mOuterRadius, point[2]);
-            return q.Length() - mInnerRadius;
-         }
-         else static_assert(false, "Unsupported dimension");
-      }
    };
-
-} // namespace Langulus::Math
+}
 

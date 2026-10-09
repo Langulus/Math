@@ -14,11 +14,9 @@
 ///TODO refer to guidelines
 namespace Langulus::Math
 {
-
    /// Signed distance function for a 2D/3D plane                             
    template<CT::Number T, size_t C>
    T SignedDistance(const TVector<T, C>& point, const TPlane<TVector<T, C>>& plane) {
       return Dot(point, plane.mNormal) + plane.mOffset;
    };
-
-} // namespace Langulus::Math
+}
