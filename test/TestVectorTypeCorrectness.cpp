@@ -60,7 +60,7 @@ TEST_CASE("CountOf checks", "[CountOf]") {
    static_assert(CountOf<TVec<T, 3>[ 8]> == 24);
 }
 
-TEST_CASE("OverlapCounts checks", "[OverlapCounts]") {
+TEST_CASE("LglsOverlapExtents checks", "[LglsOverlapExtents]") {
    int scalar {};
    int scalarArray[1] {};
    int smallArray[2] {};

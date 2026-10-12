@@ -124,7 +124,7 @@ namespace Langulus::Math
    struct VectorOfSize : Vector {
       using CTTI_Concrete = TVector<Real, S>;
       using CTTI_Bases    = Vector;
-      using CTTI_Array    = Yes<S>;
+      //using CTTI_Array    = Yes<S>;
    };
 
    /// Similar as the above, but the type is explicitly defined.              
@@ -133,7 +133,7 @@ namespace Langulus::Math
    struct VectorOfType : Vector {
       using CTTI_Concrete = Math::TVector<T, 4>;
       using CTTI_Bases    = Vector;
-      using CTTI_Typed    = T;
+      //using CTTI_Typed    = T;
    };
 
    /// Points be just vectors, man                                            
@@ -718,7 +718,7 @@ namespace Langulus::Math
    ///   @tparam LHS - left hand side, can be scalar/array/vector             
    ///   @tparam RHS - right hand side, can be scalar/array/vector            
    template<class LHS, class RHS>
-   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, Langulus::Inner::OverlapCounts<Decvq<ShedDeref<LHS>>, Decvq<ShedDeref<RHS>>>()>;
+   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, LglsOverlapExtents(LHS{}, RHS{})>;
 }
 
 #include "TSwizzle.hpp"

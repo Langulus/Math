@@ -37,7 +37,7 @@ namespace Langulus::Math
    struct NormalOfSize : Normal {
       using CTTI_Concrete  = Math::TNormal<Math::TVector<Langulus::Real, S>>;
       using CTTI_Bases     = Normal;
-      using CTTI_Array     = Yes<S>;
+      //using CTTI_Array     = Yes<S>;
       static_assert(S > 1, "Normal size must be greater than one");
    };
 
@@ -45,7 +45,7 @@ namespace Langulus::Math
    template<CT::Scalar T>
    struct NormalOfType : Normal {
       using CTTI_Concrete  = Math::TNormal<Math::TVector<T, 4>>;
-      using CTTI_Typed     = T;
+      //using CTTI_Typed     = T;
       using CTTI_Bases     = Normal;
       static_assert(CT::Real<T>, "Normals can be only made of real numbers");
    };

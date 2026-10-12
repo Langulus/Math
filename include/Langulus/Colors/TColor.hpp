@@ -61,7 +61,7 @@ namespace Langulus
    struct ColorOfSize : Color {
       using CTTI_Concrete  = Math::TColor<Math::TVector<::std::uint8_t, S>>;
       using CTTI_Bases     = Color;
-      using CTTI_Array     = Yes<S>;
+      //using CTTI_Array     = Yes<S>;
       static_assert(S > 0, "Color size must be greater than zero");
    };
 
@@ -70,7 +70,7 @@ namespace Langulus
    struct ColorOfType : Color {
       using CTTI_Concrete  = Math::TColor<Math::TVector<T, 4>>;
       using CTTI_Bases     = Color;
-      using CTTI_Typed     = T;
+      //using CTTI_Typed     = T;
    };
 }
 
