@@ -131,7 +131,7 @@ namespace Langulus::Math
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (ExtentOf<T> > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -143,7 +143,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())

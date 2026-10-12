@@ -20,7 +20,7 @@ namespace Langulus::Math
    /// Construct the range sequentially, like so:                             
    /// minX, minY, minZ..., maxX, maxY, maxZ...                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const CT::Vector auto& other) noexcept {
+   constexpr TME()::TRange(CT::Vector auto const& other) noexcept {
       SIMD::Convert<Default>(DeintCast(other), mMinMax);
 
       if constexpr (CT::Normalized<T>) {
@@ -65,7 +65,7 @@ namespace Langulus::Math
 
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const CT::Vector auto& min, const CT::Vector auto& max) noexcept {
+   constexpr TME()::TRange(CT::Vector auto const& min, CT::Vector auto const& max) noexcept {
       for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min.all[i];
          mMinMax[i + ExtentOf<T>] = max.all[i];
@@ -151,7 +151,7 @@ namespace Langulus::Math
    ///   @param v - the vector to copy                                        
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::Vector auto& v) noexcept -> TRange& {
+   constexpr auto TME()::operator = (CT::Vector auto const& v) noexcept -> TRange& {
       return *new (this) TRange {DeintCast(v)};
    }
   

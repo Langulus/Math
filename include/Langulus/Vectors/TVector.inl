@@ -41,7 +41,7 @@ namespace Langulus::Math
    /// Construct from any vector (with conversion)                            
    ///   @param a - vector to use                                             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(const CT::Vector auto& source) noexcept {
+   constexpr TME()::TVector(CT::Vector auto const& source) noexcept {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
@@ -362,7 +362,7 @@ namespace Langulus::Math
    ///   @param vec - the vector to copy                                      
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const CT::Vector auto& vec) noexcept -> TVector& {
+   constexpr auto TME()::operator = (CT::Vector auto const& vec) noexcept -> TVector& {
       return *new (this) TVector {vec};
    }
 
@@ -380,7 +380,7 @@ namespace Langulus::Math
    ///   @param other - the vector to dot with                                
    ///   @return the dot product of both vectors                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Dot(const CT::Vector auto& other) const noexcept -> T {
+   constexpr auto TME()::Dot(CT::Vector auto const& other) const noexcept -> T {
       auto source = other.all;
       auto start = all;
       const auto end = start + Math::Min(S, ExtentOf<decltype(other)>);

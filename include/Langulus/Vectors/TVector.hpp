@@ -507,7 +507,7 @@ namespace Langulus::Math
       ///   Construction                                                      
       ///                                                                     
       constexpr TVector() noexcept;
-      constexpr TVector(const CT::Vector auto&) noexcept;
+      constexpr TVector(CT::Vector auto const&) noexcept;
       constexpr TVector(CT::Scalar auto const&) noexcept;
 
       template<class T1, class T2, class...TN>
@@ -522,7 +522,7 @@ namespace Langulus::Math
       ///                                                                     
       ///   Assignment                                                        
       ///                                                                     
-      constexpr auto operator = (const CT::Vector auto&) noexcept -> TVector&;
+      constexpr auto operator = (CT::Vector auto const&) noexcept -> TVector&;
       constexpr auto operator = (CT::Scalar auto const&) noexcept -> TVector&;
 
       template<CT::Scalar N, CT::Dimension D>
@@ -654,7 +654,7 @@ namespace Langulus::Math
       template<size_t = S < 3u ? S : 3u>
       constexpr auto Volume() const noexcept;
 
-      constexpr auto Dot(const CT::Vector auto&) const noexcept -> T;
+      constexpr auto Dot(CT::Vector auto const&) const noexcept -> T;
 
       template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
       constexpr auto Cross(V const&) const noexcept -> TVector<T, 3>;
@@ -718,7 +718,7 @@ namespace Langulus::Math
    ///   @tparam LHS - left hand side, can be scalar/array/vector             
    ///   @tparam RHS - right hand side, can be scalar/array/vector            
    template<class LHS, class RHS>
-   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, Langulus::Inner::OverlapCounts<LHS, RHS>()>;
+   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, Langulus::Inner::OverlapCounts<Decvq<ShedDeref<LHS>>, Decvq<ShedDeref<RHS>>>()>;
 }
 
 #include "TSwizzle.hpp"

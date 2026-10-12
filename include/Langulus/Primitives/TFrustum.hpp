@@ -46,7 +46,7 @@ namespace Langulus::Math
       using CTTI_Typed     = TypeOf<T>;
       using CTTI_Bases     = Math::Frustum;
 
-      static constexpr size_t MemberCount = T::MemberCount;
+      static constexpr size_t MemberCount = ExtentOf<T>;
       using PointType  = T;
       using ScalarType = TypeOf<PointType>;
       using MatrixType = TMatrix<ScalarType, MemberCount + 1>;

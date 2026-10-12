@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "Primitive.hpp"
+#include <Langulus/TMany.hpp>
 
 
 namespace Langulus::Math
@@ -70,12 +71,15 @@ namespace Langulus::Math
    template<CT::CustomVector T>
    struct TLine : Line {
    private:
+      static constexpr size_t MemberCount = ExtentOf<T>;
+      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
+
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TLine>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (MemberCount > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -87,7 +91,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + MemberCount;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -104,8 +108,6 @@ namespace Langulus::Math
       using CTTI_Bases     = Math::Line;
 
       using PointType = T;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
       T mAB[2] {};
 
@@ -165,13 +167,16 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::CustomVector T>
    struct TLineLoop : LineLoop {
+      static constexpr size_t MemberCount = ExtentOf<T>;
+      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
+
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TLineLoop>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (MemberCount > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -183,7 +188,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + MemberCount;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -200,8 +205,6 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
    };
 
 
@@ -212,13 +215,16 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::CustomVector T>
    struct TLineStrip : LineStrip {
+      static constexpr size_t MemberCount = ExtentOf<T>;
+      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
+
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TLineStrip>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (MemberCount > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -230,7 +236,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + MemberCount;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -247,7 +253,5 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
    };
 }

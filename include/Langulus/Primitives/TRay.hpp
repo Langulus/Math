@@ -11,7 +11,8 @@
 
 namespace Langulus::Math
 {
-   template<CT::CustomVector> struct TRay;
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
+   struct TRay;
 
    using Ray2 = TRay<Vec2>;
    using Ray3 = TRay<Vec3>;
@@ -27,7 +28,7 @@ namespace Langulus::Math
    ///   A ray                                                                
    /// A line segment with a discrete starting point, but no ending point     
    ///                                                                        
-   template<CT::CustomVector T>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TRay {
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Nullable  = Maybe<CT::Nullable<T>>;
@@ -36,8 +37,6 @@ namespace Langulus::Math
 
       using PointType  = T;
       using ScalarType = TypeOf<T>;
-      static constexpr auto MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Rays don't exist below two dimensions");
 
       T mOrigin {};
       T mNormal {};

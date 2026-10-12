@@ -11,7 +11,7 @@
 
 namespace Langulus::Math
 {
-   template<CT::CustomVector>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TPolygon;
 
    using Polygon2 = TPolygon<Vec2>;
@@ -29,15 +29,13 @@ namespace Langulus::Math
    ///                                                                        
    /// A list of coplanar points that form a surface with a complex edge      
    ///                                                                        
-   template<CT::CustomVector T>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TPolygon : Annies::TMany<T> {
       using CTTI_Deep   = No;
       using CTTI_Bases  = Math::Polygon;
 
-      using Base = Annies::TMany<T>;
-      using PointType = T;
-      static constexpr auto MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Polygons can't exist below two dimensions");
+      using Base        = Annies::TMany<T>;
+      using PointType   = T;
 
       /// Compare two polygon sequences                                       
       bool operator == (const TPolygon& rhs) const {

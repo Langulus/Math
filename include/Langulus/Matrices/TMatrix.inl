@@ -588,7 +588,7 @@ namespace Langulus::Math
 
    /// Set translation                                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::SetPosition(const CT::Vector auto& position) noexcept
+   constexpr auto TME()::SetPosition(CT::Vector auto const& position) noexcept
    -> TMatrix& requires (ROWS > 2 and COLS > 2) {
       using V = Deref<decltype(position)>;
       constexpr auto S = Math::Min(3u, ExtentOf<V>);

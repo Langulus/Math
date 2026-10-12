@@ -272,7 +272,7 @@ namespace Langulus::Math
       constexpr auto GetPosition() const noexcept
       -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLS > 2);
 
-      constexpr auto SetPosition(const CT::Vector auto&) noexcept
+      constexpr auto SetPosition(CT::Vector auto const&) noexcept
       -> TMatrix& requires (ROWS > 2 and COLS > 2);
 
       constexpr bool IsIdentity() const noexcept;

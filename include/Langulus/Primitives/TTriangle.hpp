@@ -11,21 +11,21 @@
 
 namespace Langulus::Math
 {
-   template<CT::CustomVector>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TTriangle;
 
    using Triangle2      = TTriangle<Vec2>;
    using Triangle3      = TTriangle<Vec3>;
    using Triangle4      = TTriangle<Vec4>;
 
-   template<CT::CustomVector>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TTriangleStrip;
 
    using TriangleStrip2 = TTriangleStrip<Vec2>;
    using TriangleStrip3 = TTriangleStrip<Vec3>;
    using TriangleStrip4 = TTriangleStrip<Vec4>;
 
-   template<CT::CustomVector>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TTriangleFan;
 
    using TriangleFan2   = TTriangleFan<Vec2>;
@@ -74,7 +74,7 @@ namespace Langulus::Math
    ///   A templated triangle                                                 
    ///                                                                        
    #pragma pack(push, 1)
-   template<CT::CustomVector T>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TTriangle : Math::Triangle {
    private:
       static consteval auto GenerateToken() {
@@ -82,7 +82,7 @@ namespace Langulus::Math
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (ExtentOf<T> > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -94,7 +94,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -112,9 +112,7 @@ namespace Langulus::Math
 
       using PointType  = T;
       using ScalarType = TypeOf<T>;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
-
+      
       T mABC[3] {};
 
    public:
@@ -205,7 +203,7 @@ namespace Langulus::Math
    ///   /______\/______\/          4,3,5 - fourth triangle                   
    ///  0        2        4                                                   
    ///                                                                        
-   template<CT::CustomVector T>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TTriangleStrip : Math::TriangleStrip {
    private:
       static consteval auto GenerateToken() {
@@ -213,7 +211,7 @@ namespace Langulus::Math
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (ExtentOf<T> > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -225,7 +223,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -241,8 +239,6 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
    };
 
 
@@ -262,7 +258,7 @@ namespace Langulus::Math
    ///              \/                                                        
    ///               5                                                        
    ///                                                                        
-   template<CT::CustomVector T>
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TTriangleFan : Math::TriangleFan {
    private:
       static consteval auto GenerateToken() {
@@ -270,7 +266,7 @@ namespace Langulus::Math
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (T::MemberCount > 3) {
+         if constexpr (ExtentOf<T> > 3) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -282,7 +278,7 @@ namespace Langulus::Math
 
          // Write size                                                  
          --offset;
-         name[offset++] = '0' + T::MemberCount;
+         name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -298,8 +294,6 @@ namespace Langulus::Math
       Annies::TMany<T> mPoints;
 
       using PointType = T;
-      static constexpr size_t MemberCount = T::MemberCount;
-      static_assert(MemberCount > 1, "Triangles don't exist below two dimensions");
    };
 }
 

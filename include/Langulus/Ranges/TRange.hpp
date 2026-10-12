@@ -172,8 +172,8 @@ namespace Langulus::Math
    public:
       constexpr TRange() noexcept = default;
       constexpr TRange(const TRange&) noexcept;
-      constexpr TRange(const CT::Vector auto&) noexcept;
-      constexpr TRange(const CT::Vector auto&, const CT::Vector auto&) noexcept;
+      constexpr TRange(CT::Vector auto const&) noexcept;
+      constexpr TRange(CT::Vector auto const&, CT::Vector auto const&) noexcept;
       constexpr TRange(CT::Scalar auto const&) noexcept;
       constexpr TRange(CT::Scalar auto const&, CT::Scalar auto const&) noexcept;
       constexpr TRange(const PointType&, const PointType&) noexcept;
@@ -187,7 +187,7 @@ namespace Langulus::Math
       ///                                                                     
       constexpr auto operator = (const TRange&) noexcept -> TRange&;
       constexpr auto operator = (const CT::Range  auto&) noexcept -> TRange&;
-      constexpr auto operator = (const CT::Vector auto&) noexcept -> TRange&;
+      constexpr auto operator = (CT::Vector auto const&) noexcept -> TRange&;
       constexpr auto operator = (CT::Scalar auto const&) noexcept -> TRange&;
 
       template<class N, class D>
