@@ -293,11 +293,11 @@ namespace Langulus::Math
       }
       else {
          // The rotation axis is absolute                               
-         if constexpr (CT::Same<D, Traits::X>)
+         if constexpr (CT::Same<D, Tags::X>)
             mAim *= QuatType::FromAxis(GetRight(), angle);
-         else if constexpr (CT::Same<D, Traits::Y>)
+         else if constexpr (CT::Same<D, Tags::Y>)
             mAim *= QuatType::FromAxis(GetUp(), angle);
-         else if constexpr (CT::Same<D, Traits::Z>)
+         else if constexpr (CT::Same<D, Tags::Z>)
             mAim *= QuatType::FromAxis(GetForward(), angle);
          else
             static_assert(false, "Unsupported dimension");
@@ -350,12 +350,12 @@ namespace Langulus::Math
       bool relative = false;
 
       // Read relativity first                                          
-      verb.ForEachDeep([&relative](Tag const& trait) {
-         if (trait.IsTrait<Traits::Relative>())
-            relative = trait.AsCast<bool>();
+      verb.ForEachDeep([&relative](Tag const& tag) {
+         if (tag.IsTrait<Tags::Relative>())
+            relative = tag.AsCast<bool>();
       });
-      verb.ForEachDeep([&relative](const TMeta& trait) {
-         if (trait == MetaTraitOf<Traits::Relative>())
+      verb.ForEachDeep([&relative](const TMeta& tag) {
+         if (tag == MetaTraitOf<Tags::Relative>())
             relative = true;
       });
 

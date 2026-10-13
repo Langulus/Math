@@ -11,11 +11,11 @@
 
 /// Built-in math tags                                                        
 LANGULUS_DEFINE_TAG(Transform,
-   "Model transformation trait");
+   "Model transformation tag");
 LANGULUS_DEFINE_TAG(View,
-   "View transformation trait");
+   "View transformation tag");
 LANGULUS_DEFINE_TAG(Projection,
-   "Projection transformation trait");
+   "Projection transformation tag");
 LANGULUS_DEFINE_TAG(Solid,
    "Solidity state");
 LANGULUS_DEFINE_TAG(Pickable,
@@ -29,19 +29,19 @@ LANGULUS_DEFINE_TAG(Static,
 LANGULUS_DEFINE_TAG(Boundness,
    "Boundness state (shifts control from simulation to user and vice-versa)");
 LANGULUS_DEFINE_TAG(Relative,
-   "Relativity trait");
+   "Relativity tag");
 LANGULUS_DEFINE_TAG(Place,
-   "Position trait");
+   "Position tag");
 LANGULUS_DEFINE_TAG(Size,
-   "Size trait");
+   "Size tag");
 LANGULUS_DEFINE_TAG(Aim,
-   "Aim trait, used as a looking direction, or normals in general");
+   "Aim tag, used as a looking direction, or normals in general");
 LANGULUS_DEFINE_TAG(Velocity,
-   "Velocity trait");
+   "Velocity tag");
 LANGULUS_DEFINE_TAG(Acceleration,
-   "Acceleration trait");
+   "Acceleration tag");
 LANGULUS_DEFINE_TAG(Sampler,
-   "Sampler trait, used for sampling surfaces/volumes");
+   "Sampler tag, used for sampling surfaces/volumes");
 LANGULUS_DEFINE_TAG(Level,
    "Level of an instance");
 LANGULUS_DEFINE_TAG(Interpolator,

@@ -37,7 +37,7 @@ namespace Langulus::CTTI
       /// Destructive version, LHS is mutable. This won't allocate unless     
       /// conversion occurs.                                                  
       static bool Default(LHS& lhs, CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto const& rhs = verb.GetArgument();
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
@@ -47,8 +47,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(lhs, converted.GetRaw(), mass, converted.GetCount());
@@ -59,7 +59,7 @@ namespace Langulus::CTTI
       /// Non-destructive version, LHS is constant. Will allocate if          
       /// conversion occurs, or if verb output isn't reserved enough.         
       static bool Default(LHS const& lhs, CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto const& rhs = verb.GetArgument();
          auto result = lhs;
          if (rhs.template IsSame<LHS>()) {
@@ -71,8 +71,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(result, converted.GetRaw(), mass, converted.GetCount());

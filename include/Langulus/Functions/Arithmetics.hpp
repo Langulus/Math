@@ -12,6 +12,7 @@
 #include <Langulus/CT/Comparable.hpp>
 #include <Langulus/CT/Typed.hpp>
 #include <Langulus/CT/Normalized.hpp>
+#include <Langulus/CT/Lossless.hpp>
 
 
 namespace Langulus::CT
@@ -558,9 +559,11 @@ namespace Langulus::Math
    ///   @param n1 - second point                                             
    ///   @param a - rate                                                      
    ///   @return the linearly interpolated value                              
-   template<CT::Dense T1, CT::Dense T2, CT::Dense R> LANGULUS(INLINED)
-   constexpr auto Lerp(const T1& n0, const T2& n1, const R& a) noexcept {
-      return n0 + a * (n1 - n0);
+   template<CT::Dense T1, CT::Dense T2, CT::Real R> LANGULUS(INLINED)
+   constexpr auto Lerp(const T1& n0, const T2& n1, const R& a) noexcept
+   -> Lossless<T1, T2> {
+      using L = Lossless<T1, T2>;
+      return static_cast<L>(n0) + static_cast<L>(a * static_cast<R>(n1 - n0));
    }
 
    /// Cubic interpolation (Hermit interpolation, using tangents)             
@@ -570,16 +573,17 @@ namespace Langulus::Math
    ///   @param m1 - tangent to second point                                  
    ///   @param a - rate                                                      
    ///   @return the cubically interpolated value                             
-   template<CT::Dense T1, CT::Dense T2, CT::Dense T3, CT::Dense T4, CT::Dense T5>
-   LANGULUS(INLINED)
-   constexpr auto CerpTan(const T1& n0, const T2& m0, const T3& n1, const T4& m1, const T5& a) noexcept {
-      const auto t2 = a * a;
-      const auto t3 = t2 * a;
+   template<CT::Dense T1, CT::Dense T2, CT::Dense T3, CT::Dense T4, CT::Real R> LANGULUS(INLINED)
+   constexpr auto CerpTan(const T1& n0, const T2& m0, const T3& n1, const T4& m1, const R& a) noexcept
+   -> Lossless<T1, T2, T3, T4> {
+      using L = Lossless<T1, T2, T3, T4>;
+      const R t2 = a * a;
+      const R t3 = t2 * a;
       return
-           T1 {T1 {2} * t3 - T1 {3} * t2 + T1 {1}} * n0
-         + T1 {t3 - T1 {2} * t2 + T1 {a}} * T1 {m0}
-         + T3 {T3 {-2} * t3 + T3 {3} * t2} * n1
-         + T3 {t3 - t2} * T3 {m1};
+           L {     L { 2} * t3 - L {3}  * t2 + L {1}} * n0
+         + L {t3 - L { 2} * t2 + L {a}              } * L {m0}
+         + L {     L {-2} * t3 + L {3}  * t2        } * n1
+         + L {t3 - t2                               } * L {m1};
    }
 
    /// Cubic interpolation                                                    
@@ -589,12 +593,13 @@ namespace Langulus::Math
    ///   @param n3 - the point after the second point                         
    ///   @param a - the rate                                                  
    ///   @return the cubically interpolated value                             
-   template<CT::Dense T1, CT::Dense T2, CT::Dense T3, CT::Dense T4, CT::Dense T5>
-   LANGULUS(INLINED)
-   constexpr auto Cerp(const T1& n0, const T2& n1, const T3& n2, const T4& n3, const T5& a) noexcept {
-      const auto t2 = a * a;
-      const auto t3 = t2 * a;
-      const auto p = (n3 - n2) - (n0 - n1);
+   template<CT::Dense T1, CT::Dense T2, CT::Dense T3, CT::Dense T4, CT::Real R> LANGULUS(INLINED)
+   constexpr auto Cerp(const T1& n0, const T2& n1, const T3& n2, const T4& n3, const R& a) noexcept
+   -> Lossless<T1, T2, T3, T4> {
+      using L = Lossless<T1, T2, T3, T4>;
+      const R t2 = a * a;
+      const R t3 = t2 * a;
+      const L p = (n3 - n2) - (n0 - n1);
       return p * t3 + ((n0 - n1) - p) * t2 + (n2 - n0) * a + n1;
    }
 }

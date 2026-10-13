@@ -12,6 +12,7 @@ if (PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
    include(LangulusUtilities.cmake)
    fetch_langulus_module(Flow GIT_TAG wip)
+   fetch_langulus_module(SIMD GIT_TAG wip)
 endif()
 
 file(GLOB_RECURSE
@@ -45,6 +46,7 @@ target_include_directories(LangulusMath
 
 target_link_libraries(LangulusMath
    PUBLIC   LangulusCore
+            LangulusSIMD
             $<TARGET_PROPERTY:LangulusLogger,INTERFACE_LINK_LIBRARIES>
 )
 

@@ -37,7 +37,7 @@ namespace Langulus::CTTI
       /// Destructive version, LHS is mutable. This won't allocate unless     
       /// conversion occurs.                                                  
       static bool Default(LHS& lhs, CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto const& rhs = verb.GetArgument();
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
@@ -47,8 +47,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(lhs, converted.GetRaw(), mass, converted.GetCount());
@@ -59,7 +59,7 @@ namespace Langulus::CTTI
       /// Non-destructive version, LHS is constant. Will allocate if          
       /// conversion occurs, or if verb output isn't reserved enough.         
       static bool Default(LHS const& lhs, CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto const& rhs = verb.GetArgument();
          auto result = lhs;
          if (rhs.template IsSame<LHS>()) {
@@ -71,8 +71,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(result, converted.GetRaw(), mass, converted.GetCount());
@@ -85,9 +85,11 @@ namespace Langulus::CTTI
       static void Inner(LHS& lhs, LHS const* raw, Langulus::Real mass, size_t count) {
          switch(count) {
          case 1:
-            lhs = *raw; break;
+            lhs = *raw;
+            break;
          case 2:
-            lhs = Math::Cerp(raw[0], raw[0], raw[1], raw[1], mass); break;
+            lhs = Math::Cerp(raw[0], raw[0], raw[1], raw[1], mass);
+            break;
          case 3:
             lhs = Math::Cerp(
                raw[0],
@@ -95,11 +97,13 @@ namespace Langulus::CTTI
                Math::Cerp(raw[1], raw[1], raw[2], raw[2]),
                raw[2],
                mass
-            ); break;
+            );
+            break;
          default:
             lhs = Math::Cerp(
                raw[0], raw[1], raw[2], raw[3], mass
-            ); break;
+            );
+            break;
          }
       }
    };

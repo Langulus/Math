@@ -22,7 +22,8 @@
 namespace Langulus::CTTI
 {
    template<class T>
-   concept BuiltinAddable = requires (T& t)         { {t += t} -> ::std::same_as<T&>; }
+   concept BuiltinAddable = CT::Signed<T>
+                        and requires (T& t)         { {t += t} -> ::std::same_as<T&>; }
                         and requires (T& t)         { {t -= t} -> ::std::same_as<T&>; }
                         and requires (T const& t)   { {t +  t} -> ::std::same_as<T>;  }
                         and requires (T const& t)   { {t -  t} -> ::std::same_as<T>;  };
@@ -57,7 +58,7 @@ namespace Langulus::CTTI
       /// Destructive version, LHS is mutable. This won't allocate unless     
       /// conversion occurs.                                                  
       static bool Default(LHS& lhs, CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto const& rhs = verb.GetArgument();
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
@@ -68,8 +69,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             for (LHS const& i : converted)
@@ -81,7 +82,7 @@ namespace Langulus::CTTI
       /// Non-destructive version, LHS is constant. Will allocate if          
       /// conversion occurs, or if verb output isn't reserved enough.         
       static bool Default(LHS const& lhs, CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto const& rhs = verb.GetArgument();
          auto result = lhs;
          if (rhs.template IsSame<LHS>()) {
@@ -95,8 +96,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             for (LHS const& i : converted)
@@ -113,7 +114,7 @@ namespace Langulus::CTTI
       ///      already been checked and guarantees to contain at least one    
       ///      element of type LHS! We can safely use reinterpret_cast here!  
       static bool Default(CT::Executable auto& verb) {
-         auto const mass = static_cast<LHS>(verb.GetMass());
+         auto const mass = verb.GetMass();
          auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(verb.GetArgument());
          TMany<LHS> result; result.Reserve(rhs_typed.GetCount());
          for (LHS const& i : rhs_typed)

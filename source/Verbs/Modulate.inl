@@ -43,8 +43,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(lhs, converted.GetRaw(), converted.GetCount());
