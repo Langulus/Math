@@ -28,7 +28,7 @@ namespace Langulus::Math
    TEMPLATE() template<class T1>
    requires ::std::constructible_from<T, T1> LANGULUS(INLINED)
    constexpr TColor<T>::TColor(T1&& t1) noexcept {
-      using ALT_T = TypeOf<Deint<T1>>;
+      using ALT_T = TypeOf<T1>;
       if constexpr (T::IsReal and CT::Integer<ALT_T>) {
          // Make sure we normalize color if initializing a color made   
          // of real numbers with integers                               
@@ -59,13 +59,13 @@ namespace Langulus::Math
    TEMPLATE() template<class T1, class...TN>
    requires ::std::constructible_from<T, T1, TN...> LANGULUS(INLINED)
    constexpr TColor<T>::TColor(T1&& t1, TN&&...tn) noexcept {
-      if constexpr (T::IsReal and CT::Integer<TypeOf<Deint<T1>>>) {
+      if constexpr (T::IsReal and CT::Integer<TypeOf<T1>>) {
          // If we're initializing real color using integers,            
          // we have to divide by 255 and saturate (TODO)                
          T::operator = (T {Math::Positive(t1), Math::Positive(tn)...});
          *this /= ScalarType {255};
       }
-      else if constexpr (not T::IsReal and CT::Real<TypeOf<Deint<T1>>>) {
+      else if constexpr (not T::IsReal and CT::Real<TypeOf<T1>>) {
          // If we're initializing integer color using reals,            
          // we have to multiply by 255 and saturate                     
          T::operator = (T {

@@ -11,7 +11,6 @@
 #include <Langulus/CT/Suffix.hpp>
 #include <Langulus/CT/Real.hpp>
 #include <Langulus/CT/Signed.hpp>
-#include <Langulus/CT/CustomNumber.hpp>
 #include <Langulus/CT/Derived.hpp>
 #include <Langulus/CT/Lossless.hpp>
 #include <Langulus/IntentOf.hpp>
