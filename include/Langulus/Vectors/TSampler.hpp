@@ -160,7 +160,7 @@ namespace Langulus
          }
 
       public:
-         LANGULUS(NAME)  GenerateToken();
+         using CTTI_Named = Yes<GenerateToken()>;
          using CTTI_Typed = TypeOf<T>;
          LANGULUS_BASES(
             A::SamplerOfSize<MemberCount>,

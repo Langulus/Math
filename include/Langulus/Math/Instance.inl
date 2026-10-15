@@ -355,7 +355,7 @@ namespace Langulus::Math
             relative = tag.AsCast<bool>();
       });
       verb.ForEachDeep([&relative](TMeta const& tag) {
-         if (tag == MetaTraitOf<Tags::Relative>())
+         if (tag == MetaTagOf<Tags::Relative>())
             relative = true;
       });
 

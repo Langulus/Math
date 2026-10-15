@@ -36,7 +36,7 @@ namespace Langulus::Math
       }
 
    public:
-      LANGULUS(NAME)     GenerateToken();
+      using CTTI_Named = Yes<GenerateToken()>;
       using CTTI_Abstract = No;
       using CTTI_Typed =    T;
       LANGULUS_CONVERTS_TO(Flow::Code);

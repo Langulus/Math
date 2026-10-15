@@ -279,7 +279,7 @@ SCENARIO("Parsing scripts", "[code]") {
       const Code code = "move (Normal3(0, 0, 1), relative)";
       Many required = Verbs::Move {
          Math::Normal {0, 0, 1},
-         MetaTraitOf<Tags::Relative>()
+         MetaTagOf<Tags::Relative>()
       };
 
       WHEN("Parsed") {

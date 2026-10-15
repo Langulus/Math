@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Vectors/TVector.hpp>
+#include <Langulus/Math/Vector.hpp>
 
 
 namespace Langulus::Math
