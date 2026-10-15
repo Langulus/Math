@@ -57,7 +57,7 @@ namespace Langulus::Math
    ///   +---------------+                                                    
    ///                                                                        
    template<CT::CustomVector T>
-   struct TBox : Box {
+   struct TBox {
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TBox>();
@@ -86,7 +86,6 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named     = Yes<GenerateToken()>;
-      using CTTI_Abstract  = No;
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Typed     = TypeOf<T>;
       using CTTI_Bases     = Box;

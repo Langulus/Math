@@ -415,7 +415,7 @@ namespace Langulus::Math
    ///   @param max - higher limit                                            
    ///   @return the clamped equivalent of this vector                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Clamp(const auto& min, const auto& max) const noexcept -> TVector {
+   constexpr auto TME()::Clamp(auto const& min, auto const& max) const noexcept -> TVector {
       return this->Min(TVector {min}).Max(TVector {max});
    }
 
@@ -424,7 +424,7 @@ namespace Langulus::Math
    ///   @param max - higher limit                                            
    ///   @return the clamped equivalent of this vector                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::ClampRev(const auto& min, const auto& max) const noexcept -> TVector {
+   constexpr auto TME()::ClampRev(auto const& min, auto const& max) const noexcept -> TVector {
       TVector result {*this};
       auto minp = min.all;
       auto maxp = max.all;
@@ -492,14 +492,14 @@ namespace Langulus::Math
 
    /// Get maximum of each element                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Max(const auto& limits) const noexcept {
+   constexpr auto TME()::Max(auto const& limits) const noexcept {
       using Ret = LosslessVector<TVector, decltype(limits)>;
       return Ret {SIMD::Max(*this, limits)};
    }
 
    /// Get minimum of each element                                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Min(const auto& limits) const noexcept {
+   constexpr auto TME()::Min(auto const& limits) const noexcept {
       using Ret = LosslessVector<TVector, decltype(limits)>;
       return Ret {SIMD::Min(*this, limits)};
    }
@@ -562,7 +562,7 @@ namespace Langulus::Math
 
    /// Modulate                                                               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Mod(const auto& period) const noexcept -> TVector {
+   constexpr auto TME()::Mod(auto const& period) const noexcept -> TVector {
       using RHS = Deref<decltype(period)>;
 
       if constexpr (CT::Scalar<RHS>) {
@@ -584,7 +584,7 @@ namespace Langulus::Math
 
    /// Step                                                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Step(const auto& edge) const noexcept -> TVector {
+   constexpr auto TME()::Step(auto const& edge) const noexcept -> TVector {
       using RHS = Deref<decltype(edge)>;
 
       if constexpr (CT::Scalar<RHS>) {
@@ -606,7 +606,7 @@ namespace Langulus::Math
 
    /// Power via a vector                                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Pow(const auto& exponents) const noexcept -> TVector {
+   constexpr auto TME()::Pow(auto const& exponents) const noexcept -> TVector {
       return SIMD::Power(all, exponents);
    }
 
@@ -727,10 +727,13 @@ namespace Langulus::Math
    }
    
    TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
-   TME()::operator TVector<T, ALTS>& () const noexcept {
-      return const_cast<TVector<T, ALTS>&>(
-         reinterpret_cast<const TVector<T, ALTS>&>(*this)
-      );
+   TME()::operator TVector<T, ALTS> const& () const noexcept {
+      return reinterpret_cast<TVector<T, ALTS> const&>(*this);
+   }
+   
+   TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
+   TME()::operator TVector<T, ALTS>& () noexcept {
+      return reinterpret_cast<TVector<T, ALTS>&>(*this);
    }
    
    TEMPLATE() LANGULUS(INLINED)

@@ -31,15 +31,12 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::CustomVector T> requires (ExtentOf<T> > 1)
    struct TPolygon : Annies::TMany<T> {
-      using CTTI_Deep   = No;
-      using CTTI_Bases  = Math::Polygon;
+      using CTTI_ReflectAs = TPolygon;
+      using CTTI_Deep      = No;
+      using CTTI_Bases     = Math::Polygon;
 
-      using Base        = Annies::TMany<T>;
-      using PointType   = T;
-
-      /// Compare two polygon sequences                                       
-      bool operator == (const TPolygon& rhs) const {
-         return Base::operator == (static_cast<const Base&>(rhs));
-      }
+      using Base           = Annies::TMany<T>;
+      using PointType      = T;
+      using Base::operator ==;
    };
 }

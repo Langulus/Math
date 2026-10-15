@@ -83,8 +83,8 @@ namespace Langulus::Math
          return false;
 
       // Not quite as fast, but wastes less space                       
-      for (const auto& plane : mPlanes) {
-         const auto& normal = plane.mNormal;
+      for (auto const& plane : mPlanes) {
+         auto const& normal = plane.mNormal;
          const PointType point = {
             normal[0] >= 0 ? box.mMin[0] : box.mMax[0],
             normal[1] >= 0 ? box.mMin[1] : box.mMax[1],

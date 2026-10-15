@@ -69,7 +69,7 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    template<CT::CustomVector T>
-   struct TLine : Line {
+   struct TLine {
    private:
       static constexpr size_t MemberCount = ExtentOf<T>;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
@@ -101,7 +101,6 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named     = Yes<GenerateToken()>;
-      using CTTI_Abstract  = No;
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Nullable  = Maybe<CT::Nullable<T>>;
       using CTTI_Typed     = TypeOf<T>;
@@ -166,7 +165,7 @@ namespace Langulus::Math
    /// the previous, and the last point forms a line with the first one       
    ///                                                                        
    template<CT::CustomVector T>
-   struct TLineLoop : LineLoop {
+   struct TLineLoop {
       static constexpr size_t MemberCount = ExtentOf<T>;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
@@ -198,7 +197,6 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named     = Yes<GenerateToken()>;
-      using CTTI_Abstract  = No;
       using CTTI_Typed     = TypeOf<T>;
       using CTTI_Bases     = Math::LineLoop;
       
@@ -214,7 +212,7 @@ namespace Langulus::Math
    /// the previous                                                           
    ///                                                                        
    template<CT::CustomVector T>
-   struct TLineStrip : LineStrip {
+   struct TLineStrip {
       static constexpr size_t MemberCount = ExtentOf<T>;
       static_assert(MemberCount > 1, "Lines don't exist below two dimensions");
 
@@ -245,8 +243,7 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named     = Yes<GenerateToken()>;;
-      using CTTI_Abstract  = No;
+      using CTTI_Named     = Yes<GenerateToken()>;
       using CTTI_Typed     = TypeOf<T>;
       using CTTI_Bases     = Math::LineStrip;
 

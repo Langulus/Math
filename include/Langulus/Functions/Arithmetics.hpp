@@ -245,7 +245,7 @@ namespace Langulus::Math
    ///   @param a the number/class to get positive value of                   
    ///   @return the positive value, or clamps to zero if negative            
    LANGULUS(INLINED)
-   constexpr decltype(auto) Positive(const auto& a) noexcept {
+   constexpr decltype(auto) Positive(auto const& a) noexcept {
       using T = TypeOf<decltype(a)>;
       if constexpr (CT::Unsigned<T>)
          return (a);

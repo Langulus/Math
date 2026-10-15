@@ -507,26 +507,30 @@ namespace Langulus::Math
       ///   Construction                                                      
       ///                                                                     
       constexpr TVector() noexcept;
-      constexpr TVector(CT::Vector auto const&) noexcept;
-      constexpr TVector(CT::Scalar auto const&) noexcept;
+      constexpr TVector(TVector const&) noexcept = default;
+      constexpr TVector(TVector&&) noexcept = default;
+      explicit constexpr TVector(CT::Vector auto const&) noexcept;
+      explicit constexpr TVector(CT::Scalar auto const&) noexcept;
 
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
 
       template<class N, CT::Dimension D>
-      constexpr TVector(const TVectorComponent<N, D>&) noexcept;
+      constexpr TVector(TVectorComponent<N, D> const&) noexcept;
 
-      TVector(const CT::SIMD auto&)  noexcept;
+      TVector(CT::SIMD auto const&)  noexcept;
       TVector(Describe&&);
 
       ///                                                                     
       ///   Assignment                                                        
       ///                                                                     
+      constexpr auto operator = (TVector const&) noexcept -> TVector& = default;
+      constexpr auto operator = (TVector &&)     noexcept -> TVector& = default;
       constexpr auto operator = (CT::Vector auto const&) noexcept -> TVector&;
       constexpr auto operator = (CT::Scalar auto const&) noexcept -> TVector&;
 
       template<CT::Scalar N, CT::Dimension D>
-      constexpr auto operator = (const TVectorComponent<N, D>&) noexcept -> TVector&;
+      constexpr auto operator = (TVectorComponent<N, D> const&) noexcept -> TVector&;
 
       ///                                                                     
       ///   Verbs                                                             
@@ -661,8 +665,8 @@ namespace Langulus::Math
 
       constexpr auto Normalize() const noexcept -> TVector requires (S > 1);
 
-      constexpr auto Clamp   (const auto&, const auto&) const noexcept -> TVector;
-      constexpr auto ClampRev(const auto&, const auto&) const noexcept -> TVector;
+      constexpr auto Clamp   (auto const&, auto const&) const noexcept -> TVector;
+      constexpr auto ClampRev(auto const&, auto const&) const noexcept -> TVector;
 
       constexpr auto Round   () const noexcept -> TVector;
       constexpr auto Floor   () const noexcept -> TVector;
@@ -679,17 +683,17 @@ namespace Langulus::Math
       static constexpr auto Max() noexcept -> TVector;
       static constexpr auto Min() noexcept -> TVector;
 
-      constexpr auto Max(const auto&) const noexcept;
-      constexpr auto Min(const auto&) const noexcept;
+      constexpr auto Max(auto const&) const noexcept;
+      constexpr auto Min(auto const&) const noexcept;
 
       constexpr auto HMax() const noexcept -> T;
       constexpr auto HMin() const noexcept -> T;
       constexpr auto HSum() const noexcept -> T;
       constexpr auto HMul() const noexcept -> T;
 
-      constexpr auto Mod (const auto&) const noexcept -> TVector;
-      constexpr auto Step(const auto&) const noexcept -> TVector;
-      constexpr auto Pow (const auto&) const noexcept -> TVector;
+      constexpr auto Mod (auto const&) const noexcept -> TVector;
+      constexpr auto Step(auto const&) const noexcept -> TVector;
+      constexpr auto Pow (auto const&) const noexcept -> TVector;
 
       auto& Sort() noexcept;
 
@@ -700,7 +704,10 @@ namespace Langulus::Math
       /*explicit*/ constexpr operator N () const noexcept;
       
       template<size_t ALTS> requires (ALTS < S)
-      operator TVector<T, ALTS>& () const noexcept;
+      operator TVector<T, ALTS> const& () const noexcept;
+
+      template<size_t ALTS> requires (ALTS < S)
+      operator TVector<T, ALTS>& () noexcept;
 
       ///                                                                     
       ///   Iteration                                                         

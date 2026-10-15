@@ -40,11 +40,10 @@ namespace Langulus::Math
    ///   2D/3D frustum, centered around origin                                
    ///                                                                        
    template<CT::CustomVector T>
-   struct TFrustum : Frustum {
-      using CTTI_Abstract  = No;
-      using CTTI_POD       = Maybe<CT::POD<T>>;
-      using CTTI_Typed     = TypeOf<T>;
-      using CTTI_Bases     = Math::Frustum;
+   struct TFrustum {
+      using CTTI_POD   = Maybe<CT::POD<T>>;
+      using CTTI_Typed = TypeOf<T>;
+      using CTTI_Bases = Math::Frustum;
 
       static constexpr size_t MemberCount = ExtentOf<T>;
       using PointType  = T;

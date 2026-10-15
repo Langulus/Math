@@ -75,7 +75,7 @@ namespace Langulus::Math
    ///                                                                        
    #pragma pack(push, 1)
    template<CT::CustomVector T> requires (ExtentOf<T> > 1)
-   struct TTriangle : Math::Triangle {
+   struct TTriangle {
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TTriangle>();
@@ -104,7 +104,6 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named     = Yes<GenerateToken()>;
-      using CTTI_Abstract  = No;
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Nullable  = Maybe<CT::Nullable<T>>;
       using CTTI_Typed     = TypeOf<T>;
@@ -204,7 +203,7 @@ namespace Langulus::Math
    ///  0        2        4                                                   
    ///                                                                        
    template<CT::CustomVector T> requires (ExtentOf<T> > 1)
-   struct TTriangleStrip : Math::TriangleStrip {
+   struct TTriangleStrip {
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TTriangleStrip>();
@@ -259,7 +258,7 @@ namespace Langulus::Math
    ///               5                                                        
    ///                                                                        
    template<CT::CustomVector T> requires (ExtentOf<T> > 1)
-   struct TTriangleFan : Math::TriangleFan {
+   struct TTriangleFan {
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TTriangleFan>();

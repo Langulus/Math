@@ -210,7 +210,7 @@ namespace Langulus::Math
 
    /// Incorporate a point into the range                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Embrace(const auto&...other) noexcept -> TRange& {
+   constexpr auto TME()::Embrace(auto const&...other) noexcept -> TRange& {
       ((mMin = Math::Min(mMin, other)),...);
       ((mMax = Math::Max(mMax, other)),...);
       return *this;

@@ -196,7 +196,7 @@ namespace Langulus::Math
       /*explicit operator Annies::Text() const;
       explicit operator Flow::Code() const;*/
 
-      constexpr auto Embrace(const auto&...) noexcept -> TRange&;
+      constexpr auto Embrace(auto const&...) noexcept -> TRange&;
       constexpr auto Intersect(const CT::Range auto&) const noexcept -> TRange;
 
       auto GetMin() const noexcept -> PointType const&;

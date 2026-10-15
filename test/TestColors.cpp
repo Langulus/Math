@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE("Colors", "[color]",
    using E = TypeOf<T>;
    constexpr auto C = CountOf<T>;
 
-   auto RequireMax = [](const auto& x) {
+   auto RequireMax = [](auto const& x) {
       if constexpr (T::IsReal)
          REQUIRE(x == 1);
       else

@@ -21,7 +21,7 @@ namespace Langulus::Math
    using CylinderCapped3 = TCylinderCapped<Vec3>;
 
    /// An abstract cylinder                                                   
-   struct Cylinder : Primitive {
+   struct Cylinder {
       using CTTI_Abstract  = Yup;
       using CTTI_Concrete  = Cylinder3;
       using CTTI_Bases     = Primitive;
@@ -60,8 +60,7 @@ namespace Langulus::Math
    ///      V     |<--->V mRadius                                             
    ///                                                                        
    template<CT::CustomVector T, CT::Dimension D>
-   struct TCylinder : Cylinder {
-      using CTTI_Abstract  = No;
+   struct TCylinder {
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Typed     = TypeOf<T>;
       using CTTI_Bases     = Cylinder;

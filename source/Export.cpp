@@ -21,7 +21,7 @@ namespace Langulus::Math
 {
    using RTTI::MetaVerb;
 
-   /// Register traits                                                        
+   /// Register tags                                                        
    void RegisterTraits() {
       (void) MetaOf<Tags::X>();
       (void) MetaOf<Tags::Y>();
