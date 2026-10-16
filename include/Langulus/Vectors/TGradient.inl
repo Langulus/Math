@@ -6,16 +6,10 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "TGradient.hpp"
-#include <Langulus/Flow/Code.hpp>
-
-#define TEMPLATE()   template<CT::Dense T, size_t S>
-#define TME()        TGradient<T, S>
 
 
 namespace Langulus::Math
 {
-
    /// Manual construction                                                    
    ///   @param initial - the initial value                                   
    TEMPLATE() LANGULUS(INLINED)
@@ -153,7 +147,7 @@ namespace Langulus::Math
    }
 
    /// Convert to text                                                        
-   TEMPLATE()
+   /*TEMPLATE()
    TME()::operator Flow::Code() const {
       using Flow::Code;
       Code result;
@@ -166,9 +160,5 @@ namespace Langulus::Math
       }
       result += Code::Operator::CloseScope;
       return result;
-   }
-
-} // namespace Langulus::Math
-
-#undef TEMPLATE
-#undef TME
+   }*/
+}

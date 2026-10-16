@@ -152,7 +152,7 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<1, TYPE, DEFAULT> {
          union {
-            TYPE all[1] {};
+            TYPE all[1] {static_cast<TYPE>(DEFAULT)};
             union {
                Own<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
             };
@@ -182,7 +182,7 @@ namespace Langulus::Math
 
          void tail() { static_assert(false, "1D vector doesn't have a tail"); }
 
-         constexpr TVectorBase() noexcept {
+         /*constexpr TVectorBase() noexcept {
             all[0] = static_cast<TYPE>(DEFAULT);
          }
 
@@ -202,7 +202,7 @@ namespace Langulus::Math
          constexpr auto& operator = (TVectorBase&& other) noexcept {
             all[0] = other.all[0];
             return *this;
-         }
+         }*/
       };
 
 
@@ -211,7 +211,8 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<2, TYPE, DEFAULT> {
          union {
-            TYPE all[2] {};
+            TYPE all[2] {  static_cast<TYPE>(DEFAULT),
+                           static_cast<TYPE>(DEFAULT)    };
             struct {
                union {
                   Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
@@ -241,7 +242,7 @@ namespace Langulus::Math
 
          void tail() { static_assert(false, "2D vector doesn't have a tail"); }
 
-         constexpr TVectorBase() noexcept {
+         /*constexpr TVectorBase() noexcept {
             for (int i = 0; i < 2; ++i)
                all[i] = static_cast<TYPE>(DEFAULT);
          }
@@ -266,7 +267,7 @@ namespace Langulus::Math
             for (int i = 0; i < 2; ++i)
                all[i] = other.all[i];
             return *this;
-         }
+         }*/
       };
 
 
@@ -275,7 +276,9 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<3, TYPE, DEFAULT> {
          union {
-            TYPE all[3] {};
+            TYPE all[3] {  static_cast<TYPE>(DEFAULT),
+                           static_cast<TYPE>(DEFAULT),
+                           static_cast<TYPE>(DEFAULT)    };
             struct {
                union {
                   Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
@@ -306,7 +309,7 @@ namespace Langulus::Math
 
          void tail() { static_assert(false, "3D vector doesn't have a tail"); }
 
-         constexpr TVectorBase() noexcept {
+         /*constexpr TVectorBase() noexcept {
             for (int i = 0; i < 3; ++i)
                all[i] = static_cast<TYPE>(DEFAULT);
          }
@@ -331,7 +334,7 @@ namespace Langulus::Math
             for (int i = 0; i < 3; ++i)
                all[i] = other.all[i];
             return *this;
-         }
+         }*/
       };
 
 
@@ -340,7 +343,10 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<4, TYPE, DEFAULT> {
          union {
-            TYPE all[4] {};
+            TYPE all[4] {  static_cast<TYPE>(DEFAULT),
+                           static_cast<TYPE>(DEFAULT),
+                           static_cast<TYPE>(DEFAULT),
+                           static_cast<TYPE>(DEFAULT)    };
             struct {
                union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
                union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
@@ -361,7 +367,7 @@ namespace Langulus::Math
 
          void tail() { static_assert(false, "4D vector doesn't have a tail"); }
 
-         constexpr TVectorBase() noexcept {
+         /*constexpr TVectorBase() noexcept {
             for (int i = 0; i < 4; ++i)
                all[i] = static_cast<TYPE>(DEFAULT);
          }
@@ -386,12 +392,13 @@ namespace Langulus::Math
             for (int i = 0; i < 4; ++i)
                all[i] = other.all[i];
             return *this;
-         }
+         }*/
       };
 
 
       ///                                                                     
       /// 5+D vector base                                                     
+      ///   @attention not-default initialized!                               
       template<size_t S, CT::Number TYPE, int DEFAULT> requires (S > 4)
       struct TVectorBase<S, TYPE, DEFAULT> {
          using CTTI_Typed = TYPE;
@@ -418,7 +425,7 @@ namespace Langulus::Math
             &TVectorBase::tail
          >;
 
-         constexpr TVectorBase() noexcept {
+         /*constexpr TVectorBase() noexcept {
             for (size_t i = 0; i < S; ++i)
                all[i] = static_cast<TYPE>(DEFAULT);
          }
@@ -443,7 +450,7 @@ namespace Langulus::Math
             for (size_t i = 0; i < S; ++i)
                all[i] = other.all[i];
             return *this;
-         }
+         }*/
       };
    }
 

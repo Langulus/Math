@@ -105,7 +105,6 @@ namespace Langulus::Math
    ///                                                                     
    template<CT::CustomVector T>
    struct TScale : T {
-      using T::MemberCount;
       using T::T;
 
    private:
@@ -114,7 +113,7 @@ namespace Langulus::Math
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
-         if constexpr (MemberCount > 4) {
+         if constexpr (ExtentOf<T> > 4) {
             for (auto i : defaultClassName)
                name[offset++] = i;
             return name;
@@ -126,7 +125,7 @@ namespace Langulus::Math
 
          // Write size                                               
          --offset;
-         name[offset++] = '0' + MemberCount;
+         name[offset++] = '0' + ExtentOf<T>;
 
          // Write suffix                                             
          for (auto i : SuffixOf<TypeOf<T>>())
@@ -136,9 +135,9 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named = Yes<GenerateToken()>;
-      using CTTI_Typed = TypeOf<T>;
+      //using CTTI_Typed = TypeOf<T>;
       using CTTI_Bases = Types<
-         ScaleOfSize<MemberCount>,
+         ScaleOfSize<ExtentOf<T>>,
          ScaleOfType<TypeOf<T>>,
          T
       >;

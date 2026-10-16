@@ -8,10 +8,11 @@
 #pragma once
 #include "TVector.hpp"
 
+#define TEMPLATE()   template<CT::Dense T, size_t S>
+#define TME()        TGradient<T, S>
 
 namespace Langulus::Math
 {
-
    template<CT::Dense T, size_t S = 2>
    class TGradient;
 
@@ -45,21 +46,12 @@ namespace Langulus::Math
    using Grad2v4i = TGrad2<Vec4i>;
    using Grad2v4u = TGrad2<Vec4u>;
 
-} // namespace Langulus::Math
 
-namespace Langulus::A
-{
-
-   /// Used as an imposed base for any type that can be interpretable as      
-   /// a gradient                                                             
+   /// An abstract gradient that depends on context                           
    struct Gradient {
       using CTTI_Abstract = Yup;
    };
 
-} // namespace Langulus::A
-
-namespace Langulus::Math
-{
 
    ///                                                                        
    ///   Templated gradient                                                   
@@ -67,17 +59,16 @@ namespace Langulus::Math
    /// Useful for capsulating continuous properties and getting their         
    /// derivatives. Can capsulate anything, as long as it is arithmetic.      
    ///                                                                        
-#pragma pack(push, 1)
-   template<CT::Dense T, size_t S>
-   class TGradient : A::Gradient {
+   #pragma pack(push, 1)
+   TEMPLATE() class TGradient {
    protected:
       T mBuffer[S] {};
       size_t mIndex {};
 
    public:
-      using CTTI_POD = CT::POD<T>;
-      using CTTI_Nullable = CT::Nullifiable<T>;
-      LANGULUS_BASES(A::Gradient);
+      using CTTI_POD       = Maybe<CT::POD<T>>;
+      using CTTI_Nullable  = Maybe<CT::Nullable<T>>;
+      using CTTI_Bases     = Math::Gradient;
 
       using PointType = T;
       static constexpr size_t StateCount = S;
@@ -112,10 +103,14 @@ namespace Langulus::Math
 
       constexpr T Sum() const noexcept;
 
-      void Integrate(Flow::Verb&);
+      void Integrate(Verb&);
 
-      explicit operator Flow::Code() const;
+      //explicit operator Flow::Code() const;
    };
-#pragma pack(pop)
+   #pragma pack(pop)
+}
 
-} // namespace Langulus::Math
+#include "TGradient.inl"
+
+#undef TEMPLATE
+#undef TME
