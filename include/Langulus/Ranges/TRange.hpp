@@ -72,29 +72,28 @@ namespace Langulus::Math
 
 namespace Langulus
 {
-   /// An abstract range that always concretizises into the most versatile    
-   /// type depending on context. Range4 by default, as it's the most         
-   /// versatile type.                                                        
+   /// An abstract range that always concretizes into the most versatile      
+   /// type and size, depending on context. Range4 by default.                
    struct Range {
       using CTTI_Abstract = Yup;
       using CTTI_Concrete = Math::Range4;
    };
 
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// range of the same size                                                 
+   /// An abstract range of explicit size, that always concretizes into the   
+   /// most versatile type depending on context. Real by default.             
    template<size_t S>
    struct RangeOfSize : Range {
       using CTTI_Concrete  = Math::TRange<Math::TVector<Langulus::Real, S>>;
       using CTTI_Bases     = Range;
-      using CTTI_Array     = Yes<S>;
+      //using CTTI_Array     = Yes<S>;
    };
 
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// range of the same type                                                 
+   /// An abstract range of explicit type, that always concretizes into the   
+   /// most versatile size depending on context. 4D by default.               
    template<CT::Dense T>
    struct RangeOfType : Range {
       using CTTI_Concrete  = Math::TRange<Math::TVector<T, 4>>;
-      using CTTI_Typed     = T;
+      //using CTTI_Typed     = T;
       using CTTI_Bases     = Range;
    };
 }
