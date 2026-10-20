@@ -94,7 +94,7 @@ namespace Langulus::Math
    template<size_t C, size_t R = C>
    struct MatrixOfSize : Matrix {
       using CTTI_Concrete  = Math::TMatrix<::Langulus::Real, C, R>;
-      using CTTI_Bases     = Matrix;
+      using CTTI_Bases     = Types<MatrixOfColumns<C>, MatrixOfRows<R>>;
       
       static constexpr size_t Cols = C;
       static constexpr size_t Rows = R;
@@ -178,7 +178,7 @@ namespace Langulus::Math
       using CTTI_POD       = Maybe<CT::POD<T>>;
       using CTTI_Nullable  = No;
       using CTTI_Bases     = Types<
-         MatrixOfSize<COLS, ROWS>, MatrixOfColumns<COLS>, MatrixOfRows<ROWS>,
+         MatrixOfSize<COLS, ROWS>,
          MatrixOfType<T>, 
          T
       >;
