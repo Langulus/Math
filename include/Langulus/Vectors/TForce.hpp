@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "TVector.hpp"
-#include "../Adaptive.hpp"
+#include <Langulus/Math/Adaptive.hpp>
 
 
 namespace Langulus::Math

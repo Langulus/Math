@@ -6,21 +6,20 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Numbers/Level.hpp"
+#include "Level.hpp"
 
 
 namespace Langulus::Math
 {
-
    ///                                                                        
-   ///   Make any type adaptive, by sticking a Level member at the back and   
+   /// Make any type adaptive, by sticking a Level member at the back and     
    /// scale properly by it on arithmetic operations.                         
    ///                                                                        
    template<class T>
    struct Adaptive {
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<Adaptive>();
+         constexpr auto defaultClassName = LastCppNameOf<Adaptive>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset = 0;
 
@@ -36,11 +35,9 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;
-      using CTTI_Abstract = No;
-      using CTTI_Typed =    T;
-      LANGULUS_CONVERTS_TO(Flow::Code);
-      static constexpr bool CTTI_AdaptiveTrait = true;
+      using CTTI_Named     = Yes<GenerateToken()>;
+      using CTTI_Typed     = T;
+      using CTTI_Adaptive  = Yup;
 
       // The data                                                       
       T mValue {};
@@ -194,7 +191,6 @@ namespace Langulus::Math
    constexpr bool operator == (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
    constexpr bool operator == (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
    constexpr bool operator == (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
-
-} // namespace Langulus::Math
+}
 
 #include "Adaptive.inl"

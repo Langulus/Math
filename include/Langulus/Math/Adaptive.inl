@@ -11,9 +11,8 @@
 
 namespace Langulus::Math
 {
-
    /// Get the appropriately scaled data                                      
-   ///   @param level - the level we're accessing the data from               
+   ///   @param level the level we're accessing the data from                 
    ///   @return the adapted data                                             
    template<class T>
    constexpr T Adaptive<T>::GetMidref(Level level) const noexcept {
@@ -21,15 +20,13 @@ namespace Langulus::Math
    }
 
    /// Returns an inverted adaptive (standing operator)                       
-   ///   @param a - adaptive to invert                                        
+   ///   @param a adaptive to invert                                          
    template<CT::Adaptive T> requires CT::Signed<T> LANGULUS(INLINED)
    constexpr T operator - (T const& a) noexcept {
       return {-a.mValue, a.mLevel};
    }
 
    /// Returns the sum of two adaptives (standing operator)                   
-   ///   @param lhs - left adaptive                                           
-   ///   @param rhs - right adaptive                                          
    ///   @return the sum of the adaptives                                     
    LANGULUS(INLINED)
    constexpr auto operator + (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
@@ -51,8 +48,6 @@ namespace Langulus::Math
    }
 
    /// Returns the difference of two adaptives (standing operator)            
-   ///   @param lhs - left adaptive                                           
-   ///   @param rhs - right adaptive                                          
    ///   @return the difference of the adaptives                              
    LANGULUS(INLINED)
    constexpr auto operator - (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
@@ -74,8 +69,6 @@ namespace Langulus::Math
    }
 
    /// Returns the product of two adaptives (standing operator)               
-   ///   @param lhs - left adaptive                                           
-   ///   @param rhs - right adaptive                                          
    ///   @return the product of the adaptives                                 
    LANGULUS(INLINED)
    constexpr auto operator * (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
@@ -97,8 +90,6 @@ namespace Langulus::Math
    }
 
    /// Returns the disivion of two adaptives (standing operator)              
-   ///   @param lhs - left adaptive                                           
-   ///   @param rhs - right adaptive                                          
    ///   @return the division of the adaptives                                
    LANGULUS(INLINED)
    constexpr auto operator / (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) {
@@ -120,8 +111,6 @@ namespace Langulus::Math
    }
    
    /// Returns the remainder (a.k.a. modulation) of a division                
-   ///   @param lhs - left adaptive                                           
-   ///   @param rhs - right adaptive                                          
    ///   @return the modulo, picking a lossless type between the two          
    LANGULUS(INLINED)
    constexpr auto operator % (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) {
@@ -278,8 +267,4 @@ namespace Langulus::Math
    constexpr bool operator == (const CT::NotAdaptive auto& lhs, const RHS& rhs) noexcept {
       return lhs == rhs.mValue;
    }
-
-} // namespace Langulus::Math
-
-#undef TEMPLATE
-#undef TME
+}

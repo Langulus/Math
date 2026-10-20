@@ -31,17 +31,6 @@ namespace Langulus::Verbs
    struct Cerp;
 }
 
-namespace Langulus::CT
-{
-   /// Anything that is adaptive                                              
-   template<class...T>
-   concept Adaptive = Dense<T...> and ((Decay<T>::CTTI_Adaptive) and ...);
-
-   /// Anything that has the gradient trait                                   
-   template<class...T>
-   concept Gradient = Dense<T...> and ((Decay<T>::CTTI_Gradient) and ...);
-}
-
 namespace Langulus::Math
 {
    LANGULUS_API(MATH) extern void RegisterTraits();

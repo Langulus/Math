@@ -103,8 +103,8 @@ namespace Langulus::Math
       LglsAssumeUser(describe, "Empty descriptor for TRange");
 
       if (describe->CastsTo<Range>()) {
-         mMin = Describe {describe.GetMember(0)};
-         mMax = Describe {describe.GetMember(1)};
+         mMin = Describe{Many{Annies::Absorb, describe->GetMember(0)}};
+         mMax = Describe{Many{Annies::Absorb, describe->GetMember(1)}};
          return;
       }
       else if (describe->CastsTo<Vector>() and describe->GetCount() == 2) {

@@ -917,12 +917,12 @@ namespace Langulus::Math
    ) noexcept {
       using LHS = Deref<decltype(lhs)>;
       using RHS = Deref<decltype(rhs)>;
-      static_assert(LHS::Rows == RHS::Columns and LHS::Columns == RHS::Rows,
+      static_assert(LHS::Rows == RHS::Cols and LHS::Cols == RHS::Rows,
          "Can't multiply these matrices - their sizes aren't compatible");
       using Ret = LosslessMatrix<LHS, RHS>;
 
       Ret r = Ret::Null();
-      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
+      Sequence<Ret::Cols>::ForEach([&]<size_t COL>() noexcept {
          auto& rc = r.template GetColumn<COL>();
          auto& rhsc = rhs.template GetColumn<COL>();
 
@@ -956,8 +956,8 @@ namespace Langulus::Math
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = LosslessMatrix<decltype(lhs), decltype(rhs)>;
-      TypeOf<Ret> result[Ret::Columns][Ret::Rows];
-      Sequence<Ret::Columns>::ForEach([&]<size_t COL>() noexcept {
+      TypeOf<Ret> result[Ret::Cols][Ret::Rows];
+      Sequence<Ret::Cols>::ForEach([&]<size_t COL>() noexcept {
          SIMD::Add(
             lhs.template GetColumn<COL>(),
             rhs.template GetColumn<COL>(),

@@ -9,6 +9,7 @@
 #include "../Vectors/TVector.hpp"
 #include "../Numbers/TColorComponent.hpp"
 
+#define TEMPLATE() template<CT::CustomVector T>
 
 namespace Langulus::Math
 {
@@ -46,10 +47,7 @@ namespace Langulus::Math
    using Blue    = Blue8;
    using Alpha   = Alpha8;
    using Depth   = Depth32;
-}
-
-namespace Langulus
-{
+   
    /// Abstract color                                                         
    struct Color {
       using CTTI_Abstract  = Yup;
@@ -72,12 +70,8 @@ namespace Langulus
       using CTTI_Bases     = Color;
       //using CTTI_Typed     = T;
    };
-}
-
-#define TEMPLATE() template<CT::CustomVector T>
-
-namespace Langulus::Math
-{
+   
+   
    ///                                                                        
    ///   Templated color                                                      
    ///                                                                        
