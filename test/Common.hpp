@@ -9,7 +9,7 @@
 /// INTENTIONALLY NOT GUARDED                                                 
 /// Include this file once in each cpp file, after all other headers          
 #include <Langulus/Math/Config.hpp>
-#include <Langulus/Flow/Resolvable.hpp>
+#include <Langulus/Flow/Downcastable.hpp>
 #include <Langulus/Testing.hpp>
 
 using namespace Math;
@@ -19,5 +19,5 @@ using namespace Flow;
 struct Fraction : public Flow::Resolvable {
    using CTTI_Abstract = No;
    LANGULUS_BASES(Resolvable);
-   Fraction() : Resolvable {this} {}
+   Fraction() : Downcastable {this} {}
 };
