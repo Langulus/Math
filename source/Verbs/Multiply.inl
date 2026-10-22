@@ -40,7 +40,7 @@ namespace Langulus::CTTI
       /// conversion occurs.                                                  
       static bool Default(LHS& lhs, CT::Executable auto& verb) {
          auto const mass = static_cast<LHS>(verb.GetMass());
-         Many const rhs  = verb.GetArgument();
+         Many const rhs  = verb.GetRHS();
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
             auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
@@ -62,7 +62,7 @@ namespace Langulus::CTTI
       /// conversion occurs, or if verb output isn't reserved enough.         
       static bool Default(LHS const& lhs, CT::Executable auto& verb) {
          auto const mass = static_cast<LHS>(verb.GetMass());
-         Many const rhs  = verb.GetArgument();
+         Many const rhs  = verb.GetRHS();
          auto result = lhs;
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
@@ -90,7 +90,7 @@ namespace Langulus::CTTI
       ///      element of type LHS! We can safely use reinterpret_cast here!  
       static bool Default(CT::Executable auto& verb) {
          auto const mass = static_cast<LHS>(verb.GetMass());
-         Many const rhs  = verb.GetArgument();
+         Many const rhs  = verb.GetRHS();
          if (mass < 0) {
             auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
             TMany<LHS> result; result.Reserve(rhs_typed.GetCount());
@@ -140,7 +140,7 @@ namespace Langulus::CTTI
          if (verb.GetMass() >= 0)
             return true;
 
-         Many const rhs  = verb.GetArgument();
+         Many const rhs  = verb.GetRHS();
          auto& rhs_typed = reinterpret_cast<TMany<Math::Infinity> const&>(rhs);
          TMany<Math::Infinity> result; result.Reserve(rhs_typed.GetCount());
          for (Math::Infinity const& i : rhs_typed)

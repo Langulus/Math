@@ -14,6 +14,8 @@
 #include "../Numbers/Dimension.hpp"
 #include <Langulus/CT/Number.hpp>
 #include <Langulus/CT/CustomVector.hpp>
+#include <Langulus/CT/Members.hpp>
+#include <Langulus/CT/Suffix.hpp>
 #include <Langulus/SIMD/SIMD.hpp>
 #include <Langulus/Utils/Sequence.hpp>
 #include <Langulus/Utils/Literal.hpp>

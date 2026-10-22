@@ -172,8 +172,8 @@ namespace Langulus::Math
 
    /*TEMPLATE()
    void TME()::Multiply(Verb& verb) {
-      if (verb.GetArgument()) {
-         TVector rhs {Describe(verb.GetArgument())};
+      if (verb.GetRHS()) {
+         TVector rhs {Describe(verb.GetRHS())};
          verb << (*this * rhs);
       }
    }

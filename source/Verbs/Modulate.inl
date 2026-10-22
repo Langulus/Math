@@ -34,7 +34,7 @@ namespace Langulus::CTTI
       /// Destructive version, LHS is mutable. This won't allocate unless     
       /// conversion occurs.                                                  
       static bool Default(LHS& lhs, CT::Executable auto& verb) {
-         Many const rhs = verb.GetArgument();
+         Many const rhs = verb.GetRHS();
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
             auto& rhs_typed = reinterpret_cast<TMany<LHS> const&>(rhs);
@@ -55,7 +55,7 @@ namespace Langulus::CTTI
       /// Non-destructive version, LHS is constant. Will allocate if          
       /// conversion occurs, or if verb output isn't reserved enough.         
       static bool Default(LHS const& lhs, CT::Executable auto& verb) {
-         Many const rhs = verb.GetArgument();
+         Many const rhs = verb.GetRHS();
          auto result = lhs;
          if (rhs.template IsSame<LHS>()) {
             // Easy path - types are the same                           
