@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include <Langulus/Math/Vector.hpp>
+#include <Langulus/MetaOf.hpp>
 
 
 namespace Langulus::Math
@@ -16,7 +17,7 @@ namespace Langulus::Math
    struct VectorTypeGenerator {
       template<class...T>
       static void Register(Types<T...>&&) {
-         (((void) MetaOf<TVector<T, S>>()), ...);
+         (((void) MetaDataOf<TVector<T, S>>()), ...);
       }
    };
 

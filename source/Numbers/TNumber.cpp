@@ -5,6 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
+#include <Langulus/MetaOf.hpp>
 #include <Langulus/Math/Export.hpp>
 #include <Langulus/Numbers/TAngle.hpp>
 #include <Langulus/Numbers/Level.hpp>
@@ -17,8 +18,8 @@ namespace Langulus::Math
    void RegisterNumbers() {
       RegisterAngles();
 
-      (void) MetaOf<Infinity>();
-      (void) MetaOf<Level>();
+      (void) MetaDataOf<Infinity>();
+      (void) MetaDataOf<Level>();
 
       /*(void) MetaOf<Constants::LevelHuman>();
       (void) MetaOf<Constants::LevelAsteroid>();
