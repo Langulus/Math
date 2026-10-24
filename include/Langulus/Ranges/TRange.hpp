@@ -178,7 +178,7 @@ namespace Langulus::Math
       constexpr TRange(const PointType&, const PointType&) noexcept;
       constexpr TRange(const ScalarType&, const ScalarType&) noexcept;
 
-      TRange(const CT::SIMD auto&) noexcept;
+      TRange(CT::SIMD auto const&) noexcept;
       TRange(Describe&&);
 
       ///                                                                     

@@ -29,7 +29,7 @@ namespace Langulus::Math
    /// Returns the sum of two adaptives (standing operator)                   
    ///   @return the sum of the adaptives                                     
    LANGULUS(INLINED)
-   constexpr auto operator + (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr auto operator + (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return Adaptive {
          lhs.GetMidref(commonLevel) + rhs.GetMidref(commonLevel),
@@ -38,19 +38,19 @@ namespace Langulus::Math
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS operator + (const LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr LHS operator + (LHS const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return {lhs.mValue + rhs, lhs.mLevel};
    }
 
    template<CT::Adaptive RHS> LANGULUS(INLINED)
-   constexpr RHS operator + (const CT::NotAdaptive auto& lhs, const RHS& rhs) noexcept {
+   constexpr RHS operator + (CT::NotAdaptive auto const& lhs, RHS const& rhs) noexcept {
       return {lhs + rhs.mValue, rhs.mLevel};
    }
 
    /// Returns the difference of two adaptives (standing operator)            
    ///   @return the difference of the adaptives                              
    LANGULUS(INLINED)
-   constexpr auto operator - (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr auto operator - (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return Adaptive {
          lhs.GetMidref(commonLevel) - rhs.GetMidref(commonLevel),
@@ -59,19 +59,19 @@ namespace Langulus::Math
    }
     
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS operator - (const LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr LHS operator - (LHS const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return {lhs.mValue - rhs, lhs.mLevel};
    }
 
    template<CT::Adaptive RHS> LANGULUS(INLINED)
-   constexpr RHS operator - (const CT::NotAdaptive auto& lhs, const RHS& rhs) noexcept {
+   constexpr RHS operator - (CT::NotAdaptive auto const& lhs, RHS const& rhs) noexcept {
       return {lhs - rhs.mValue, rhs.mLevel};
    }
 
    /// Returns the product of two adaptives (standing operator)               
    ///   @return the product of the adaptives                                 
    LANGULUS(INLINED)
-   constexpr auto operator * (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr auto operator * (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return Adaptive {
          lhs.GetMidref(commonLevel) * rhs.GetMidref(commonLevel),
@@ -80,19 +80,19 @@ namespace Langulus::Math
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS operator * (const LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr LHS operator * (LHS const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return {lhs.mValue * rhs, lhs.mLevel};
    }
 
    template<CT::Adaptive RHS> LANGULUS(INLINED)
-   constexpr RHS operator * (const CT::NotAdaptive auto& lhs, const RHS& rhs) noexcept {
+   constexpr RHS operator * (CT::NotAdaptive auto const& lhs, RHS const& rhs) noexcept {
       return {lhs * rhs.mValue, rhs.mLevel};
    }
 
    /// Returns the disivion of two adaptives (standing operator)              
    ///   @return the division of the adaptives                                
    LANGULUS(INLINED)
-   constexpr auto operator / (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) {
+   constexpr auto operator / (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return Adaptive {
          lhs.GetMidref(commonLevel) / rhs.GetMidref(commonLevel),
@@ -101,19 +101,19 @@ namespace Langulus::Math
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS operator / (const LHS& lhs, const CT::NotAdaptive auto& rhs) {
+   constexpr LHS operator / (LHS const& lhs, CT::NotAdaptive auto const& rhs) {
       return {lhs.mValue / rhs, lhs.mLevel};
    }
 
    template<CT::Adaptive RHS> LANGULUS(INLINED)
-   constexpr RHS operator / (const CT::NotAdaptive auto& lhs, const RHS& rhs) {
+   constexpr RHS operator / (CT::NotAdaptive auto const& lhs, RHS const& rhs) {
       return {lhs / rhs.mValue, rhs.mLevel};
    }
    
    /// Returns the remainder (a.k.a. modulation) of a division                
    ///   @return the modulo, picking a lossless type between the two          
    LANGULUS(INLINED)
-   constexpr auto operator % (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) {
+   constexpr auto operator % (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return Adaptive {
          lhs.GetMidref(commonLevel) % rhs.GetMidref(commonLevel),
@@ -122,12 +122,12 @@ namespace Langulus::Math
    }
 
    template<CT::CustomNumber LHS> LANGULUS(INLINED)
-   constexpr LHS operator % (const LHS& lhs, const CT::NotAdaptive auto& rhs) {
+   constexpr LHS operator % (LHS const& lhs, CT::NotAdaptive auto const& rhs) {
       return {lhs.mValue % rhs, lhs.mLevel};
    }
 
    template<CT::CustomNumber RHS> LANGULUS(INLINED)
-   constexpr RHS operator % (const CT::NotAdaptive auto& lhs, const RHS& rhs) {
+   constexpr RHS operator % (CT::NotAdaptive auto const& lhs, RHS const& rhs) {
       return {lhs % rhs.mValue, rhs.mLevel};
    }
 
@@ -137,45 +137,45 @@ namespace Langulus::Math
    ///                                                                        
    /// Add                                                                    
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator += (LHS& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr LHS& operator += (LHS& lhs, CT::Adaptive auto const& rhs) noexcept {
       return (lhs = lhs + rhs);
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator += (LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr LHS& operator += (LHS& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return (lhs = lhs + rhs);
    }
 
    /// Subtract                                                               
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator -= (LHS& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr LHS& operator -= (LHS& lhs, CT::Adaptive auto const& rhs) noexcept {
       return (lhs = lhs - rhs);
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator -= (LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr LHS& operator -= (LHS& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return (lhs = lhs - rhs);
    }
 
    /// Multiply                                                               
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator *= (LHS& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr LHS& operator *= (LHS& lhs, CT::Adaptive auto const& rhs) noexcept {
       return (lhs = lhs * rhs);
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator *= (LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr LHS& operator *= (LHS& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return (lhs = lhs * rhs);
    }
 
    /// Divide                                                                 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator /= (LHS& lhs, const CT::Adaptive auto& rhs) {
+   constexpr LHS& operator /= (LHS& lhs, CT::Adaptive auto const& rhs) {
       return (lhs = lhs / rhs);
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr LHS& operator /= (LHS& lhs, const CT::NotAdaptive auto& rhs) {
+   constexpr LHS& operator /= (LHS& lhs, CT::NotAdaptive auto const& rhs) {
       return (lhs = lhs / rhs);
    }
 
@@ -185,86 +185,86 @@ namespace Langulus::Math
    ///                                                                        
    /// Smaller                                                                
    LANGULUS(INLINED)
-   constexpr bool operator < (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator < (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return lhs.GetMidref(commonLevel) < rhs.GetMidref(commonLevel);
    }
 
    LANGULUS(INLINED)
-   constexpr bool operator < (const CT::Adaptive auto& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr bool operator < (CT::Adaptive auto const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return lhs.mValue < rhs;
    }
 
    LANGULUS(INLINED)
-   constexpr bool operator < (const CT::NotAdaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator < (CT::NotAdaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       return lhs < rhs.mValue;
    }
 
    /// Bigger                                                                 
    LANGULUS(INLINED)
-   constexpr bool operator > (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator > (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return lhs.GetMidref(commonLevel) > rhs.GetMidref(commonLevel);
    }
 
    LANGULUS(INLINED)
-   constexpr bool operator > (const CT::Adaptive auto& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr bool operator > (CT::Adaptive auto const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return lhs.mValue > rhs;
    }
 
    LANGULUS(INLINED)
-   constexpr bool operator > (const CT::NotAdaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator > (CT::NotAdaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       return lhs > rhs.mValue;
    }
 
    /// Bigger or equal                                                        
    LANGULUS(INLINED)
-   constexpr bool operator >= (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator >= (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return lhs.GetMidref(commonLevel) >= rhs.GetMidref(commonLevel);
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr bool operator >= (const LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr bool operator >= (LHS const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return lhs.mValue >= rhs;
    }
 
    template<CT::Adaptive RHS> LANGULUS(INLINED)
-   constexpr bool operator >= (const CT::NotAdaptive auto& lhs, const RHS& rhs) noexcept {
+   constexpr bool operator >= (CT::NotAdaptive auto const& lhs, RHS const& rhs) noexcept {
       return lhs >= rhs.mValue;
    }
 
    /// Smaller or equal                                                       
    LANGULUS(INLINED)
-   constexpr bool operator <= (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator <= (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return lhs.GetMidref(commonLevel) <= rhs.GetMidref(commonLevel);
    }
 
    LANGULUS(INLINED)
-   constexpr bool operator <= (const CT::Adaptive auto& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr bool operator <= (CT::Adaptive auto const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return lhs.mValue <= rhs;
    }
 
    LANGULUS(INLINED)
-   constexpr bool operator <= (const CT::NotAdaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator <= (CT::NotAdaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       return lhs <= rhs.mValue;
    }
 
    /// Equal                                                                  
    LANGULUS(INLINED)
-   constexpr bool operator == (const CT::Adaptive auto& lhs, const CT::Adaptive auto& rhs) noexcept {
+   constexpr bool operator == (CT::Adaptive auto const& lhs, CT::Adaptive auto const& rhs) noexcept {
       const auto commonLevel = lhs.mLevel.GetRefPoint(rhs.mLevel);
       return lhs.GetMidref(commonLevel) == rhs.GetMidref(commonLevel);
    }
 
    template<CT::Adaptive LHS> LANGULUS(INLINED)
-   constexpr bool operator == (const LHS& lhs, const CT::NotAdaptive auto& rhs) noexcept {
+   constexpr bool operator == (LHS const& lhs, CT::NotAdaptive auto const& rhs) noexcept {
       return lhs.mValue == rhs;
    }
 
    template<CT::Adaptive RHS> LANGULUS(INLINED)
-   constexpr bool operator == (const CT::NotAdaptive auto& lhs, const RHS& rhs) noexcept {
+   constexpr bool operator == (CT::NotAdaptive auto const& lhs, RHS const& rhs) noexcept {
       return lhs == rhs.mValue;
    }
 }

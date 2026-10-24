@@ -39,21 +39,21 @@ namespace Langulus::Math
    }
    
    /// Construct from any vector (with conversion)                            
-   ///   @param a - vector to use                                             
+   ///   @param a vector to use                                               
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector(CT::Vector auto const& source) noexcept {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
    /// Construct from any scalar (with conversion)                            
-   ///   @param a - vector to use                                             
+   ///   @param a vector to use                                               
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector(CT::Scalar auto const& source) noexcept {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
    /// Adapt a component to the vector's internal type                        
-   ///   @param x - the component to adapt                                    
+   ///   @param x the component to adapt                                      
    ///   @return the adapted component                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr decltype(auto) TME()::Adapt(CT::Scalar auto const& x) noexcept {
@@ -106,23 +106,23 @@ namespace Langulus::Math
    }
 
    /// Construct from a vector component                                      
-   ///   @param a - component to set                                          
+   ///   @param a component to set                                            
    TEMPLATE() template<class N, CT::Dimension D> LANGULUS(INLINED)
-   constexpr TME()::TVector(const TVectorComponent<N, D>& source) noexcept
+   constexpr TME()::TVector(const TVectorComponent<N, D>& a) noexcept
       : TVector {} {
       static_assert(D::Index < S, "LHS doesn't have such dimension");
-      all[D::Index] = Adapt(source.mValue);
+      all[D::Index] = Adapt(a.mValue);
    }
 
    /// Construct from a SIMD register                                         
-   ///   @param source - register                                             
+   ///   @param source register                                               
    TEMPLATE() LANGULUS(INLINED)
-   TME()::TVector(const CT::SIMD auto& source) noexcept {
+   TME()::TVector(CT::SIMD auto const& source) noexcept {
       SIMD::Store(source, all);
    }
 
    /// Construct from a descriptor                                            
-   ///   @param describe - the descriptor to scan                             
+   ///   @param describe the descriptor to scan                               
    TEMPLATE()
    TME()::TVector(Describe&& describe) {
       LglsAssumeUser(describe, "Empty descriptor for TVector");
@@ -220,7 +220,7 @@ namespace Langulus::Math
    ///                                                                        
    /// Get the value of a specific component index                            
    ///   @attention assumes index is in vector's size limits                  
-   ///   @param i - index of the component (0, 1, 2 correspond to X, Y, Z)    
+   ///   @param i index of the component (0, 1, 2 correspond to X, Y, Z)      
    ///   @return a reference to the component                                 
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Get(const size_t i) const noexcept -> T const& {
@@ -242,7 +242,7 @@ namespace Langulus::Math
 
    /// Get Nth vector element                                                 
    ///   @attention assumes index is in vector's size limits                  
-   ///   @param a - index of the element (0, 1, 2 correspond to X, Y, Z)      
+   ///   @param a index of the element (0, 1, 2 correspond to X, Y, Z)        
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator [] (const size_t a) noexcept -> T& {
@@ -318,8 +318,8 @@ namespace Langulus::Math
    }
 
    /// Cast the vector to another number type, with the ability to normalize  
-   ///   @tparam AS - the type of number to cast to                           
-   ///   @tparam NORMALIZE - whether or not to normalize the result           
+   ///   @tparam AS the type of number to cast to                             
+   ///   @tparam NORMALIZE whether or not to normalize the result             
    ///   @return the converted vector                                         
    TEMPLATE() template<class AS, bool NORMALIZE> LANGULUS(INLINED)
    constexpr TVector<AS, S> TME()::AsCast() const noexcept {
@@ -335,7 +335,7 @@ namespace Langulus::Math
    }
 
    /// Multiply all components together                                       
-   ///   @tparam ALTS - number of dimensions to multiply together             
+   ///   @tparam ALTS number of dimensions to multiply together               
    ///   @return the product                                                  
    TEMPLATE() template<size_t ALTS> LANGULUS(INLINED)
    constexpr auto TME()::Volume() const noexcept {
@@ -351,7 +351,7 @@ namespace Langulus::Math
    }
 
    /// Copy scalar                                                            
-   ///   @param scalar - the scalar value                                     
+   ///   @param scalar the scalar value                                       
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (CT::Scalar auto const& scalar) noexcept -> TVector& {
@@ -359,7 +359,7 @@ namespace Langulus::Math
    }
 
    /// Copy vector                                                            
-   ///   @param vec - the vector to copy                                      
+   ///   @param vec the vector to copy                                        
    ///   @return a reference to this vector                                   
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::operator = (CT::Vector auto const& vec) noexcept -> TVector& {
@@ -367,7 +367,7 @@ namespace Langulus::Math
    }
 
    /// Set only a specific component                                          
-   ///   @param com - the component to overwrite                              
+   ///   @param com the component to overwrite                                
    ///   @return a reference to this vector                                   
    TEMPLATE() template<CT::Scalar N, CT::Dimension D> LANGULUS(INLINED)
    constexpr auto TME()::operator = (const TVectorComponent<N, D>& com) noexcept -> TVector& {
@@ -377,7 +377,7 @@ namespace Langulus::Math
    }
 
    /// Dot product                                                            
-   ///   @param other - the vector to dot with                                
+   ///   @param other the vector to dot with                                  
    ///   @return the dot product of both vectors                              
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Dot(CT::Vector auto const& other) const noexcept -> T {
@@ -391,7 +391,7 @@ namespace Langulus::Math
    }
 
    /// Cross product                                                          
-   ///   @param rhs - the vector to cross with                                
+   ///   @param rhs the vector to cross with                                  
    ///   @return the cross product of both vectors                            
    TEMPLATE() template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
    constexpr auto TME()::Cross(V const& rhs) const noexcept -> TVector<T, 3> {
@@ -411,8 +411,8 @@ namespace Langulus::Math
    }
 
    /// Clamp between a minimum and maximum                                    
-   ///   @param min - lower limit                                             
-   ///   @param max - higher limit                                            
+   ///   @param min lower limit                                               
+   ///   @param max higher limit                                              
    ///   @return the clamped equivalent of this vector                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Clamp(auto const& min, auto const& max) const noexcept -> TVector {
@@ -420,8 +420,8 @@ namespace Langulus::Math
    }
 
    /// Clamp outide a minimum and maximum                                     
-   ///   @param min - lower limit                                             
-   ///   @param max - higher limit                                            
+   ///   @param min lower limit                                               
+   ///   @param max higher limit                                              
    ///   @return the clamped equivalent of this vector                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::ClampRev(auto const& min, auto const& max) const noexcept -> TVector {
@@ -727,12 +727,12 @@ namespace Langulus::Math
    }
    
    TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
-   TME()::operator TVector<T, ALTS> const& () const noexcept {
+   constexpr TME()::operator TVector<T, ALTS> const& () const noexcept {
       return reinterpret_cast<TVector<T, ALTS> const&>(*this);
    }
    
    TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
-   TME()::operator TVector<T, ALTS>& () noexcept {
+   constexpr TME()::operator TVector<T, ALTS>& () noexcept {
       return reinterpret_cast<TVector<T, ALTS>&>(*this);
    }
    

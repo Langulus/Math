@@ -409,7 +409,7 @@ namespace Langulus::Math
                Move(force * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Level& octave) {
+            [&](Level const& octave) {
                // Apply a change in octave                              
                // All points of a physical object move to/from center   
                VERBOSE_TINSTANCE("Applying an octave: " << octave
@@ -499,7 +499,7 @@ namespace Langulus::Math
    ///   @param level - the level offset                                      
    ///   @param relative - whether or not level is relative to current        
    TEMPLATE()
-   void TME()::ChangeLevel(const Level& level, bool relative) {
+   void TME()::ChangeLevel(Level const& level, bool relative) {
       if (relative)
          mUseLevelChange += level;
       else

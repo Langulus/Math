@@ -50,13 +50,13 @@ namespace Langulus::Math
          : mValue {data}
          , mLevel {level} {}
 
-      constexpr Adaptive& operator = (const CT::Adaptive auto& rhs) noexcept {
+      constexpr Adaptive& operator = (CT::Adaptive auto const& rhs) noexcept {
          mValue = DeintCast(rhs).mValue;
          mLevel = DeintCast(rhs).mLevel;
          return *this;
       }
 
-      constexpr Adaptive& operator = (const CT::NotAdaptive auto& rhs) noexcept {
+      constexpr Adaptive& operator = (CT::NotAdaptive auto const& rhs) noexcept {
          mValue = DeintCast(rhs);
          return *this;
       }
@@ -86,50 +86,50 @@ namespace Langulus::Math
    constexpr T operator - (T const&) noexcept;
 
    /// Returns the sum of two numbers                                         
-   constexpr auto operator + (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr auto operator + (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    template<CT::Adaptive LHS>
-   constexpr LHS operator + (const LHS&, const CT::NotAdaptive auto&) noexcept;
+   constexpr LHS operator + (LHS const&, CT::NotAdaptive auto const&) noexcept;
 
    template<CT::Adaptive RHS>
-   constexpr RHS operator + (const CT::NotAdaptive auto&, const RHS&) noexcept;
+   constexpr RHS operator + (CT::NotAdaptive auto const&, RHS const&) noexcept;
 
    /// Returns the difference of two numbers                                  
-   constexpr auto operator - (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr auto operator - (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    template<CT::Adaptive LHS>
-   constexpr LHS operator - (const LHS&, const CT::NotAdaptive auto&) noexcept;
+   constexpr LHS operator - (LHS const&, CT::NotAdaptive auto const&) noexcept;
 
    template<CT::Adaptive RHS>
-   constexpr RHS operator - (const CT::NotAdaptive auto&, const RHS&) noexcept;
+   constexpr RHS operator - (CT::NotAdaptive auto const&, RHS const&) noexcept;
 
    /// Returns the product of two numbers                                     
-   constexpr auto operator * (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr auto operator * (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    template<CT::Adaptive LHS>
-   constexpr LHS operator * (const LHS&, const CT::NotAdaptive auto&) noexcept;
+   constexpr LHS operator * (LHS const&, CT::NotAdaptive auto const&) noexcept;
 
    template<CT::Adaptive RHS>
-   constexpr RHS operator * (const CT::NotAdaptive auto&, const RHS&) noexcept;
+   constexpr RHS operator * (CT::NotAdaptive auto const&, RHS const&) noexcept;
 
    /// Returns the division of two numbers                                    
-   constexpr auto operator / (const CT::Adaptive auto&, const CT::Adaptive auto&);
+   constexpr auto operator / (CT::Adaptive auto const&, CT::Adaptive auto const&);
 
    template<CT::Adaptive LHS>
-   constexpr LHS operator / (const LHS&, const CT::NotAdaptive auto&);
+   constexpr LHS operator / (LHS const&, CT::NotAdaptive auto const&);
 
    template<CT::Adaptive RHS>
-   constexpr RHS operator / (const CT::NotAdaptive auto&, const RHS&);
+   constexpr RHS operator / (CT::NotAdaptive auto const&, RHS const&);
    
    /// Returns the remainder (a.k.a. modulation) of a division                
    /// We augment c++ builtin types, by providing % operators for Real, too   
-   constexpr auto operator % (const CT::Adaptive auto&, const CT::Adaptive auto&);
+   constexpr auto operator % (CT::Adaptive auto const&, CT::Adaptive auto const&);
 
    template<CT::Adaptive LHS>
-   constexpr LHS operator % (const LHS&, const CT::NotAdaptive auto&);
+   constexpr LHS operator % (LHS const&, CT::NotAdaptive auto const&);
 
    template<CT::Adaptive RHS>
-   constexpr RHS operator % (const CT::NotAdaptive auto&, const RHS&);
+   constexpr RHS operator % (CT::NotAdaptive auto const&, RHS const&);
 
 
    ///                                                                        
@@ -137,60 +137,60 @@ namespace Langulus::Math
    ///                                                                        
    /// Add                                                                    
    template<CT::Adaptive LHS>
-   constexpr LHS& operator += (LHS&, const CT::Adaptive auto&) noexcept;
+   constexpr LHS& operator += (LHS&, CT::Adaptive auto const&) noexcept;
 
    template<CT::Adaptive LHS>
-   constexpr LHS& operator += (LHS&, const CT::NotAdaptive auto&) noexcept;
+   constexpr LHS& operator += (LHS&, CT::NotAdaptive auto const&) noexcept;
 
    /// Subtract                                                               
    template<CT::Adaptive LHS>
-   constexpr LHS& operator -= (LHS&, const CT::Adaptive auto&) noexcept;
+   constexpr LHS& operator -= (LHS&, CT::Adaptive auto const&) noexcept;
 
    template<CT::Adaptive LHS>
-   constexpr LHS& operator -= (LHS&, const CT::NotAdaptive auto&) noexcept;
+   constexpr LHS& operator -= (LHS&, CT::NotAdaptive auto const&) noexcept;
 
    /// Multiply                                                               
    template<CT::Adaptive LHS>
-   constexpr LHS& operator *= (LHS&, const CT::Adaptive auto&) noexcept;
+   constexpr LHS& operator *= (LHS&, CT::Adaptive auto const&) noexcept;
 
    template<CT::Adaptive LHS>
-   constexpr LHS& operator *= (LHS&, const CT::NotAdaptive auto&) noexcept;
+   constexpr LHS& operator *= (LHS&, CT::NotAdaptive auto const&) noexcept;
 
    /// Divide                                                                 
    template<CT::Adaptive LHS>
-   constexpr LHS& operator /= (LHS&, const CT::Adaptive auto&);
+   constexpr LHS& operator /= (LHS&, CT::Adaptive auto const&);
 
    template<CT::Adaptive LHS>
-   constexpr LHS& operator /= (LHS&, const CT::NotAdaptive auto&);
+   constexpr LHS& operator /= (LHS&, CT::NotAdaptive auto const&);
 
 
    ///                                                                        
    ///   Comparing                                                            
    ///                                                                        
    /// Smaller                                                                
-   constexpr bool operator <  (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
-   constexpr bool operator <  (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
-   constexpr bool operator <  (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator <  (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
+   constexpr bool operator <  (CT::Adaptive auto const&, CT::NotAdaptive auto const&) noexcept;
+   constexpr bool operator <  (CT::NotAdaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    /// Bigger                                                                 
-   constexpr bool operator >  (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
-   constexpr bool operator >  (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
-   constexpr bool operator >  (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator >  (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
+   constexpr bool operator >  (CT::Adaptive auto const&, CT::NotAdaptive auto const&) noexcept;
+   constexpr bool operator >  (CT::NotAdaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    /// Bigger or equal                                                        
-   constexpr bool operator >= (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
-   constexpr bool operator >= (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
-   constexpr bool operator >= (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator >= (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
+   constexpr bool operator >= (CT::Adaptive auto const&, CT::NotAdaptive auto const&) noexcept;
+   constexpr bool operator >= (CT::NotAdaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    /// Smaller or equal                                                       
-   constexpr bool operator <= (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
-   constexpr bool operator <= (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
-   constexpr bool operator <= (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator <= (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
+   constexpr bool operator <= (CT::Adaptive auto const&, CT::NotAdaptive auto const&) noexcept;
+   constexpr bool operator <= (CT::NotAdaptive auto const&, CT::Adaptive auto const&) noexcept;
 
    /// Equal                                                                  
-   constexpr bool operator == (const CT::Adaptive auto&, const CT::Adaptive auto&) noexcept;
-   constexpr bool operator == (const CT::Adaptive auto&, const CT::NotAdaptive auto&) noexcept;
-   constexpr bool operator == (const CT::NotAdaptive auto&, const CT::Adaptive auto&) noexcept;
+   constexpr bool operator == (CT::Adaptive auto const&, CT::Adaptive auto const&) noexcept;
+   constexpr bool operator == (CT::Adaptive auto const&, CT::NotAdaptive auto const&) noexcept;
+   constexpr bool operator == (CT::NotAdaptive auto const&, CT::Adaptive auto const&) noexcept;
 }
 
 #include "Adaptive.inl"

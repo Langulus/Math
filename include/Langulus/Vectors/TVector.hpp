@@ -13,6 +13,7 @@
 
 #include "../Numbers/Dimension.hpp"
 #include <Langulus/CT/Number.hpp>
+#include <Langulus/CT/Vector.hpp>
 #include <Langulus/CT/CustomVector.hpp>
 #include <Langulus/CT/Members.hpp>
 #include <Langulus/CT/Suffix.hpp>
@@ -518,17 +519,18 @@ namespace Langulus::Math
       constexpr TVector() noexcept;
       constexpr TVector(TVector const&) noexcept = default;
       constexpr TVector(TVector&&) noexcept = default;
-      explicit constexpr TVector(CT::Vector auto const&) noexcept;
-      explicit constexpr TVector(CT::Scalar auto const&) noexcept;
 
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
 
-      template<class N, CT::Dimension D>
-      constexpr TVector(TVectorComponent<N, D> const&) noexcept;
+      explicit constexpr TVector(CT::Vector auto const&) noexcept;
+      explicit constexpr TVector(CT::Scalar auto const&) noexcept;
 
-      TVector(CT::SIMD auto const&)  noexcept;
-      TVector(Describe&&);
+      template<class N, CT::Dimension D>
+      explicit constexpr TVector(TVectorComponent<N, D> const&) noexcept;
+
+      explicit TVector(CT::SIMD auto const&)  noexcept;
+      explicit TVector(Describe&&);
 
       ///                                                                     
       ///   Assignment                                                        
@@ -706,17 +708,22 @@ namespace Langulus::Math
 
       auto& Sort() noexcept;
 
+      // Explicit conversions                                           
       constexpr explicit operator T&   () const noexcept requires (S == 1);
       constexpr explicit operator bool () const noexcept;
 
       template<CT::Number N> requires (S == 1 and CT::Convertible<N, T>)
-      /*explicit*/ constexpr operator N () const noexcept;
+      explicit constexpr operator N () const noexcept;
+      
+      // Implicit conversions exist only when there's no cost           
+      constexpr operator T const& () const noexcept requires (S == 1) { return *all; }
+      constexpr operator T& () noexcept requires (S == 1) { return *all; }
       
       template<size_t ALTS> requires (ALTS < S)
-      operator TVector<T, ALTS> const& () const noexcept;
+      constexpr operator TVector<T, ALTS> const& () const noexcept;
 
       template<size_t ALTS> requires (ALTS < S)
-      operator TVector<T, ALTS>& () noexcept;
+      constexpr operator TVector<T, ALTS>& () noexcept;
 
       ///                                                                     
       ///   Iteration                                                         
@@ -731,8 +738,7 @@ namespace Langulus::Math
    #pragma pack(pop)
 
    /// Generate a lossless vector type from provided LHS and RHS types        
-   ///   @tparam LHS - left hand side, can be scalar/array/vector             
-   ///   @tparam RHS - right hand side, can be scalar/array/vector            
+   ///   @tparam LHS, RHS can be scalar/array/vector, custom or not           
    template<class LHS, class RHS>
    using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, LglsOverlapExtents(LHS{}, RHS{})>;
 }

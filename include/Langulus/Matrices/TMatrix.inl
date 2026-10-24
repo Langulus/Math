@@ -910,13 +910,8 @@ namespace Langulus::Math
 
 
    /// MARK: Multiply                                                         
-   LANGULUS(INLINED)
-   constexpr auto operator * (
-      CT::Matrix auto const& lhs,
-      CT::Matrix auto const& rhs
-   ) noexcept {
-      using LHS = Deref<decltype(lhs)>;
-      using RHS = Deref<decltype(rhs)>;
+   template<CT::Matrix LHS, CT::Matrix RHS> LANGULUS(INLINED)
+   constexpr auto operator * (LHS const& lhs, RHS const& rhs) noexcept {
       static_assert(LHS::Rows == RHS::Cols and LHS::Cols == RHS::Rows,
          "Can't multiply these matrices - their sizes aren't compatible");
       using Ret = LosslessMatrix<LHS, RHS>;
@@ -927,23 +922,12 @@ namespace Langulus::Math
          auto& rhsc = rhs.template GetColumn<COL>();
 
          Sequence<Ret::Rows>::ForEach([&]<size_t ROW>() noexcept {
-            //TODO make this more elegant somehow...
-            /*if consteval {
-               SIMD::Add(rc,
-                  SIMD::Inner::MultiplyConstexpr(
-                     lhs.template GetColumn<ROW>(),
-                     rhsc.template GetIdx<ROW>()
-                  ), rc
-               );
-            }
-            else {*/
-               SIMD::Add(rc,
-                  SIMD::Inner::Multiply(
-                     lhs.template GetColumn<ROW>(),
-                     rhsc.template GetIdx<ROW>()
-                  ), rc
-               );
-            //}
+            SIMD::Add(rc,
+               SIMD::Multiply(
+                  lhs.template GetColumn<ROW>(),
+                  rhsc.template GetIdx<ROW>()
+               ), rc
+            );
          });
       });
       return r;

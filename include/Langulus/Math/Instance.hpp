@@ -171,7 +171,7 @@ namespace Langulus::Math
       template<class K>
       void Move(const TForce<K>&, bool relative = false);
 
-      void ChangeLevel(const Level&, bool relative = false);
+      void ChangeLevel(Level const&, bool relative = false);
 
       bool operator == (const TInstance&) const noexcept = default;
    };

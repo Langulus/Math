@@ -66,7 +66,7 @@ namespace Langulus::Math
       ///   @param level - the level the camera is on                         
       ///   @param view - the camera view transformation                      
       ///   @param proj - the camera projection transformation                
-      LOD(const Level& level, const Mat4& view, const Mat4& proj)
+      LOD(Level const& level, const Mat4& view, const Mat4& proj)
          : mLevel {level}
          , mView {view}
          , mViewInverted {view.Invert()}

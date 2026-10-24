@@ -165,7 +165,7 @@ namespace Langulus::Math
 
       /// Get a reference point between two levels                            
       ///   @return a middle level                                            
-      constexpr static Level GetRefPoint(const Level& o1, const Level& o2) noexcept {
+      constexpr static Level GetRefPoint(Level const& o1, Level const& o2) noexcept {
          return o1.GetRefPoint(o2);
       }
 
