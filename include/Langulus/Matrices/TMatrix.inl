@@ -605,10 +605,9 @@ namespace Langulus::Math
    TEMPLATE() template<size_t ROW> LANGULUS(INLINED)
    auto TME()::GetRow() const noexcept -> RowType {
       static_assert(ROW < Rows, "Row index out if range");
-      T r[Cols];
-      for (unsigned col = 0; col < Cols; ++col)
-         r[col] = mColumns[col][ROW];
-      return r;
+      return LglsSequence(Cols, {
+         return RowType {mColumns[I][ROW]...};
+      });
    }
 
    TEMPLATE() template<size_t ROW> LANGULUS(INLINED)
