@@ -120,7 +120,7 @@ namespace Langulus::Math
       /// or in front of the distance                                         
       ///   If index is below zero, then we're observing from afar            
       ///   If index is above zero, then we're observing too close            
-      ///   At zero we're observing the default quality asset                 
+      ///   At zero we're observing the default quality art                   
       ///   @return the LOD index                                             
       Real GetIndex() const noexcept {
          return mLODIndex;
