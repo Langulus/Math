@@ -49,8 +49,7 @@ namespace Langulus::Math
    ///      alternatives to seamlessly integrate everywhere.                  
    #pragma pack(push, 1)
    template<class T>
-   struct TNumber : Number {
-      using CTTI_Abstract     = No;
+   struct TNumber {
       using CTTI_Number       = Yup;
       using CTTI_CustomNumber = Yup;
       using CTTI_Typed        = T;

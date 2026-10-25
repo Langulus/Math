@@ -15,15 +15,14 @@ namespace Langulus::Math
 
    ///                                                                        
    ///   Hashes without Sine                                                  
-   ///                                                                        
    ///   Credit to David Hoskins - https://www.shadertoy.com/view/4djSRW      
-   ///   Trying to find a Hash function that is the same on all systems       
+   ///                                                                        
+   /// Trying to find a Hash function that is the same on all systems         
    /// and doesn't rely on trigonometry functions that lose accuracy with     
    /// high values.                                                           
-   ///                                                                        
-   ///   @tparam DOUT - number of output dimensions                           
-   ///   @tparam DIN - number of input dimensions                             
-   ///   @tparam T - real number type to use for computation                  
+   ///   @tparam DOUT number of output dimensions                             
+   ///   @tparam DIN number of input dimensions                               
+   ///   @tparam T real number type to use for computation                    
    template<size_t DOUT, size_t DIN, CT::Real T = Real>
    struct THoskins {
       static_assert(DIN >= 1 && DIN <= 4,
@@ -33,10 +32,10 @@ namespace Langulus::Math
 
       using V = TVector<T, 4>;
       static constexpr V seed {.1031, .1030, .0973, .1099};
-      static constexpr auto v1 = CT::Same<Real, float> ? "float" : "double";
-      static constexpr auto v2 = CT::Same<Real, float> ? "vec2" : "vec2d";
-      static constexpr auto v3 = CT::Same<Real, float> ? "vec3" : "vec3d";
-      static constexpr auto v4 = CT::Same<Real, float> ? "vec4" : "vec4d";
+      static constexpr auto v1 = Same<Real, float> ? "float" : "double";
+      static constexpr auto v2 = Same<Real, float> ? "vec2" : "vec2d";
+      static constexpr auto v3 = Same<Real, float> ? "vec3" : "vec3d";
+      static constexpr auto v4 = Same<Real, float> ? "vec4" : "vec4d";
 
       /// Perform the hashing function, or get an equivalent shader code      
       template<bool GET_GLSL = false>
@@ -392,21 +391,17 @@ namespace Langulus::Math
 
    ///                                                                        
    /// Sine-based hashes                                                      
-   ///                                                                        
    /// These may be inconsistent on different GPUs and degrade with larger n  
-   ///                                                                        
 
    /// 1-1 sin hash                                                           
-   ///   @tparam T - real type to use (deducible)                             
-   ///   @param n - the number to hash                                        
+   ///   @param n the number to hash                                          
    template<CT::Real T>
    T SinHash(T const& n) noexcept {
       return Frac(Sin(n) * T {43758.5453123});
    }
 
    /// 1-2 sin hash                                                           
-   ///   @tparam T - real type to use (deducible)                             
-   ///   @param n - the number to hash                                        
+   ///   @param n the number to hash                                          
    template<CT::Real T>
    T SinHash(const TVector<T, 2>& p) noexcept {
       T h = Dot(p, TVector<T, 2>(T {127.1}, T {311.7}));
@@ -414,8 +409,7 @@ namespace Langulus::Math
    }
 
    /// 1-3 sin hash                                                           
-   ///   @tparam T - real type to use (deducible)                             
-   ///   @param n - the number to hash                                        
+   ///   @param n the number to hash                                          
    template<CT::Real T>
    T SinHash(const TVector<T, 3>& p) noexcept {
       T h = Dot(p, TVector<T, 3>(T {127.1}, T {311.7}, T {758.5453123}));
@@ -423,11 +417,9 @@ namespace Langulus::Math
    }
 
    /// Integer hashes                                                         
-   ///   @tparam T - integer type to use (deducible)                          
-   ///   @param n - the number to hash                                        
+   ///   @param n the number to hash                                          
    template<CT::Integer T>
    auto IntHash(T const& n) noexcept {
       return n * (n ^ (n >> 15));
    }
-
-} // namespace Langulus::Math
+}

@@ -293,11 +293,11 @@ namespace Langulus::Math
       }
       else {
          // The rotation axis is absolute                               
-         if constexpr (CT::Same<D, Tags::X>)
+         if constexpr (Same<D, Tags::X>)
             mAim *= QuatType::FromAxis(GetRight(), angle);
-         else if constexpr (CT::Same<D, Tags::Y>)
+         else if constexpr (Same<D, Tags::Y>)
             mAim *= QuatType::FromAxis(GetUp(), angle);
-         else if constexpr (CT::Same<D, Tags::Z>)
+         else if constexpr (Same<D, Tags::Z>)
             mAim *= QuatType::FromAxis(GetForward(), angle);
          else
             static_assert(false, "Unsupported dimension");
@@ -351,7 +351,7 @@ namespace Langulus::Math
 
       // Read relativity first                                          
       verb.ForEachDeep([&relative](Tag const& tag) {
-         if (tag.IsTrait<Tags::Relative>())
+         if (tag.IsTag<Tags::Relative>())
             relative = tag.AsCast<bool>();
       });
       verb.ForEachDeep([&relative](TMeta const& tag) {
@@ -361,12 +361,12 @@ namespace Langulus::Math
 
       verb.ForEachDeep([&](Many const& part) {
          size_t done = part.ForEach(
-            [&](const Normal& normal) {
+            [&](const Normal3& normal) {
                // Move towards normalized direction                     
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving along normal: " << normal 
                   << (relative ? " (relatively)" : ""));
-               Move(Normal {normal * verb.GetMass()}, relative);
+               Move(Normal3 {normal * verb.GetMass()}, relative);
                verb.Done();
             },
             [&](const Vec2& point) {

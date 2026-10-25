@@ -467,7 +467,6 @@ namespace Langulus::Math
    /// vectors. When swizzling, the template returns a similar vector with T  
    /// being a pointer (a so called proxy vector), in order to implement      
    /// swizzling. Proxy vectors eventually decay into conventional vectors.   
-   ///                                                                        
    TEMPLATE()
    struct TVector : Inner::TVectorBase<S, T, DEFAULT> {
    private:
@@ -508,7 +507,7 @@ namespace Langulus::Math
       using CTTI_Abstract     = No;
       using CTTI_POD          = Maybe<CT::POD<T>>;
       using CTTI_Nullable     = Maybe<DEFAULT == 0>;
-      using CTTI_Bases        = Types<VectorOfSize<S>, VectorOfType<T>, Base, T>;
+      using CTTI_Bases        = Types<VectorOfSize<S>, VectorOfType<T>, /*Base,*/ T>;
       using CTTI_Vector       = Yup;
       using CTTI_CustomVector = Yup;
 

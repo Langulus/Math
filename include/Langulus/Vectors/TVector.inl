@@ -189,7 +189,7 @@ namespace Langulus::Math
    TEMPLATE() template<CT::Serial AS, class TOKEN>
    AS TME()::Serialize() const {
       AS result;
-      constexpr bool SCOPED = S > 1 or not CT::Same<TVector, TOKEN>;
+      constexpr bool SCOPED = S > 1 or not Same<TVector, TOKEN>;
       if constexpr (SCOPED) {
          result += MetaDataOf<TOKEN>();
          result += '(';

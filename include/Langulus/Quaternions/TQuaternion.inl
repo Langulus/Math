@@ -146,11 +146,11 @@ namespace Langulus::Math
    /// Create a quaternion from an oriented angle                             
    TEMPLATE() template<CT::Angle A, CT::Dimension D> LANGULUS(INLINED)
    constexpr QUAT() QUAT()::FromAngle(const TAngle<A, D>& angle) noexcept {
-      if constexpr (CT::Same<D, Tags::X>)
+      if constexpr (Same<D, Tags::X>)
          return FromAxis(TVector<T, 4>{1, 0, 0, 0}, angle); //TODO weird MSVC bugs, can't use Axes::X for some reason
-      else if constexpr (CT::Same<D, Tags::Y>)
+      else if constexpr (Same<D, Tags::Y>)
          return FromAxis(TVector<T, 4>{0, 1, 0, 0}, angle);
-      else if constexpr (CT::Same<D, Tags::Z>)
+      else if constexpr (Same<D, Tags::Z>)
          return FromAxis(TVector<T, 4>{0, 0, 1, 0}, angle);
       else
          static_assert(false, "Unsupported dimension");

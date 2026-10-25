@@ -488,7 +488,7 @@ namespace Langulus::Math
    /*TEMPLATE() template<CT::Serial AS, class TOKEN>
    AS TME()::Serialize() const {
       AS result;
-      constexpr bool SCOPED = not CT::Same<TME(), TOKEN>;
+      constexpr bool SCOPED = not Same<TME(), TOKEN>;
       if constexpr (SCOPED) {
          result += MetaDataOf<TOKEN>();
          result += "(";
@@ -972,7 +972,7 @@ namespace Langulus::Math
    ///   @return the transformed vector                                       
    LANGULUS(INLINED)
    constexpr auto operator * (
-      CT::CustomVector auto const& lhs,
+      CT::Vector auto const& lhs,
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
@@ -988,7 +988,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator + (
-      CT::CustomVector auto const& lhs,
+      CT::Vector auto const& lhs,
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1003,7 +1003,7 @@ namespace Langulus::Math
    ///   @return the modified matrix                                          
    LANGULUS(INLINED)
    constexpr auto operator - (
-      CT::CustomVector auto const& lhs,
+      CT::Vector auto const& lhs,
       CT::Matrix auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
@@ -1019,7 +1019,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       CT::Matrix auto const& lhs,
-      CT::CustomVector auto const& rhs
+      CT::Vector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(rhs)>;
       constexpr auto C = ExtentOf<Ret>;
@@ -1035,7 +1035,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       CT::Matrix auto const& lhs,
-      CT::CustomVector auto const& rhs
+      CT::Vector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Cols][Ret::Rows];
@@ -1050,7 +1050,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       CT::Matrix auto const& lhs,
-      CT::CustomVector auto const& rhs
+      CT::Vector auto const& rhs
    ) noexcept {
       using Ret = Deref<decltype(lhs)>;
       TypeOf<Ret> result[Ret::Cols][Ret::Rows];
@@ -1156,7 +1156,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator += (
       CT::Matrix auto& lhs,
-      CT::CustomVector auto const& rhs
+      CT::Vector auto const& rhs
    ) noexcept {
       return (lhs = lhs + rhs);
    }
@@ -1185,7 +1185,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto& operator -= (
       CT::Matrix auto& lhs,
-      CT::CustomVector auto const& rhs
+      CT::Vector auto const& rhs
    ) noexcept {
       return (lhs = lhs - rhs);
    }
