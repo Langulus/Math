@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "Level.hpp"
+#include "../CT/Adaptive.hpp"
 
 
 namespace Langulus::Math
@@ -14,7 +15,6 @@ namespace Langulus::Math
    ///                                                                        
    /// Make any type adaptive, by sticking a Level member at the back and     
    /// scale properly by it on arithmetic operations.                         
-   ///                                                                        
    template<class T>
    struct Adaptive {
    private:
@@ -62,13 +62,13 @@ namespace Langulus::Math
       }
 
       /// Convert from any force to text                                      
-      explicit operator Flow::Code() const {
+      /*explicit operator Flow::Code() const {
          return static_cast<Flow::Code>(mValue);
       }
 
       constexpr operator T& () const noexcept {
          return const_cast<T&>(mValue);
-      }
+      }*/
 
       constexpr T GetMidref(Level) const noexcept;
    };
