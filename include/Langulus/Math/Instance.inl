@@ -352,7 +352,7 @@ namespace Langulus::Math
       // Read relativity first                                          
       verb.ForEachDeep([&relative](Tag const& tag) {
          if (tag.IsTag<Tags::Relative>())
-            relative = tag.AsCast<bool>();
+            relative = tag.As<bool>();
       });
       verb.ForEachDeep([&relative](TMeta const& tag) {
          if (tag == MetaTagOf<Tags::Relative>())

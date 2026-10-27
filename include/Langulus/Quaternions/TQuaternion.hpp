@@ -7,55 +7,47 @@
 ///                                                                           
 #pragma once
 #include "../Matrices/TMatrix.hpp"
+#include <Langulus/CT/Quaternion.hpp>
 
 
 namespace Langulus::Math
 {
-
-   template<CT::Scalar>
+   template<CT::Number>
    struct TQuaternion;
 
-   template<CT::Scalar T>
+   template<CT::Number T>
    using TQuat = TQuaternion<T>;
 
-   using Quaternionf = TQuaternion<Float>;
-   using Quaterniond = TQuaternion<Double>;
-   using Quaternion  = TQuaternion<Real>;
+   using Quaternionf = TQuaternion<float>;
+   using Quaterniond = TQuaternion<double>;
+   using Quaternionr = TQuaternion<Real>;
 
    using Quatf = Quaternionf;
    using Quatd = Quaterniond;
-   using Quat  = Quaternion;
+   using Quat  = Quaternionr;
 
-} // namespace Langulus::Math
-
-namespace Langulus::A
-{
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// quaternion                                                             
    struct Quaternion {
-      using CTTI_Abstract = Yup;
-      using CTTI_Concrete = Math::Quaternion;
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = Math::Quat;
    };
 
    /// Used as an imposed base for any type that can be interpretable as a    
    /// quaternion of the same type                                            
-   template<CT::Scalar T>
+   template<CT::Number T>
    struct QuaternionOfType : Quaternion {
-      using CTTI_Concrete = Math::TQuaternion<T>;
-      using CTTI_Typed = T;
-      LANGULUS_BASES(Quaternion);
+      using CTTI_Concrete  = Math::TQuaternion<T>;
+      using CTTI_Typed     = T;
+      using CTTI_Bases     = Quaternion;
    };
 
-} // namespace Langulus::A
-
-namespace Langulus::Math
-{
 
    ///                                                                        
    ///   Templated quaternion                                                 
    ///                                                                        
-   template<CT::Scalar T>
+   template<CT::Number T>
    struct TQuaternion : TVector<T, 4> {
       using Base  = TVector<T, 4>;
       using Base3 = TVector<T, 3>;
@@ -73,7 +65,7 @@ namespace Langulus::Math
 
    private:
       static consteval auto GenerateToken() {
-         constexpr auto defaultClassName = RTTI::LastCppNameOf<TQuaternion>();
+         constexpr auto defaultClassName = LastCppNameOf<TQuaternion>();
          ::std::array<char, defaultClassName.size() + 1> name {};
          ::std::size_t offset {};
 
@@ -90,14 +82,12 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named = Yes<GenerateToken()>;;
-      using CTTI_Nullable = No;
-      LANGULUS_BASES(Base, A::QuaternionOfType<T>);
-
-      // Make TQuaternion match the CT::QuaternionBased concept         
-      static constexpr bool CTTI_QuaternionTrait = true;
-      // Override the inherited trait                                   
-      static constexpr bool CTTI_VectorTrait = false;
+      using CTTI_Named        = Yes<GenerateToken()>;;
+      using CTTI_Nullable     = No;
+      using CTTI_Bases        = Types<Base, QuaternionOfType<T>>;
+      using CTTI_Quaternion   = Yup;
+      using CTTI_Vector       = No;
+      using CTTI_CustomVector = No;
 
       using Base::Base;
       constexpr TQuaternion() noexcept;
@@ -144,22 +134,21 @@ namespace Langulus::Math
    ///                                                                        
    ///   Operators that involve quaternions                                   
    ///                                                                        
-   constexpr auto operator * (const CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
-   constexpr auto operator * (const CT::QuaternionBased auto&, CT::CustomVector auto const&) noexcept;
-   constexpr auto operator * (CT::CustomVector auto const&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (CT::Quaternion auto const&, CT::Quaternion auto const&) noexcept;
+   constexpr auto operator * (CT::Quaternion auto const&, CT::CustomVector auto const&) noexcept;
+   constexpr auto operator * (CT::CustomVector auto const&, CT::Quaternion auto const&) noexcept;
 
-   constexpr void operator *= (CT::QuaternionBased auto&, const CT::QuaternionBased auto&) noexcept;
+   constexpr void operator *= (CT::Quaternion auto&, CT::Quaternion auto const&) noexcept;
 
-   constexpr auto operator + (const CT::QuaternionBased auto&, CT::Scalar auto const&) noexcept;
-   constexpr auto operator + (CT::Scalar auto const&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator + (CT::Quaternion auto const&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator + (CT::Scalar auto const&, CT::Quaternion auto const&) noexcept;
 
-   constexpr auto operator - (const CT::QuaternionBased auto&, CT::Scalar auto const&) noexcept;
-   constexpr auto operator - (CT::Scalar auto const&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator - (CT::Quaternion auto const&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator - (CT::Scalar auto const&, CT::Quaternion auto const&) noexcept;
 
-   constexpr auto operator * (const CT::QuaternionBased auto&, CT::Scalar auto const&) noexcept;
-   constexpr auto operator * (CT::Scalar auto const&, const CT::QuaternionBased auto&) noexcept;
+   constexpr auto operator * (CT::Quaternion auto const&, CT::Scalar auto const&) noexcept;
+   constexpr auto operator * (CT::Scalar auto const&, CT::Quaternion auto const&) noexcept;
 
-   constexpr auto operator / (const CT::QuaternionBased auto&, CT::Scalar auto const&);
-   constexpr auto operator / (CT::Scalar auto const&, const CT::QuaternionBased auto&);
-
-} // namespace Langulus::Math
+   constexpr auto operator / (CT::Quaternion auto const&, CT::Scalar auto const&);
+   constexpr auto operator / (CT::Scalar auto const&, CT::Quaternion auto const&);
+}

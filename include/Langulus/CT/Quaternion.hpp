@@ -12,10 +12,10 @@
 namespace Langulus::CTTI
 {
    /// Extends T by marking it as quaternion. Examples:                       
-   /// 1) template<> struct Quaternon<YourType> {};                           
-   /// 2) struct YourType { using CTTI_Quaternon = Yup; };                    
+   /// 1) template<> struct Quaternion<YourType> {};                          
+   /// 2) struct YourType { using CTTI_Quaternion = Yup; };                   
    template<class T>
-   struct Quaternon;
+   struct Quaternion;
 }
 
-LANGULUS_CTTI_CONCEPT_DECVQ(Quaternon);
+LANGULUS_CTTI_CONCEPT_DECVQ(Quaternion);
