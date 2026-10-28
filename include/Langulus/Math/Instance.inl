@@ -177,7 +177,7 @@ namespace Langulus::Math
       auto scale = GetScale() * factor;
       if (scale.IsDegenerate())
          scale = 1;
-      return A::Matrix::From<PointType>(GetAim(), translate, scale);
+      return Matrix::From<PointType>(GetAim(), translate, scale);
    }
 
    /// Get model transformation                                               
@@ -187,7 +187,7 @@ namespace Langulus::Math
       auto scale = GetScale();
       if (scale.IsDegenerate())
          scale = 1;
-      return A::Matrix::From<PointType>(GetAim(), GetPosition(), scale);
+      return Matrix::From<PointType>(GetAim(), GetPosition(), scale);
    }
 
    /// Get view transformation, relative to a given level                     
@@ -195,14 +195,14 @@ namespace Langulus::Math
    ///   @return the view matrix                                              
    TEMPLATE()
    auto TME()::GetViewTransform(Level level) const -> MatrixType {
-      return A::Matrix::From<PointType>(GetAim(), GetPosition(level));
+      return Matrix::From<PointType>(GetAim(), GetPosition(level));
    }
 
    /// Get view transformation                                                
    ///   @return the view matrix                                              
    TEMPLATE()
    auto TME()::GetViewTransform() const -> MatrixType {
-      return A::Matrix::From<PointType>(GetAim(), GetPosition());
+      return Matrix::From<PointType>(GetAim(), GetPosition());
    }
 
    /// Constrain to another instance                                          
@@ -344,8 +344,8 @@ namespace Langulus::Math
    /// Execute a move/rotate/scale verb                                       
    ///   @param verb - movement verb                                          
    TEMPLATE()
-   void TME()::Move(Flow::Verb& verb) {
-      using Annies::Block;
+   void TME()::Move(Verb& verb) {
+      //using Annies::Block;
       using Annies::Tag;
       bool relative = false;
 
@@ -354,14 +354,14 @@ namespace Langulus::Math
          if (tag.IsTag<Tags::Relative>())
             relative = tag.As<bool>();
       });
-      verb.ForEachDeep([&relative](TMeta const& tag) {
+      verb.ForEachDeep([&relative](RTTI::TMeta const& tag) {
          if (tag == MetaTagOf<Tags::Relative>())
             relative = true;
       });
 
       verb.ForEachDeep([&](Many const& part) {
          size_t done = part.ForEach(
-            [&](const Normal3& normal) {
+            [&](Normal3 const& normal) {
                // Move towards normalized direction                     
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving along normal: " << normal 
@@ -369,7 +369,7 @@ namespace Langulus::Math
                Move(Normal3 {normal * verb.GetMass()}, relative);
                verb.Done();
             },
-            [&](const Vec2& point) {
+            [&](Vec2 const& point) {
                // Move towards a point in space                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point2: " << point
@@ -377,7 +377,7 @@ namespace Langulus::Math
                Move(point * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Vec3& point) {
+            [&](Vec3 const& point) {
                // Move towards a point in space                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point3: " << point
@@ -385,7 +385,7 @@ namespace Langulus::Math
                Move(point * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Vec4& point) {
+            [&](Vec4 const& point) {
                // Move towards a point in space                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Moving to a point3: " << point
@@ -393,7 +393,7 @@ namespace Langulus::Math
                Move(point.xyz() * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Force2& force) {
+            [&](Force2 const& force) {
                // Apply a force                                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Applying a force2: " << force
@@ -401,7 +401,7 @@ namespace Langulus::Math
                Move(force * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Force3& force) {
+            [&](Force3 const& force) {
                // Apply a force                                         
                // All points move in the same direction                 
                VERBOSE_TINSTANCE("Applying a force3: " << force
@@ -417,7 +417,7 @@ namespace Langulus::Math
                ChangeLevel(octave * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Size& size) {
+            [&](Scale3 const& size) {
                // Apply a change in size                                
                // All points of a physical object move to/from center   
                VERBOSE_TINSTANCE("Applying a size: " << size

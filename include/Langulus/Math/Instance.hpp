@@ -15,6 +15,7 @@
 #include "Scale.hpp"
 #include "Quaternion.hpp"
 #include "MersenneTwister.hpp"
+#include <Langulus/TRef.hpp>
 #include <Langulus/Verbs/Move.hpp>
 
 #if 0
@@ -34,12 +35,13 @@ namespace Langulus::Math
    ///                                                                        
    template<CT::CustomVector T>
    struct TInstance {
-      using ScalarType = TypeOf<T>;
-      using PointType  = T;
-      using MatrixType = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
-      using RangeType  = TRange<T>;
-      using QuatType   = TQuaternion<ScalarType>;
-      using SizeType   = TScale<TVector<ScalarType, T::MemberCount, 1>>;
+      using ScalarType     = TypeOf<T>;
+      using PointType      = T;
+      using MatrixType     = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
+      using RangeType      = TRange<T>;
+      using QuatType       = TQuaternion<ScalarType>;
+      using SizeType       = TScale<TVector<ScalarType, T::MemberCount, 1>>;
+      using CTTI_Ability   = Verbs::Move;
       
       //                                                                
       // The following properties are reset on each Update()            
@@ -121,8 +123,6 @@ namespace Langulus::Math
       Ref<TInstance> mParent;
 
    public:
-      LANGULUS_VERBS(Verbs::Move);
-
       TInstance() noexcept = default;
 
       auto GetRange(Level) const -> RangeType;
@@ -158,22 +158,16 @@ namespace Langulus::Math
 
       auto RandomPosition(RNG&, const RangeType&) const -> PointType;
 
-      void Move(Flow::Verb&);
+      void Move(Verb&);
 
-      template<CT::Angle A, CT::Dimension D>
-      void Rotate(const TAngle<A, D>&, bool relative = false);
-
-      template<class K>
-      void Move(const TScale<K>&, bool relative = false);
-
+      void Rotate(CT::Angle auto const&, bool relative = false);
+      void Move(CT::Scale auto const&, bool relative = false);
       void Move(CT::CustomVector auto const&, bool relative = false);
-
-      template<class K>
-      void Move(const TForce<K>&, bool relative = false);
+      void Move(CT::Force auto const&, bool relative = false);
 
       void ChangeLevel(Level const&, bool relative = false);
 
-      bool operator == (const TInstance&) const noexcept = default;
+      bool operator == (TInstance const&) const noexcept = default;
    };
 }
 

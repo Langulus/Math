@@ -10,18 +10,18 @@
 #include "../Numbers/TAngle.hpp"
 #include <Langulus/CT/Matrix.hpp>
 
-#define TARGS(a)     CT::Scalar a##T, size_t a##C, size_t a##R
+#define TARGS(a)     CT::Number a##T, size_t a##C, size_t a##R
 #define TMAT(a)      TMatrix<a##T, a##C, a##R>
-#define TEMPLATE()   template<CT::Scalar T, size_t COLS, size_t ROWS>
+#define TEMPLATE()   template<CT::Number T, size_t COLS, size_t ROWS>
 #define TME()        TMatrix<T, COLS, ROWS>
 
 
 namespace Langulus::Math
 {
-   template<CT::Scalar>
+   template<CT::Number>
    struct TQuaternion;
 
-   template<CT::Scalar, size_t COLS, size_t ROWS = COLS>
+   template<CT::Number, size_t COLS, size_t ROWS = COLS>
    struct TMatrix;
 
    using Mat2  = TMatrix<Real, 2>;
