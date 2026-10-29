@@ -27,7 +27,7 @@ LANGULUS_RTTI_BOUNDARY(RTTI::MainBoundary)
 
 
 int main(int argc, char* argv[]) {
-   Math::RegisterTraits();
+   Math::RegisterTags();
    Math::RegisterVerbs();
    Math::RegisterVectors();
    Math::RegisterNormals();

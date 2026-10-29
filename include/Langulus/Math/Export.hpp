@@ -33,12 +33,13 @@ namespace Langulus::Verbs
 
 namespace Langulus::Math
 {
-   LANGULUS_API(MATH) extern void RegisterTraits();
+   LANGULUS_API(MATH) extern void RegisterTags();
    LANGULUS_API(MATH) extern void RegisterVerbs();
    LANGULUS_API(MATH) extern void RegisterPrimitives();
    LANGULUS_API(MATH) extern void RegisterVectors();
    LANGULUS_API(MATH) extern void RegisterColors();
    LANGULUS_API(MATH) extern void RegisterAngles();
+   LANGULUS_API(MATH) extern void RegisterNumbers();
    LANGULUS_API(MATH) extern void RegisterRanges();
    LANGULUS_API(MATH) extern void RegisterNormals();
 }
