@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "TVector.hpp"
+#include <Langulus/CT/Scale.hpp>
 
 
 namespace Langulus::Math
@@ -135,7 +136,7 @@ namespace Langulus::Math
 
    public:
       using CTTI_Named = Yes<GenerateToken()>;
-      //using CTTI_Typed = TypeOf<T>;
+      using CTTI_Scale = Yup;
       using CTTI_Bases = Types<
          ScaleOfSize<ExtentOf<T>>,
          ScaleOfType<TypeOf<T>>,

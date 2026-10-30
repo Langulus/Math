@@ -32,7 +32,6 @@ namespace Langulus::Math
    ///                                                                        
    /// Provides higher order functionality for rotation, translation,         
    /// scaling, and primitive collisions. Can be 2D or 3D, depending on T     
-   ///                                                                        
    template<CT::CustomVector T>
    struct TInstance {
       using ScalarType     = TypeOf<T>;
@@ -160,10 +159,10 @@ namespace Langulus::Math
 
       void Move(Verb&);
 
-      void Rotate(CT::Angle auto const&, bool relative = false);
-      void Move(CT::Scale auto const&, bool relative = false);
-      void Move(CT::CustomVector auto const&, bool relative = false);
-      void Move(CT::Force auto const&, bool relative = false);
+      void Rotate(CT::Angle auto const&,        bool relative = false);
+      void Move  (CT::Scale auto const&,        bool relative = false);
+      void Move  (CT::CustomVector auto const&, bool relative = false);
+      void Move  (CT::Force auto const&,        bool relative = false);
 
       void ChangeLevel(Level const&, bool relative = false);
 

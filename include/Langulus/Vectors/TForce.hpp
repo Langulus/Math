@@ -8,6 +8,7 @@
 #pragma once
 #include "TVector.hpp"
 #include <Langulus/Math/Adaptive.hpp>
+#include <Langulus/CT/Force.hpp>
 
 
 namespace Langulus::Math
@@ -71,17 +72,37 @@ namespace Langulus::Math
    using Force4i64 = TForce<TVector<::std::int64_t, 4>>;
    using Force4u64 = TForce<TVector<::std::uint64_t, 4>>;
 
-   using Force     = Force3;
-   using Forcef    = Force3f;
-   using Forced    = Force3d;
-   using Forcei    = Force3i;
-   using Forceu    = Force3u;
-   using Forcei8   = Force3i8;
-   using Forceu8   = Force3u8;
-   using Forcei16  = Force3i16;
-   using Forceu16  = Force3u16;
-   using Forcei32  = Force3i32;
-   using Forceu32  = Force3u32;
-   using Forcei64  = Force3i64;
-   using Forceu64  = Force3u64;
+
+   /// Abstract force that relies on the context to pick the proper type.     
+   /// A 2D world will work with Force2, a 3D world will work with Force3.    
+   /// Some contexts will demand integer forces, while others will require    
+   /// real ones. If context lacks definition, this will default to Force3,   
+   /// as it's the most versatile type, albeit a bit bigger.                  
+   struct Force {
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = Force3;
+   };
+
+   /// Similar as the above, but the size is explicitly defined.              
+   /// Only the type is decided by the context, defaulting to real.           
+   template<size_t S> requires (S>0)
+   struct ForceOfSize : Force {
+      using CTTI_Concrete = TForce<TVector<Real, S>>;
+      using CTTI_Bases    = Force;
+   };
+
+   /// Similar as the above, but the type is explicitly defined.              
+   /// Only the size is decided by the context, defaulting to 4.              
+   template<CT::Number T>
+   struct ForceOfType : Force {
+      using CTTI_Concrete = TForce<TVector<T, 4>>;
+      using CTTI_Bases    = Force;
+   };
+}
+
+namespace Langulus::CTTI
+{
+   /// Reflect all adaptives made with custom vectors as forces               
+   template<CT::CustomVector T>
+   struct Force<Math::Adaptive<T>> {};
 }
