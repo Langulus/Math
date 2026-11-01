@@ -739,7 +739,7 @@ namespace Langulus::Math
    /// Generate a lossless vector type from provided LHS and RHS types        
    ///   @tparam LHS, RHS can be scalar/array/vector, custom or not           
    template<class LHS, class RHS>
-   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, LglsOverlapExtents(LHS{}, RHS{})>;
+   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, LglsOverlapExtents(Fake<LHS>(), Fake<RHS>())>;
 }
 
 #include "TSwizzle.hpp"

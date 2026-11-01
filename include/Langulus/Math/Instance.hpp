@@ -24,6 +24,9 @@
    #define VERBOSE_TINSTANCE(a) LANGULUS(NOOP)
 #endif
 
+#define TEMPLATE()   template<CT::CustomVector T>
+#define TME()        TInstance<T>
+
 
 namespace Langulus::Math
 {
@@ -32,14 +35,14 @@ namespace Langulus::Math
    ///                                                                        
    /// Provides higher order functionality for rotation, translation,         
    /// scaling, and primitive collisions. Can be 2D or 3D, depending on T     
-   template<CT::CustomVector T>
+   TEMPLATE()
    struct TInstance {
       using ScalarType     = TypeOf<T>;
       using PointType      = T;
-      using MatrixType     = TMatrix<ScalarType, T::MemberCount + 1, T::MemberCount + 1>;
+      using MatrixType     = TMatrix<ScalarType, ExtentOf<T> + 1, ExtentOf<T> + 1>;
       using RangeType      = TRange<T>;
       using QuatType       = TQuaternion<ScalarType>;
-      using SizeType       = TScale<TVector<ScalarType, T::MemberCount, 1>>;
+      using SizeType       = TScale<TVector<ScalarType, ExtentOf<T>, 1>>;
       using CTTI_Ability   = Verbs::Move;
       
       //                                                                
@@ -171,3 +174,6 @@ namespace Langulus::Math
 }
 
 #include "Instance.inl"
+
+#undef TME
+#undef TEMPLATE

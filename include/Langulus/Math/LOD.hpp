@@ -63,10 +63,10 @@ namespace Langulus::Math
       LOD() = default;
 
       /// LOD state construction                                              
-      ///   @param level - the level the camera is on                         
-      ///   @param view - the camera view transformation                      
-      ///   @param proj - the camera projection transformation                
-      LOD(Level const& level, const Mat4& view, const Mat4& proj)
+      ///   @param level the level the camera is on                           
+      ///   @param view the camera view transformation                        
+      ///   @param proj the camera projection transformation                  
+      LOD(Level const& level, Mat4 const& view, Mat4 const& proj)
          : mLevel {level}
          , mView {view}
          , mViewInverted {view.Invert()}
@@ -86,7 +86,7 @@ namespace Langulus::Math
       /// Recalculate LOD state by specifying the model matrix                
       ///   @attention assumes the view matrices have been set prior          
       ///   @param model the model transformation                             
-      void Transform(const Mat4& model) {
+      void Transform(Mat4 const& model) {
          mModel = model;
          mModelView = mModel * mViewInverted;
          mOrigin = mModelView.GetPosition();

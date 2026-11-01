@@ -287,7 +287,7 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Typed = Yes<GenerateToken()>;
+      using CTTI_Named = Yes<GenerateToken()>;
       using CTTI_Bases = Types<T, AngleOfDimension<D>, AngleOfType<T>>;
 
       using Dimension = D;

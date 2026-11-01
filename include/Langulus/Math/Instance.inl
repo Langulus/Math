@@ -8,16 +8,12 @@
 #pragma once 
 #include "Instance.hpp"
 
-#define TEMPLATE()   template<CT::CustomVector T>
-#define TME()        TInstance<T>
-
 
 namespace Langulus::Math
 {
-
    /// Get the range of the instance (aka AABB) from a ref level              
    /// This doesn't take rotation into account, only scaling                  
-   ///   @param level - the reference level                                   
+   ///   @param level the reference level                                     
    ///   @return the AABB range                                               
    TEMPLATE()
    auto TME()::GetRange(Level level) const -> RangeType {
@@ -29,7 +25,7 @@ namespace Langulus::Math
 
    /// Get the range of the instance (aka AABB) from a ref level              
    /// This takes rotation and scale into account                             
-   ///   @param level - the reference level                                   
+   ///   @param level the reference level                                     
    ///   @return the AABB range                                               
    TEMPLATE()
    auto TME()::GetRangeRotated(Level level) const -> RangeType {
@@ -69,7 +65,7 @@ namespace Langulus::Math
    }
 
    /// Get the future-projected position                                      
-   ///   @param dt - delta time between frames                                
+   ///   @param dt delta time between frames                                  
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
    auto TME()::GetPositionNext(const ScalarType& dt) const noexcept -> PointType {
@@ -77,7 +73,7 @@ namespace Langulus::Math
    }
 
    /// Get the past-projected position                                        
-   ///   @param dt - delta time between frames                                
+   ///   @param dt delta time between frames                                  
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
    auto TME()::GetPositionPrev(const ScalarType& dt) const noexcept -> PointType {
@@ -85,7 +81,7 @@ namespace Langulus::Math
    }
 
    /// Get the future-projected velocity                                      
-   ///   @param dt - delta time between frames                                
+   ///   @param dt delta time between frames                                  
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
    auto TME()::GetVelocityNext(const ScalarType& dt) const noexcept -> PointType {
@@ -93,7 +89,7 @@ namespace Langulus::Math
    }
 
    /// Get the past-projected velocity                                        
-   ///   @param dt - delta time between frames                                
+   ///   @param dt delta time between frames                                  
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
    auto TME()::GetVelocityPrev(const ScalarType& dt) const noexcept -> PointType {
@@ -122,7 +118,7 @@ namespace Langulus::Math
    }
 
    /// Get scale, relative to a given octave                                  
-   ///   @param octave - the octave                                           
+   ///   @param octave the octave                                             
    ///   @return the scale                                                    
    TEMPLATE()
    auto TME()::GetScale(Level level) const -> SizeType {
@@ -145,7 +141,7 @@ namespace Langulus::Math
    }
 
    /// Get position, relative to a given level                                
-   ///   @param level - the level                                             
+   ///   @param level the level                                               
    ///   @return the position                                                 
    TEMPLATE()
    auto TME()::GetPosition(Level level) const -> PointType {
@@ -168,7 +164,7 @@ namespace Langulus::Math
    }
 
    /// Get model transformation, relative to a given level                    
-   ///   @param level - the level                                             
+   ///   @param level the level                                               
    ///   @return the model matrix                                             
    TEMPLATE()
    auto TME()::GetModelTransform(Level level) const -> MatrixType {
@@ -191,7 +187,7 @@ namespace Langulus::Math
    }
 
    /// Get view transformation, relative to a given level                     
-   ///   @param level - the level                                             
+   ///   @param level the level                                               
    ///   @return the view matrix                                              
    TEMPLATE()
    auto TME()::GetViewTransform(Level level) const -> MatrixType {
@@ -206,8 +202,8 @@ namespace Langulus::Math
    }
 
    /// Constrain to another instance                                          
-   ///   @param limits - instance representing the possible volume            
-   ///   @param range - symoblic range that transforms the limits             
+   ///   @param limits instance representing the possible volume              
+   ///   @param range symoblic range that transforms the limits               
    TEMPLATE()
    void TME()::ConstrainPosition(const TInstance& limits, const RangeType& range) {
       // Clamp inside object                                            
@@ -229,7 +225,7 @@ namespace Langulus::Math
 
    /// Set relative or absolute scale                                         
    ///   @tparam RELATIVE - if true, then ignores mParent chain               
-   ///   @param scale - the new scale                                         
+   ///   @param scale the new scale                                           
    TEMPLATE() template<bool RELATIVE>
    void TME()::SetScale(const SizeType& scale) {
       if constexpr (RELATIVE)
@@ -243,8 +239,8 @@ namespace Langulus::Math
    }
 
    /// Set relative or absolute position                                      
-   ///   @tparam RELATIVE - if true, then ignores mParent chain               
-   ///   @param scale - the new scale                                         
+   ///   @tparam RELATIVE if true, then ignores mParent chain                 
+   ///   @param scale the new scale                                           
    TEMPLATE() template<bool RELATIVE>
    void TME()::SetPosition(const PointType& position) {
       if constexpr (RELATIVE)
@@ -258,8 +254,8 @@ namespace Langulus::Math
    }
 
    /// Get a constrained random position that uses this instance volume       
-   ///   @param rng - random number genrator to use                           
-   ///   @param range - the symbolic range for modifying the volume           
+   ///   @param rng random number genrator to use                             
+   ///   @param range the symbolic range for modifying the volume             
    ///   @return the generated position                                       
    TEMPLATE()
    auto TME()::RandomPosition(RNG& rng, const RangeType& range) const -> PointType {
@@ -283,16 +279,17 @@ namespace Langulus::Math
    }
 
    /// Rotate by euler angles                                                 
-   ///   @param angle - the oriented angle                                    
-   ///   @param relative - whether or not the angle is relative to current    
-   TEMPLATE() template<CT::Angle A, CT::Dimension D>
-   void TME()::Rotate(const TAngle<A, D>& angle, bool relative) {
+   ///   @param angle the oriented angle                                      
+   ///   @param relative whether or not the angle is relative to current      
+   TEMPLATE()
+   void TME()::Rotate(CT::Angle auto const& angle, bool relative) {
       if (relative) {
          // The rotation axis is relative                               
          mAim *= QuatType::FromAngle(angle);
       }
       else {
          // The rotation axis is absolute                               
+         using D = typename Decay<decltype(angle)>::Dimension;
          if constexpr (Same<D, Tags::X>)
             mAim *= QuatType::FromAxis(GetRight(), angle);
          else if constexpr (Same<D, Tags::Y>)
@@ -305,10 +302,10 @@ namespace Langulus::Math
    }
 
    /// Resize instance (movement inwards/outwards)                            
-   ///   @param sizer - the new size                                          
-   ///   @param relative - whether or not size is relative to current         
-   TEMPLATE() template<class K>
-   void TME()::Move(const TScale<K>& sizer, bool relative) {
+   ///   @param sizer the new size                                            
+   ///   @param relative whether or not size is relative to current           
+   TEMPLATE()
+   void TME()::Move(CT::Scale auto const& sizer, bool relative) {
       if (relative)
          mScale += sizer;
       else
@@ -317,9 +314,9 @@ namespace Langulus::Math
 
    /// Sets a new position or move along a direction - applies one-time       
    /// impulse, that can be counter-acted only by collision                   
-   ///   @param position - the new position or direction (depending if Normal 
+   ///   @param position the new position or direction (depending if Normal   
    ///      or not)                                                           
-   ///   @param relative - whether or not position/normal is relative to      
+   ///   @param relative whether or not position/normal is relative to        
    ///      current orientation                                               
    TEMPLATE()
    void TME()::Move(CT::CustomVector auto const& position, bool relative) {
@@ -331,10 +328,10 @@ namespace Langulus::Math
 
    /// Add a multioctave force - changes velocity in a persistent way, that   
    /// can be counter-acted by other forces only                              
-   ///   @param force - the force to apply                                    
-   ///   @param relative - whether or not force is relative to current        
-   TEMPLATE() template<class K>
-   void TME()::Move(const TForce<K>& force, bool relative) {
+   ///   @param force the force to apply                                      
+   ///   @param relative whether or not force is relative to current          
+   TEMPLATE()
+   void TME()::Move(CT::Force auto const& force, bool relative) {
       if (relative)
          mUseVelocity += mAim * (force.GetMidref(mLevel) * PointType {1,1,-1});
       else
@@ -342,10 +339,9 @@ namespace Langulus::Math
    }
 
    /// Execute a move/rotate/scale verb                                       
-   ///   @param verb - movement verb                                          
+   ///   @param verb movement verb                                            
    TEMPLATE()
    void TME()::Move(Verb& verb) {
-      //using Annies::Block;
       using Annies::Tag;
       bool relative = false;
 
@@ -436,7 +432,7 @@ namespace Langulus::Math
          if constexpr (T::MemberCount > 2) {
             // Yaw and pitch are allowed only above 2D                  
             done = part.ForEach(
-               [&](const Yawd& angle) {
+               [this,&verb,&relative](Yawd const& angle) {
                   // Rotate via a yaw angle (turning around Y)          
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Yaw (degrees): " << angle 
@@ -444,7 +440,7 @@ namespace Langulus::Math
                   Rotate(angle * verb.GetMass(), relative);
                   verb.Done();
                },
-               [&](const Yawr& angle) {
+               [this,&verb,&relative](Yawr const& angle) {
                   // Rotate via a yaw angle (turning around Y)          
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Yaw (radians): " << angle
@@ -452,7 +448,7 @@ namespace Langulus::Math
                   Rotate(angle * verb.GetMass(), relative);
                   verb.Done();
                },
-               [&](const Pitchd& angle) {
+               [this,&verb,&relative](Pitchd const& angle) {
                   // Rotate via a pitch angle (turning around X)        
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Pitch (degrees): " << angle 
@@ -460,7 +456,7 @@ namespace Langulus::Math
                   Rotate(angle * verb.GetMass(), relative);
                   verb.Done();
                },
-               [&](const Pitchr& angle) {
+               [this,&verb,&relative](Pitchr const& angle) {
                   // Rotate via a pitch angle (turning around X)        
                   // All points move around the center                  
                   VERBOSE_TINSTANCE("Pitch (radians): " << angle
@@ -475,7 +471,7 @@ namespace Langulus::Math
          }
 
          done = part.ForEach(
-            [&](const Rolld& angle) {
+            [this,&verb,&relative](Rolld const& angle) {
                // Rotate via a roll angle (turning around Z)            
                // All points of a physical object move around the center
                VERBOSE_TINSTANCE("Roll (degrees): " << angle 
@@ -483,7 +479,7 @@ namespace Langulus::Math
                Rotate(angle * verb.GetMass(), relative);
                verb.Done();
             },
-            [&](const Rollr& angle) {
+            [this,&verb,&relative](Rollr const& angle) {
                // Rotate via a roll angle (turning around Z)            
                // All points of a physical object move around the center
                VERBOSE_TINSTANCE("Roll (radians): " << angle
@@ -496,8 +492,8 @@ namespace Langulus::Math
    }
 
    /// Add/subtract a level, essentially resizing the instance                
-   ///   @param level - the level offset                                      
-   ///   @param relative - whether or not level is relative to current        
+   ///   @param level the level offset                                        
+   ///   @param relative whether or not level is relative to current          
    TEMPLATE()
    void TME()::ChangeLevel(Level const& level, bool relative) {
       if (relative)
@@ -505,8 +501,4 @@ namespace Langulus::Math
       else
          mUseLevelChange  = level;
    }
-
-} // namespace Langulus::Math
-
-#undef TME
-#undef TEMPLATE
+}
