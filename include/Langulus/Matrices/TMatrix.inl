@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "TMatrix.hpp"
 
 
 namespace Langulus::Math
@@ -140,7 +141,7 @@ namespace Langulus::Math
       }
       else {
          // Direct memory copy (fastest)                                
-         CopyMemory(mArray, DeintCast(a).mArray);
+         memcpy(mArray, DeintCast(a).mArray, sizeof(mArray));
       }
    }
    
