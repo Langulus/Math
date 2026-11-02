@@ -44,18 +44,19 @@ namespace Langulus::Math
 {
    ///                                                                        
    /// 2D/3D box with varying dimensions, centered around origin              
+   /// An example unit 2D box, centered at origin:                            
    ///                                                                        
-   /// An example unit 2D quad, centered at origin:                           
-   ///           ^ +Y                                                         
-   ///           |                                                            
-   ///   +-------+-------+   (.5, .5) mOffsets from origin                    
-   ///   |               |                                                    
-   ///   |               |                                                    
-   ///   |       +       |--> +X                                              
-   ///   |     origin    |                                                    
-   ///   |               |                                                    
-   ///   +---------------+                                                    
-   ///                                                                        
+   ///                             ^ +Y      (.5, .5) mOffsets from origin    
+   ///                             |        /                                 
+   ///                     +-------+-------+                                  
+   ///                     |               |                                  
+   ///                     |               |                                  
+   ///                     |       +       |--> +X                            
+   ///                     |     origin    |                                  
+   ///                     |               |                                  
+   ///                     +---------------+                                  
+   ///                    /                                                   
+   /// (-.5, -.5) mOffsets from origin                                        
    template<CT::CustomVector T>
    struct TBox {
    private:
@@ -91,6 +92,7 @@ namespace Langulus::Math
       using CTTI_Bases     = Box;
 
       using PointType = T;
+      static constexpr size_t MemberCount = ExtentOf<PointType>;
       static_assert(ExtentOf<T> > 1, "Can't have one-dimensional box");
 
       T mOffsets {.5};
