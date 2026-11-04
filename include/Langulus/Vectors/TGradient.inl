@@ -29,7 +29,7 @@ namespace Langulus::Math
    ///   @param index - the index                                             
    ///   @return a constant reference to the value                            
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto& TME()::operator [](const size_t& index) const noexcept {
+   constexpr auto& TME()::operator [](size_t const& index) const noexcept {
       if (mIndex - index < S)
          return mBuffer[mIndex - index];
       return mBuffer[S - index];
@@ -39,7 +39,7 @@ namespace Langulus::Math
    ///   @param index - the index                                             
    ///   @return a reference to the value                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto& TME()::operator [](const size_t& index) noexcept {
+   constexpr auto& TME()::operator [](size_t const& index) noexcept {
       if (mIndex - index < S)
          return mBuffer[mIndex - index];
       return mBuffer[S - index];

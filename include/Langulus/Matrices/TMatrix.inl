@@ -522,7 +522,7 @@ namespace Langulus::Math
    ///   @param i index [0; MemberCount)                                      
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t i) noexcept -> ColType& {
+   constexpr auto TME()::operator [] (size_t const i) noexcept -> ColType& {
       return mColumns[i];
    }
 
@@ -530,7 +530,7 @@ namespace Langulus::Math
    ///   @param i index [0; COLS*ROWS)                                        
    ///   @return a reference to the element                                   
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t i) const noexcept -> ColType const& {
+   constexpr auto TME()::operator [] (size_t const i) const noexcept -> ColType const& {
       return mColumns[i];
    }
 

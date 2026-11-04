@@ -223,12 +223,12 @@ namespace Langulus::Math
    ///   @param i index of the component (0, 1, 2 correspond to X, Y, Z)      
    ///   @return a reference to the component                                 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Get(const size_t i) const noexcept -> T const& {
+   constexpr auto TME()::Get(size_t const i) const noexcept -> T const& {
       return all[i];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Get(const size_t i) noexcept -> T& {
+   constexpr auto TME()::Get(size_t const i) noexcept -> T& {
       return all[i];
    }
 
@@ -245,12 +245,12 @@ namespace Langulus::Math
    ///   @param a index of the element (0, 1, 2 correspond to X, Y, Z)        
    ///   @returns a reference to the component                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t a) noexcept -> T& {
+   constexpr auto TME()::operator [] (size_t const a) noexcept -> T& {
       return all[a];
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator [] (const size_t a) const noexcept -> T const& {
+   constexpr auto TME()::operator [] (size_t const a) const noexcept -> T const& {
       return all[a];
    }
 

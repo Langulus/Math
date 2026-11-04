@@ -82,8 +82,8 @@ namespace Langulus::Math
       template<class T1, class T2, class... TAIL>
       constexpr TGradient(const T1&, const T2&, const TAIL&...) noexcept;
 
-      constexpr auto& operator [](const size_t&) const noexcept;
-      constexpr auto& operator [](const size_t&) noexcept;
+      constexpr auto& operator [](size_t const&) const noexcept;
+      constexpr auto& operator [](size_t const&) noexcept;
 
       constexpr bool operator == (const TGradient&) const noexcept;
 
