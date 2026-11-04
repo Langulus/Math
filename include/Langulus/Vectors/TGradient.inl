@@ -138,13 +138,13 @@ namespace Langulus::Math
    }
 
    /// Integrate/differentiate                                                
-   TEMPLATE()
-   void TME()::Integrate(Flow::Verb& verb) {
+   /*TEMPLATE()
+   void TME()::Integrate(Verb& verb) {
       if (verb.GetMass() > 0)
          verb << Sum();
       else if (verb.GetMass() < 0)
          verb << Delta();
-   }
+   }*/
 
    /// Convert to text                                                        
    /*TEMPLATE()

@@ -103,7 +103,7 @@ namespace Langulus::Math
 
       constexpr T Sum() const noexcept;
 
-      void Integrate(Verb&);
+      //void Integrate(Verb&);
 
       //explicit operator Flow::Code() const;
    };
