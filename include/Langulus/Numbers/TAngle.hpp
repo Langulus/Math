@@ -10,7 +10,7 @@
 #include "Dimension.hpp"
 #include <Langulus/Math/Tags.hpp>
 #include <Langulus/CT/Lossless.hpp>
-#include <Langulus/Describe.hpp>
+#include <Langulus/Annies/Functional/Describe.hpp>
 
 
 namespace Langulus::CT

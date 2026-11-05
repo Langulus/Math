@@ -8,7 +8,6 @@
 #pragma once
 #include <Langulus/Functions/Arithmetics.hpp>
 #include <Langulus/Functions/Trigonometry.hpp>
-#include <Langulus/Describe.hpp>
 #include <Langulus/CT/Swizzled.hpp>
 
 

@@ -181,6 +181,10 @@ namespace Langulus::Math
          return static_cast<size_t>(mValue - Level::Min);
       }
 
+      explicit constexpr operator int () const noexcept {
+         return static_cast<int>(mValue);
+      }
+
       using CTTI_Values = Types<
          NamedValue<Human,    "Level::Human",      "A canonical human level">,
          NamedValue<Asteroid, "Level::Asteroid",   "A canonical asteroid level">,
