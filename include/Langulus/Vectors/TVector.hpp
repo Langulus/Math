@@ -674,7 +674,7 @@ namespace Langulus::Math
       template<CT::Vector V> requires (S >= 3 and ExtentOf<V> >= 3)
       constexpr auto Cross(V const&) const noexcept -> TVector<T, 3>;
 
-      constexpr auto Normalize() const noexcept -> TVector requires (S > 1);
+      constexpr auto Normalize() const noexcept -> TVector requires (S > 1 and CT::Real<T>);
 
       constexpr auto Clamp   (auto const&, auto const&) const noexcept -> TVector;
       constexpr auto ClampRev(auto const&, auto const&) const noexcept -> TVector;
@@ -740,7 +740,11 @@ namespace Langulus::Math
    /// Generate a lossless vector type from provided LHS and RHS types        
    ///   @tparam LHS, RHS can be scalar/array/vector, custom or not           
    template<class LHS, class RHS>
-   using LosslessVector = TVector<Decay<Lossless<LHS, RHS>>, LglsOverlapExtents(Fake<LHS>(), Fake<RHS>())>;
+   using LosslessVector = TVector<
+      Decay<Lossless<LHS, RHS>>, 
+      LglsOverlapExtents(Fake<LHS>(), Fake<RHS>()), 
+      static_cast<int>(Decay<LHS>::Default)
+   >;
 }
 
 #include "TSwizzle.hpp"
@@ -865,4 +869,186 @@ namespace Langulus::CTTI
 
       NamedValue<Axes::Origin<T>,   "Origin",          "A canonical zero vector">
    > {};
+}
+
+namespace Langulus::Math
+{
+   extern template struct TVector<float, 1, 0>;
+   extern template struct TVector<double, 1, 0>;
+   extern template struct TVector<::std::int8_t, 1, 0>;
+   extern template struct TVector<::std::uint8_t, 1, 0>;
+   extern template struct TVector<::std::int16_t, 1, 0>;
+   extern template struct TVector<::std::uint16_t, 1, 0>;
+   extern template struct TVector<::std::int32_t, 1, 0>;
+   extern template struct TVector<::std::uint32_t, 1, 0>;
+   extern template struct TVector<::std::int64_t, 1, 0>;
+   extern template struct TVector<::std::uint64_t, 1, 0>;
+
+   extern template struct TVector<float, 2, 0>;
+   extern template struct TVector<double, 2, 0>;
+   extern template struct TVector<::std::int8_t, 2, 0>;
+   extern template struct TVector<::std::uint8_t, 2, 0>;
+   extern template struct TVector<::std::int16_t, 2, 0>;
+   extern template struct TVector<::std::uint16_t, 2, 0>;
+   extern template struct TVector<::std::int32_t, 2, 0>;
+   extern template struct TVector<::std::uint32_t, 2, 0>;
+   extern template struct TVector<::std::int64_t, 2, 0>;
+   extern template struct TVector<::std::uint64_t, 2, 0>;
+
+   extern template struct TVector<float, 3, 0>;
+   extern template struct TVector<double, 3, 0>;
+   extern template struct TVector<::std::int8_t, 3, 0>;
+   extern template struct TVector<::std::uint8_t, 3, 0>;
+   extern template struct TVector<::std::int16_t, 3, 0>;
+   extern template struct TVector<::std::uint16_t, 3, 0>;
+   extern template struct TVector<::std::int32_t, 3, 0>;
+   extern template struct TVector<::std::uint32_t, 3, 0>;
+   extern template struct TVector<::std::int64_t, 3, 0>;
+   extern template struct TVector<::std::uint64_t, 3, 0>;
+
+   extern template struct TVector<float, 4, 0>;
+   extern template struct TVector<double, 4, 0>;
+   extern template struct TVector<::std::int8_t, 4, 0>;
+   extern template struct TVector<::std::uint8_t, 4, 0>;
+   extern template struct TVector<::std::int16_t, 4, 0>;
+   extern template struct TVector<::std::uint16_t, 4, 0>;
+   extern template struct TVector<::std::int32_t, 4, 0>;
+   extern template struct TVector<::std::uint32_t, 4, 0>;
+   extern template struct TVector<::std::int64_t, 4, 0>;
+   extern template struct TVector<::std::uint64_t, 4, 0>;
+
+   extern template struct TVector<float, 1, 1>;
+   extern template struct TVector<double, 1, 1>;
+   extern template struct TVector<::std::int8_t, 1, 1>;
+   extern template struct TVector<::std::uint8_t, 1, 1>;
+   extern template struct TVector<::std::int16_t, 1, 1>;
+   extern template struct TVector<::std::uint16_t, 1, 1>;
+   extern template struct TVector<::std::int32_t, 1, 1>;
+   extern template struct TVector<::std::uint32_t, 1, 1>;
+   extern template struct TVector<::std::int64_t, 1, 1>;
+   extern template struct TVector<::std::uint64_t, 1, 1>;
+
+   extern template struct TVector<float, 2, 1>;
+   extern template struct TVector<double, 2, 1>;
+   extern template struct TVector<::std::int8_t, 2, 1>;
+   extern template struct TVector<::std::uint8_t, 2, 1>;
+   extern template struct TVector<::std::int16_t, 2, 1>;
+   extern template struct TVector<::std::uint16_t, 2, 1>;
+   extern template struct TVector<::std::int32_t, 2, 1>;
+   extern template struct TVector<::std::uint32_t, 2, 1>;
+   extern template struct TVector<::std::int64_t, 2, 1>;
+   extern template struct TVector<::std::uint64_t, 2, 1>;
+
+   extern template struct TVector<float, 3, 1>;
+   extern template struct TVector<double, 3, 1>;
+   extern template struct TVector<::std::int8_t, 3, 1>;
+   extern template struct TVector<::std::uint8_t, 3, 1>;
+   extern template struct TVector<::std::int16_t, 3, 1>;
+   extern template struct TVector<::std::uint16_t, 3, 1>;
+   extern template struct TVector<::std::int32_t, 3, 1>;
+   extern template struct TVector<::std::uint32_t, 3, 1>;
+   extern template struct TVector<::std::int64_t, 3, 1>;
+   extern template struct TVector<::std::uint64_t, 3, 1>;
+
+   extern template struct TVector<float, 4, 1>;
+   extern template struct TVector<double, 4, 1>;
+   extern template struct TVector<::std::int8_t, 4, 1>;
+   extern template struct TVector<::std::uint8_t, 4, 1>;
+   extern template struct TVector<::std::int16_t, 4, 1>;
+   extern template struct TVector<::std::uint16_t, 4, 1>;
+   extern template struct TVector<::std::int32_t, 4, 1>;
+   extern template struct TVector<::std::uint32_t, 4, 1>;
+   extern template struct TVector<::std::int64_t, 4, 1>;
+   extern template struct TVector<::std::uint64_t, 4, 1>;
+}
+
+namespace Langulus::RTTI
+{
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 1, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 1, 0>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 2, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 2, 0>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 3, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 3, 0>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 4, 0>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 4, 0>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 1, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 1, 1>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 2, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 2, 1>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 3, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 3, 1>>();
+
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 4, 1>>();
+   extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 4, 1>>();
 }

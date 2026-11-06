@@ -10,6 +10,8 @@
 #include <Langulus/Functions/Trigonometry.hpp>
 #include <Langulus/CT/Swizzled.hpp>
 
+#include <Langulus/Annies/Functional/Describe.hpp>
+
 
 namespace Langulus::Math
 {
@@ -402,7 +404,7 @@ namespace Langulus::Math
    /// Normalize                                                              
    ///   @return the normalized vector                                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Normalize() const noexcept -> TVector requires (S > 1) {
+   constexpr auto TME()::Normalize() const noexcept -> TVector requires (S > 1 and CT::Real<T>) {
       const auto l = Length();
       if (l == T {0})
          return TME() {};
@@ -477,16 +479,16 @@ namespace Langulus::Math
    /// Get biggest possible vector of the type                                
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Max() noexcept -> TVector {
-      return ::std::numeric_limits<T>::max();
+      return TVector {::std::numeric_limits<T>::max()};
    }
 
    /// Get smallest possible vector of the type                               
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Min() noexcept -> TVector {
       if constexpr (CT::Real<T>)
-         return {::std::numeric_limits<T>::lowest()};
+         return TVector {::std::numeric_limits<T>::lowest()};
       else
-         return {::std::numeric_limits<T>::min()};
+         return TVector {::std::numeric_limits<T>::min()};
    }
 
    /// Get maximum of each element                                            
@@ -555,7 +557,7 @@ namespace Langulus::Math
          T* it = result;
          for (auto& i : all)
             *(it++) = Math::Sign(i);
-         return result;
+         return TVector {result};
       }
    }
 
@@ -613,13 +615,13 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Frac() const noexcept -> TVector {
       if constexpr (not CT::Real<T>)
-         return {0};
+         return TVector {0};
       else {
          T result[S];
          T* it = result;
          for (auto& i : all)
             *(it++) = Math::Frac(i);
-         return result;
+         return TVector {result};
       }
    }
 
@@ -630,7 +632,7 @@ namespace Langulus::Math
       T* it = result;
       for (auto& i : all)
          *(it++) = Math::Sqrt(i);
-      return result;
+      return TVector {result};
    }
 
    /// Exponent                                                               
@@ -640,7 +642,7 @@ namespace Langulus::Math
       T* it = result;
       for (auto& i : all)
          *(it++) = Math::Exp(i);
-      return result;
+      return TVector {result};
    }
 
    /// Sine                                                                   
@@ -650,7 +652,7 @@ namespace Langulus::Math
       T* it = result;
       for (auto& i : all)
          *(it++) = Math::Sin(i);
-      return result;
+      return TVector {result};
    }
 
    /// Cosine                                                                 
@@ -660,7 +662,7 @@ namespace Langulus::Math
       T* it = result;
       for (auto& i : all)
          *(it++) = Math::Cos(i);
-      return result;
+      return TVector {result};
    }
 
    /// Quicksort                                                              
@@ -685,7 +687,7 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Warp(T const& scalar) const noexcept -> TVector {
       if constexpr (CT::Signed<T>) {
-         const auto absScale = Abs(scalar);
+         const auto absScale = Math::Abs(scalar);
          const auto halfScale = absScale / T {2};
          T result[S];
          T* it = result;
@@ -695,14 +697,14 @@ namespace Langulus::Math
                   ? i + absScale : i;
          }
 
-         return result;
+         return TVector {result};
       }
       else {
          T result[S];
          T* it = result;
          for (auto& i : all)
             *(it++) = i > scalar ? i - scalar : i;
-         return result;
+         return TVector {result};
       }
    }
 
