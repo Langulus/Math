@@ -505,6 +505,7 @@ namespace Langulus::Math
    public:
       static constexpr bool IsReal  = CT::Real<T>;
       static constexpr T    Default = static_cast<T>(DEFAULT);
+
       using ArrayType   = T[S];
       using Base        = Inner::TVectorBase<S, T, DEFAULT>;
       using PointType   = TVector;
@@ -517,6 +518,13 @@ namespace Langulus::Math
       using CTTI_Vector       = Yup;
       using CTTI_CustomVector = Yup;
 
+      // Reinterpretable vectors can use implicit cast to reference     
+      template<CT::Vector V>
+      static constexpr bool Reinterpretable = not CT::Intent<V>
+                                          and CT::CustomVector<V>
+                                          and Same<TypeOf<V>, T>
+                                          and ExtentOf<V> >= S;
+
    public:
       ///                                                                     
       ///   Construction                                                      
@@ -528,8 +536,9 @@ namespace Langulus::Math
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
 
-      explicit constexpr TVector(CT::Vector auto const&) noexcept;
-      explicit constexpr TVector(CT::Scalar auto const&) noexcept;
+      template<CT::Vector V>
+      /*explicit*/ constexpr TVector(V const&) noexcept requires (not Reinterpretable<V>);
+      /*explicit*/ constexpr TVector(CT::Scalar auto const&) noexcept;
 
       template<class N, CT::Dimension D>
       explicit constexpr TVector(TVectorComponent<N, D> const&) noexcept;
@@ -544,6 +553,9 @@ namespace Langulus::Math
       constexpr auto operator = (TVector &&)     noexcept -> TVector& = default;
       constexpr auto operator = (CT::Vector auto const&) noexcept -> TVector&;
       constexpr auto operator = (CT::Scalar auto const&) noexcept -> TVector&;
+
+      template<class SELF, class V>
+      constexpr auto operator = (this SELF&, ::std::initializer_list<V>&&) noexcept -> SELF&;
 
       template<CT::Scalar N, CT::Dimension D>
       constexpr auto operator = (TVectorComponent<N, D> const&) noexcept -> TVector&;

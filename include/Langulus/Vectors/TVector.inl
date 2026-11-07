@@ -41,8 +41,8 @@ namespace Langulus::Math
    
    /// Construct from any vector (with conversion)                            
    ///   @param a vector to use                                               
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TVector(CT::Vector auto const& source) noexcept {
+   TEMPLATE() template<CT::Vector V> LANGULUS(INLINED)
+   constexpr TME()::TVector(V const& source) noexcept requires (not Reinterpretable<V>) {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
