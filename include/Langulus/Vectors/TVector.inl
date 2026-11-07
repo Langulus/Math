@@ -10,7 +10,7 @@
 #include <Langulus/Functions/Trigonometry.hpp>
 #include <Langulus/CT/Swizzled.hpp>
 
-#include <Langulus/Annies/Functional/Describe.hpp>
+//#include <Langulus/Annies/Functional/Describe.hpp>
 
 
 namespace Langulus::Math
@@ -129,10 +129,10 @@ namespace Langulus::Math
       LglsAssumeUser(describe, "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    
-      auto initialized = describe.ExtractData(all);
+      auto initialized = describe->ExtractData(all);
       if (not initialized) {
          // Attempt converting anything to T                            
-         initialized = describe.ExtractDataAs(all);
+         initialized = describe->ExtractDataAs(all);
       }
 
       if (not initialized) {
@@ -140,7 +140,7 @@ namespace Langulus::Math
          ForEachOr(Typelists::Arithmetic{}, [&]<class AS>{
             if constexpr (not Same<T, AS>) {
                AS all_as[S];
-               initialized = describe.ExtractData(all_as);
+               initialized = describe->ExtractData(all_as);
                if (initialized)
                   SIMD::Convert<DEFAULT>(all_as, this->all);
                return initialized > 0;

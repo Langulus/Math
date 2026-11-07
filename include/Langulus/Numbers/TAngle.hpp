@@ -300,9 +300,9 @@ namespace Langulus::Math
          LglsAssumeUser(describe, "Empty descriptor for TAngle");
 
          // Attempt initializing without any conversion                 
-         if (not describe.ExtractData(mValue)) {
+         if (not describe->ExtractData(mValue)) {
             // Attempt converting anything to T                         
-            if (not describe.ExtractDataAs(mValue)) {
+            if (not describe->ExtractDataAs(mValue)) {
                // Nothing was initialized. This is always an error in   
                // the context of the describe-constructor. If descriptor
                // was empty, the default constructor would've been      

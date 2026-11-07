@@ -111,8 +111,8 @@ namespace Langulus::Math
       static constexpr Real Default = Human;
 
       /// Default (human level) construction                                  
-      constexpr Level() noexcept
-         : Base {Level::Default} {}
+      constexpr Level() noexcept = default;
+         //: Base {Level::Default} {}
 
       /// Real number construction. Supports intents.                         
       ///   @param octave the real number to interpret as level               

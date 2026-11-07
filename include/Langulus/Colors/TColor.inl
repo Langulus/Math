@@ -88,7 +88,7 @@ namespace Langulus::Math
       LglsAssumeUser(*describe, "Empty descriptor for TVector");
 
       // Attempt initializing without any conversion                    
-      auto initialized = describe.ExtractData(all);
+      auto initialized = describe->ExtractData(all);
       if constexpr (T::IsReal) {
          if (initialized) {
             // It was initialized from similar data, but we still have  
@@ -103,7 +103,7 @@ namespace Langulus::Math
          ForEachOr(Typelists::Arithmetic{}, [&]<class AS>{
             if constexpr (not Same<ScalarType, AS>) {
                AS all_as[ExtentOf<T>];
-               initialized = describe.ExtractData(all_as);
+               initialized = describe->ExtractData(all_as);
                if (initialized) {
                   if constexpr (T::IsReal and CT::Integer<AS>) {
                      // If we're initializing real color using integers,

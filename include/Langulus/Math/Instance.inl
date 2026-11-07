@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once 
 #include "Instance.hpp"
+#include <Langulus/Math/Quaternion.hpp>
 
 
 namespace Langulus::Math
@@ -227,7 +228,7 @@ namespace Langulus::Math
    ///   @tparam RELATIVE - if true, then ignores mParent chain               
    ///   @param scale the new scale                                           
    TEMPLATE() template<bool RELATIVE>
-   void TME()::SetScale(const SizeType& scale) {
+   void TME()::SetScale(CT::CustomVector auto const& scale) {
       if constexpr (RELATIVE)
          mScale = scale;
       else {
@@ -242,7 +243,7 @@ namespace Langulus::Math
    ///   @tparam RELATIVE if true, then ignores mParent chain                 
    ///   @param scale the new scale                                           
    TEMPLATE() template<bool RELATIVE>
-   void TME()::SetPosition(const PointType& position) {
+   void TME()::SetPosition(CT::CustomVector auto const& position) {
       if constexpr (RELATIVE)
          mPosition = position;
       else {

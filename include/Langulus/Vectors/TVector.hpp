@@ -22,7 +22,10 @@
 #include <Langulus/Utils/Literal.hpp>
 #include <Langulus/Math/Tags.hpp>
 #include <Langulus/TOwn.hpp>
+
 #include <Langulus/Annies/Functional/Describe.hpp>
+#include <Langulus/Annies/Functional/Deepen.hpp>
+#include <Langulus/Annies/Functional/ForEach.hpp>
 
 #define TARGS(a)     CT::Number a##T, size_t a##S, int a##D
 #define TVEC(a)      TVector<a##T, a##S, a##D>

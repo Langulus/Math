@@ -230,10 +230,10 @@ namespace Langulus::Math
 
       // Attempt initializing without any conversion                    
       T all[MemberCount];
-      auto initialized = describe.ExtractData(all);
+      auto initialized = describe->ExtractData(all);
       if (not initialized) {
          // Attempt converting anything to T                            
-         initialized = describe.ExtractDataAs(all);
+         initialized = describe->ExtractDataAs(all);
       }
 
       if (not initialized) {

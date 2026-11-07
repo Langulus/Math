@@ -154,9 +154,9 @@ namespace Langulus::Math
       void ConstrainPosition(const TInstance&, const RangeType&);
 
       template<bool RELATIVE = false>
-      void SetScale(const SizeType&);
+      void SetScale(CT::CustomVector auto const&);
       template<bool RELATIVE = false>
-      void SetPosition(const PointType&);
+      void SetPosition(CT::CustomVector auto const&);
 
       auto RandomPosition(RNG&, const RangeType&) const -> PointType;
 
