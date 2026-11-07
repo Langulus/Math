@@ -430,7 +430,7 @@ namespace Langulus::Math
          if (done > 0)
             return;
 
-         if constexpr (T::MemberCount > 2) {
+         if constexpr (Dimensions > 2) {
             // Yaw and pitch are allowed only above 2D                  
             done = part.ForEach(
                [this,&verb,&relative](Yawd const& angle) {

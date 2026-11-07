@@ -523,7 +523,7 @@ namespace Langulus::Math
       static constexpr bool Reinterpretable = not CT::Intent<V>
                                           and CT::CustomVector<V>
                                           and Same<TypeOf<V>, T>
-                                          and ExtentOf<V> >= S;
+                                          and ExtentOf<V> > S;
 
    public:
       ///                                                                     
@@ -536,8 +536,9 @@ namespace Langulus::Math
       template<class T1, class T2, class...TN>
       constexpr TVector(const T1&, const T2&, const TN&...) noexcept;
 
-      template<CT::Vector V>
-      /*explicit*/ constexpr TVector(V const&) noexcept requires (not Reinterpretable<V>);
+      //template<CT::Vector V>
+      /*explicit*/ //constexpr TVector(V const&) noexcept requires (not Reinterpretable<V>); //TODO will be useful one day if i'm able to specialize cast to reference operator for constexpr
+      /*explicit*/ constexpr TVector(CT::Vector auto const&) noexcept;
       /*explicit*/ constexpr TVector(CT::Scalar auto const&) noexcept;
 
       template<class N, CT::Dimension D>
@@ -736,11 +737,15 @@ namespace Langulus::Math
       constexpr operator T const& () const noexcept requires (S == 1) { return *all; }
       constexpr operator T& () noexcept requires (S == 1) { return *all; }
       
-      template<size_t ALTS> requires (ALTS < S)
-      constexpr operator TVector<T, ALTS> const& () const noexcept;
+      /*template<size_t ALTS, int ALTD> requires (ALTS <= S) LANGULUS(INLINED) //TODO can't make this cooperate due to constexpr and reinterpret_cast - can't specialize for constexpr only, so just rely on constructor for now
+      operator TVector<T, ALTS, ALTD> const& () const noexcept {
+         return reinterpret_cast<TVector<T, ALTS, ALTD> const&>(*this);
+      }*/
 
-      template<size_t ALTS> requires (ALTS < S)
-      constexpr operator TVector<T, ALTS>& () noexcept;
+      template<size_t ALTS, int ALTD> requires (ALTS <= S) LANGULUS(INLINED)
+      operator TVector<T, ALTS, ALTD>& () noexcept {
+         return reinterpret_cast<TVector<T, ALTS, ALTD>&>(*this);
+      }
 
       ///                                                                     
       ///   Iteration                                                         

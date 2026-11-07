@@ -41,13 +41,20 @@ namespace Langulus::Math
    
    /// Construct from any vector (with conversion)                            
    ///   @param a vector to use                                               
-   TEMPLATE() template<CT::Vector V> LANGULUS(INLINED)
+   /*TEMPLATE() template<CT::Vector V> LANGULUS(INLINED)
    constexpr TME()::TVector(V const& source) noexcept requires (not Reinterpretable<V>) {
+      SIMD::Convert<DEFAULT>(DeintCast(source), all);
+   }*/ //TODO see header for that one
+
+   /// Construct from any vector (with conversion or not, intent or not)      
+   ///   @param source vector to use                                          
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TVector(CT::Vector auto const& source) noexcept {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
    }
 
-   /// Construct from any scalar (with conversion)                            
-   ///   @param a vector to use                                               
+   /// Construct from any scalar (with conversion or not, intent or not)      
+   ///   @param source scalar to use                                          
    TEMPLATE() LANGULUS(INLINED)
    constexpr TME()::TVector(CT::Scalar auto const& source) noexcept {
       SIMD::Convert<DEFAULT>(DeintCast(source), all);
@@ -727,16 +734,6 @@ namespace Langulus::Math
       return static_cast<N>(all[0]);
    }
    
-   TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
-   constexpr TME()::operator TVector<T, ALTS> const& () const noexcept {
-      return reinterpret_cast<TVector<T, ALTS> const&>(*this);
-   }
-   
-   TEMPLATE() template<size_t ALTS> requires (ALTS < S) LANGULUS(INLINED)
-   constexpr TME()::operator TVector<T, ALTS>& () noexcept {
-      return reinterpret_cast<TVector<T, ALTS>&>(*this);
-   }
-   
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::begin() noexcept -> T* {
       return all;
@@ -923,15 +920,15 @@ namespace Langulus::Math
    /// Vector * Scalar                                                        
    LANGULUS(INLINED)
    constexpr auto operator * (CT::CustomVector auto const& lhs, CT::Scalar auto const& rhs) noexcept {
-      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
-      return Ret {SIMD::Multiply(lhs, rhs)};
+      //using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Decay<decltype(lhs)> {SIMD::Multiply(lhs, rhs)};
    }
 
    /// Scalar * Vector                                                        
    LANGULUS(INLINED)
    constexpr auto operator * (CT::Scalar auto const& lhs, CT::CustomVector auto const& rhs) noexcept {
-      using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
-      return Ret {SIMD::Multiply(lhs, rhs)};
+      //using Ret = LosslessVector<decltype(lhs), decltype(rhs)>;
+      return Decay<decltype(rhs)> {SIMD::Multiply(lhs, rhs)};
    }
 
 
@@ -952,15 +949,15 @@ namespace Langulus::Math
    /// Proxy * Scalar                                                         
    LANGULUS(INLINED)
    constexpr auto operator * (const CT::Swizzled auto& lhs, CT::Scalar auto const& rhs) noexcept {
-      using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
-      return Ret {SIMD::Multiply(lhs.GetBase(), rhs)};
+      //using Ret = LosslessVector<decltype(lhs.GetBase()), decltype(rhs)>;
+      return Decay<decltype(lhs.GetBase())> {SIMD::Multiply(lhs.GetBase(), rhs)};
    }
 
    /// Scalar * Proxy                                                         
    LANGULUS(INLINED)
    constexpr auto operator * (CT::Scalar auto const& lhs, const CT::Swizzled auto& rhs) noexcept {
-      using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
-      return Ret {SIMD::Multiply(lhs, rhs.GetBase())};
+      //using Ret = LosslessVector<decltype(lhs), decltype(rhs.GetBase())>;
+      return Decay<decltype(rhs.GetBase())> {SIMD::Multiply(lhs, rhs.GetBase())};
    }
 
 

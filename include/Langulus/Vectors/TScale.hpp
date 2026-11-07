@@ -138,8 +138,12 @@ namespace Langulus::Math
          ScaleOfType<TypeOf<T>>,
          T
       >;
+
       using T::T;
       using T::operator =;
+
+      constexpr TScale(CT::Vector auto const& other) noexcept
+         : T {other} {}
 
       static_assert(T::Default == TypeOf<T> {1},
          "Scaling type must default to 1");

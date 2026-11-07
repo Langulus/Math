@@ -10,9 +10,12 @@
 #include <Langulus/CT/Quaternion.hpp>
 
 
+#define TEMPLATE()   template<CT::Number T>
+#define QUAT()       TQuaternion<T>
+
 namespace Langulus::Math
 {
-   template<CT::Number>
+   TEMPLATE()
    struct TQuaternion;
 
    template<CT::Number T>
@@ -27,27 +30,17 @@ namespace Langulus::Math
    using Quat  = Quaternionr;
 
 
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// quaternion                                                             
+   /// Context dependent abstract quaternion. Defaults to real.               
    struct Quaternion {
       using CTTI_Abstract  = Yup;
       using CTTI_Concrete  = Math::Quat;
-   };
-
-   /// Used as an imposed base for any type that can be interpretable as a    
-   /// quaternion of the same type                                            
-   template<CT::Number T>
-   struct QuaternionOfType : Quaternion {
-      using CTTI_Concrete  = Math::TQuaternion<T>;
-      using CTTI_Typed     = T;
-      using CTTI_Bases     = Quaternion;
    };
 
 
    ///                                                                        
    ///   Templated quaternion                                                 
    ///                                                                        
-   template<CT::Number T>
+   TEMPLATE()
    struct TQuaternion : TVector<T, 4> {
       using Base  = TVector<T, 4>;
       using Base3 = TVector<T, 3>;
@@ -82,30 +75,32 @@ namespace Langulus::Math
       }
 
    public:
-      using CTTI_Named        = Yes<GenerateToken()>;;
+      using CTTI_Named        = Yes<GenerateToken()>;
       using CTTI_Nullable     = No;
-      using CTTI_Bases        = Types<Base, QuaternionOfType<T>>;
+      using CTTI_Bases        = Types<Base, Quaternion>;
       using CTTI_Quaternion   = Yup;
       using CTTI_Vector       = No;
       using CTTI_CustomVector = No;
 
       using Base::Base;
+      using Base::operator =;
+
       constexpr TQuaternion() noexcept;
-      constexpr TQuaternion(const Base&) noexcept;
-      constexpr TQuaternion(const TMatrix<T, 2>&) noexcept;
+      constexpr TQuaternion(Base const&) noexcept;
+      constexpr TQuaternion(TMatrix<T, 2> const&) noexcept;
+
       template<size_t COLUMNS, size_t ROWS>
-      constexpr TQuaternion(const TMatrix<T, COLUMNS, ROWS>&)
-         noexcept requires (COLUMNS >= 3 and ROWS >= 3);
+      constexpr TQuaternion(TMatrix<T, COLUMNS, ROWS> const&) noexcept requires (COLUMNS >= 3 and ROWS >= 3);
 
-      explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;
+      /*explicit operator Annies::Text() const;
+      explicit operator Flow::Code() const;*/
 
-      static constexpr TQuaternion FromAxis(const Base3&, CT::Angle auto const&) noexcept;
+      static constexpr TQuaternion FromAxis(Base3 const&, CT::Angle auto const&) noexcept;
 
       template<CT::Angle A, CT::Dimension D>
-      static constexpr TQuaternion FromAngle(const TAngle<A, D>&) noexcept;
+      static constexpr TQuaternion FromAngle(TAngle<A, D> const&) noexcept;
 
-      constexpr TQuaternion& LookAt(const Base3&) noexcept;
+      constexpr TQuaternion& LookAt(Base3 const&) noexcept;
 
       constexpr auto GetForward() const noexcept;
       constexpr auto GetBackward() const noexcept;
@@ -131,24 +126,30 @@ namespace Langulus::Math
    template<class LHS, class RHS>
    using LosslessQuaternion = TQuaternion<Lossless<TypeOf<LHS>, TypeOf<RHS>>>;
 
+
    ///                                                                        
    ///   Operators that involve quaternions                                   
    ///                                                                        
-   constexpr auto operator * (CT::Quaternion auto const&, CT::Quaternion auto const&) noexcept;
-   constexpr auto operator * (CT::Quaternion auto const&, CT::CustomVector auto const&) noexcept;
-   constexpr auto operator * (CT::CustomVector auto const&, CT::Quaternion auto const&) noexcept;
+   constexpr auto operator *  (CT::Quaternion   auto const&, CT::Quaternion   auto const&) noexcept;
+   constexpr auto operator *  (CT::Quaternion   auto const&, CT::CustomVector auto const&) noexcept;
+   constexpr auto operator *  (CT::CustomVector auto const&, CT::Quaternion   auto const&) noexcept;
 
    constexpr void operator *= (CT::Quaternion auto&, CT::Quaternion auto const&) noexcept;
 
-   constexpr auto operator + (CT::Quaternion auto const&, CT::Scalar auto const&) noexcept;
-   constexpr auto operator + (CT::Scalar auto const&, CT::Quaternion auto const&) noexcept;
-
-   constexpr auto operator - (CT::Quaternion auto const&, CT::Scalar auto const&) noexcept;
-   constexpr auto operator - (CT::Scalar auto const&, CT::Quaternion auto const&) noexcept;
-
-   constexpr auto operator * (CT::Quaternion auto const&, CT::Scalar auto const&) noexcept;
-   constexpr auto operator * (CT::Scalar auto const&, CT::Quaternion auto const&) noexcept;
-
-   constexpr auto operator / (CT::Quaternion auto const&, CT::Scalar auto const&);
-   constexpr auto operator / (CT::Scalar auto const&, CT::Quaternion auto const&);
+   constexpr auto operator +  (CT::Quaternion auto const&, CT::Scalar     auto const&) noexcept;
+   constexpr auto operator +  (CT::Scalar     auto const&, CT::Quaternion auto const&) noexcept;
+ 
+   constexpr auto operator -  (CT::Quaternion auto const&, CT::Scalar     auto const&) noexcept;
+   constexpr auto operator -  (CT::Scalar     auto const&, CT::Quaternion auto const&) noexcept;
+ 
+   constexpr auto operator *  (CT::Quaternion auto const&, CT::Scalar     auto const&) noexcept;
+   constexpr auto operator *  (CT::Scalar     auto const&, CT::Quaternion auto const&) noexcept;
+ 
+   constexpr auto operator /  (CT::Quaternion auto const&, CT::Scalar     auto const&);
+   constexpr auto operator /  (CT::Scalar     auto const&, CT::Quaternion auto const&);
 }
+
+#include "TQuaternion.inl"
+
+#undef TEMPLATE
+#undef QUAT

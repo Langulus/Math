@@ -51,11 +51,11 @@ namespace Langulus::Math
       using CTTI_Concrete = Mat4;
 
       template<CT::CustomVector V> static constexpr auto
-      From(const TQuaternion<TypeOf<V>>&, V const& = 0, V const& = 1) noexcept
-         -> TMatrix<TypeOf<V>, V::MemberCount + 1>;
+      From(TQuaternion<TypeOf<V>> const& aim, V const& translate = 0, V const& scale = 1) noexcept
+         -> TMatrix<TypeOf<V>, ExtentOf<V> + 1>;
 
       template<CT::Angle A, CT::Scalar T> static constexpr auto
-      PerspectiveFOV(A const&, T const& aspect, T const& near, T const& far)
+      PerspectiveFOV(A const& fov, T const& aspect, T const& near, T const& far)
          -> TMatrix<T, 4>;
 
       template<CT::Scalar T> static constexpr auto
@@ -270,7 +270,7 @@ namespace Langulus::Math
       constexpr auto GetScale() const noexcept -> TVector<T, 3>;
 
       constexpr auto GetPosition() const noexcept
-      -> const TVector<T, ROWS - 1>& requires (ROWS > 2 and COLS > 2);
+      -> TVector<T, ROWS - 1> /*const&*/ requires (ROWS > 2 and COLS > 2); //TODO could one day be possible if we are able to specialize cast-to-ref operators for constexpr
 
       constexpr auto SetPosition(CT::Vector auto const&) noexcept
       -> TMatrix& requires (ROWS > 2 and COLS > 2);

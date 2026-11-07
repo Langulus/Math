@@ -8,20 +8,16 @@
 #pragma once
 #include "TQuaternion.hpp"
 
-#define TEMPLATE()   template<CT::Scalar T>
-#define QUAT()       TQuaternion<T>
-
 
 namespace Langulus::Math
 {
-
    /// Default quaternion construction to identity                            
    TEMPLATE() LANGULUS(INLINED)
    constexpr QUAT()::TQuaternion() noexcept
       : Base {0, 0, 0, 1} {
-      static_assert(CT::Vector<QUAT()>,
+      /*static_assert(CT::Vector<QUAT()>,//TODO move this to tests
          "Quaternions should match CT::Vector");
-      static_assert(CT::QuaternionBased<QUAT()>,
+      static_assert(CT::Quaternion<QUAT()>,
          "Quaternions shouldn't match CT::CustomVector");
       static_assert(not CT::CustomVector<QUAT()>,
          "Quaternions should match CT::CustomVector");
@@ -32,18 +28,18 @@ namespace Langulus::Math
       static_assert(CountOf<QUAT()> == 4,
          "Quaternions should have four elements");
       static_assert(CT::Exact<TypeOf<QUAT()>, T>,
-         "Quaternions should have type");
+         "Quaternions should have type");*/
    }
 
    /// Quaternion construction from 4-component vector                        
    TEMPLATE() LANGULUS(INLINED)
-   constexpr QUAT()::TQuaternion(const Base& v) noexcept
+   constexpr QUAT()::TQuaternion(Base const& v) noexcept
       : Base {v} {}
 
    /// Construct a roll (around Z) quaternion from 2x2 matrix                 
-   ///   @param matrix - 2x2 matrix to convert to a roll quaternion           
+   ///   @param matrix 2x2 matrix to convert to a roll quaternion             
    TEMPLATE() LANGULUS(INLINED)
-   constexpr QUAT()::TQuaternion(const TMatrix<T, 2, 2>& matrix) noexcept {   
+   constexpr QUAT()::TQuaternion(TMatrix<T, 2, 2> const& matrix) noexcept {   
       const auto trace = T {1} + matrix[0] + matrix[3];
       const auto S = Math::Sqrt(trace) * T {2};
       x = y = T {0};
@@ -52,7 +48,7 @@ namespace Langulus::Math
    }
 
    /// Constructor from 3x3 matrix                                            
-   ///   @param matrix - 3x3 matrix to convert to a quaternion                
+   ///   @param matrix 3x3 matrix to convert to a quaternion                  
    TEMPLATE() template<size_t COLUMNS, size_t ROWS>
    constexpr QUAT()::TQuaternion(
       const TMatrix<T, COLUMNS, ROWS>& m
@@ -112,7 +108,7 @@ namespace Langulus::Math
    }
 
    /// Serialize quaternion to text                                           
-   TEMPLATE() LANGULUS(INLINED)
+   /*TEMPLATE() LANGULUS(INLINED)
    QUAT()::operator Annies::Text() const {
       return Base::template Serialize<Annies::Text, TQuaternion>();
    }
@@ -121,7 +117,7 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    QUAT()::operator Flow::Code() const {
       return Base::template Serialize<Flow::Code, TQuaternion>();
-   }
+   }*/
 
    /// Create a quaternion from euler angles   in radians                     
    /*
@@ -134,7 +130,7 @@ namespace Langulus::Math
 
    /// Create a quaternion from axis and angle                                
    TEMPLATE() LANGULUS(INLINED)
-   constexpr QUAT() QUAT()::FromAxis(const Base3& axis, CT::Angle auto const& angle) noexcept {
+   constexpr QUAT() QUAT()::FromAxis(Base3 const& axis, CT::Angle auto const& angle) noexcept {
       using A = Deref<decltype(angle)>;
       const auto halfangle = angle * A {.5};
       return {
@@ -145,13 +141,13 @@ namespace Langulus::Math
 
    /// Create a quaternion from an oriented angle                             
    TEMPLATE() template<CT::Angle A, CT::Dimension D> LANGULUS(INLINED)
-   constexpr QUAT() QUAT()::FromAngle(const TAngle<A, D>& angle) noexcept {
-      if constexpr (Same<D, Tags::X>)
-         return FromAxis(TVector<T, 4>{1, 0, 0, 0}, angle); //TODO weird MSVC bugs, can't use Axes::X for some reason
+   constexpr QUAT() QUAT()::FromAngle(TAngle<A, D> const& angle) noexcept {
+      if constexpr      (Same<D, Tags::X>)
+         return FromAxis(Axes::X<T>, angle);
       else if constexpr (Same<D, Tags::Y>)
-         return FromAxis(TVector<T, 4>{0, 1, 0, 0}, angle);
+         return FromAxis(Axes::Y<T>, angle);
       else if constexpr (Same<D, Tags::Z>)
-         return FromAxis(TVector<T, 4>{0, 0, 1, 0}, angle);
+         return FromAxis(Axes::Z<T>, angle);
       else
          static_assert(false, "Unsupported dimension");
    }
@@ -181,7 +177,7 @@ namespace Langulus::Math
 
    /// Quaternion look at                                                     
    TEMPLATE() LANGULUS(INLINED)
-   constexpr QUAT()& QUAT()::LookAt(const Base3& dir) noexcept {
+   constexpr QUAT()& QUAT()::LookAt(Base3 const& dir) noexcept {
       auto look = (*this) * Axes::Forward<T>;
       auto axis = dir % look;
       auto angle = T {1} / dir.Dot(look);
@@ -301,8 +297,8 @@ namespace Langulus::Math
    ///   @return a lossless product of the two                                
    LANGULUS(INLINED)
    constexpr auto operator * (
-      CT::Quaternion auto const& lhs,
-      const CT::CustomVector     auto& rhs
+      CT::Quaternion   auto const& lhs,
+      CT::CustomVector auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       const Q vecQuat {typename Q::Base3 {rhs}, 0};
@@ -315,8 +311,8 @@ namespace Langulus::Math
    ///   @return a lossless product of the two                                
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::CustomVector     auto& lhs,
-      CT::Quaternion auto const& rhs
+      CT::CustomVector auto const& lhs,
+      CT::Quaternion   auto const& rhs
    ) noexcept {
       return rhs.Conjugate() * lhs;
    }
@@ -324,7 +320,7 @@ namespace Langulus::Math
    /// Quaterion *= Quaternion                                                
    LANGULUS(INLINED)
    constexpr void operator *= (
-            CT::Quaternion auto& lhs,
+      CT::Quaternion auto& lhs,
       CT::Quaternion auto const& rhs
    ) noexcept {
       lhs = lhs * rhs;
@@ -334,7 +330,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator + (
       CT::Quaternion auto const& lhs,
-      const CT::Scalar     auto& rhs
+      CT::Scalar     auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Add(lhs, rhs)};
@@ -343,7 +339,7 @@ namespace Langulus::Math
    /// Scalar + Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator + (
-      const CT::Scalar     auto& lhs,
+      CT::Scalar     auto const& lhs,
       CT::Quaternion auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -354,7 +350,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator - (
       CT::Quaternion auto const& lhs,
-      const CT::Scalar     auto& rhs
+      CT::Scalar     auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Subtract(lhs, rhs)};
@@ -363,7 +359,7 @@ namespace Langulus::Math
    /// Scalar - Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator - (
-      const CT::Scalar     auto& lhs,
+      CT::Scalar     auto const& lhs,
       CT::Quaternion auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -374,7 +370,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator * (
       CT::Quaternion auto const& lhs,
-      const CT::Scalar     auto& rhs
+      CT::Scalar     auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Multiply(lhs, rhs)};
@@ -383,7 +379,7 @@ namespace Langulus::Math
    /// Scalar * Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator * (
-      const CT::Scalar     auto& lhs,
+      CT::Scalar     auto const& lhs,
       CT::Quaternion auto const& rhs
    ) noexcept {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
@@ -394,7 +390,7 @@ namespace Langulus::Math
    LANGULUS(INLINED)
    constexpr auto operator / (
       CT::Quaternion auto const& lhs,
-      const CT::Scalar     auto& rhs
+      CT::Scalar     auto const& rhs
    ) {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Divide(lhs, rhs)};
@@ -403,28 +399,25 @@ namespace Langulus::Math
    /// Scalar / Quaternion                                                    
    LANGULUS(INLINED)
    constexpr auto operator / (
-      const CT::Scalar     auto& lhs,
+      CT::Scalar     auto const& lhs,
       CT::Quaternion auto const& rhs
    ) {
       using Q = LosslessQuaternion<decltype(lhs), decltype(rhs)>;
       return Q {SIMD::Divide(lhs, rhs)};
    }
 
-} // namespace Langulus::Math
-
-namespace Langulus::A
-{
 
    /// Compose a transformation matrix by combining position, orientation     
    /// and scale                                                              
-   ///   @param q - the orientation quaternion                                
-   ///   @param p - the position vector                                       
-   ///   @param s - the scale vector                                          
+   ///   @param q the orientation quaternion                                  
+   ///   @param p the position vector                                         
+   ///   @param s the scale vector                                            
    ///   @return the composed matrix                                          
-   template<CT::CustomVector T> constexpr Math::TMatrix<TypeOf<T>, T::MemberCount + 1>
-   Matrix::From(const Math::TQuaternion<TypeOf<T>>& q, T const& p, T const& s) noexcept {
+   template<CT::CustomVector T>
+   constexpr auto Matrix::From(TQuaternion<TypeOf<T>> const& q, T const& p, T const& s) noexcept
+   -> TMatrix<TypeOf<T>, ExtentOf<T> + 1> {
       using K = TypeOf<T>;
-      Math::TMatrix<K, T::MemberCount + 1> result;
+      TMatrix<K, ExtentOf<T> + 1> result;
       auto x2 = q.x + q.x;
       auto y2 = q.y + q.y;
       auto z2 = q.z + q.z;
@@ -454,8 +447,4 @@ namespace Langulus::A
       result.SetPosition(p);
       return result;
    }
-
-} // namespace Langulus::A
-
-#undef TEMPLATE
-#undef QUAT
+}

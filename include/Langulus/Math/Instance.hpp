@@ -45,6 +45,8 @@ namespace Langulus::Math
       using SizeType       = TScale<TVector<ScalarType, ExtentOf<T>, 1>>;
       using CTTI_Ability   = Verbs::Move;
       
+      static constexpr size_t Dimensions = ExtentOf<T>;
+
       //                                                                
       // The following properties are reset on each Update()            
       // Single-tick movement incurred by simulation                    

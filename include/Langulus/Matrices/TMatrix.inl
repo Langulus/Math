@@ -583,7 +583,7 @@ namespace Langulus::Math
    /// Get translation                                                        
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::GetPosition() const noexcept
-   -> TVector<T, ROWS - 1> const& requires (ROWS > 2 and COLS > 2) {
+   -> TVector<T, ROWS - 1> /*const&*/ requires (ROWS > 2 and COLS > 2) { //TODO see header
       return mColumns[Cols - 1];
    }
 
