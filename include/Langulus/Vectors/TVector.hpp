@@ -159,7 +159,7 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<1, TYPE, DEFAULT> {
          union {
-            TYPE all[1] {static_cast<TYPE>(DEFAULT)};
+            TYPE all[1] {};
             union {
                Own<TYPE, Tags::X, Tags::R, Tags::U> x, first, r, red, u;
             };
@@ -188,6 +188,8 @@ namespace Langulus::Math
          static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
          void tail() { static_assert(false, "1D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {}
 
          /*constexpr TVectorBase() noexcept {
             all[0] = static_cast<TYPE>(DEFAULT);
@@ -218,8 +220,7 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<2, TYPE, DEFAULT> {
          union {
-            TYPE all[2] {  static_cast<TYPE>(DEFAULT),
-                           static_cast<TYPE>(DEFAULT)    };
+            TYPE all[2] {};
             struct {
                union {
                   Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
@@ -248,6 +249,8 @@ namespace Langulus::Math
          static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
          void tail() { static_assert(false, "2D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {}
 
          /*constexpr TVectorBase() noexcept {
             for (int i = 0; i < 2; ++i)
@@ -283,9 +286,7 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<3, TYPE, DEFAULT> {
          union {
-            TYPE all[3] {  static_cast<TYPE>(DEFAULT),
-                           static_cast<TYPE>(DEFAULT),
-                           static_cast<TYPE>(DEFAULT)    };
+            TYPE all[3] {};
             struct {
                union {
                   Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u;
@@ -315,6 +316,8 @@ namespace Langulus::Math
          static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
          void tail() { static_assert(false, "3D vector doesn't have a tail"); }
+
+         constexpr TVectorBase() noexcept {}
 
          /*constexpr TVectorBase() noexcept {
             for (int i = 0; i < 3; ++i)
@@ -350,10 +353,7 @@ namespace Langulus::Math
       template<CT::Number TYPE, int DEFAULT>
       struct TVectorBase<4, TYPE, DEFAULT> {
          union {
-            TYPE all[4] {  static_cast<TYPE>(DEFAULT),
-                           static_cast<TYPE>(DEFAULT),
-                           static_cast<TYPE>(DEFAULT),
-                           static_cast<TYPE>(DEFAULT)    };
+            TYPE all[4] {};
             struct {
                union { Own<TYPE, Tags::X, Tags::R, Tags::U> x, first,  r, red,   u; };
                union { Own<TYPE, Tags::Y, Tags::G, Tags::V> y, second, g, green, v; };
@@ -371,6 +371,8 @@ namespace Langulus::Math
          using CTTI_Typed = TYPE;
          using CTTI_Array = Yes<4>;
          using ScalarType = TYPE;
+
+         constexpr TVectorBase() noexcept {}
 
          void tail() { static_assert(false, "4D vector doesn't have a tail"); }
 
@@ -740,13 +742,24 @@ namespace Langulus::Math
    };
    #pragma pack(pop)
 
+   namespace Inner
+   {
+      template<class T>
+      consteval int DecideDefaultValue() {
+         if constexpr (::std::is_class_v<T>)
+            return static_cast<int>(T::Default);
+         else
+            return 0;
+      }
+   }
+
    /// Generate a lossless vector type from provided LHS and RHS types        
    ///   @tparam LHS, RHS can be scalar/array/vector, custom or not           
    template<class LHS, class RHS>
    using LosslessVector = TVector<
       Decay<Lossless<LHS, RHS>>, 
       LglsOverlapExtents(Fake<LHS>(), Fake<RHS>()), 
-      static_cast<int>(Decay<LHS>::Default)
+      Inner::DecideDefaultValue<Decay<LHS>>()
    >;
 }
 

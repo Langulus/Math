@@ -72,15 +72,14 @@ namespace Langulus::Math
    using Scale4u64   = TScale<TVector<::std::uint64_t, 4, 1>>;
 
 
-   /// Used as an imposed base for any type that can be interpretable as a 
-   /// size                                                                
+   /// Abstract scale that depends on context. Defaults to 3D real scale.     
    struct Scale {
       using CTTI_Abstract  = Yup;
       using CTTI_Concrete  = Math::Scale3;
    };
 
-   /// Used as an imposed base for any type that can be interpretable as a 
-   /// size of the same size                                               
+   /// Abstract scale of specific dimensionality that depends on context.     
+   /// Defaults to real scale.                                                
    template<size_t S>
    struct ScaleOfSize : Scale {
       using CTTI_Concrete  = Math::TScale<Math::TVector<::Langulus::Real, S, 1>>;
@@ -90,8 +89,8 @@ namespace Langulus::Math
       static_assert(S > 0, "Scale must be greater than zero");
    };
 
-   /// Used as an imposed base for any type that can be interpretable as a 
-   /// size of the same type                                               
+   /// Abstract scale of specific type that depends on context.               
+   /// Defaults to 3D scale.                                                  
    template<CT::Number T>
    struct ScaleOfType : Scale {
       using CTTI_Concrete  = Math::TScale<Math::TVector<T, 3, 1>>;
@@ -100,14 +99,11 @@ namespace Langulus::Math
    };
 
 
-   ///                                                                     
-   ///   Templated size                                                    
-   /// Vector specialization that defaults to 1 and is used for scaling    
-   ///                                                                     
+   ///                                                                        
+   /// MARK: TScale                                                           
+   /// Vector specialization that defaults to 1 and is used for scaling       
    template<CT::CustomVector T>
    struct TScale : T {
-      using T::T;
-
    private:
       static consteval auto GenerateToken() {
          constexpr auto defaultClassName = LastCppNameOf<TScale>();
@@ -120,15 +116,15 @@ namespace Langulus::Math
             return name;
          }
 
-         // Write prefix                                             
+         // Write prefix                                                
          for (auto i : "Scale")
             name[offset++] = i;
 
-         // Write size                                               
+         // Write size                                                  
          --offset;
          name[offset++] = '0' + ExtentOf<T>;
 
-         // Write suffix                                             
+         // Write suffix                                                
          for (auto i : SuffixOf<TypeOf<T>>())
             name[offset++] = i;
          return name;
@@ -142,16 +138,18 @@ namespace Langulus::Math
          ScaleOfType<TypeOf<T>>,
          T
       >;
+      using T::T;
+      using T::operator =;
 
       static_assert(T::Default == TypeOf<T> {1},
-         "Scaling type does not default to 1");
+         "Scaling type must default to 1");
 
-      /// Convert from any size to code                                    
+      /// Convert from any size to code                                       
       /*explicit operator Flow::Code() const {
          return T::template Serialize<Flow::Code, TScale>();
       }
 
-      /// Convert from any size to text                                    
+      /// Convert from any size to text                                       
       explicit operator Annies::Text() const {
          return T::template Serialize<Annies::Text, TScale>();
       }*/
