@@ -102,7 +102,6 @@ namespace Langulus::Math
 {
    ///                                                                        
    ///   Templated range                                                      
-   ///                                                                        
    #pragma pack(push, 1)
    TEMPLATE()
    struct TRange {
@@ -157,6 +156,7 @@ namespace Langulus::Math
       using CTTI_Range      = Yup;
       using CTTI_Normalized = Maybe<CT::Normalized<T>>;
       using CTTI_Typed      = ScalarType;
+      using CTTI_Vector     = No;
       using CTTI_Array      = Yes<ScalarCount>;
       using CTTI_Named      = Yes<GenerateToken()>;
       using CTTI_POD        = Maybe<CT::POD<T>>;
@@ -170,21 +170,19 @@ namespace Langulus::Math
 
    public:
       constexpr TRange() noexcept = default;
-      constexpr TRange(const TRange&) noexcept;
+      constexpr TRange(TRange const&) noexcept;
       constexpr TRange(CT::Vector auto const&) noexcept;
       constexpr TRange(CT::Vector auto const&, CT::Vector auto const&) noexcept;
       constexpr TRange(CT::Scalar auto const&) noexcept;
       constexpr TRange(CT::Scalar auto const&, CT::Scalar auto const&) noexcept;
-      constexpr TRange(const PointType&, const PointType&) noexcept;
-      constexpr TRange(const ScalarType&, const ScalarType&) noexcept;
+      constexpr TRange(PointType const&, PointType const&) noexcept;
+      constexpr TRange(ScalarType const&, ScalarType const&) noexcept;
 
       TRange(CT::SIMD auto const&) noexcept;
       TRange(Describe&&);
 
-      ///                                                                     
-      ///   Assignment                                                        
-      ///                                                                     
-      constexpr auto operator = (const TRange&) noexcept -> TRange&;
+      /// MARK: Assignment                                                    
+      constexpr auto operator = (TRange const&) noexcept -> TRange&;
       constexpr auto operator = (const CT::Range  auto&) noexcept -> TRange&;
       constexpr auto operator = (CT::Vector auto const&) noexcept -> TRange&;
       constexpr auto operator = (CT::Scalar auto const&) noexcept -> TRange&;
@@ -204,13 +202,13 @@ namespace Langulus::Math
       auto Center() const noexcept -> PointType;
 
       constexpr bool IsDegenerate() const noexcept;
-      constexpr bool Contains(const PointType&) const noexcept;
-      constexpr bool ContainsHalfClosed(const PointType&) const noexcept;
-      constexpr auto ClampRev(const PointType&) const noexcept -> PointType;
-      constexpr auto Clamp(const PointType&) const noexcept -> PointType;
+      constexpr bool Contains(PointType const&) const noexcept;
+      constexpr bool ContainsHalfClosed(PointType const&) const noexcept;
+      constexpr auto ClampRev(PointType const&) const noexcept -> PointType;
+      constexpr auto Clamp(PointType const&) const noexcept -> PointType;
 
-      constexpr auto operator |  (const TRange&) const noexcept -> TRange;
-      constexpr auto operator |= (const TRange&)       noexcept -> TRange&;
+      constexpr auto operator |  (TRange const&) const noexcept -> TRange;
+      constexpr auto operator |= (TRange const&)       noexcept -> TRange&;
 
       /// Get Nth range element                                               
       ///   @attention assumes index is in range's extent limits              

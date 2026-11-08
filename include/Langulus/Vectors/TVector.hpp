@@ -22,6 +22,7 @@
 #include <Langulus/Utils/Literal.hpp>
 #include <Langulus/Math/Tags.hpp>
 #include <Langulus/TOwn.hpp>
+#include <Langulus/Text.hpp>
 
 #include <Langulus/Annies/Functional/Describe.hpp>
 #include <Langulus/Annies/Functional/Deepen.hpp>
@@ -187,7 +188,7 @@ namespace Langulus::Math
          static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
          static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
-         void tail() { static_assert(false, "1D vector doesn't have a tail"); }
+         void tail() { /*static_assert(false, "1D vector doesn't have a tail");*/ }
 
          constexpr TVectorBase() noexcept {}
 
@@ -248,7 +249,7 @@ namespace Langulus::Math
          static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
          static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
-         void tail() { static_assert(false, "2D vector doesn't have a tail"); }
+         void tail() { /*static_assert(false, "2D vector doesn't have a tail");*/ }
 
          constexpr TVectorBase() noexcept {}
 
@@ -315,7 +316,7 @@ namespace Langulus::Math
          static constexpr TYPE alpha   = static_cast<TYPE>(DEFAULT);
          static constexpr TYPE t       = static_cast<TYPE>(DEFAULT);
 
-         void tail() { static_assert(false, "3D vector doesn't have a tail"); }
+         void tail() { /*static_assert(false, "3D vector doesn't have a tail");*/ }
 
          constexpr TVectorBase() noexcept {}
 
@@ -374,7 +375,7 @@ namespace Langulus::Math
 
          constexpr TVectorBase() noexcept {}
 
-         void tail() { static_assert(false, "4D vector doesn't have a tail"); }
+         void tail() { /*static_assert(false, "4D vector doesn't have a tail");*/ }
 
          /*constexpr TVectorBase() noexcept {
             for (int i = 0; i < 4; ++i)
@@ -621,23 +622,19 @@ namespace Langulus::Math
       constexpr auto Length() const noexcept -> T;
       constexpr bool IsDegenerate() const noexcept;
 
-      template<size_t HEAD, size_t...TAIL>
-      decltype(auto) Swz() noexcept;
-      template<size_t HEAD, size_t...TAIL>
-      constexpr decltype(auto) Swz() const noexcept;
-
       template<size_t...I>
       static constexpr bool SwzRequirements = ((S > I) and ...);
 
+      template<size_t E1, size_t...EN>
+      decltype(auto) Swz() noexcept requires SwzRequirements<E1, EN...>;
+      template<size_t E1, size_t...EN> 
+      constexpr decltype(auto) Swz() const noexcept requires SwzRequirements<E1, EN...>;
+
       /// Generate all combinations of all swizzle functions up to 4D         
       #define LANGULUS_TVECTOR_SWIZZLER(name, ...) \
-         LANGULUS(INLINED) decltype(auto) name() noexcept \
-         requires (SwzRequirements<__VA_ARGS__>) { \
-            return Swz<__VA_ARGS__>(); \
-         } \
-         LANGULUS(INLINED) decltype(auto) name() const noexcept \
-         requires (SwzRequirements<__VA_ARGS__>) { \
-            return Swz<__VA_ARGS__>(); \
+         LANGULUS(INLINED) decltype(auto) name(this auto&& self) noexcept \
+         requires SwzRequirements<__VA_ARGS__> { \
+            return self.template Swz<__VA_ARGS__>(); \
          }
 
       /// 2D Swizzlers                                                        
@@ -748,14 +745,37 @@ namespace Langulus::Math
       }
 
       ///                                                                     
-      ///   Iteration                                                         
-      ///                                                                     
+      /// MARK: Iteration                                                     
       constexpr auto begin()       noexcept -> T*;
       constexpr auto end()         noexcept -> T*;
       constexpr auto last()        noexcept -> T*;
       constexpr auto begin() const noexcept -> T const*;
       constexpr auto end()   const noexcept -> T const*;
       constexpr auto last()  const noexcept -> T const*;
+
+      /// Write the body of the vector (reused in vector specializations)     
+      ///   @return the resulting body                                        
+      template<class SELF>
+      explicit operator Annies::Text (this SELF const& self) {
+         Annies::Text result;
+         constexpr bool SCOPED = S > 1 or not Same<TVector, SELF>;
+         if constexpr (SCOPED) {
+            result += MetaDataOf<SELF>();
+            result += Serial::OpenScope.Token;
+         }
+
+         bool first = true;
+         for (auto& v : self) {
+            if (not first)
+               result += Serial::And.Token;
+            first = false;
+            result += v;
+         }
+
+         if constexpr (SCOPED)
+            result += Serial::CloseScope.Token;
+         return result;
+      }
    };
    #pragma pack(pop)
 
@@ -788,10 +808,11 @@ namespace Langulus::Math
 #undef TEMPLATE
 #undef TME
 
+LANGULUS_MORPHISM_CONCEPT(CT::CustomVector, Annies::Text);
+
 
 ///                                                                           
-///   Cardinal vectors                                                        
-///                                                                           
+/// MARK: Cardinal vectors                                                    
 namespace Langulus::Axes
 {
    using namespace ::Langulus::Math;

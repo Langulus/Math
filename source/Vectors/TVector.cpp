@@ -23,7 +23,7 @@ namespace Langulus::Math
 
    /// Register all commonly used vector types and constants, so they can be  
    /// instantiated from scripts                                              
-   void RegisterVectors() {
+   LANGULUS_EXPORT() void RegisterVectors() {
       VectorTypeGenerator<1>::Register(Typelists::Arithmetic {});
       VectorTypeGenerator<2>::Register(Typelists::Arithmetic {});
       VectorTypeGenerator<3>::Register(Typelists::Arithmetic {});

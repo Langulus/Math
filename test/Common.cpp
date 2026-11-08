@@ -23,9 +23,6 @@
 #define CATCH_CONFIG_RUNNER
 #include "Common.hpp"
 
-LANGULUS_RTTI_BOUNDARY(RTTI::MainBoundary)
-
-
 int main(int argc, char* argv[]) {
    Math::RegisterTags();
    Math::RegisterVerbs();

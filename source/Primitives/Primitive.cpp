@@ -21,7 +21,7 @@
 namespace Langulus::Math
 {
    /// Register primitives                                                    
-   void RegisterPrimitives() {
+   LANGULUS_EXPORT() void RegisterPrimitives() {
       (void) MetaOf<Box2>();
       (void) MetaOf<Box3>();
       (void) MetaOf<BoxRounded2>();

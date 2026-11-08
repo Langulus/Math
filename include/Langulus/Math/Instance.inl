@@ -69,7 +69,7 @@ namespace Langulus::Math
    ///   @param dt delta time between frames                                  
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
-   auto TME()::GetPositionNext(const ScalarType& dt) const noexcept -> PointType {
+   auto TME()::GetPositionNext(ScalarType const& dt) const noexcept -> PointType {
       return mPosition + mVelocity * dt;
    }
 
@@ -77,7 +77,7 @@ namespace Langulus::Math
    ///   @param dt delta time between frames                                  
    ///   @return the projected position, based on current velocity            
    TEMPLATE()
-   auto TME()::GetPositionPrev(const ScalarType& dt) const noexcept -> PointType {
+   auto TME()::GetPositionPrev(ScalarType const& dt) const noexcept -> PointType {
       return mPosition - mVelocity * dt;
    }
 
@@ -85,7 +85,7 @@ namespace Langulus::Math
    ///   @param dt delta time between frames                                  
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
-   auto TME()::GetVelocityNext(const ScalarType& dt) const noexcept -> PointType {
+   auto TME()::GetVelocityNext(ScalarType const& dt) const noexcept -> PointType {
       return mVelocity + mAcceleration * dt;
    }
 
@@ -93,7 +93,7 @@ namespace Langulus::Math
    ///   @param dt delta time between frames                                  
    ///   @return the projected velocity, based on current acceleration        
    TEMPLATE()
-   auto TME()::GetVelocityPrev(const ScalarType& dt) const noexcept -> PointType {
+   auto TME()::GetVelocityPrev(ScalarType const& dt) const noexcept -> PointType {
       return mVelocity - mAcceleration * dt;
    }
 

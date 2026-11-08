@@ -308,7 +308,7 @@ namespace Langulus::Math
    /// Mutable swizzle                                                        
    ///   @returns a proxy vector with the selected components                 
    TEMPLATE() template<size_t E1, size_t...EN> LANGULUS(INLINED)
-   decltype(auto) TME()::Swz() noexcept {
+   decltype(auto) TME()::Swz() noexcept requires SwzRequirements<E1, EN...> {
       if constexpr (sizeof...(EN) == 0)
          return (all[E1]);
       else
@@ -318,7 +318,7 @@ namespace Langulus::Math
    /// Immutable swizzle, just returns a shuffled vector                      
    ///   @returns a simple vector with the selected copied components         
    TEMPLATE() template<size_t E1, size_t...EN> LANGULUS(INLINED)
-   constexpr decltype(auto) TME()::Swz() const noexcept {
+   constexpr decltype(auto) TME()::Swz() const noexcept requires SwzRequirements<E1, EN...> {
       if constexpr (sizeof...(EN) == 0)
          return (all[E1]);
       else

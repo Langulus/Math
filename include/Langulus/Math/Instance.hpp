@@ -132,10 +132,10 @@ namespace Langulus::Math
       auto GetRange(Level) const -> RangeType;
       auto GetRangeRotated(Level) const -> RangeType;
 
-      auto GetPositionNext(const ScalarType&) const noexcept -> PointType;
-      auto GetPositionPrev(const ScalarType&) const noexcept -> PointType;
-      auto GetVelocityNext(const ScalarType&) const noexcept -> PointType;
-      auto GetVelocityPrev(const ScalarType&) const noexcept -> PointType;
+      auto GetPositionNext(ScalarType const&) const noexcept -> PointType;
+      auto GetPositionPrev(ScalarType const&) const noexcept -> PointType;
+      auto GetVelocityNext(ScalarType const&) const noexcept -> PointType;
+      auto GetVelocityPrev(ScalarType const&) const noexcept -> PointType;
 
       auto GetRight() const noexcept -> PointType;
       auto GetUp() const noexcept -> PointType;

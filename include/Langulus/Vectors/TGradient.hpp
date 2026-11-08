@@ -58,7 +58,6 @@ namespace Langulus::Math
    ///                                                                        
    /// Useful for capsulating continuous properties and getting their         
    /// derivatives. Can capsulate anything, as long as it is arithmetic.      
-   ///                                                                        
    #pragma pack(push, 1)
    TEMPLATE() class TGradient {
    protected:

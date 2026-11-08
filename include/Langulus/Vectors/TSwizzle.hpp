@@ -14,7 +14,6 @@ namespace Langulus::Math::Inner
    ///                                                                        
    /// Creates a shuffled representation of a source vector, and commits      
    /// any changes to it upon destruction                                     
-   ///                                                                        
    template<TARGS(V) = 0, size_t...I>
    struct TSwizzle : TVector<VT, sizeof...(I), VD> {
       using CTTI_ReflectAs    = void;

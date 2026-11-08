@@ -13,8 +13,8 @@ namespace Langulus::Math
 {
    /// Copy constructor                                                       
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const TRange& a) noexcept {
-      SIMD::Convert<Default>(a.mMinMax, mMinMax);
+   constexpr TME()::TRange(TRange const& a) noexcept {
+      mMinMax = a.mMinMax; //SIMD::Convert<Default>(a.mMinMax, mMinMax);
    }
 
    /// Construct the range sequentially, like so:                             
@@ -42,7 +42,7 @@ namespace Langulus::Math
 
    /// Create range from a min and a max vectors                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const PointType& min, const PointType& max) noexcept {
+   constexpr TME()::TRange(PointType const& min, PointType const& max) noexcept {
       for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min.all[i];
          mMinMax[i + ExtentOf<T>] = max.all[i];
@@ -51,7 +51,7 @@ namespace Langulus::Math
 
    /// Create range from a min and a max scalars                              
    TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TRange(const ScalarType& min, const ScalarType& max) noexcept {
+   constexpr TME()::TRange(ScalarType const& min, ScalarType const& max) noexcept {
       for (size_t i = 0; i < ExtentOf<T>; ++i) {
          mMinMax[i] = min;
          mMinMax[i + ExtentOf<T>] = max;
@@ -135,7 +135,7 @@ namespace Langulus::Math
    ///   @param r - the range to copy                                         
    ///   @return a reference to this range                                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::operator = (const TRange& r) noexcept -> TRange& {
+   constexpr auto TME()::operator = (TRange const& r) noexcept -> TRange& {
       return *new (this) TRange {r};
    }
 
@@ -225,13 +225,13 @@ namespace Langulus::Math
 
    /// Get the minimum value                                                  
    TEMPLATE() LANGULUS(INLINED)
-   auto TME()::GetMin() const noexcept -> const PointType& {
+   auto TME()::GetMin() const noexcept -> PointType const& {
       return mMin;
    }
 
    /// Get the maximum value                                                  
    TEMPLATE() LANGULUS(INLINED)
-   auto TME()::GetMax() const noexcept -> const PointType& {
+   auto TME()::GetMax() const noexcept -> PointType const& {
       return mMax;
    }
 
@@ -258,23 +258,23 @@ namespace Langulus::Math
 
    /// Check if a point resides inside the closed interval                    
    TEMPLATE() LANGULUS(INLINED)
-   constexpr bool TME()::Contains(const PointType& a) const noexcept {
+   constexpr bool TME()::Contains(PointType const& a) const noexcept {
       return a >= mMin and a <= mMax;
    }
 
    /// Check if a point resides inside the half-closed interval               
    TEMPLATE() LANGULUS(INLINED)
-   constexpr bool TME()::ContainsHalfClosed(const PointType& x) const noexcept {
+   constexpr bool TME()::ContainsHalfClosed(PointType const& x) const noexcept {
       return x >= mMin and x < mMax;
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::ClampRev(const PointType& pos) const noexcept -> PointType {
+   constexpr auto TME()::ClampRev(PointType const& pos) const noexcept -> PointType {
       return pos.ClampRev(mMin, mMax);
    }
 
    TEMPLATE() LANGULUS(INLINED)
-   constexpr auto TME()::Clamp(const PointType& pos) const noexcept -> PointType {
+   constexpr auto TME()::Clamp(PointType const& pos) const noexcept -> PointType {
       return pos.Clamp(mMin, mMax);
    }
 

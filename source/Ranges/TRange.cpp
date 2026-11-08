@@ -22,7 +22,7 @@ namespace Langulus::Math
 
    /// Register all commonly used range types and constants, so they can be   
    /// instantiated from scripts                                              
-   void RegisterRanges() {
+   LANGULUS_EXPORT() void RegisterRanges() {
       RangeTypeGenerator<1>::Register(Typelists::Arithmetic {});
       RangeTypeGenerator<2>::Register(Typelists::Arithmetic {});
       RangeTypeGenerator<3>::Register(Typelists::Arithmetic {});

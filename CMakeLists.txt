@@ -15,12 +15,6 @@ if (PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
    fetch_langulus_module(SIMD GIT_TAG wip)
 endif()
 
-file(GLOB_RECURSE
-   LANGULUS_MATH_SOURCES 
-   LIST_DIRECTORIES FALSE CONFIGURE_DEPENDS
-   source/*.cpp
-)
-
 # Build and install Math library												
 add_langulus_library(LangulusMath
    SOURCES  $<TARGET_OBJECTS:LangulusLogger>
@@ -30,7 +24,14 @@ add_langulus_library(LangulusMath
             $<TARGET_OBJECTS:LangulusSIMD>
             $<TARGET_OBJECTS:LangulusAnnies>
             $<TARGET_OBJECTS:LangulusFlow>
-            ${LANGULUS_MATH_SOURCES}
+            source/Colors/TColor.cpp
+            source/Numbers/TAngle.cpp
+            source/Numbers/TNumber.cpp
+            source/Primitives/Primitive.cpp
+            source/Ranges/TRange.cpp
+            source/Vectors/TNormal.cpp
+            source/Vectors/TVector.cpp
+            source/Export.cpp
 )
 
 target_include_directories(LangulusMath 
