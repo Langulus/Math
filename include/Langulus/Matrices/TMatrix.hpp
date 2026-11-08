@@ -54,8 +54,8 @@ namespace Langulus::Math
       From(TQuaternion<TypeOf<V>> const& aim, V const& translate = 0, V const& scale = 1) noexcept
          -> TMatrix<TypeOf<V>, ExtentOf<V> + 1>;
 
-      template<CT::Angle A, CT::Scalar T> static constexpr auto
-      PerspectiveFOV(A const& fov, T const& aspect, T const& near, T const& far)
+      template<CT::Scalar T> static constexpr auto
+      PerspectiveFOV(CT::Angle auto const& fov, T const& aspect, T const& near, T const& far)
          -> TMatrix<T, 4>;
 
       template<CT::Scalar T> static constexpr auto

@@ -18,9 +18,9 @@ namespace Langulus::Math
    ///   @param near the distance to the near clipping plane                  
    ///   @param far the distance to the far clipping plane                    
    ///   @return the projection matrix                                        
-   template<CT::Angle A, CT::Scalar T>
+   template<CT::Scalar T>
    constexpr auto Matrix::PerspectiveFOV(
-      A const& fieldOfView,
+      CT::Angle auto const& fieldOfView,
       T const& aspect,
       T const& near,
       T const& far
