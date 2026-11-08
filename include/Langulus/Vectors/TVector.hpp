@@ -904,6 +904,7 @@ namespace Langulus::CTTI
    > {};
 }
 
+#if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
 namespace Langulus::Math
 {
    extern template struct TVector<float, 1, 0>;
@@ -1085,3 +1086,186 @@ namespace Langulus::RTTI
    extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 4, 1>>();
    extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 4, 1>>();
 }
+#else
+namespace Langulus::Math
+{
+   template struct LANGULUS_IMPORT() TVector<float, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<double, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 1, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 1, 0>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<double, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 2, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 2, 0>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<double, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 3, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 3, 0>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<double, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 4, 0>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 4, 0>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<double, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 1, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 1, 1>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<double, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 2, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 2, 1>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<double, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 3, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 3, 1>;
+
+   template struct LANGULUS_IMPORT() TVector<float, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<double, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int8_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint8_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int16_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint16_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int32_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::int64_t, 4, 1>;
+   template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 4, 1>;
+}
+
+namespace Langulus::RTTI
+{
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 1, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 1, 0>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 2, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 2, 0>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 3, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 3, 0>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 4, 0>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 4, 0>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 1, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 1, 1>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 2, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 2, 1>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 3, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 3, 1>>();
+
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<double, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int8_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint8_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int16_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint16_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int32_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint32_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::int64_t, 4, 1>>();
+   template LANGULUS_IMPORT() DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 4, 1>>();
+}
+#endif
