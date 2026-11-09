@@ -15,7 +15,7 @@
 namespace Langulus::Math
 {
    /// Register custom number types                                           
-   void RegisterNumbers() {
+   LANGULUS_EXPORT() void RegisterNumbers() {
       RegisterAngles();
 
       (void) MetaDataOf<Infinity>();

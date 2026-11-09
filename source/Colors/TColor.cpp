@@ -12,7 +12,7 @@ namespace Langulus::Math
 {
    /// Register all commonly used color types and constants, so they can be   
    /// instantiated from scripts                                              
-   void RegisterColors() {
+   LANGULUS_EXPORT() void RegisterColors() {
       // Types                                                          
       (void) MetaOf<RGB24>();
       (void) MetaOf<RGB96>();

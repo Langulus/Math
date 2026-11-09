@@ -21,7 +21,7 @@ namespace Langulus::Math
    };
 
    /// Register all normal types                                              
-   void RegisterNormals() {
+   LANGULUS_EXPORT() void RegisterNormals() {
       NormalTypeGenerator<2>::Register(Typelists::Reals {});
       NormalTypeGenerator<3>::Register(Typelists::Reals {});
       NormalTypeGenerator<4>::Register(Typelists::Reals {});

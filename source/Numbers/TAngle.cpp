@@ -11,7 +11,7 @@
 namespace Langulus::Math
 {
    /// Register angle types                                                   
-   void RegisterAngles() {
+   LANGULUS_EXPORT() void RegisterAngles() {
       (void) MetaOf<Degrees>();
       (void) MetaOf<Radians>();
              
