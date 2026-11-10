@@ -44,20 +44,20 @@ TEMPLATE_TEST_CASE("Padding and alignment checks", "[sizes]", ALL_TYPES) {
 	REQUIRE(sizeof(TVec<T, 3>[ 8]) == sizeof(TVec<T, 4>[6]));
 }
 
-TEST_CASE("CountOf checks", "[CountOf]") {
+TEST_CASE("ExtentOf checks", "[ExtentOf]") {
    using T = float;
 
-   static_assert(CountOf<TVec<T, 1>> == 1);
-   static_assert(CountOf<TVec<T, 2>> == 2);
-   static_assert(CountOf<TVec<T, 3>> == 3);
-   static_assert(CountOf<TVec<T, 4>> == 4);
+   static_assert(ExtentOf<TVec<T, 1>> == 1);
+   static_assert(ExtentOf<TVec<T, 2>> == 2);
+   static_assert(ExtentOf<TVec<T, 3>> == 3);
+   static_assert(ExtentOf<TVec<T, 4>> == 4);
 
-   static_assert(CountOf<TVec<T, 1>[12]> == 12);
-   static_assert(CountOf<TVec<T, 1>[12]> == 12);
-   static_assert(CountOf<TVec<T, 1>[12]> == 12);
-   static_assert(CountOf<TVec<T, 2>[12]> == 24);
-   static_assert(CountOf<TVec<T, 2>[12]> == 24);
-   static_assert(CountOf<TVec<T, 3>[ 8]> == 24);
+   static_assert(ExtentOf<TVec<T, 1>[12]> == 12);
+   static_assert(ExtentOf<TVec<T, 1>[12]> == 12);
+   static_assert(ExtentOf<TVec<T, 1>[12]> == 12);
+   static_assert(ExtentOf<TVec<T, 2>[12]> == 24);
+   static_assert(ExtentOf<TVec<T, 2>[12]> == 24);
+   static_assert(ExtentOf<TVec<T, 3>[ 8]> == 24);
 }
 
 TEST_CASE("LglsOverlapExtents checks", "[LglsOverlapExtents]") {

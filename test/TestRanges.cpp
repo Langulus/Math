@@ -75,9 +75,9 @@ TEMPLATE_TEST_CASE("Ranges", "[range]",
    using P = typename T::PointType;
    using P2 = typename T::CoalescedType;
    using E = TypeOf<T>;
-   constexpr auto C = CountOf<T>;
+   constexpr auto C = ExtentOf<T>;
    static_assert(CT::Exact<E, TypeOf<P>>);
-   static_assert(sizeof(E) * CountOf<P> * 2 == sizeof(P) * 2);
+   static_assert(sizeof(E) * ExtentOf<P> * 2 == sizeof(P) * 2);
    static_assert(sizeof(T) == sizeof(P) * 2);
 
    GIVEN("A range") {

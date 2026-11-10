@@ -71,7 +71,7 @@ TEMPLATE_TEST_CASE("Vectors", "[vec]",
    using Flow::Code;
    using T = TestType;
    using E = TypeOf<T>;
-   constexpr auto C = CountOf<T>;
+   constexpr auto C = ExtentOf<T>;
 
    GIVEN("A vector") {
       if constexpr (not CT::Normalized<T>) {

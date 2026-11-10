@@ -25,7 +25,7 @@ namespace Langulus::Math
          "Quaternions should match Base size");
       static_assert(sizeof(QUAT()) == sizeof(T) * 4,
          "Quaternions should match T*4 size");
-      static_assert(CountOf<QUAT()> == 4,
+      static_assert(ExtentOf<QUAT()> == 4,
          "Quaternions should have four elements");
       static_assert(CT::Exact<TypeOf<QUAT()>, T>,
          "Quaternions should have type");*/

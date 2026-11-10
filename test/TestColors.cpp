@@ -19,7 +19,7 @@ TEMPLATE_TEST_CASE("Colors", "[color]",
    using Flow::Code;
    using T = TestType;
    using E = TypeOf<T>;
-   constexpr auto C = CountOf<T>;
+   constexpr auto C = ExtentOf<T>;
 
    auto RequireMax = [](auto const& x) {
       if constexpr (T::IsReal)

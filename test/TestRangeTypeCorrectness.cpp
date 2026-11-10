@@ -49,20 +49,20 @@ TEMPLATE_TEST_CASE("Padding and alignment checks for ranges", "[sizes]", ALL_TYP
 	REQUIRE(sizeof(TRange<TVec<T, 3>>[ 8]) == sizeof(TRange<TVec<T, 4>>[6]));
 }
 
-TEST_CASE("CountOf checks for ranges", "[CountOf]") {
+TEST_CASE("ExtentOf checks for ranges", "[ExtentOf]") {
    using T = float;
 
-   static_assert(CountOf<TRange<TVec<T, 1>>> == 2);
-   static_assert(CountOf<TRange<TVec<T, 2>>> == 4);
-   static_assert(CountOf<TRange<TVec<T, 3>>> == 6);
-   static_assert(CountOf<TRange<TVec<T, 4>>> == 8);
+   static_assert(ExtentOf<TRange<TVec<T, 1>>> == 2);
+   static_assert(ExtentOf<TRange<TVec<T, 2>>> == 4);
+   static_assert(ExtentOf<TRange<TVec<T, 3>>> == 6);
+   static_assert(ExtentOf<TRange<TVec<T, 4>>> == 8);
 
-   static_assert(CountOf<TRange<TVec<T, 1>>[12]> == 12*2);
-   static_assert(CountOf<TRange<TVec<T, 1>>[12]> == 12*2);
-   static_assert(CountOf<TRange<TVec<T, 1>>[12]> == 12*2);
-   static_assert(CountOf<TRange<TVec<T, 2>>[12]> == 24*2);
-   static_assert(CountOf<TRange<TVec<T, 2>>[12]> == 24*2);
-   static_assert(CountOf<TRange<TVec<T, 3>>[ 8]> == 24*2);
+   static_assert(ExtentOf<TRange<TVec<T, 1>>[12]> == 12*2);
+   static_assert(ExtentOf<TRange<TVec<T, 1>>[12]> == 12*2);
+   static_assert(ExtentOf<TRange<TVec<T, 1>>[12]> == 12*2);
+   static_assert(ExtentOf<TRange<TVec<T, 2>>[12]> == 24*2);
+   static_assert(ExtentOf<TRange<TVec<T, 2>>[12]> == 24*2);
+   static_assert(ExtentOf<TRange<TVec<T, 3>>[ 8]> == 24*2);
 }
 
 TEST_CASE("Lossless checks for ranges against vectors", "[lossless]") {
