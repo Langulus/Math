@@ -190,8 +190,9 @@ namespace Langulus::Math
       template<class N, class D>
       constexpr auto& operator = (const TVectorComponent<N, D>&) noexcept;
 
-      /*explicit operator Annies::Text() const;
-      explicit operator Flow::Code() const;*/
+      template<class SELF>
+      explicit operator Annies::Text(this SELF const& self);
+      /*explicit operator Flow::Code() const;*/
 
       constexpr auto Embrace(auto const&...) noexcept -> TRange&;
       constexpr auto Intersect(const CT::Range auto&) const noexcept -> TRange;
@@ -255,6 +256,7 @@ namespace Langulus::Math
 #undef TEMPLATE
 #undef TME
 
+LANGULUS_MORPHISM_CONCEPT(CT::Range, Annies::Text);
 
 namespace Langulus::Ranges
 {

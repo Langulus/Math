@@ -183,30 +183,21 @@ namespace Langulus::Math
          result += mMax.operator Code();
       result += Code::Operator::CloseScope;
       return result;
-   }
+   }*/
 
    /// Serialize to text                                                      
-   TEMPLATE() LANGULUS(INLINED)
-   TME()::operator Annies::Text() const {
+   TEMPLATE() template<class SELF> LANGULUS(INLINED)
+   TME()::operator Annies::Text(this SELF const& self) {
       using Annies::Text;
       Text result;
-      result += NameOf<TRange>();
-      result += "(";
-      if constexpr (MemberCount == 2) {
-         Annies::MakeBlock(mMin.all).Serialize(result);
-         result += "; ";
-         Annies::MakeBlock(mMax.all).Serialize(result);
-      }
-      else {
-         result += "(";
-            Annies::MakeBlock(mMin.all).Serialize(result);
-         result += "); (";
-            Annies::MakeBlock(mMax.all).Serialize(result);
-         result += ")";
-      }
-      result += ")";
+      result += MetaDataOf<SELF>();
+      result += Serial::OpenScope.Token;
+      result += self.mMin;
+      result += Serial::Pair.Token;
+      result += self.mMax;
+      result += Serial::CloseScope.Token;
       return result;
-   }*/
+   }
 
    /// Incorporate a point into the range                                     
    TEMPLATE() LANGULUS(INLINED)

@@ -191,7 +191,7 @@ namespace Langulus::Math
       constexpr TMatrix(TMatrix const&) noexcept;
       constexpr TMatrix(TMatrix&&) noexcept;
       constexpr TMatrix(CT::Matrix auto const&) noexcept;
-      constexpr TMatrix(CT::Vector auto const&) noexcept;
+      constexpr TMatrix(CT::CustomVector auto const&) noexcept;
       constexpr TMatrix(CT::Scalar auto const&) noexcept;
       template<class T1>
       constexpr TMatrix(const T1*) noexcept;
@@ -206,7 +206,7 @@ namespace Langulus::Math
       static constexpr TMatrix Rotate(CT::Angle auto const&) noexcept
       requires (ROWS >= 2 and COLS >= 2);
 
-      static constexpr TMatrix RotateAxis(const TVector<T, 3>&, CT::Angle auto const&) noexcept
+      static constexpr TMatrix RotateAxis(TVector<T, 3> const&, CT::Angle auto const&) noexcept
       requires (ROWS >= 3 and COLS >= 3);
 
       static constexpr TMatrix Rotate(CT::Angle auto const& pitch, CT::Angle auto const& yaw) noexcept

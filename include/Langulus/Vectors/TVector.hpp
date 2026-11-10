@@ -466,7 +466,7 @@ namespace Langulus::Math
 
 
    ///                                                                        
-   ///   Templated vector                                                     
+   /// MARK: TVector                                                          
    ///                                                                        
    ///   This is a multipurpose vector that is used in numerous places, such  
    /// as: primitives, colors, forces, scalers, normals, samplers, etc...     
@@ -528,8 +528,7 @@ namespace Langulus::Math
 
    public:
       ///                                                                     
-      ///   Construction                                                      
-      ///                                                                     
+      /// MARK: Construction                                                  
       constexpr TVector() noexcept;
       constexpr TVector(TVector const&) noexcept = default;
       constexpr TVector(TVector&&) noexcept = default;
@@ -549,28 +548,32 @@ namespace Langulus::Math
       explicit TVector(Describe&&);
 
       ///                                                                     
-      ///   Assignment                                                        
-      ///                                                                     
+      /// MARK: Assignment                                                    
       constexpr auto operator = (TVector const&) noexcept -> TVector& = default;
       constexpr auto operator = (TVector &&)     noexcept -> TVector& = default;
       constexpr auto operator = (CT::Vector auto const&) noexcept -> TVector&;
       constexpr auto operator = (CT::Scalar auto const&) noexcept -> TVector&;
 
       template<class SELF, class V>
-      constexpr auto operator = (this SELF&, ::std::initializer_list<V>&&) noexcept -> SELF&;
+      constexpr auto operator = (this SELF& self, ::std::initializer_list<V>&& ilist) noexcept -> SELF& {
+         auto src = ilist.data();
+         for (size_t i = 0; i < ilist.size(); ++i)
+            self.all[i] = static_cast<T>(*src);
+         for (size_t i = ilist.size(); i < S; ++i)
+            self.all[i] = Default;
+         return self;
+      }
 
       template<CT::Scalar N, CT::Dimension D>
       constexpr auto operator = (TVectorComponent<N, D> const&) noexcept -> TVector&;
 
       ///                                                                     
-      ///   Verbs                                                             
-      ///                                                                     
+      /// MARK: Verbs                                                         
       //void Multiply(Verb&) const;
       //void Multiply(Verb&);
 
       ///                                                                     
-      ///   Interpretation                                                    
-      ///                                                                     
+      /// MARK: Interpretation                                                
       //template<CT::Serial AS, class TOKEN>
       //AS Serialize() const;
 
@@ -580,8 +583,7 @@ namespace Langulus::Math
       static constexpr decltype(auto) Adapt(CT::Scalar auto const&) noexcept;
 
       ///                                                                     
-      ///   Access                                                            
-      ///                                                                     
+      /// MARK: Access                                                        
       using Base::x;
       using Base::first;
       using Base::r;
@@ -617,11 +619,45 @@ namespace Langulus::Math
       constexpr auto operator [] (size_t)       noexcept ->       T&;
       constexpr auto operator [] (size_t) const noexcept -> T const&;
 
+      // Prefix operators                                               
+      template<class SELF>
+      constexpr auto operator ++ (this SELF& self) noexcept -> SELF& {
+         for(auto& it : self)
+            ++it;//TODO SIMD
+         return self;
+      }
+
+      template<class SELF>
+      constexpr auto operator -- (this SELF& self) noexcept -> SELF& {
+         for(auto& it : self)
+            --it;//TODO SIMD
+         return self;
+      }
+
+      // Suffix operators                                               
+      template<class SELF>
+      constexpr auto operator ++ (this SELF& self, int) noexcept -> SELF {
+         SELF backup = self;
+         for(auto& it : self)
+            ++it;//TODO SIMD
+         return backup;
+      }
+
+      template<class SELF>
+      constexpr auto operator -- (this SELF& self, int) noexcept -> SELF {
+         SELF backup = self;
+         for(auto& it : self)
+            --it;//TODO SIMD
+         return backup;
+      }
+
       constexpr auto GetCount() const noexcept -> size_t;
       constexpr auto LengthSquared() const noexcept -> T;
       constexpr auto Length() const noexcept -> T;
       constexpr bool IsDegenerate() const noexcept;
 
+      ///                                                                     
+      /// MARK: Swizzle                                                       
       template<size_t...I>
       static constexpr bool SwzRequirements = ((S > I) and ...);
 

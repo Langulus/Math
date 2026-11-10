@@ -144,6 +144,20 @@ namespace Langulus::Math
          memcpy(mArray, DeintCast(a).mArray, sizeof(mArray));
       }
    }
+
+   /// Construct from vector                                                  
+   ///   @param x spread across entire matrix diagonal, if vector size is     
+   ///      equal or smaller than the number of diagonal cells if vector is   
+   ///      smaller, the remaining values default to 1 if vector is larger,   
+   ///      the elements are copied sequentially with any missing elements    
+   ///      defaulting to identity                                            
+   TEMPLATE() LANGULUS(INLINED)
+   constexpr TME()::TMatrix(CT::CustomVector auto const& x) noexcept {
+      using V = Deref<Deint<decltype(x)>>;
+      constexpr auto D = Math::Min(Diagonal, ExtentOf<V>);
+      for (size_t i = 0; i < D; ++i)
+         mColumns[i][i] = Adapt(x[i]);
+   }
    
    /// Construct from scalar                                                  
    ///   @param x spread across entire matrix diagonal                        
@@ -154,26 +168,12 @@ namespace Langulus::Math
          mColumns[i][i] = xx;
    }
 
-   /// Construct from vector                                                  
-   ///   @param x spread across entire matrix diagonal, if vector size is     
-   ///      equal or smaller than the number of diagonal cells if vector is   
-   ///      smaller, the remaining values default to 1 if vector is larger,   
-   ///      the elements are copied sequentially with any missing elements    
-   ///      defaulting to identity                                            
-   TEMPLATE() LANGULUS(INLINED)
-   constexpr TME()::TMatrix(CT::Vector auto const& x) noexcept {
-      using V = Deref<Deint<decltype(x)>>;
-      constexpr auto D = Math::Min(Diagonal, ExtentOf<V>);
-      for (size_t i = 0; i < D; ++i)
-         mColumns[i][i] = Adapt(x[i]);
-   }
-
    /// Manual initialization from an array (unsafe)                           
    ///   @param t1 array of scalars                                           
    TEMPLATE() template<class T1> LANGULUS(INLINED)
    constexpr TME()::TMatrix(const T1* t1) noexcept {
       if constexpr (Same<T, T1>)
-         ::std::memcpy(mArray, t1, sizeof(mArray));
+         memcpy(mArray, t1, sizeof(mArray));
       else
          SIMD::Convert<0>(*static_cast<const T1(*)[MemberCount]>(static_cast<const void*>(t1)), mArray);
    }
@@ -252,7 +252,7 @@ namespace Langulus::Math
       }
       else {
          // Otherwise copy the provided elements, the rest is identity  
-         ::std::memcpy(mArray, all, initialized * sizeof(T));
+         memcpy(mArray, all, initialized * sizeof(T));
       }
    }
 
@@ -396,7 +396,7 @@ namespace Langulus::Math
    TEMPLATE() LANGULUS(INLINED)
    constexpr auto TME()::Translate(CT::Vector auto const& position) noexcept
    -> TMatrix {
-      TMatrix temp {};
+      TMatrix temp;
       return temp.SetPosition(position);
    }
 
