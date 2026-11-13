@@ -191,28 +191,6 @@ namespace Langulus::Math
          void tail() { /*static_assert(false, "1D vector doesn't have a tail");*/ }
 
          constexpr TVectorBase() noexcept {}
-
-         /*constexpr TVectorBase() noexcept {
-            all[0] = static_cast<TYPE>(DEFAULT);
-         }
-
-         constexpr TVectorBase(const TVectorBase& other) noexcept {
-            all[0] = other.all[0];
-         }
-
-         constexpr TVectorBase(TVectorBase&& other) noexcept {
-            all[0] = other.all[0];
-         }
-
-         constexpr auto& operator = (const TVectorBase& other) noexcept {
-            all[0] = other.all[0];
-            return *this;
-         }
-
-         constexpr auto& operator = (TVectorBase&& other) noexcept {
-            all[0] = other.all[0];
-            return *this;
-         }*/
       };
 
 
@@ -252,33 +230,6 @@ namespace Langulus::Math
          void tail() { /*static_assert(false, "2D vector doesn't have a tail");*/ }
 
          constexpr TVectorBase() noexcept {}
-
-         /*constexpr TVectorBase() noexcept {
-            for (int i = 0; i < 2; ++i)
-               all[i] = static_cast<TYPE>(DEFAULT);
-         }
-
-         constexpr TVectorBase(const TVectorBase& other) noexcept {
-            for (int i = 0; i < 2; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr TVectorBase(TVectorBase&& other) noexcept {
-            for (int i = 0; i < 2; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr auto& operator = (const TVectorBase& other) noexcept {
-            for (int i = 0; i < 2; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }
-
-         constexpr auto& operator = (TVectorBase&& other) noexcept {
-            for (int i = 0; i < 2; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }*/
       };
 
 
@@ -319,33 +270,6 @@ namespace Langulus::Math
          void tail() { /*static_assert(false, "3D vector doesn't have a tail");*/ }
 
          constexpr TVectorBase() noexcept {}
-
-         /*constexpr TVectorBase() noexcept {
-            for (int i = 0; i < 3; ++i)
-               all[i] = static_cast<TYPE>(DEFAULT);
-         }
-
-         constexpr TVectorBase(const TVectorBase& other) noexcept {
-            for (int i = 0; i < 3; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr TVectorBase(TVectorBase&& other) noexcept {
-            for (int i = 0; i < 3; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr auto& operator = (const TVectorBase& other) noexcept {
-            for (int i = 0; i < 3; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }
-
-         constexpr auto& operator = (TVectorBase&& other) noexcept {
-            for (int i = 0; i < 3; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }*/
       };
 
 
@@ -376,33 +300,6 @@ namespace Langulus::Math
          constexpr TVectorBase() noexcept {}
 
          void tail() { /*static_assert(false, "4D vector doesn't have a tail");*/ }
-
-         /*constexpr TVectorBase() noexcept {
-            for (int i = 0; i < 4; ++i)
-               all[i] = static_cast<TYPE>(DEFAULT);
-         }
-
-         constexpr TVectorBase(const TVectorBase& other) noexcept {
-            for (int i = 0; i < 4; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr TVectorBase(TVectorBase&& other) noexcept {
-            for (int i = 0; i < 4; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr auto& operator = (const TVectorBase& other) noexcept {
-            for (int i = 0; i < 4; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }
-
-         constexpr auto& operator = (TVectorBase&& other) noexcept {
-            for (int i = 0; i < 4; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }*/
       };
 
 
@@ -434,33 +331,6 @@ namespace Langulus::Math
             &TVectorBase::w,
             &TVectorBase::tail
          >;
-
-         /*constexpr TVectorBase() noexcept {
-            for (size_t i = 0; i < S; ++i)
-               all[i] = static_cast<TYPE>(DEFAULT);
-         }
-
-         constexpr TVectorBase(const TVectorBase& other) noexcept {
-            for (size_t i = 0; i < S; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr TVectorBase(TVectorBase&& other) noexcept {
-            for (size_t i = 0; i < S; ++i)
-               all[i] = other.all[i];
-         }
-
-         constexpr auto& operator = (const TVectorBase& other) noexcept {
-            for (size_t i = 0; i < S; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }
-
-         constexpr auto& operator = (TVectorBase&& other) noexcept {
-            for (size_t i = 0; i < S; ++i)
-               all[i] = other.all[i];
-            return *this;
-         }*/
       };
    }
 
@@ -615,6 +485,26 @@ namespace Langulus::Math
 
       template<size_t I>
       constexpr auto GetIdx() const noexcept -> T const&;
+
+      constexpr bool operator ==  (TVector const& rhs) const noexcept {
+         return SIMD::Equals(all, rhs.all);
+      }
+
+      constexpr bool operator <= (TVector const& rhs) const noexcept {
+         return SIMD::EqualsOrLesser(all, rhs.all);
+      }
+
+      constexpr bool operator >= (TVector const& rhs) const noexcept {
+         return SIMD::EqualsOrGreater(all, rhs.all);
+      }
+
+      constexpr bool operator > (TVector const& rhs) const noexcept {
+         return SIMD::Greater(all, rhs.all);
+      }
+
+      constexpr bool operator < (TVector const& rhs) const noexcept {
+         return SIMD::Lesser(all, rhs.all);
+      }
 
       constexpr auto operator [] (size_t)       noexcept ->       T&;
       constexpr auto operator [] (size_t) const noexcept -> T const&;
@@ -961,7 +851,6 @@ namespace Langulus::CTTI
    > {};
 }
 
-#if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
 namespace Langulus::Math
 {
    extern template struct TVector<float, 1, 0>;
@@ -1053,6 +942,7 @@ namespace Langulus::Math
    extern template struct TVector<::std::uint64_t, 4, 1>;
 }
 
+#if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
 namespace Langulus::RTTI
 {
    extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<float, 1, 0>>();
@@ -1144,7 +1034,7 @@ namespace Langulus::RTTI
    extern template DefinitionData const* DefinitionData::Reflect<Math::TVector<::std::uint64_t, 4, 1>>();
 }
 #else
-namespace Langulus::Math
+/*namespace Langulus::Math
 {
    template struct LANGULUS_IMPORT() TVector<float, 1, 0>;
    template struct LANGULUS_IMPORT() TVector<double, 1, 0>;
@@ -1233,7 +1123,7 @@ namespace Langulus::Math
    template struct LANGULUS_IMPORT() TVector<::std::uint32_t, 4, 1>;
    template struct LANGULUS_IMPORT() TVector<::std::int64_t, 4, 1>;
    template struct LANGULUS_IMPORT() TVector<::std::uint64_t, 4, 1>;
-}
+}*/
 
 namespace Langulus::RTTI
 {
