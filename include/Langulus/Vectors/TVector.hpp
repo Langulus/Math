@@ -851,7 +851,7 @@ namespace Langulus::CTTI
    > {};
 }
 
-namespace Langulus::Math
+/*namespace Langulus::Math
 {
    extern template struct TVector<float, 1, 0>;
    extern template struct TVector<double, 1, 0>;
@@ -940,7 +940,7 @@ namespace Langulus::Math
    extern template struct TVector<::std::uint32_t, 4, 1>;
    extern template struct TVector<::std::int64_t, 4, 1>;
    extern template struct TVector<::std::uint64_t, 4, 1>;
-}
+}*/
 
 #if defined(LANGULUS_EXPORT_ALL) or defined(LANGULUS_EXPORT_MATH)
 namespace Langulus::RTTI

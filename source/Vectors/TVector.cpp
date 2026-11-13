@@ -45,7 +45,7 @@ namespace Langulus::Math
    }
 }
 
-namespace Langulus::Math
+/*namespace Langulus::Math
 {
    template struct TVector<float, 1, 0>;
    template struct TVector<double, 1, 0>;
@@ -134,7 +134,7 @@ namespace Langulus::Math
    template struct TVector<::std::uint32_t, 4, 1>;
    template struct TVector<::std::int64_t, 4, 1>;
    template struct TVector<::std::uint64_t, 4, 1>;
-}
+}*/
 
 namespace Langulus::RTTI
 {
