@@ -7,6 +7,7 @@
 ///                                                                           
 #include <Langulus/Vectors/TNormal.hpp>
 
+#include <Langulus/Annies/Functional/Compare.hpp>
 
 namespace Langulus::Math
 {

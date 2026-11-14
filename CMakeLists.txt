@@ -11,8 +11,8 @@ if (PROJECT_IS_TOP_LEVEL OR NOT LANGULUS)
    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
    include(LangulusUtilities.cmake)
-   fetch_langulus_module(Flow GIT_TAG wip)
    fetch_langulus_module(SIMD GIT_TAG wip)
+   fetch_langulus_module(Flow GIT_TAG wip)
 endif()
 
 # Build and install Math library												
@@ -35,20 +35,12 @@ add_langulus_library(LangulusMath
 )
 
 target_include_directories(LangulusMath 
-   PUBLIC	$<TARGET_PROPERTY:LangulusLogger,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusRTTI,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusFractalloc,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusPercist,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusSIMD,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusAnnies,INTERFACE_INCLUDE_DIRECTORIES>
-            $<TARGET_PROPERTY:LangulusFlow,INTERFACE_INCLUDE_DIRECTORIES>
-            include
+   PUBLIC	include
 )
 
 target_link_libraries(LangulusMath
-   PUBLIC   LangulusCore
-            LangulusSIMD
-            $<TARGET_PROPERTY:LangulusLogger,INTERFACE_LINK_LIBRARIES>
+   PUBLIC   LangulusSIMD
+            LangulusFlow
 )
 
 target_compile_definitions(LangulusMath

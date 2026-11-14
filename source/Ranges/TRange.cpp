@@ -7,6 +7,7 @@
 ///                                                                           
 #include <Langulus/Ranges/TRange.hpp>
 
+#include <Langulus/Annies/Functional/Compare.hpp>
 
 namespace Langulus::Math
 {

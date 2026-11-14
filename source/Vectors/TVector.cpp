@@ -8,6 +8,7 @@
 #include <Langulus/Math/Vector.hpp>
 #include <Langulus/MetaOf.hpp>
 
+#include <Langulus/Annies/Functional/Compare.hpp>
 
 namespace Langulus::Math
 {

@@ -16,6 +16,7 @@
 #include "Verbs/Randomize.inl"
 #include "Verbs/Move.inl"
 
+#include <Langulus/Annies/Functional/Compare.hpp>
 
 namespace Langulus::Math
 {
