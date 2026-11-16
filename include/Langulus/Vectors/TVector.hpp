@@ -426,10 +426,10 @@ namespace Langulus::Math
 
       template<class SELF, class V>
       constexpr auto operator = (this SELF& self, ::std::initializer_list<V>&& ilist) noexcept -> SELF& {
-         auto src = ilist.data();
-         for (size_t i = 0; i < ilist.size(); ++i)
-            self.all[i] = static_cast<T>(*src);
-         for (size_t i = ilist.size(); i < S; ++i)
+         size_t i = 0;
+         for (auto& src : ilist)
+            self.all[i++] = static_cast<T>(src);
+         for (; i < S; ++i)
             self.all[i] = Default;
          return self;
       }
