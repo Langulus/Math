@@ -8,6 +8,7 @@
 #pragma once
 #include "Primitive.hpp"
 #include <Langulus/Annies/Functional/Compare.hpp>
+#include <Langulus/Annies/Functional/Remove.hpp>
 
 
 namespace Langulus::Math
@@ -39,5 +40,26 @@ namespace Langulus::Math
       using Base           = Annies::TMany<T>;
       using PointType      = T;
       using Base::operator ==;
+   };
+}
+
+namespace Langulus::CTTI
+{
+   /// Rule for serializing Recipe to Text                                    
+   template<CT::CustomVector T> requires (ExtentOf<T> > 1)
+   struct SerializationRule<Annies::Text, Math::TPolygon<T>> {
+      using S = Serializer<Annies::Text>;
+      using Context = typename S::Context;
+
+      static void Serialize(Math::TPolygon<T> const& polygon, Annies::Text& out, Context* context) {
+         out += NameOf<Math::TPolygon<T>>();
+         out += Serial::OpenScope.Token;
+         for (auto& point : polygon) {
+            Langulus::Serialize(point, out, context);
+            out += Serial::And.Token;
+         }
+         out -= Serial::And.Token.size();
+         out += Serial::CloseScope.Token;
+      }
    };
 }

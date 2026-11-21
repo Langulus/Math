@@ -93,8 +93,8 @@ namespace Langulus::CTTI
          case 3:
             lhs = Math::Cerp(
                raw[0],
-               Math::Cerp(raw[0], raw[0], raw[1], raw[1]), //TODO this is probably wrong, i made it up cuz it made sense to me
-               Math::Cerp(raw[1], raw[1], raw[2], raw[2]),
+               Math::Cerp(raw[0], raw[0], raw[1], raw[1], 0.5), //TODO this is probably wrong, i made it up cuz it made sense to me
+               Math::Cerp(raw[1], raw[1], raw[2], raw[2], 0.5),
                raw[2],
                mass
             );

@@ -45,8 +45,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(mass, lhs, converted);
@@ -69,8 +69,8 @@ namespace Langulus::CTTI
          }
          else {
             // Hard path - we must attempt conversion to LHS            
-            auto converted = rhs.template ConvertTo<LHS>();
-            if (not converted)
+            TMany<LHS> converted;
+            if (not rhs.ConvertTo(converted))
                return false;
 
             Inner(mass, result, converted);
