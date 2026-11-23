@@ -101,8 +101,8 @@ namespace Langulus::Math
    TEMPLATE()
    TME()::TRange(Describe&& describe) {
       LglsAssumeUser(describe, "Empty descriptor for TRange");
-
-      if (describe->CastsTo<Range>()) {
+      TODO();
+      /*if (describe->CastsTo<Range>()) {
          mMin = Describe{Many{Absorb, describe->GetMember(0)}};
          mMax = Describe{Many{Absorb, describe->GetMember(1)}};
          return;
@@ -121,7 +121,7 @@ namespace Langulus::Math
             mMax = mMax.Normalize();
          }
          return;
-      }
+      }*/
 
       // Nothing was initialized. This is always an error in the        
       // context of the describe-constructor. If descriptor was         
